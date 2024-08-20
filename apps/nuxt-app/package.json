@@ -1,0 +1,21 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "start": "nuxt start",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "nuxt": "^3.12.4",
+    "vue": "^3.4.31",
+    "vue-router": "^4.4.0",
+    "@geins/core": "file:../../packages/core",
+    "@geins/cms": "file:../../packages/cms",
+    "@geins/nuxt": "file:../../packages/nuxt"
+  }
+}

@@ -1,0 +1,49 @@
+<script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { GeinsCore, type GeinsCredentialsAPI } from '@geins/core';  // Ensure correct path to your package
+
+const messages = ref<string[]>([]);
+let geinsCore: GeinsCore | null = null;
+// Initialize GeinsCore with credentials
+const credentials: GeinsCredentialsAPI = {
+    apiKey: 'CF2FF80B-6F85-4CD9-ACE5-F41962891E07',
+    accountName: 'demogeins',
+
+};
+geinsCore = new GeinsCore(credentials);
+
+// Add message to the messages array
+const addMessage = (message: string) => {
+    messages.value.push(message);
+};
+
+// Broadcast a message
+const broadcast = () => {
+    const channel = geinsCore?.broadcastChannel;
+    if (channel) {
+        const message = { type: 'message', payload: 'hello from nuxt-app' };
+        channel.postMessage(message);
+        messages.value.push(`Message sent: ${message.type} - ${message.payload}`);
+        console.log('Message sent:');
+    } else {
+        console.log('BroadcastChannel not initialized');
+    }
+};
+
+// Check the status of the BroadcastChannel
+const status = () => {
+    const channel = geinsCore?.broadcastChannel;
+    messages.value.push(`Channel status: ${channel ? 'open' : 'closed'}`);
+};
+
+</script>
+
+<template>
+    <div>
+        <h2>Nuxt Broadcast Test</h2>
+        <button @click="broadcast">Send Message</button>
+        <button @click="status">Check Status</button>
+        <br />
+        <p v-for="(message, index) in messages" :key="index">{{ message }}</p>
+    </div>
+</template>
