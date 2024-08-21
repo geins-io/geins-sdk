@@ -6,14 +6,14 @@ import { ContentAreaService } from './contentAreaService';
 
 class GeinsCMS  {
     private merchantApiClient: GeinsMerchantApiClient;
-    public menu: MenuService;    
+    public menu: MenuService;
     public page: PageService;
     public content: ContentAreaService;
 
-    constructor(core: GeinsCore) { 
+    constructor(core: GeinsCore) {
         if(!core) {
             throw new Error('Core is required');
-        }        
+        }
         if (core.client) {
             this.merchantApiClient = core.client;
         } else {
@@ -22,13 +22,13 @@ class GeinsCMS  {
         this.menu = new MenuService(this.merchantApiClient);
         this.page = new PageService(this.merchantApiClient);
         this.content = new ContentAreaService(this.merchantApiClient);
-    }   
+    }
     get client(): GeinsMerchantApiClient {
         if (!this.merchantApiClient) {
             throw new Error('Merchant API Client is not set');
         }
         return this.merchantApiClient;
-    }      
+    }
 }
 
 export { GeinsCMS, ContentAreaVariabels };

@@ -4,6 +4,7 @@
 - [ ] Add Client for the API
 - [ ] Add broadcast for the API
 - [ ] Add Cookie for the API
+- [ ] Routing server side
 
 ## Serach - @geins/search
 -  [ ] Product search

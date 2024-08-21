@@ -1,0 +1,8 @@
+#import "product/variant.graphql"
+
+fragment VariantBase on VariantType {
+  variants {
+    ...Variant
+  }
+  ...Variant
+}

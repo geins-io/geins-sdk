@@ -1,4 +1,4 @@
-import { BaseService } from './baseService';
+import { BaseService } from '@geins/core';
 import { queries } from './queries';
 
 export class PageService extends BaseService {

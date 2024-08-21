@@ -12,10 +12,9 @@ class Broadcast {
         this.channelId = channelId;
         try {
             this.bc = new BroadcastService(channelId);
-            console.log('Broadcast Channel initialized successfully with id:', channelId);
         } catch (error) {
             console.error('Broadcast Channel initialization failed', error);
-        }        
+        }
     }
 
     get channel(): BroadcastService {
@@ -27,9 +26,9 @@ class Broadcast {
 
     addEventListener(handler: any) {
         this.channel.removeEventListener('message', handler);
-        this.channel.addEventListener('message', (message) => {            
+        this.channel.addEventListener('message', (message) => {
             handler(message);
-        });        
+        });
     }
 
     postMessage(message: BroadcastMessage) {

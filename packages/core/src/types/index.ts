@@ -10,8 +10,14 @@ export type GeinsCredentialsAPI = {
     environment?: Environment;
 };
 
+export type GeinsManagementAPICredentials = {
+    apiKey: string;
+    username: string;
+    password: string;
+};
+
 export type GeinsAPILocalization = {
     channelId: string;
     marketId: string;
-    language: string;
+    languageId: string;
 };

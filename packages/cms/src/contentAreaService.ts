@@ -1,5 +1,5 @@
 import { GeinsAPILocalization } from '@geins/core';
-import { BaseService } from './baseService';
+import { BaseService } from '@geins/core';
 import { queries } from './queries';
 import type { ContentAreaVariabels } from './types';
 

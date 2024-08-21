@@ -12,7 +12,8 @@
     "dependencies": {
         "@apollo/client": "^3.11.4",
         "graphql": "^16.9.0",
-        "js-cookie": "^3.0.5"
+        "js-cookie": "^3.0.5",
+        "node-cache": "^5.1.2"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^26.0.1",

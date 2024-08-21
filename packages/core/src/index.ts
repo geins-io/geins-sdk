@@ -4,7 +4,10 @@ import { Environment } from './types';
 import { ENDPOINTS } from './endpoints';
 import { Broadcast, BroadcastMessage } from './broadcast'
 import GeinsMerchantApiClient from './client';
-import type { GeinsCredentialsAPI, GeinsAPILocalization } from './types';
+import { BaseService } from './baseService';
+import GeinsManagementApiClient from './clientManagementApi';
+import { GeinsRouter } from './routing';
+import type { GeinsCredentialsAPI, GeinsAPILocalization, GeinsManagementAPICredentials } from './types';
 
 const BROADCAST_CHANNEL = 'geins-channel';
 
@@ -27,7 +30,7 @@ class GeinsCore {
         this.accountName = credentials.accountName;
         this.environment = credentials.environment || Environment.PRODUCTION;
 
-        // Set endpoints      
+        // Set endpoints
 
         // Initialize API Client
         if (this.apiKey && this.accountName) {
@@ -36,9 +39,9 @@ class GeinsCore {
                 auth: ENDPOINTS.auth.replace('{ACCOUNT}', this.accountName).replace('{ENV}', this.environment),
                 authSign: ENDPOINTS.auth_sign.replace('{API-KEY}', this.apiKey),
                 image: ENDPOINTS.image.replace('{ACCOUNT}', this.accountName)
-            };    
+            };
         }
-      
+
 
         // Initialize BroadcastChannel
         if (!this.serverContext()){
@@ -62,44 +65,47 @@ class GeinsCore {
     private initBroadcastChannel() {
         try {
             this.bc = new Broadcast(this.broadcastChannelId);
-            const handler = (message: BroadcastMessage) => {                
+            const handler = (message: BroadcastMessage) => {
                 console.log('Broadcast message received:', message);
             }
             this.bc.addEventListener(handler);
         } catch (error) {
             console.error('Broadcas Channel initialization failed', error);
-        }     
+        }
     }
 
     // Get Broadcast Channel
     get broadcastChannel(): Broadcast | undefined {
         if(!this.serverContext()){
             if (!this.bc) {
-                this.initBroadcastChannel();                
+                this.initBroadcastChannel();
             }
             return this.bc;
         }
-        return undefined;       
+        return undefined;
     }
-        
+
     get endpoints(): any {
         return this.endpointsUrls;
     }
 
     get client(): GeinsMerchantApiClient | undefined {
         if(!this.endpointsUrls){
-            throw new Error('Endpoints are not set');            
+            throw new Error('Endpoints are not set');
         }
         if(!this.apiClient){
-            this.initApiClient();            
+            this.initApiClient();
         }
         return this.apiClient;
     }
 }
 
-export { 
-    GeinsCore, 
-    GeinsCredentialsAPI, 
+export {
+    GeinsCore,
+    GeinsCredentialsAPI,
     GeinsMerchantApiClient,
     GeinsAPILocalization,
+    BaseService,
+    GeinsManagementAPICredentials,
+    GeinsRouter
  };
