@@ -13,6 +13,6 @@ export default defineNuxtModule<ModuleOptions>({
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url)
 
-    // addPlugin({ src: resolver.resolve('./runtime/plugin'), mode: 'client' })
+    addPlugin({ src: resolver.resolve('./runtime/plugin'), mode: 'client' })
   },
 })

@@ -3,12 +3,14 @@ import { ref } from 'vue';
 import { GeinsCore, GeinsRouter, type GeinsCredentialsAPI, type GeinsAPILocalization } from '@geins/core';
 const { data } = await useFetch<any>('/api/router');
 const runtimeConfig = useRuntimeConfig()
+const nuxtApp = useNuxtApp();
 const router = new GeinsRouter();
 
 
 const items = ref<any[]>([]);
 const handleClick = () => {
-  console.log('click', data);
+  console.log('nuxtApp', nuxtApp);
+  console.log(nuxtApp.$hello('name'));
 };
 
 </script>

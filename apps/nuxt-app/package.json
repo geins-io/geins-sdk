@@ -16,6 +16,6 @@
     "vue-router": "^4.4.0",
     "@geins/core": "file:../../packages/core",
     "@geins/cms": "file:../../packages/cms",
-    "@geins/nuxt": "file:../../packages/nuxt"
+    "@geins/nuxt": "file:../../modules/nuxt"
   }
 }
