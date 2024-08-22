@@ -5,10 +5,10 @@ const IMAGE_URL = 'https://{ACCOUNT}.commerce.services';
 const MANAGEMENT_API_URL = 'https://mgmtapi.geins.io';
 
 const ENDPOINTS = {
-    main: API_URL,
-    auth: AUTH_URL,
-    auth_sign: SIGN_URL,
-    image: IMAGE_URL
+  main: API_URL,
+  auth: AUTH_URL,
+  auth_sign: SIGN_URL,
+  image: IMAGE_URL,
 };
 
 export { ENDPOINTS, MANAGEMENT_API_URL };

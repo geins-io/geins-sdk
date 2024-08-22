@@ -1,27 +1,32 @@
 {
   "name": "geins",
-  "version": "0.0.1",
-  "main": "index.js",
-  "scripts": {
-    "build": "npx turbo run build",
-    "dev": "npx turbo run dev",
-    "dev:nuxt": "npx turbo run dev --filter=nuxt-app",
-    "dev:next": "npx turbo run dev --filter=next-app",
-    "dev:svelte": "npx turbo run dev --filter=svelte-app",
-    "start:nuxt": "npx turbo run start --filter=nuxt-app",
-    "build:nuxt": "npx turbo run build --filter=nuxt-app"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "version": "0.1.0",
+  "author": "Geins",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
-  "devDependencies": {
-    "turbo": "^2.0.4"
+  "license": "MIT",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "dev:nuxt": "turbo dev --filter=nuxt-app",
+    "start:nuxt": "turbo start --filter=nuxt-app",
+    "build:nuxt": "turbo build --filter=nuxt-app",
+    "dev:next": "turbo dev --filter=next-app",
+    "dev:svelte": "turbo dev --filter=svelte-app",
+    "format": "prettier --write \"**/*.{ts,tsx,md,vue,js}\""
   },
-  "packageManager": "yarn@1.22.22"
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "turbo": "^2.0.7",
+    "typescript": "^5.4.5",
+    "prettier-plugin-svelte": "^3.2.6",
+    "prettier-plugin-vue": "^1.1.6"
+  },
+  "packageManager": "yarn@1.22.22",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

@@ -8,19 +8,19 @@ export default {
   output: [
     {
       file: 'dist/index.cjs',
-      format: 'cjs'
+      format: 'cjs',
     },
     {
       file: 'dist/index.esm.js',
-      format: 'esm'
-    }
+      format: 'esm',
+    },
   ],
   plugins: [
     resolve({
-      preferBuiltins: true
+      preferBuiltins: true,
     }),
     commonjs(),
     typescript(),
-    graphql()
-  ]
+    graphql(),
+  ],
 };

@@ -2,8 +2,8 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { GeinsCore } from '@geins/core';
 import { GeinsCMS, type ContentAreaVariabels } from '@geins/cms';
-import type { GeinsAPILocalization} from '@geins/types';
-const runtimeConfig = useRuntimeConfig()
+import type { GeinsAPILocalization } from '@geins/types';
+const runtimeConfig = useRuntimeConfig();
 const items = ref<any[]>([]);
 
 const localization: GeinsAPILocalization = {
@@ -17,19 +17,21 @@ const geinsCore = new GeinsCore({
 const geinsCMS = new GeinsCMS(geinsCore);
 
 const getContentArea = () => {
-  geinsCMS.content.area('Frontpage', 'The front page area', {}, localization).then((response) => {
-    if (response.loading) {
-      console.info('loading');
-      return;
-    }
-    if (!response.data) {
-      console.info('no data');
-      return;
-    }
-    const data = response.data;
-    items.value.unshift(JSON.stringify(data));
-    items.value.unshift(`${new Date().toISOString()} :: -----------------`);
-  });
+  geinsCMS.content
+    .area('Frontpage', 'The front page area', {}, localization)
+    .then((response) => {
+      if (response.loading) {
+        console.info('loading');
+        return;
+      }
+      if (!response.data) {
+        console.info('no data');
+        return;
+      }
+      const data = response.data;
+      items.value.unshift(JSON.stringify(data));
+      items.value.unshift(`${new Date().toISOString()} :: -----------------`);
+    });
 };
 
 const getPage = () => {
@@ -45,10 +47,8 @@ const getPage = () => {
     const data = response.data;
     items.value.unshift(JSON.stringify(data));
     items.value.unshift(`${new Date().toISOString()} :: -----------------`);
-
   });
 };
-
 </script>
 <template>
   <div>
@@ -57,12 +57,8 @@ const getPage = () => {
     <button @click="getPage">Get Page</button>
     <br /><br />
 
-
     <div v-for="(item, index) in items" :key="index">
-
       <code>{{ item }}</code>
     </div>
-
-
   </div>
 </template>

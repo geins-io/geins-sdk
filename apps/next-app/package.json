@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3111",
+    "dev": "next dev --turbo --port 3111",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -12,8 +12,8 @@
     "react": "^18",
     "react-dom": "^18",
     "next": "14.2.5",
-    "@geins/core": "file:../../packages/core",
-    "@geins/cms": "file:../../packages/cms"
+    "@geins/core": "*",
+    "@geins/cms": "*"
   },
   "devDependencies": {
     "typescript": "^5",

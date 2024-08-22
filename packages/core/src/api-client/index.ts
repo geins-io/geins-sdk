@@ -1,3 +1,3 @@
-export * from "./merchantApiClient";
-export * from "./managementApiClient";
-export * from "./endpoints";
+export * from './merchantApiClient';
+export * from './managementApiClient';
+export * from './endpoints';

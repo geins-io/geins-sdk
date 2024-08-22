@@ -1,1 +1,1 @@
-export * from './brandService'
+export * from './brandService';

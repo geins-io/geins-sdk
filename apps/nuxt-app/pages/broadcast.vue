@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { GeinsCore } from '@geins/core';
-import type { MerchantApiCredentials} from '@geins/types';
+import type { MerchantApiCredentials } from '@geins/types';
 
 const messages = ref<string[]>([]);
 let geinsCore: GeinsCore | null = null;
@@ -12,7 +12,6 @@ const credentials: MerchantApiCredentials = {
 };
 geinsCore = new GeinsCore(credentials);
 
-
 // Broadcast a message
 const broadcast = () => {
   const channel = geinsCore?.broadcastChannel;
@@ -20,7 +19,6 @@ const broadcast = () => {
     const message = { type: 'message', payload: 'hello from nuxt-app' };
     channel.postMessage(message);
     messages.value.push(`Message sent: ${message.type} - ${message.payload}`);
-
   } else {
     console.log('BroadcastChannel not initialized');
   }
@@ -31,7 +29,6 @@ const status = () => {
   const channel = geinsCore?.broadcastChannel;
   messages.value.push(`Channel status: ${channel ? 'open' : 'closed'}`);
 };
-
 </script>
 
 <template>

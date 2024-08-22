@@ -1,4 +1,10 @@
-import { ApolloClient, InMemoryCache, NormalizedCache, NormalizedCacheObject, gql} from '@apollo/client';
+import {
+  ApolloClient,
+  InMemoryCache,
+  NormalizedCache,
+  NormalizedCacheObject,
+  gql,
+} from '@apollo/client';
 
 export enum FetchPolicy {
   CACHE_FIRST = 'cache-first',
@@ -9,10 +15,10 @@ export enum FetchPolicy {
 }
 
 export class MerchantApiClient {
-  private client: ApolloClient<NormalizedCacheObject> ;
+  private client: ApolloClient<NormalizedCacheObject>;
   fetchPolicy: FetchPolicy = FetchPolicy.NETWORK_ONLY;
   pollInterval: number = 0;
-  constructor(apiUrl:string, apiKey: string) {
+  constructor(apiUrl: string, apiKey: string) {
     this.client = this.createClient(apiUrl, apiKey);
   }
 
@@ -21,9 +27,9 @@ export class MerchantApiClient {
       uri: apiUrl,
       cache: new InMemoryCache(),
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'x-apikey': apiKey,
-      }
+      },
     });
   }
   getClient(): ApolloClient<NormalizedCacheObject> | undefined {
@@ -41,8 +47,8 @@ export class MerchantApiClient {
       options: {
         fetchPolicy: options.fetchPolicy || this.fetchPolicy,
         pollInterval: options.pollInterval || this.pollInterval,
-      }
-    }
+      },
+    };
     return this.client.query(q);
   }
 
@@ -50,5 +56,3 @@ export class MerchantApiClient {
     return this.client.mutate(mutation);
   }
 }
-
-
