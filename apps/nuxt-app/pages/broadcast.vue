@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { GeinsCore, type GeinsCredentialsAPI } from '@geins/core';  // Ensure correct path to your package
+import { GeinsCore } from '@geins/core';
+import type { MerchantApiCredentials} from '@geins/types';
 
 const messages = ref<string[]>([]);
 let geinsCore: GeinsCore | null = null;
 // Initialize GeinsCore with credentials
-const credentials: GeinsCredentialsAPI = {
+const credentials: MerchantApiCredentials = {
   apiKey: 'CF2FF80B-6F85-4CD9-ACE5-F41962891E07',
   accountName: 'demogeins',
-
 };
 geinsCore = new GeinsCore(credentials);
 

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { GeinsCore, type GeinsCredentialsAPI, type GeinsAPILocalization } from '@geins/core';
+import { GeinsCore } from '@geins/core';
 import { GeinsCMS, type ContentAreaVariabels } from '@geins/cms';
+import type { GeinsAPILocalization} from '@geins/types';
 const runtimeConfig = useRuntimeConfig()
 const items = ref<any[]>([]);
 
 const localization: GeinsAPILocalization = {
-  ...(runtimeConfig.public.channel || {})
+  ...runtimeConfig.public.geins.localization,
 };
 
 const geinsCore = new GeinsCore({

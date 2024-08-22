@@ -879,16 +879,20 @@
   version "0.0.1"
   dependencies:
     "@apollo/client" "^3.10.5"
-    "@geins/core" "file:../../Users/Axelsson/AppData/Local/Yarn/Cache/v6/npm-@geins-cms-0.0.1-29efc64f-6ede-4d9f-a29f-b791b1959e52-1724314377257/node_modules/@geins/core"
+    "@geins/core" "file:../../Users/Axelsson/AppData/Local/Yarn/Cache/v6/npm-@geins-cms-0.0.1-0ac6133a-00ac-440b-8510-3ab23d1efb79-1724319866543/node_modules/@geins/core"
     graphql "^16.8.2"
 
 "@geins/core@file:packages/core":
   version "0.0.1"
   dependencies:
     "@apollo/client" "^3.11.4"
+    "@geins/types" "file:../../Users/Axelsson/AppData/Local/Yarn/Cache/v6/npm-@geins-core-0.0.1-fe4a518c-78b4-45ec-bf01-7cd5359983bc-1724319866545/node_modules/@geins/types"
     graphql "^16.9.0"
     js-cookie "^3.0.5"
     node-cache "^5.1.2"
+
+"@geins/types@file:packages/types":
+  version "0.0.1"
 
 "@graphql-typed-document-node/core@^3.1.1":
   version "3.2.0"

@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { GeinsCore, GeinsCredentialsAPI, GeinsAPILocalization } from '@geins/core';
+import { GeinsCore } from '@geins/core';
+import type { GeinsAPILocalization } from '@geins/types';
 import { GeinsCMS } from '@geins/cms';
 
 const Home = () => {
