@@ -4,6 +4,11 @@
   "author": "Geins",
   "private": true,
   "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/config/*",
+    "packages/sdk/*"
+  ],
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -24,9 +29,5 @@
   "packageManager": "yarn@1.22.22",
   "engines": {
     "node": ">=20"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  }
 }
