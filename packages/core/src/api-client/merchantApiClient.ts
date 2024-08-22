@@ -1,5 +1,4 @@
-import { ApolloClient, InMemoryCache, gql} from '@apollo/client';
-
+import { ApolloClient, InMemoryCache, NormalizedCache, NormalizedCacheObject, gql} from '@apollo/client';
 
 export enum FetchPolicy {
   CACHE_FIRST = 'cache-first',
@@ -9,8 +8,8 @@ export enum FetchPolicy {
   STANDBY = 'standby',
 }
 
-export default class GeinsMerchantApiClient {
-  private client: any;
+export class MerchantApiClient {
+  private client: ApolloClient<NormalizedCacheObject> ;
   fetchPolicy: FetchPolicy = FetchPolicy.NETWORK_ONLY;
   pollInterval: number = 0;
   constructor(apiUrl:string, apiKey: string) {
@@ -27,7 +26,7 @@ export default class GeinsMerchantApiClient {
       }
     });
   }
-  getClient(): GeinsMerchantApiClient | undefined {    
+  getClient(): ApolloClient<NormalizedCacheObject> | undefined {
     return this.client;
   }
 
@@ -35,22 +34,21 @@ export default class GeinsMerchantApiClient {
     this.client.clearStore();
   }
 
-  async runQuery(query: any, variables: any = {}, options: any = {}) {    
+  async runQuery(query: any, variables: any = {}, options: any = {}) {
     const q = {
       query,
       variables,
       options: {
         fetchPolicy: options.fetchPolicy || this.fetchPolicy,
         pollInterval: options.pollInterval || this.pollInterval,
-      }       
-    }    
+      }
+    }
     return this.client.query(q);
   }
 
   async runMutation(mutation: any) {
     return this.client.mutate(mutation);
-  }  
+  }
 }
 
 
- 

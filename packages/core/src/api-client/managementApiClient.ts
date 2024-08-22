@@ -1,20 +1,19 @@
 
 import { MANAGEMENT_API_URL } from './endpoints'
-import type { GeinsManagementAPICredentials } from './types'
-//
+import type { ManagementApiCredentials } from '@geins/types';
 
-export default class GeinsManagementApiClient {
+export class ManagementApiClient {
   private baseUrl: string;
   private apiKey: string;
   private authToken: string;
 
-  constructor(credentials: GeinsManagementAPICredentials) {
+  constructor(credentials: ManagementApiCredentials) {
     this.baseUrl = MANAGEMENT_API_URL;
     this.apiKey = credentials.apiKey;
     this.authToken = this.createAuthToken(credentials);
   }
 
-  createAuthToken(credentials: GeinsManagementAPICredentials) {
+  createAuthToken(credentials: ManagementApiCredentials) {
     return btoa(`${credentials.username}:${credentials.password}`);
   }
 

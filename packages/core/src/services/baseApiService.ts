@@ -1,10 +1,10 @@
-import GeinsMerchantApiClient from './client';
-import type { GeinsAPILocalization } from './types';
+import { MerchantApiClient } from '../api-client/merchantApiClient';
+import type { GeinsAPILocalization } from '@geins/types';
 
-export abstract class BaseService {
-    protected client: GeinsMerchantApiClient;
+export abstract class BaseApiService {
+    protected client: MerchantApiClient;
 
-    constructor(client: GeinsMerchantApiClient) {
+    constructor(client: MerchantApiClient) {
         this.client = client;
 
     }

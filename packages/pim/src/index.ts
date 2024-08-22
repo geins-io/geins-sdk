@@ -1,8 +1,8 @@
-import { GeinsCore, GeinsMerchantApiClient } from '@geins/core';
-import { BrandService } from './brandService';
+import { GeinsCore, MerchantApiClient } from '@geins/core';
+import { BrandService } from './services';
 
 class GeinsPIM  {
-    private merchantApiClient: GeinsMerchantApiClient;
+    private merchantApiClient: MerchantApiClient;
     public brand: BrandService;
     constructor(core: GeinsCore) {
         if(!core) {
@@ -15,7 +15,7 @@ class GeinsPIM  {
         }
         this.brand = new BrandService(this.merchantApiClient);
     }
-    get client(): GeinsMerchantApiClient {
+    get client(): MerchantApiClient {
         if (!this.merchantApiClient) {
             throw new Error('Merchant API Client is not set');
         }

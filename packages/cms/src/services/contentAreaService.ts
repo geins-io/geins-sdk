@@ -1,9 +1,8 @@
-import { GeinsAPILocalization } from '@geins/core';
-import { BaseService } from '@geins/core';
-import { queries } from './queries';
-import type { ContentAreaVariabels } from './types';
+import { GeinsAPILocalization, ContentAreaVariabels } from '@geins/types';
+import { BaseApiService } from '@geins/core';
+import { queries } from '../graphql'
 
-export class ContentAreaService extends BaseService {
+export class ContentAreaService extends BaseApiService {
 
     async area(family:string, areaName:string, variables: ContentAreaVariabels = { }, localization: GeinsAPILocalization) {
         if (!variables) {

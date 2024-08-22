@@ -1,11 +1,9 @@
-import { GeinsCore, GeinsMerchantApiClient  } from '@geins/core';
-import type { ContentAreaVariabels } from './types';
-import { MenuService } from './menuService';
-import { PageService } from './pageService';
-import { ContentAreaService } from './contentAreaService';
+import { GeinsCore, MerchantApiClient  } from '@geins/core';
+import type { ContentAreaVariabels } from '@geins/types';
+import { MenuService, PageService, ContentAreaService } from './services';
 
 class GeinsCMS  {
-    private merchantApiClient: GeinsMerchantApiClient;
+    private merchantApiClient: MerchantApiClient;
     public menu: MenuService;
     public page: PageService;
     public content: ContentAreaService;
@@ -23,7 +21,7 @@ class GeinsCMS  {
         this.page = new PageService(this.merchantApiClient);
         this.content = new ContentAreaService(this.merchantApiClient);
     }
-    get client(): GeinsMerchantApiClient {
+    get client(): MerchantApiClient {
         if (!this.merchantApiClient) {
             throw new Error('Merchant API Client is not set');
         }

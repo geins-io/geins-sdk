@@ -1,12 +1,10 @@
 <script lang="ts">
   import {
     GeinsCore,
-    GeinsRouter,
-    type GeinsCredentialsAPI,
-    type GeinsAPILocalization,
+    GeinsRouter
   } from "@geins/core";
   import { GeinsCMS, type ContentAreaVariabels } from "@geins/cms";
-
+import type { GeinsAPILocalization } from "@geins/types";
   const API_KEY = "CF2FF80B-6F85-4CD9-ACE5-F41962891E07";
   const ACCOUNT_NAME = "DEMOGEINS";
   const ENVIRONMENT = "PRODUCTION";
