@@ -1,5 +1,4 @@
-
-import { MANAGEMENT_API_URL } from './endpoints'
+import { MANAGEMENT_API_URL } from './endpoints';
 import type { ManagementApiCredentials } from '@geins/types';
 
 export class ManagementApiClient {
@@ -26,19 +25,17 @@ export class ManagementApiClient {
     const options = {
       method,
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
         'x-apikey': this.apiKey,
-        'Authorization': `Bearer ${this.authToken}`,
+        Authorization: `Bearer ${this.authToken}`,
       },
       body: JSON.stringify(data),
     };
 
-    const reponse  = await fetch(endpointUrl, options).then((response) => {
+    const reponse = await fetch(endpointUrl, options).then((response) => {
       return response.json();
     });
     return reponse;
   }
 }
-
-

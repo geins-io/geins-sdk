@@ -2,16 +2,14 @@
 import { ref } from 'vue';
 import { GeinsCore, GeinsRouter } from '@geins/core';
 const { data } = await useFetch<any>('/api/router');
-const runtimeConfig = useRuntimeConfig()
+const runtimeConfig = useRuntimeConfig();
 const nuxtApp = useNuxtApp();
 const router = new GeinsRouter();
-
 
 const items = ref<any[]>([]);
 const handleClick = () => {
   console.log('nuxtApp', nuxtApp);
 };
-
 </script>
 <template>
   <div>
@@ -20,6 +18,5 @@ const handleClick = () => {
     <button @click="handleClick">CMS</button>
     <button @click="handleClick">CRM</button>
     <button @click="handleClick">Page</button>
-
   </div>
 </template>

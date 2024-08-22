@@ -1,4 +1,4 @@
-import { Environment } from "../common";
+import { Environment } from '../common';
 
 export type MerchantApiCredentials = {
   apiKey: string;

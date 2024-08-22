@@ -1,5 +1,5 @@
-import menu from './graphql/menu.graphql'
-import contentArea from './graphql/widget-area.graphql'
+import menu from './graphql/menu.graphql';
+import contentArea from './graphql/widget-area.graphql';
 
 const queries = {
   menu,

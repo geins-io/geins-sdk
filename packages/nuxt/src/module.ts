@@ -1,4 +1,4 @@
-import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit';
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {}
@@ -11,8 +11,8 @@ export default defineNuxtModule<ModuleOptions>({
   // Default configuration options of the Nuxt module
   defaults: {},
   setup(_options, _nuxt) {
-    const resolver = createResolver(import.meta.url)
+    const resolver = createResolver(import.meta.url);
 
-    addPlugin({ src: resolver.resolve('./runtime/plugin'), mode: 'client' })
+    addPlugin({ src: resolver.resolve('./runtime/plugin'), mode: 'client' });
   },
-})
+});

@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev": "nuxt dev --turbo --port 3000",
     "build": "nuxt build",
-    "dev": "nuxt dev -p 3000",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "start": "nuxt start",
@@ -14,7 +14,15 @@
     "nuxt": "^3.12.4",
     "vue": "^3.4.31",
     "vue-router": "^4.4.0",
-    "@geins/core": "file:../../packages/core",
-    "@geins/cms": "file:../../packages/cms"
+    "@geins/core": "*",
+    "@geins/cms": "*"
+  },
+  "devDependencies": {
+    "@geins/eslint-config": "*",
+    "@geins/typescript-config": "*",
+    "@nuxt/eslint-config": "^0.3.13",
+    "@types/node": "^20",
+    "typescript": "^5",
+    "eslint": "^8"
   }
 }

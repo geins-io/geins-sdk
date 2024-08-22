@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { GeinsCore } from '@geins/core';
@@ -19,7 +19,12 @@ const Home = () => {
   const geinsCMS = new GeinsCMS(geinsCore);
 
   const getContentArea = async () => {
-    const response = await geinsCMS.content.area('Frontpage', 'The front page area', {}, localization);
+    const response = await geinsCMS.content.area(
+      'Frontpage',
+      'The front page area',
+      {},
+      localization,
+    );
     if (response.loading) {
       console.info('loading');
       return;
@@ -30,7 +35,11 @@ const Home = () => {
     }
 
     const data = response.data;
-    setItems(prevItems => [ `${new Date().toISOString()} :: -----------------`, JSON.stringify(data), ...prevItems]);
+    setItems((prevItems) => [
+      `${new Date().toISOString()} :: -----------------`,
+      JSON.stringify(data),
+      ...prevItems,
+    ]);
   };
 
   const getPage = async () => {
@@ -45,7 +54,11 @@ const Home = () => {
     }
 
     const data = response.data;
-    setItems(prevItems => [ `${new Date().toISOString()} :: -----------------`, JSON.stringify(data), ...prevItems]);
+    setItems((prevItems) => [
+      `${new Date().toISOString()} :: -----------------`,
+      JSON.stringify(data),
+      ...prevItems,
+    ]);
   };
 
   return (
@@ -56,11 +69,9 @@ const Home = () => {
       <div>
         {items.map((item, index) => (
           <>
-          <br/>
-          <code>
-            {item}
-           </code>
-           </>
+            <br />
+            <code>{item}</code>
+          </>
         ))}
       </div>
     </main>
