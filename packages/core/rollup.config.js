@@ -16,7 +16,9 @@ export default {
     }
   ],
   plugins: [
-    resolve(),
+    resolve({
+      preferBuiltins: true
+    }),
     commonjs(),
     typescript(),
     graphql()

@@ -1,8 +1,8 @@
-import type { GeinsAPILocalization } from '@geins/core';
-import { BaseService } from '@geins/core';
-import { queries } from './queries';
+import { GeinsAPILocalization, ContentAreaVariabels } from '@geins/types';
+import { BaseApiService } from '@geins/core';
+import { queries } from '../graphql';
 
-export class MenuService extends BaseService {
+export class MenuService extends BaseApiService {
     async atLocation(locationId: string, localization: GeinsAPILocalization) {
         if (!locationId) {
             throw new Error('Location ID is required');

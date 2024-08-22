@@ -1,5 +1,5 @@
 {
-  "name": "@geins/core",
+  "name": "@geins/types",
   "version": "0.0.1",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -9,19 +9,11 @@
     "build": "rollup -c",
     "prepublishOnly": "npm run build"
   },
-  "dependencies": {
-    "@apollo/client": "^3.11.4",
-    "graphql": "^16.9.0",
-    "js-cookie": "^3.0.5",
-    "node-cache": "^5.1.2",
-    "@geins/types": "file:../types"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
-    "@rollup/plugin-graphql": "^2.0.4",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@types/js-cookie": "^3.0.6",
     "typescript": "^5.4.5"
   }
 }

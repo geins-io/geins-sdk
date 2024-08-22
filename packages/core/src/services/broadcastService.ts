@@ -1,11 +1,11 @@
 // https://github.com/pubkey/broadcast-channel
 import { BroadcastChannel as BroadcastService } from 'broadcast-channel';
-interface BroadcastMessage {
+export interface BroadcastMessage {
     type: string;
     payload: any;
 }
 
-class Broadcast {
+export class Broadcast {
    private bc: BroadcastService<BroadcastMessage> | undefined;
    private channelId: string | undefined;
    constructor(channelId: string) {
@@ -36,6 +36,4 @@ class Broadcast {
     }
 
 }
-
-export { Broadcast, BroadcastMessage };
 

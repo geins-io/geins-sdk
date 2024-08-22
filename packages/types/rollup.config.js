@@ -1,7 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
-import graphql from '@rollup/plugin-graphql';
+
 
 export default {
   input: 'src/index.ts',
@@ -16,11 +16,8 @@ export default {
     }
   ],
   plugins: [
-    resolve({
-      preferBuiltins: true
-    }),
+    resolve(),
     commonjs(),
     typescript(),
-    graphql()
   ]
 };
