@@ -7,13 +7,13 @@ import { GeinsCMS } from '@geins/cms';
 const Home = () => {
   const [items, setItems] = useState<string[]>([]);
   const localization: GeinsAPILocalization = {
-    channelId: process.env.NEXT_PUBLIC_CHANNEL_ID,
-    marketId: process.env.NEXT_PUBLIC_MARKET_ID,
-    languageId: process.env.NEXT_PUBLIC_LANGUAGE_ID,
+    channelId: process.env.NEXT_PUBLIC_CHANNEL_ID || '1|se',
+    marketId: process.env.NEXT_PUBLIC_MARKET_ID || 'se',
+    languageId: process.env.NEXT_PUBLIC_LANGUAGE_ID || 'sv-SE',
   };
   const geinsCore = new GeinsCore({
-    apiKey: process.env.NEXT_PUBLIC_API_KEY,
-    accountName: process.env.NEXT_PUBLIC_ACCOUNT_NAME,
+    apiKey: process.env.NEXT_PUBLIC_API_KEY || '00000',
+    accountName: process.env.NEXT_PUBLIC_ACCOUNT_NAME || 'demogeins',
   });
   const geinsCMS = new GeinsCMS(geinsCore);
 

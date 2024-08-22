@@ -5,9 +5,9 @@
   "scripts": {
     "build": "npx turbo run build",
     "dev": "npx turbo run dev",
-    "dev:nuxt": "npx turbo run dev --filter=nuxt-app -- --port 3000",
-    "dev:next": "npx turbo run dev --filter=next-app -- --port 3111",
-    "dev:svelte": "npx turbo run dev --filter=svelte-app -- --port 3112",
+    "dev:nuxt": "npx turbo run dev --filter=nuxt-app",
+    "dev:next": "npx turbo run dev --filter=next-app",
+    "dev:svelte": "npx turbo run dev --filter=svelte-app",
     "start:nuxt": "npx turbo run start --filter=nuxt-app",
     "build:nuxt": "npx turbo run build --filter=nuxt-app"
   },
@@ -23,5 +23,5 @@
   "devDependencies": {
     "turbo": "^2.0.4"
   },
-  "packageManager": "npm@10.8.1"
+  "packageManager": "yarn@1.22.22"
 }

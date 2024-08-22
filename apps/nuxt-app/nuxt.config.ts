@@ -4,9 +4,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-08-19',
    // ... other configuration options
 
-    modules: [
-    '@geins/nuxt',
-  ],
+  // modules: [
+  //   '@geins/nuxt',
+  // ],
 
 
   runtimeConfig: {

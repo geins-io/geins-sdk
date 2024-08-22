@@ -1,7 +1,7 @@
 {
     "name": "@geins/core",
     "version": "0.0.1",
-    "main": "dist/index.cjs.js",
+    "main": "dist/index.cjs",
     "module": "dist/index.esm.js",
     "types": "dist/index.d.ts",
     "type": "module",
