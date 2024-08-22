@@ -1,9 +1,10 @@
 {
   "name": "svelte-app",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --port 3222",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -22,6 +23,5 @@
   "dependencies": {
     "@geins/core": "file:../../packages/core",
     "@geins/cms": "file:../../packages/cms"
-  },
-  "type": "module"
+  }
 }
