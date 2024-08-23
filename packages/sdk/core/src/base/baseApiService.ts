@@ -56,4 +56,15 @@ export abstract class BaseApiService {
     }
     return this.client.runQuery(query, variables);
   }
+
+  protected async runQueryParsed<T>(query: any, variables: any): Promise<T> {
+    const result = await this.runQuery(query, variables);
+
+    // Assuming result is JSON. If not, adjust parsing accordingly.
+    const parsedResult = this.parseResult(result);
+
+    return parsedResult as T;
+  }
+
+  protected abstract parseResult(result: any): any;
 }

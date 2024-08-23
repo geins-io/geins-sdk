@@ -1,4 +1,4 @@
-import { ContentAreaVariabels } from '@geins/types';
+import { ContentAreaVariables } from '@geins/types';
 import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 
@@ -6,7 +6,7 @@ export class ContentAreaService extends BaseApiService {
   async area(
     family: string,
     areaName: string,
-    variables?: ContentAreaVariabels,
+    variables?: ContentAreaVariables,
   ) {
     if (!areaName || !family) {
       throw new Error('areaName and family is required');
@@ -19,5 +19,11 @@ export class ContentAreaService extends BaseApiService {
     const vars = this.createVariables(arg);
 
     return await this.runQuery(queries.contentArea, vars);
+  }
+
+  protected parseResult(result: any): any {
+    // Implement the parsing logic specific to PageService
+    // Adjust based on expected result structure
+    return JSON.parse(result);
   }
 }

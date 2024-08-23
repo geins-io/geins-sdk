@@ -1,5 +1,5 @@
 import { GeinsCore, MerchantApiClient } from '@geins/core';
-import { BrandService } from './services';
+// import { BrandService } from './services';
 
 class GeinsPIM {
   /* private merchantApiClient: MerchantApiClient;

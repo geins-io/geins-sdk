@@ -1,5 +1,5 @@
 import { GeinsCore } from '@geins/core';
-import type { Channel, ContentAreaVariabels } from '@geins/types';
+import type { Channel, ContentAreaVariables } from '@geins/types';
 import { MenuService, PageService, ContentAreaService } from './services';
 
 export abstract class BasePackage {
@@ -31,4 +31,4 @@ class GeinsCMS extends BasePackage {
   }
 }
 
-export { GeinsCMS, ContentAreaVariabels };
+export { GeinsCMS, ContentAreaVariables };
