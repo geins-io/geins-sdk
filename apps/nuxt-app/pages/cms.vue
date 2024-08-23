@@ -58,24 +58,24 @@ const getPage = () => {
 };
 const getMenu = () => {
   console.log('getting menu at location slug:', menuLocation.value);
-  /*   geinsCMS.menu.location(menuLocation.value).then((response) => {
-      if (response.loading) {
-        console.info('loading');
-        return;
-      }
-      if (!response.data) {
-        console.info('no data');
-        return;
-      }
-      const data = response.data;
-      items.value.unshift(JSON.stringify(data));
-      items.value.unshift(`${new Date().toISOString()} :: -----------------`);
-    }); */
+  geinsCMS.menu.location(menuLocation.value).then((response) => {
+    if (response.loading) {
+      console.info('loading');
+      return;
+    }
+    if (!response.data) {
+      console.info('no data');
+      return;
+    }
+    const data = response.data;
+    items.value.unshift(JSON.stringify(data));
+    items.value.unshift(`:: geinsCMS.menu.location :: ----------------- :: [${new Date().toISOString()}]`);
+  });
   geinsCMS.menu.locationParsed(menuLocation.value).then((result) => {
     return result as MenuType;
   }).then((menu) => {
     items.value.unshift(JSON.stringify(menu));
-    items.value.unshift(`${new Date().toISOString()} TYPED :: -----------------`);
+    items.value.unshift(`:: geinsCMS.menu.locationParsed :: ----------------- :: [${new Date().toISOString()}]`);
   });
 
 };
@@ -117,7 +117,9 @@ const getMenu = () => {
       </tr>
     </table>
     <div v-for="(item, index) in items" :key="index">
-      <code>{{ item }}</code>
+      <p>
+        <code>{{ item }}</code>
+      </p>
     </div>
   </div>
 </template>
