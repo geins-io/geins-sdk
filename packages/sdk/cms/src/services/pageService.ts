@@ -3,16 +3,17 @@ import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 
 export class PageService extends BaseApiService {
-  async slug(slug: string) {
-    if (!slug) {
-      throw new Error('Slug is required');
+  async page(alias: string, variables?: ContentAreaVariabels) {
+    if (!alias) {
+      throw new Error('Alias is required');
     }
-    const variables = {
-      slug,
-    };
-    if (!this.client) {
-      throw new Error('Merchant API Client is not set');
-    }
-    return this.client.runQuery(queries.contentArea, variables);
+
+    // set alias to widgetAlias in variables gor usability
+    const arg = { ...variables };
+    arg.widgetAlias = alias;
+
+    const vars = this.createVariables(arg);
+
+    return await this.runQuery(queries.contentArea, vars);
   }
 }

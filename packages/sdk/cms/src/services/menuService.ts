@@ -3,7 +3,7 @@ import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 
 export class MenuService extends BaseApiService {
-  async atLocation(locationId: string) {
+  async location(locationId: string) {
     if (!locationId) {
       throw new Error('Location ID is required');
     }
@@ -11,9 +11,12 @@ export class MenuService extends BaseApiService {
     const variables = {
       menuLocationId: locationId,
     };
-    if (!this.client) {
-      throw new Error('Merchant API Client is not set');
-    }
-    return this.client.runQuery(queries.menu, variables);
+    // set alias to widgetAlias in variables gor usability
+    const arg = { ...variables };
+    arg.menuLocationId = locationId;
+
+    const vars = this.createVariables(arg);
+
+    return await this.runQuery(queries.contentArea, vars);
   }
 }
