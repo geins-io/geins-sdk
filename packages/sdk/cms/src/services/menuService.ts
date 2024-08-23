@@ -3,6 +3,9 @@ import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 export class MenuService extends BaseApiService {
   private async locationVars(locationId: string) {
+    if (!locationId) {
+      throw new Error('LocationId is required');
+    }
     const vars = this.createVariables({ menuLocationId: locationId });
     return vars;
   }

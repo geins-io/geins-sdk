@@ -31,10 +31,21 @@ query widgetArea(
     }
     tags
     containers {
+      id
+      name
+      sortOrder
+      classNames
       layout
+      responsiveMode
       design
+
       widgets {
+        id
         name
+        sortOrder
+        type
+        size
+        classNames
         configuration
         images {
           fileName

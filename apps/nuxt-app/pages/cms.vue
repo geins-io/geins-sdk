@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import Menu from '@/components/cms/Menu.vue';
+import ContentArea from '~/components/cms/ContentArea.vue';
 import { GeinsCore } from '@geins/core';
 import { GeinsCMS } from '@geins/cms';
-import type { Channel, MerchantApiCredentials, ContentAreaVariables, MenuType } from '@geins/types';
+import type { Channel, MerchantApiCredentials, ContentAreaVariables, MenuType, ContentAreaType } from '@geins/types';
 const runtimeConfig = useRuntimeConfig();
 const items = ref<any[]>([]);
 const channel: Channel = {
@@ -19,15 +20,13 @@ const marketId = runtimeConfig.public.defaultMarket;
 const geinsCore = new GeinsCore(geinsCredentials, channel, { marketId, languageId });
 const geinsCMS = new GeinsCMS(geinsCore);
 
-let slug = ref<string>('om-oss');
+let slug = ref<string>('hej');
 let family = ref<string>('Frontpage');
 let area = ref<string>('The front page area');
 let menuLocation = ref<string>('main-desktop');
 
-const menuData = ref<MenuType>({
-  title: 'No title',
-  menuItems: [],
-});
+const menuData = ref<MenuType>();
+const pageData = ref<ContentAreaType>();
 
 
 const getContentArea = () => {
@@ -42,8 +41,10 @@ const getContentArea = () => {
       return;
     }
     const data = response.data;
-    items.value.unshift(JSON.stringify(data));
-    items.value.unshift(`${new Date().toISOString()} :: -----------------`);
+    items.value.unshift({
+      header: `:: geinsCMS.content.area :: ----------------- :: [${new Date().toISOString()}]`,
+      data: JSON.stringify(data)
+    });
   });
 };
 
@@ -60,8 +61,20 @@ const getPage = () => {
       return;
     }
     const data = response.data;
-    items.value.unshift(JSON.stringify(data));
-    items.value.unshift(`${new Date().toISOString()} :: -----------------`);
+    items.value.unshift({
+      header: `:: geinsCMS.page.alias :: ----------------- :: [${new Date().toISOString()}]`,
+      data: JSON.stringify(data)
+    });
+  });
+  geinsCMS.page.aliasParsed(slug.value).then((result) => {
+    return result as ContentAreaType;
+  }).then((contentArea) => {
+    console.log('widgetArea:', contentArea);
+    pageData.value = contentArea;
+    items.value.unshift({
+      header: `:: geinsCMS.page.aliasParsed :: ----------------- :: [${new Date().toISOString()}]`,
+      data: JSON.stringify(contentArea)
+    });
   });
 };
 const getMenu = () => {
@@ -143,7 +156,8 @@ const getMenu = () => {
         </td>
         <td></td>
         <td style="vertical-align: top;">
-          <Menu :menu="menuData" />
+          <Menu v-if="menuData" :menu="menuData" />
+          <ContentArea v-if="pageData" :family="family" :area="area" :data="pageData" />
         </td>
       </tr>
     </table>
