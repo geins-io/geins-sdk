@@ -759,14 +759,11 @@
   version "0.0.1"
   dependencies:
     "@apollo/client" "^3.11.4"
-    "@geins/types" "file:../../../../../Library/Caches/Yarn/v6/npm-@geins-core-0.0.1-ed4a1c37-6185-4e1c-a015-3b90445af7dc-1724334089843/node_modules/@geins/types"
+    "@geins/types" "*"
     broadcast-channel "^7.0.0"
     graphql "^16.9.0"
     js-cookie "^3.0.5"
     node-cache "^5.1.2"
-
-"@geins/types@file:packages/sdk/types":
-  version "0.0.1"
 
 "@graphql-typed-document-node/core@^3.1.1":
   version "3.2.0"

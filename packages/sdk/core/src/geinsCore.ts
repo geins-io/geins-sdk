@@ -1,5 +1,9 @@
 import { Environment } from '@geins/types';
-import type { MerchantApiCredentials } from '@geins/types';
+import type {
+  MerchantApiCredentials,
+  Channel,
+  MarketLanguage,
+} from '@geins/types';
 import { MerchantApiClient, ENDPOINTS } from './api-client';
 import { Broadcast, BroadcastMessage } from './services/';
 
@@ -13,20 +17,36 @@ export class GeinsCore {
   private accountName: string = '';
   private environment: Environment = Environment.PRODUCTION;
 
+  // channel information
+  private useChannel: Channel;
+
+  // default market language
+  private useDefaultMarketLanguage: MarketLanguage | undefined;
+
   // broadcast channel
   private broadcastChannelId: string = BROADCAST_CHANNEL;
   private bc: Broadcast | undefined;
 
-  constructor(credentials: MerchantApiCredentials) {
+  constructor(
+    credentials: MerchantApiCredentials,
+    channel: Channel,
+    defualtMarketLanguage?: MarketLanguage,
+  ) {
+    if (!channel) {
+      throw new Error('Channel is required');
+    }
+
     if (!credentials) {
       throw new Error('Credentials are required');
     }
+
+    this.useChannel = channel;
+
     // Set authentication information
     this.apiKey = credentials.apiKey;
     this.accountName = credentials.accountName;
-    this.environment = credentials.environment || Environment.PRODUCTION;
-
-    // Set endpoints
+    this.environment =
+      (credentials.environment as Environment) || Environment.PRODUCTION;
 
     // Initialize API Client
     if (this.apiKey && this.accountName) {
@@ -40,6 +60,10 @@ export class GeinsCore {
       };
     }
 
+    if (defualtMarketLanguage) {
+      this.useDefaultMarketLanguage = defualtMarketLanguage;
+    }
+
     // Initialize BroadcastChannel
     if (!this.serverContext()) {
       this.initBroadcastChannel();
@@ -49,6 +73,7 @@ export class GeinsCore {
   private serverContext() {
     return typeof window === 'undefined';
   }
+
   // Initialize API Client
   private initApiClient() {
     if (this.apiKey && this.accountName) {
@@ -74,6 +99,15 @@ export class GeinsCore {
     }
   }
 
+  get client(): any {
+    if (!this.endpointsUrls) {
+      throw new Error('Endpoints are not set');
+    }
+    if (!this.apiClient) {
+      this.initApiClient();
+    }
+    return this.apiClient;
+  }
   // Get Broadcast Channel
   get broadcastChannel(): Broadcast | undefined {
     if (!this.serverContext()) {
@@ -89,13 +123,11 @@ export class GeinsCore {
     return this.endpointsUrls;
   }
 
-  get client(): MerchantApiClient | undefined {
-    if (!this.endpointsUrls) {
-      throw new Error('Endpoints are not set');
-    }
-    if (!this.apiClient) {
-      this.initApiClient();
-    }
-    return this.apiClient;
+  get channel(): Channel {
+    return this.useChannel;
+  }
+
+  get defaultMarketLanguage(): MarketLanguage | undefined {
+    return this.useDefaultMarketLanguage;
   }
 }

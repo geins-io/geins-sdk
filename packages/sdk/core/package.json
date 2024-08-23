@@ -15,7 +15,7 @@
     "js-cookie": "^3.0.5",
     "node-cache": "^5.1.2",
     "broadcast-channel": "^7.0.0",
-    "@geins/types": "file:../types"
+    "@geins/types": "*"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",

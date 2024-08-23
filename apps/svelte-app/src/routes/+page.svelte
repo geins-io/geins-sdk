@@ -1,5 +1,5 @@
 <script lang="ts">
-  import {
+ /*  import {
     GeinsCore,
     GeinsRouter
   } from "@geins/core";
@@ -62,16 +62,18 @@ import type { GeinsAPILocalization } from "@geins/types";
         ...items,
       ];
     });
-  }
+  } */
 </script>
 
 <h2>Svelte @geins/CMS Test</h2>
-<button on:click={getContentArea}> Get Content Area </button>
+<!-- <button on:click={getContentArea}> Get Content Area </button>
 <button on:click={getPage}> Get Page</button>
 <div>
-  <!-- Loop items in <p>-->
+
   {#each items as item}
     <br />
     <code>{item}</code>
   {/each}
 </div>
+  -->
+

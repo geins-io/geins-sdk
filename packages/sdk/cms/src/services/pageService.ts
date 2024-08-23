@@ -1,4 +1,4 @@
-import { GeinsAPILocalization, ContentAreaVariabels } from '@geins/types';
+import { ContentAreaVariabels } from '@geins/types';
 import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 
@@ -10,6 +10,9 @@ export class PageService extends BaseApiService {
     const variables = {
       slug,
     };
+    if (!this.client) {
+      throw new Error('Merchant API Client is not set');
+    }
     return this.client.runQuery(queries.contentArea, variables);
   }
 }

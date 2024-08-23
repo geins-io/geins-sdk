@@ -10,4 +10,6 @@ export type ContentAreaVariabels = {
   customerType?: CustomerType | null;
   preview?: boolean | null;
   displaySetting?: string | null;
+  marketId?: string | null;
+  languageId?: string | null;
 };

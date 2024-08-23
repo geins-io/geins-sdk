@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+/*
 import { GeinsCore } from '@geins/core';
 import type { GeinsAPILocalization } from '@geins/types';
 import { GeinsCMS } from '@geins/cms';
-
+*/
 const Home = () => {
+/*
   const [items, setItems] = useState<string[]>([]);
   const localization: GeinsAPILocalization = {
     channelId: process.env.NEXT_PUBLIC_CHANNEL_ID || '1|se',
@@ -60,11 +62,11 @@ const Home = () => {
       ...prevItems,
     ]);
   };
-
+ */
   return (
     <main>
       <h2>Next.js @geins/CMS Test</h2>
-      <button onClick={getContentArea}>Get Content Area</button>
+      {/* <button onClick={getContentArea}>Get Content Area</button>
       <button onClick={getPage}>Get Page</button>
       <div>
         {items.map((item, index) => (
@@ -73,7 +75,7 @@ const Home = () => {
             <code>{item}</code>
           </>
         ))}
-      </div>
+      </div> */}
     </main>
   );
 };
