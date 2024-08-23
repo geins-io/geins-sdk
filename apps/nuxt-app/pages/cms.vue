@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import Menu from '@/components/cms/Menu.vue';
 import { GeinsCore } from '@geins/core';
 import { GeinsCMS } from '@geins/cms';
 import type { Channel, MerchantApiCredentials, ContentAreaVariables, MenuType } from '@geins/types';
@@ -23,6 +24,12 @@ let family = ref<string>('Frontpage');
 let area = ref<string>('The front page area');
 let menuLocation = ref<string>('main-desktop');
 
+const menuData = ref<MenuType>({
+  title: 'No title',
+  menuItems: [],
+});
+
+
 const getContentArea = () => {
   console.log('getting content area with family:""', family.value, '"and area:""', area.value, '"');
   geinsCMS.content.area(family.value, area.value).then((response) => {
@@ -42,6 +49,7 @@ const getContentArea = () => {
 
 const getPage = () => {
   console.log('getting page with slug:', slug.value);
+
   geinsCMS.page.alias(slug.value).then((response) => {
     if (response.loading) {
       console.info('loading');
@@ -58,6 +66,7 @@ const getPage = () => {
 };
 const getMenu = () => {
   console.log('getting menu at location slug:', menuLocation.value);
+
   geinsCMS.menu.location(menuLocation.value).then((response) => {
     if (response.loading) {
       console.info('loading');
@@ -68,58 +77,76 @@ const getMenu = () => {
       return;
     }
     const data = response.data;
-    items.value.unshift(JSON.stringify(data));
-    items.value.unshift(`:: geinsCMS.menu.location :: ----------------- :: [${new Date().toISOString()}]`);
+    items.value.unshift({
+      header: `:: geinsCMS.menu.locationParsed :: ----------------- :: [${new Date().toISOString()}]`,
+      data: JSON.stringify(data)
+    });
   });
+
   geinsCMS.menu.locationParsed(menuLocation.value).then((result) => {
     return result as MenuType;
   }).then((menu) => {
-    items.value.unshift(JSON.stringify(menu));
-    items.value.unshift(`:: geinsCMS.menu.locationParsed :: ----------------- :: [${new Date().toISOString()}]`);
+    menuData.value = menu;
+    items.value.unshift({
+      header: `:: geinsCMS.menu.locationParsed :: ----------------- :: [${new Date().toISOString()}]`,
+      data: JSON.stringify(menu)
+    });
+
   });
 
 };
 </script>
-
 <template>
   <div>
     <h2>Nuxt @geins/CMS Test</h2>
-    <table style="border:0">
+    <table>
       <tr>
-        <td>family:</td>
-        <td>area:</td>
+        <td>
+          <table>
+            <tr>
+              <td>family:</td>
+              <td>area:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><input v-model="family" /></td>
+              <td><input v-model="area" /></td>
+              <td><button @click="getContentArea">Get Content Area</button></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>slug:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><input v-model="slug" /></td>
+              <td><button @click="getPage">Get Page</button></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>slug:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><input v-model="menuLocation" /></td>
+              <td><button @click="getMenu">Get Menu</button></td>
+            </tr>
+          </table>
+          <div v-for=" (item, index) in items" :key="index">
+            <p>
+              <b>{{ item.header }}</b><br />
+              <textarea style="border:0; width:900px; height:300px; "> {{ item.data }}</textarea>
+            </p>
+          </div>
+        </td>
         <td></td>
-      </tr>
-      <tr>
-        <td><input v-model="family" /></td>
-        <td><input v-model="area" /></td>
-        <td><button @click="getContentArea">Get Content Area</button></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td>slug:</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td><input v-model="slug" /></td>
-        <td><button @click="getPage">Get Page</button></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td>slug:</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td><input v-model="menuLocation" /></td>
-        <td><button @click="getMenu">Get Menu</button></td>
+        <td style="vertical-align: top;">
+          <Menu :menu="menuData" />
+        </td>
       </tr>
     </table>
-    <div v-for="(item, index) in items" :key="index">
-      <p>
-        <code>{{ item }}</code>
-      </p>
-    </div>
+
   </div>
 </template>
