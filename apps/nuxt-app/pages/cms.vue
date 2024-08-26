@@ -28,8 +28,13 @@ let menuLocation = ref<string>('main-desktop');
 const menuData = ref<MenuType>();
 const pageData = ref<ContentAreaType>();
 
+const resetCompnentData = () => {
+  menuData.value = undefined;
+  pageData.value = undefined;
+};
 
 const getContentArea = () => {
+  resetCompnentData();
   console.log('getting content area with family:""', family.value, '"and area:""', area.value, '"');
   geinsCMS.content.area(family.value, area.value).then((response) => {
     if (response.loading) {
@@ -46,9 +51,20 @@ const getContentArea = () => {
       data: JSON.stringify(data)
     });
   });
+  geinsCMS.content.areaParsed(family.value, area.value).then((result) => {
+    return result as ContentAreaType;
+  }).then((contentArea) => {
+    console.log('widgetArea:', contentArea);
+    pageData.value = contentArea;
+    items.value.unshift({
+      header: `:: geinsCMS.content.areaParsed :: ----------------- :: [${new Date().toISOString()}]`,
+      data: JSON.stringify(contentArea)
+    });
+  });
 };
 
 const getPage = () => {
+  resetCompnentData();
   console.log('getting page with slug:', slug.value);
 
   geinsCMS.page.alias(slug.value).then((response) => {
@@ -78,6 +94,7 @@ const getPage = () => {
   });
 };
 const getMenu = () => {
+  resetCompnentData();
   console.log('getting menu at location slug:', menuLocation.value);
 
   geinsCMS.menu.location(menuLocation.value).then((response) => {
@@ -114,7 +131,7 @@ const getMenu = () => {
     <h2>Nuxt @geins/CMS Test</h2>
     <table>
       <tr>
-        <td>
+        <td style="vertical-align: top;">
           <table>
             <tr>
               <td>family:</td>

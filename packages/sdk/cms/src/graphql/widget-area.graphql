@@ -34,7 +34,6 @@ query widgetArea(
       id
       name
       sortOrder
-      classNames
       layout
       responsiveMode
       design
@@ -45,7 +44,6 @@ query widgetArea(
         sortOrder
         type
         size
-        classNames
         configuration
         images {
           fileName
