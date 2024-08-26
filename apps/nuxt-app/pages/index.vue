@@ -5,5 +5,6 @@ import { ref } from 'vue';
   <div>
     <h2>Nuxt Test</h2>
     <NuxtLink to="/cms">Go to CMS Test</NuxtLink>
+    <NuxtLink to="/crm">Go to CRM Test</NuxtLink>
   </div>
 </template>
