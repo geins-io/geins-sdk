@@ -103,7 +103,14 @@ export function parseContentDataByType(type: string, data: any) {
     case 'JSONPageWidget':
       return parseContentDataJson(data);
     default:
-      return data;
+      return parseJsonSafe(data);
+  }
+}
+export function parseJsonSafe(data: any) {
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    return {};
   }
 }
 

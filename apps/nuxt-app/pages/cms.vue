@@ -5,15 +5,18 @@ import ContentArea from '~/components/cms/ContentArea.vue';
 import { GeinsCore } from '@geins/core';
 import { GeinsCMS } from '@geins/cms';
 import type { Channel, MerchantApiCredentials, ContentAreaVariables, MenuType, ContentAreaType } from '@geins/types';
+
 const runtimeConfig = useRuntimeConfig();
 const items = ref<any[]>([]);
 const channel: Channel = {
   siteId: runtimeConfig.public.channel.siteId,
   siteTopDomain: runtimeConfig.public.channel.siteTopDomain,
 };
+
 const geinsCredentials: MerchantApiCredentials = {
   ...runtimeConfig.public.geins,
 };
+
 const languageId = runtimeConfig.public.defaultLanguage;
 const marketId = runtimeConfig.public.defaultMarket;
 
@@ -93,6 +96,7 @@ const getPage = () => {
     });
   });
 };
+
 const getMenu = () => {
   resetCompnentData();
   console.log('getting menu at location slug:', menuLocation.value);
@@ -125,6 +129,7 @@ const getMenu = () => {
   });
 
 };
+
 </script>
 <template>
   <div>
@@ -167,7 +172,7 @@ const getMenu = () => {
           <div v-for=" (item, index) in items" :key="index">
             <p>
               <b>{{ item.header }}</b><br />
-              <textarea style="border:0; width:900px; height:300px; "> {{ item.data }}</textarea>
+              <textarea style="border:0; width:600px; height:300px; "> {{ item.data }}</textarea>
             </p>
           </div>
         </td>
