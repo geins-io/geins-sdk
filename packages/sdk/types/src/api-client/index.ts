@@ -3,7 +3,7 @@ import { Environment } from '../common';
 export type MerchantApiCredentials = {
   apiKey: string;
   accountName: string;
-  environment?: Environment;
+  environment?: Environment | string | null;
 };
 
 export type ManagementApiCredentials = {
@@ -12,8 +12,12 @@ export type ManagementApiCredentials = {
   password: string;
 };
 
-export type GeinsAPILocalization = {
-  channelId: string;
-  marketId: string;
+export type Channel = {
+  siteId: string;
+  siteTopDomain: string;
+};
+
+export type MarketLanguage = {
   languageId: string;
+  marketId: string;
 };

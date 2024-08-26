@@ -1,44 +1,39 @@
-import { GeinsAPILocalization, ContentAreaVariabels } from '@geins/types';
+import { ContentAreaVariables, ContentAreaType } from '@geins/core';
 import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
-
+import * as contentParsers from '../util/contentParsers';
 export class ContentAreaService extends BaseApiService {
-  async area(
+  private async areaVars(
     family: string,
     areaName: string,
-    variables: ContentAreaVariabels = {},
-    localization: GeinsAPILocalization,
+    variables?: ContentAreaVariables,
   ) {
-    if (!variables) {
-      throw new Error('variables is required');
-    }
     if (!areaName || !family) {
       throw new Error('areaName and family is required');
     }
-    // set areaName and family in variables for usability
-    variables.areaName = areaName;
-    variables.family = family;
 
-    const vars = this.createVariables(variables, localization);
-    return this.client.runQuery(queries.contentArea, vars);
+    const combinedVariables = { ...variables, areaName, family };
+    return this.createVariables(combinedVariables);
+  }
+  async area(
+    family: string,
+    areaName: string,
+    variables?: ContentAreaVariables,
+  ) {
+    const vars = await this.areaVars(family, areaName, variables);
+    return await this.runQuery(queries.contentArea, vars);
   }
 
-  async page(
-    alias: string,
-    variables: ContentAreaVariabels,
-    localization: GeinsAPILocalization,
+  async areaParsed(
+    family: string,
+    areaName: string,
+    variables?: ContentAreaVariables,
   ) {
-    if (!alias) {
-      throw new Error('Alias is required');
-    }
-    if (!variables) {
-      throw new Error('variables is required');
-    }
+    const vars = await this.areaVars(family, areaName, variables);
+    return await this.runQueryParsed(queries.contentArea, vars);
+  }
 
-    // set alias to widgetAlias in variables gor usability
-    variables.widgetAlias = alias;
-
-    const vars = this.createVariables(variables, localization);
-    return this.client.runQuery(queries.contentArea, vars);
+  protected parseResult(result: any): ContentAreaType {
+    return contentParsers.parseContentArea(result);
   }
 }
