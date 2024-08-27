@@ -26,6 +26,11 @@
 - [ ] Server side session with JWT
 - [ ] Cookie based session
 
+### Cookies
+
+- [ ] Add cookies
+- [ ] Add cookie consent
+
 ## PIM - @geins/product
 
 - [ ] Product

@@ -5,7 +5,13 @@ import type {
   MarketLanguage,
 } from '@geins/types';
 import { MerchantApiClient, ENDPOINTS } from './api-client';
-import { Broadcast, BroadcastMessage } from './services/';
+import {
+  Broadcast,
+  BroadcastMessage,
+  CookieService,
+  EventService,
+} from './services/';
+import { isServerContext } from './utils';
 
 const BROADCAST_CHANNEL = 'geins-channel';
 
@@ -26,6 +32,12 @@ export class GeinsCore {
   // broadcast channel
   private broadcastChannelId: string = BROADCAST_CHANNEL;
   private bc: Broadcast | undefined;
+
+  // cookie service
+  private cookieService: CookieService | undefined;
+
+  // events
+  private eventService: EventService;
 
   constructor(
     credentials: MerchantApiCredentials,
@@ -65,13 +77,12 @@ export class GeinsCore {
     }
 
     // Initialize BroadcastChannel
-    if (!this.serverContext()) {
+    if (!isServerContext()) {
       this.initBroadcastChannel();
+      this.cookieService = new CookieService();
     }
-  }
 
-  private serverContext() {
-    return typeof window === 'undefined';
+    this.eventService = new EventService();
   }
 
   // Initialize API Client
@@ -110,7 +121,7 @@ export class GeinsCore {
   }
   // Get Broadcast Channel
   get broadcastChannel(): Broadcast | undefined {
-    if (!this.serverContext()) {
+    if (!isServerContext()) {
       if (!this.bc) {
         this.initBroadcastChannel();
       }
@@ -127,7 +138,18 @@ export class GeinsCore {
     return this.useChannel;
   }
 
+  get events(): EventService {
+    return this.eventService;
+  }
+
   get defaultMarketLanguage(): MarketLanguage | undefined {
     return this.useDefaultMarketLanguage;
+  }
+
+  get cookies(): CookieService {
+    if (!this.cookieService) {
+      this.cookieService = new CookieService();
+    }
+    return this.cookieService;
   }
 }

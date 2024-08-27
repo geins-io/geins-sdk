@@ -1,6 +1,6 @@
 // THE CLIENT WITH ALL LOGIC FOR AUTHENTICATION
 
-export default class GeinsAuthClient {
+export default class AuthClient {
   private authEndpoint: string;
   private signAccount: (sign: string) => Promise<string>;
   private token: string = '';

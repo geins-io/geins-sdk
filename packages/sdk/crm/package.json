@@ -1,24 +1,23 @@
 {
-    "name": "@geins/crm",
-    "version": "0.0.1",
-    "main": "dist/index.cjs.js",
-    "module": "dist/index.esm.js",
-    "types": "dist/index.d.ts",
-    "type": "module",
-    "scripts": {
-        "build": "rollup -c",
-        "prepublishOnly": "npm run build"
-    },
-    "dependencies": {
-        "@geins/core": "file:../core",
-        "js-cookie": "^3.0.5"
-    },
-    "devDependencies": {
-        "@rollup/plugin-commonjs": "^26.0.1",
-        "@rollup/plugin-graphql": "^2.0.4",
-        "@rollup/plugin-node-resolve": "^15.2.3",
-        "@rollup/plugin-typescript": "^11.1.6",
-        "@types/js-cookie": "^3.0.6",
-        "typescript": "^5.4.5"
-    }
+  "name": "@geins/crm",
+  "version": "0.0.1",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@geins/core": "*"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-graphql": "^2.0.4",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/js-cookie": "^3.0.6",
+    "typescript": "^5.4.5"
+  }
 }

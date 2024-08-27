@@ -1,23 +1,23 @@
 {
-    "name": "@geins/cms",
-    "version": "0.0.1",
-    "main": "dist/index.cjs",
-    "module": "dist/index.esm.js",
-    "types": "dist/index.d.ts",
-    "type": "module",
-    "scripts": {
-        "build": "rollup -c",
-        "prepublishOnly": "npm run build"
-    },
-    "dependencies": {
-        "@apollo/client": "^3.10.5",
-        "graphql": "^16.8.2",
-        "@geins/core": "file:../core"
-    },
-    "devDependencies": {
-        "@rollup/plugin-commonjs": "^26.0.1",
-        "@rollup/plugin-node-resolve": "^15.2.3",
-        "@rollup/plugin-typescript": "^11.1.6",
-        "typescript": "^5.4.5"
-    }
+  "name": "@geins/cms",
+  "version": "0.0.1",
+  "main": "dist/index.cjs",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.10.5",
+    "graphql": "^16.8.2",
+    "@geins/core": "*"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "typescript": "^5.4.5"
+  }
 }

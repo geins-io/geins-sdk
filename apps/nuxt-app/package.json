@@ -15,7 +15,8 @@
     "vue": "^3.4.31",
     "vue-router": "^4.4.0",
     "@geins/core": "*",
-    "@geins/cms": "*"
+    "@geins/cms": "*",
+    "@geins/crm": "*"
   },
   "devDependencies": {
     "@geins/eslint-config": "*",
