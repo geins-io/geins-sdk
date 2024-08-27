@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "build": "rollup -c",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@apollo/client": "^3.11.4",
@@ -15,7 +16,8 @@
     "js-cookie": "^3.0.5",
     "node-cache": "^5.1.2",
     "broadcast-channel": "^7.0.0",
-    "@geins/types": "*"
+    "@geins/types": "*",
+    "@geins/eslint-config": "*"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
@@ -23,6 +25,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/js-cookie": "^3.0.6",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "eslint": "^8"
   }
 }

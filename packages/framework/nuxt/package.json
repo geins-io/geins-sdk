@@ -26,8 +26,9 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.12.4",
-    "@geins/core": "file:../core",
-    "broadcast-channel": "^7.0.0"
+    "@geins/core": "*",
+    "broadcast-channel": "^7.0.0",
+    "@geins/eslint-config": "*"
   },
   "devDependencies": {
     "@nuxt/devtools": "^1.3.9",
@@ -37,9 +38,9 @@
     "@nuxt/test-utils": "^3.14.1",
     "@types/node": "^20.14.11",
     "changelogen": "^0.5.5",
-    "eslint": "^9.7.0",
+    "eslint": "^8",
     "nuxt": "^3.12.4",
-    "typescript": "latest",
+    "typescript": "^5.4.5",
     "vitest": "^2.0.3",
     "vue-tsc": "^2.0.26"
   }
