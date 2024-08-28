@@ -2,27 +2,28 @@
   "name": "nuxt-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "nuxt dev --turbo --port 3000",
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "start": "nuxt start",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint --fix ."
   },
   "dependencies": {
     "nuxt": "^3.12.4",
     "vue": "^3.4.31",
     "vue-router": "^4.4.0",
     "@geins/core": "*",
-    "@geins/cms": "*"
+    "@geins/cms": "*",
+    "@geins/eslint-config": "*"
   },
   "devDependencies": {
-    "@geins/eslint-config": "*",
-    "@geins/typescript-config": "*",
     "@nuxt/eslint-config": "^0.3.13",
     "@types/node": "^20",
-    "typescript": "^5",
-    "eslint": "^8"
+    "typescript": "^5.4.5",
+    "eslint": "^9"
   }
 }
