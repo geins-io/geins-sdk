@@ -2,6 +2,7 @@
   "name": "nuxt-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "nuxt dev --turbo --port 3000",
     "build": "nuxt build",
@@ -9,7 +10,7 @@
     "preview": "nuxt preview",
     "start": "nuxt start",
     "postinstall": "nuxt prepare",
-    "lint": "eslint ."
+    "lint": "eslint --fix ."
   },
   "dependencies": {
     "nuxt": "^3.12.4",
@@ -25,6 +26,6 @@
     "@nuxt/eslint-config": "^0.3.13",
     "@types/node": "^20",
     "typescript": "^5.4.5",
-    "eslint": "^8"
+    "eslint": "^9"
   }
 }
