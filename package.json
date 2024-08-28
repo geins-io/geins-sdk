@@ -7,7 +7,8 @@
   "workspaces": [
     "apps/*",
     "packages/config/*",
-    "packages/sdk/*"
+    "packages/sdk/*",
+    "packages/framework/*"
   ],
   "scripts": {
     "build": "turbo build",

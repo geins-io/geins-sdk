@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "rollup -c",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "yarn build",
     "lint": "eslint --fix ."
   },
   "dependencies": {

@@ -21,8 +21,6 @@
     "@geins/eslint-config": "*"
   },
   "devDependencies": {
-    "@geins/eslint-config": "*",
-    "@geins/typescript-config": "*",
     "@nuxt/eslint-config": "^0.3.13",
     "@types/node": "^20",
     "typescript": "^5.4.5",
