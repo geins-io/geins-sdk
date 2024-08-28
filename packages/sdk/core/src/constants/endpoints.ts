@@ -1,6 +1,6 @@
 const API_URL = 'https://merchantapi.geins.io/graphql';
 const SIGN_URL = 'https://merchantapi.geins.io/auth/sign/{API-KEY}?identity=';
-const AUTH_URL = 'https://auth-service.geins.io/api/{ACCOUNT}_{ENV}/';
+const AUTH_URL = 'https://auth-service.geins.io/api/{ACCOUNT}_{ENV}';
 const IMAGE_URL = 'https://{ACCOUNT}.commerce.services';
 const MANAGEMENT_API_URL = 'https://mgmtapi.geins.io';
 
@@ -11,4 +11,11 @@ const ENDPOINTS = {
   image: IMAGE_URL,
 };
 
-export { ENDPOINTS, MANAGEMENT_API_URL };
+export {
+  ENDPOINTS,
+  MANAGEMENT_API_URL,
+  API_URL,
+  SIGN_URL,
+  AUTH_URL,
+  IMAGE_URL,
+};

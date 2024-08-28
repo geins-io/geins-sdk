@@ -1,9 +1,13 @@
-import { BroadcastChannel } from 'broadcast-channel';
-
-import { isServerContext } from '../utils';
 import events from 'events';
+import { BroadcastChannel } from 'broadcast-channel';
+import { isServerContext } from '../utils';
 
+interface EventData {
+  type: string;
+  payload: any;
+}
 export class EventService {
+  private eventName: string = 'geins-event';
   private emitter: any;
   private broadcast: BroadcastChannel | undefined;
   private broadcastChannelId: string = 'geins-channel';
@@ -17,44 +21,40 @@ export class EventService {
 
   addBroadcastListener() {
     if (this.broadcast) {
-      this.broadcast.onmessage = (event: any) => {
-        console.log('3. broadcast message', event);
-        //const data = event.data.payload;
-        this.emitter.emit(event.data.type, event.data.payload);
+      this.broadcast.onmessage = (data: any) => {
+        this.emitter.emit(data.eventName, data.data);
       };
     }
   }
 
-  listnerAdd(eventName: string, handler: any) {
+  listnerAdd(handler: any, eventName: string = this.eventName) {
     this.emitter.on(eventName, handler);
   }
 
-  listnerOnce(eventName: string, handler: any) {
+  listnerOnce(handler: any, eventName: string = this.eventName) {
     this.emitter.once(eventName, handler);
   }
 
-  listnerRemove(eventName: string, handler: any) {
+  listnerRemove(eventName: string = this.eventName) {
     this.emitter.removeAllListeners(eventName);
   }
 
-  listnerRemoveAll(eventName: string) {
+  listnerRemoveAll(eventName: string = this.eventName) {
     this.emitter.removeAllListeners(eventName);
   }
 
-  listnerCount(eventName: string) {
+  listnerCount(eventName: string = this.eventName) {
     return this.emitter.listenerCount(eventName);
   }
 
-  listnersGet(eventName: string) {
+  listnersGet(eventName: string = this.eventName) {
     return this.emitter.listeners(eventName);
   }
 
-  push(eventName: string, data?: any) {
-    console.log('1. push', eventName, data);
+  push(data?: any, eventName: string = this.eventName) {
     this.emitter.emit(eventName, data);
     if (this.broadcast) {
-      console.log('2. broadcast push', eventName, data);
-      this.broadcast?.postMessage({ type: eventName, payload: data });
+      this.broadcast?.postMessage({ data, eventName });
     }
   }
 }
