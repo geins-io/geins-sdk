@@ -165,7 +165,7 @@ var CookieService = /** @class */ (function () {
             }
         }
     }
-    CookieService.prototype.getCookieConfig = function () {
+    CookieService.prototype.getConfig = function () {
         /*    expires: this.expires,
         path: this.path,
         domain: this.domain, */
@@ -173,17 +173,17 @@ var CookieService = /** @class */ (function () {
             secure: this.secure,
         };
     };
-    CookieService.prototype.getAllCookies = function () {
+    CookieService.prototype.getAll = function () {
         return api.get();
     };
-    CookieService.prototype.setCookie = function (cookie) {
-        api.set(cookie.name, cookie.payload, this.getCookieConfig());
+    CookieService.prototype.set = function (cookie) {
+        api.set(cookie.name, cookie.payload, this.getConfig());
     };
-    CookieService.prototype.getCookie = function (cookie) {
+    CookieService.prototype.get = function (cookie) {
         return api.get(cookie.name);
     };
-    CookieService.prototype.removeCookie = function (cookie) {
-        api.remove(cookie.name, this.getCookieConfig());
+    CookieService.prototype.remove = function (cookieName) {
+        api.remove(cookieName);
     };
     return CookieService;
 }());
@@ -3288,6 +3288,13 @@ var ENDPOINTS = {
     auth: AUTH_URL,
     auth_sign: SIGN_URL,
     image: IMAGE_URL,
+};
+
+var AUTH_COOKIES = {
+    USER: 'geins-user',
+    USER_AUTH: 'geins-auth',
+    USER_TYPE: 'geins-user-type',
+    USER_MAX_AGE: 'geins-user-maxage',
 };
 
 function isServerContext() {
@@ -16144,4 +16151,4 @@ var GeinsCore = /** @class */ (function () {
     return GeinsCore;
 }());
 
-export { API_URL, AUTH_URL, BaseApiService, BasePackage, Broadcast, CookieService, CustomerType, ENDPOINTS, Environment, EventService, FetchPolicy, GeinsCore, GeinsRouter, IMAGE_URL, MANAGEMENT_API_URL, ManagementApiClient, MerchantApiClient, SIGN_URL, buildEndpoints, isServerContext };
+export { API_URL, AUTH_COOKIES, AUTH_URL, BaseApiService, BasePackage, Broadcast, CookieService, CustomerType, ENDPOINTS, Environment, EventService, FetchPolicy, GeinsCore, GeinsRouter, IMAGE_URL, MANAGEMENT_API_URL, ManagementApiClient, MerchantApiClient, SIGN_URL, buildEndpoints, isServerContext };

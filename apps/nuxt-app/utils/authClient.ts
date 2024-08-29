@@ -1,5 +1,5 @@
-import Cookies from 'js-cookie';
 import { AuthService } from './authService';
+import { CookieService, AUTH_COOKIES } from '@geins/core';
 
 interface Credentials {
   username: string;
@@ -16,6 +16,7 @@ export enum ConnectionType {
 export class AuthClient {
   private AUTH_ENDPOINT_APP = '/api/auth';
   private authService: AuthService | null = null;
+  private cookieService: CookieService = new CookieService();
 
   constructor(
     private connectionType: ConnectionType,
@@ -67,15 +68,71 @@ export class AuthClient {
         ? await this.loginProxy(credentials)
         : await this.loginClientSide(credentials);
 
-    if (!user) {
+    if (!user || !user.authenticated) {
       throw new Error('Invalid credentials');
     }
 
+    this.setCookiesLogin(user);
     return user;
   }
 
-  logout() {
-    // logout logic
+  private async logoutProxy() {
+    const result = await fetch(this.AUTH_ENDPOINT_APP + '/logout', {
+      method: 'GET',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((res) => res.json());
+    return result.status === 200;
+  }
+
+  private async logoutClientSide() {
+    if (!this.authService) {
+      throw new Error('AuthService not initialized');
+    }
+    return await this.authService.logout();
+  }
+
+  async logout() {
+    this.clearCookies();
+    const result =
+      this.connectionType === ConnectionType.Proxy
+        ? await this.logoutProxy()
+        : await this.logoutClientSide();
+
+    if (!result) {
+      throw new Error('Logout failed');
+    }
+    return result;
+  }
+
+  private async refreshProxy() {
+    const result = await fetch(this.AUTH_ENDPOINT_APP + '/refresh', {
+      method: 'GET',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((res) => res.json());
+    return result.status === 200;
+  }
+
+  private async refreshClientSide() {
+    if (!this.authService) {
+      throw new Error('AuthService not initialized');
+    }
+    return await this.authService.refresh();
+  }
+
+  async refresh() {
+    const result =
+      this.connectionType === ConnectionType.Proxy
+        ? await this.refreshProxy()
+        : await this.refreshClientSide();
+
+    console.log('--refresh', result);
+    return result;
   }
 
   authenticateded() {
@@ -84,5 +141,26 @@ export class AuthClient {
 
   passwordReset() {
     // password reset logic
+  }
+
+  private setCookiesLogin(user: any) {
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER,
+      payload: user.username,
+    });
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_AUTH,
+      payload: user.token,
+    });
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_TYPE,
+      payload: user.customerType,
+    });
+  }
+
+  private clearCookies() {
+    this.cookieService.remove(AUTH_COOKIES.USER);
+    this.cookieService.remove(AUTH_COOKIES.USER_AUTH);
+    this.cookieService.remove(AUTH_COOKIES.USER_TYPE);
   }
 }

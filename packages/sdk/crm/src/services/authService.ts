@@ -63,15 +63,10 @@ export class AuthService {
 
   public login2() {
     console.log('login logic');
-    // login logic
-    this.cookies.setCookie({
-      name: this.COOKIE_NAME_USER,
-      payload: 'to----ken',
-    });
   }
 
   public logout() {
-    this.cookies.removeCookie({ name: this.COOKIE_NAME_USER });
+    //this.cookies.remove({ name: this.COOKIE_NAME_USER });
     // logout logic
   }
 
@@ -85,7 +80,7 @@ export class AuthService {
 
     let username: string | null = credentials
       ? credentials.username
-      : this.cookies.getCookie({ name: this.COOKIE_NAME_USER }) || null;
+      : this.cookies.get({ name: this.COOKIE_NAME_USER }) || null;
     console.log('update -> username', username);
     if (this.client?.authorized) {
       console.log('authorized -- > push event');

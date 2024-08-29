@@ -35,35 +35,48 @@ let slug = ref<string>('');
 const loginProxyGood = async () => {
   const result = await authClientProxy.login({ username: 'arvidsson@geins.io', password: 'MuDwzsBLq4Tx45X', rememberUser: true });
   console.log('loginProxyGood() result', result);
+  dumpCookies();
 };
 
 const loginClientGood = async () => {
   const result = await authClientClientSide.login({ username: 'arvidsson@geins.io', password: 'MuDwzsBLq4Tx45X', rememberUser: true });
   console.log('loginClientGood() result', result);
+  dumpCookies();
 };
 
 const loginProxyBad = async () => {
   const result = await authClientProxy.login({ username: 'arvsidsson@geins.io', password: 'MuDwzsBLq4Tx45X', rememberUser: true });
   console.log('loginProxyBad() result', result);
+  dumpCookies();
 };
 
 const loginClientBad = async () => {
   const result = await authClientClientSide.login({ username: 'arvsidsson@geins.io', password: 'MuDwzsBLq4Tx45X', rememberUser: true });
   console.log('loginClientBad() result', result);
+  dumpCookies();
 };
 
-const loginBad = () => {
-
+const refreshProxy = async () => {
+  const result = await authClientProxy.refresh();
+  console.log('refreshProxy() result', result);
+  dumpCookies();
 };
 
-const logout = () => {
+const logoutProxy = async () => {
+  const result = await authClientProxy.logout();
+  console.log('logoutProxy() result', result);
+  dumpCookies();
+};
 
+const logoutClient = async () => {
+  const result = await authClientClientSide.logout();
+  console.log('logoutClient() result', result);
+  dumpCookies();
 }
 
-
-
 const dumpCookies = () => {
-  const allCookies = geinsCore.cookies.getAllCookies();
+  items.value = [];
+  const allCookies = geinsCore.cookies.getAll();
   // loop through all cookies
   for (const key in allCookies) {
     items.value.push({ header: key, data: JSON.stringify(allCookies[key], null, 2) });
@@ -99,6 +112,8 @@ const dumpCookies = () => {
               <td>
                 <button @click="loginProxyGood">Login Good</button>
                 <button @click="loginProxyBad">Login Bad</button>
+                <button @click="refreshProxy">Refresh</button>
+                <button @click="logoutProxy">Logout</button>
               </td>
             </tr>
             <tr>
@@ -110,6 +125,7 @@ const dumpCookies = () => {
               <td>
                 <button @click="loginClientGood">Login Good</button>
                 <button @click="loginClientBad">Login Bad</button>
+                <button @click="logoutClient">Logout</button>
               </td>
             </tr>
           </table>

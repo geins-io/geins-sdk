@@ -15,13 +15,13 @@ export declare class CookieService {
     private domain;
     private secure;
     constructor(config?: CookieServiceConfig);
-    protected getCookieConfig(): {
+    protected getConfig(): {
         secure: boolean;
     };
-    getAllCookies(): {
+    getAll(): {
         [key: string]: string;
     };
-    setCookie(cookie: CookieType): void;
-    getCookie(cookie: CookieType): string | undefined;
-    removeCookie(cookie: CookieType): void;
+    set(cookie: CookieType): void;
+    get(cookie: CookieType): string | undefined;
+    remove(cookieName: string): void;
 }

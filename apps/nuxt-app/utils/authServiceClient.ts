@@ -69,6 +69,7 @@ export class AuthServiceClient {
 
     if (data?.token) {
       this.setTokenData(data);
+      //this.setMaxAge(data.maxAge);
     }
   }
 
@@ -137,12 +138,10 @@ export class AuthServiceClient {
       }
       const text = await response.text();
       if (!text) {
-        console.log('Empty response');
         return null;
       }
       try {
         const retval = JSON.parse(text);
-        console.log('Parsed response:', retval);
         return retval;
       } catch (jsonError) {
         throw new Error('Invalid JSON response');

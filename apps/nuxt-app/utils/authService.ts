@@ -1,3 +1,4 @@
+import ts from 'typescript';
 import { AuthServiceClient } from './authServiceClient';
 
 interface Credentials {
@@ -9,7 +10,7 @@ interface Credentials {
 export class AuthService {
   private signEndpoint: string;
   private authEndpoint: string;
-  private client: AuthServiceClient | null = null;
+  private client: AuthServiceClient | undefined;
 
   constructor(signEndpoint: string, authEndpoint: string) {
     this.signEndpoint = signEndpoint;
@@ -32,11 +33,13 @@ export class AuthService {
   public async login(
     credentials: Credentials,
   ): Promise<ReturnType<AuthService['getUserObject']>> {
-    if (!this.client) {
-      throw new Error('AuthServiceClient is not initialized');
-    }
     try {
-      await this.client.connect(credentials, 'login');
+      if (!this.client) {
+        this.initClient();
+      }
+      if (this.client) {
+        await this.client.connect(credentials, 'login');
+      }
       return this.getUserObject();
     } catch (error) {
       console.error('Login failed:', error);
@@ -49,14 +52,14 @@ export class AuthService {
    * @returns A boolean indicating success.
    */
   public async logout(): Promise<boolean> {
+    // check if the client is initialized
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
 
     try {
       await this.client.connect(undefined, 'logout');
-      this.client = null; // Reset the client to clear the session
-      console.log('Logout successful');
+      this.client = undefined;
       return true;
     } catch (error) {
       console.error('Logout failed:', error);
@@ -74,6 +77,55 @@ export class AuthService {
     }
 
     return this.client.authorized;
+  }
+
+  public async changePassword(
+    credentials: Credentials & { newPassword: string },
+  ): Promise<boolean> {
+    if (!this.client) {
+      throw new Error('AuthServiceClient is not initialized');
+    }
+
+    try {
+      await this.client.connect(credentials, 'password');
+      return true;
+    } catch (error) {
+      console.error('Password change failed:', error);
+      return false;
+    }
+  }
+
+  public async register(
+    credentials: Credentials & { customerType: string },
+  ): Promise<boolean> {
+    if (!this.client) {
+      throw new Error('AuthServiceClient is not initialized');
+    }
+
+    try {
+      await this.client.connect(credentials, 'register');
+      return true;
+    } catch (error) {
+      console.error('Registration failed:', error);
+      return false;
+    }
+  }
+
+  public async refresh(): Promise<boolean> {
+    if (!this.client) {
+      throw new Error('AuthServiceClient is not initialized');
+    }
+
+    try {
+      await this.client.connect();
+      console.log('Token refreshed');
+      console.log('use :', this.getUserObject());
+
+      return true;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return false;
+    }
   }
 
   /**

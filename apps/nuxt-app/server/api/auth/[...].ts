@@ -26,27 +26,40 @@ export default defineEventHandler(async (event) => {
   if (!params) {
     return nothing();
   }
-
   const authMethod = params._;
   if (!authMethod) {
     return nothing();
   }
 
   const method = event.req.method;
-  const {
-    username = '',
-    password = '',
-    rememberUser = false,
-  }: AuthApiQuery = method === 'GET'
-    ? await getQuery(event)
-    : await readBody(event);
+
+  let username = '';
+  let password = '';
+  let rememberUser = false;
+  let resetPassword = false;
+
+  if (method === 'GET') {
+    const qs = await getQuery(event);
+    username = qs.username?.toString() ?? '';
+    password = qs.password?.toString() ?? '';
+    rememberUser = Boolean(qs.rememberUser) ?? false;
+    resetPassword = Boolean(qs.resetPassword) ?? false;
+  } else {
+    const body = await readBody(event);
+    if (body) {
+      username = body.username;
+      password = body.password;
+      rememberUser = body.rememberUser;
+      resetPassword = body.resetPassword;
+    }
+  }
 
   if (authMethod === 'login') {
     return await login(username, password, rememberUser);
   } else if (authMethod === 'logout') {
     return await logout();
-  } else if (authMethod === 'status') {
-    return await status();
+  } else if (authMethod === 'refresh') {
+    return await refresh();
   } else {
     return nothing();
   }
@@ -59,7 +72,9 @@ const login = async (
 ) => {
   try {
     const credentials = { username, password, rememberUser };
+
     const user = await authService.login(credentials);
+
     return {
       status: user.authenticated ? 200 : 401,
       body: {
@@ -97,13 +112,14 @@ const logout = async () => {
   }
 };
 
-const status = async () => {
+const refresh = async () => {
   try {
-    const isAuthenticated = await authService.status();
+    const result = await authService.refresh();
+    console.log('ts refresh result', result);
     return {
       status: 200,
       body: {
-        authenticated: isAuthenticated,
+        data: result,
       },
     };
   } catch (error: any) {

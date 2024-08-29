@@ -36,7 +36,7 @@ export class CookieService {
       }
     }
   }
-  protected getCookieConfig() {
+  protected getConfig() {
     /*    expires: this.expires,
     path: this.path,
     domain: this.domain, */
@@ -45,17 +45,19 @@ export class CookieService {
     };
   }
 
-  public getAllCookies() {
+  public getAll() {
     return Cookies.get();
   }
 
-  public setCookie(cookie: CookieType) {
-    Cookies.set(cookie.name, cookie.payload, this.getCookieConfig());
+  public set(cookie: CookieType) {
+    Cookies.set(cookie.name, cookie.payload, this.getConfig());
   }
-  public getCookie(cookie: CookieType) {
+
+  public get(cookie: CookieType) {
     return Cookies.get(cookie.name);
   }
-  public removeCookie(cookie: CookieType) {
-    Cookies.remove(cookie.name, this.getCookieConfig());
+
+  public remove(cookieName: string) {
+    Cookies.remove(cookieName);
   }
 }
