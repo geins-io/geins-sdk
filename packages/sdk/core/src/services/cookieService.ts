@@ -1,9 +1,8 @@
 import Cookies from 'js-cookie';
 
-export interface CookieType {
+export interface CookieType extends CookieServiceConfig {
   name: string;
-  payload?: any;
-  expires?: number;
+  payload: string;
 }
 export interface CookieServiceConfig {
   domain?: string | undefined;
@@ -52,9 +51,19 @@ export class CookieService {
 
   public set(cookie: CookieType, config?: CookieServiceConfig) {
     const options = config || this.getConfig();
+    if (cookie.domain) {
+      options.domain = cookie.domain;
+    }
+    if (cookie.path) {
+      options.path = cookie.path;
+    }
+    if (cookie.secure) {
+      options.secure = cookie.secure;
+    }
     if (cookie.expires) {
       options.expires = cookie.expires;
     }
+
     Cookies.set(cookie.name, cookie.payload, options);
   }
 

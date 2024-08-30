@@ -182,7 +182,6 @@ export class AuthClient {
       this.connectionType === ConnectionType.Proxy
         ? await this.refreshProxy()
         : await this.refreshClientSide();
-    console.log('** result:', result);
     this.setCookiesRefresh(result);
     return result;
   }
@@ -211,12 +210,14 @@ export class AuthClient {
       payload: user.customerType,
     });
   }
+
   private setCookiesRefresh(userToken: any) {
     this.cookieService.set({
       name: AUTH_COOKIES.USER_AUTH,
       payload: userToken,
     });
   }
+
   private clearCookies() {
     this.cookieService.remove(AUTH_COOKIES.USER);
     this.cookieService.remove(AUTH_COOKIES.USER_AUTH);

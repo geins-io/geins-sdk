@@ -7,6 +7,7 @@ import type { Channel, MerchantApiCredentials } from '@geins/core';
 
 const runtimeConfig = useRuntimeConfig();
 const items = ref<any[]>([]);
+
 const channel: Channel = {
   siteId: runtimeConfig.public.channel.siteId,
   siteTopDomain: runtimeConfig.public.channel.siteTopDomain,
@@ -28,31 +29,59 @@ const geinsCore = new GeinsCore(geinsCredentials, channel, { marketId, languageI
 const authClientProxy = new AuthClient(ConnectionType.Proxy);
 const authClientClientSide = new AuthClient(ConnectionType.ClientSide, endpoints.authSign, endpoints.auth);
 
-let username = ref<string>('');
-let password = ref<string>('');
+let username = ref<string>('arvidsson@geins.io');
+let password = ref<string>('MuDwzsBLq4Tx45X');
+let remeberUser = ref<Boolean>(true);
 let slug = ref<string>('');
 
+const getCredentials = () => {
+  return {
+    username: username.value,
+    password: password.value,
+    remeberUser: remeberUser.value,
+  };
+};
+const credentials = ref(getCredentials());
+
+onMounted(() => {
+  dumpCookies();
+});
+
 const loginProxyGood = async () => {
-  const result = await authClientProxy.login({ username: 'arvidsson@geins.io', password: 'MuDwzsBLq4Tx45X', rememberUser: true });
+
+  const result = await authClientProxy.login(credentials.value);
   console.log('loginProxyGood() result', result);
   dumpCookies();
 };
 
 const loginClientGood = async () => {
-  const result = await authClientClientSide.login({ username: 'arvidsson@geins.io', password: 'MuDwzsBLq4Tx45X', rememberUser: true });
+  const result = await authClientClientSide.login(credentials.value);
   console.log('loginClientGood() result', result);
   dumpCookies();
 };
 
 const loginProxyBad = async () => {
-  const result = await authClientProxy.login({ username: 'arvsidsson@geins.io', password: 'MuDwzsBLq4Tx45X', rememberUser: true });
+  const result = await authClientProxy.login({ username: 'error', password: 'error', rememberUser: true });
   console.log('loginProxyBad() result', result);
   dumpCookies();
 };
 
 const loginClientBad = async () => {
-  const result = await authClientClientSide.login({ username: 'arvsidsson@geins.io', password: 'MuDwzsBLq4Tx45X', rememberUser: true });
+
+  const result = await authClientClientSide.login({ username: 'error', password: 'error', rememberUser: true });
   console.log('loginClientBad() result', result);
+  dumpCookies();
+};
+
+const logoutProxy = async () => {
+  const result = await authClientProxy.logout();
+  console.log('refreshProxy() result', result);
+  dumpCookies();
+};
+
+const logoutClient = async () => {
+  const result = await authClientClientSide.logout();
+  console.log('refreshProxy() result', result);
   dumpCookies();
 };
 
@@ -69,13 +98,13 @@ const refreshClient = async () => {
 };
 
 const registerProxy = async () => {
-  const result = await authClientProxy.registerUser();
+  const result = await authClientProxy.register();
   console.log('registerProxy() result', result);
   dumpCookies();
 };
 
 const registerClient = async () => {
-  const result = await authClientClientSide.registerUser();
+  const result = await authClientClientSide.register();
   console.log('registerClient() result', result);
   dumpCookies();
 };
@@ -128,66 +157,83 @@ const previewToken = async () => {
               <td>password:</td>
               <td></td>
             </tr>
-
             <tr>
               <td><input v-model="username" /></td>
-              <td><input v-model="password" type="password" /></td>
               <td>
+                <input v-model="password" type="password" />
               </td>
+              <td> <input type="checkbox" v-model="remeberUser" /> Remember me </td>
             </tr>
-
             <tr>
+              <td colspan="3"></td>
+            </tr>
+            <tr>
+              <td> PROXY:</td>
               <td></td>
-              <td>
-                PROXY:
-              </td>
-              <td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="3">
                 <button @click="loginProxyGood">Login Good</button>
                 <button @click="loginProxyBad">Login Bad</button>
                 <button @click="logoutProxy">Logout</button>
                 <button @click="refreshProxy">Refresh</button>
-                <button @click="">User Register</button>
-                <button @click="">Password Refresh</button>
+                <button @click="registerProxy">User Register</button>
+                <button @click="passwordProxy">Password Refresh</button>
               </td>
             </tr>
             <tr>
-              <td>
-              </td>
-              <td>
-                CLIENT SIDE:
-              </td>
-              <td>
+              <td colspan="3"></td>
+            </tr>
+            <tr>
+              <td> CLIENT SIDE:</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="3">
                 <button @click="loginClientGood">Login Good</button>
                 <button @click="loginClientBad">Login Bad</button>
                 <button @click="logoutClient">Logout</button>
                 <button @click="refreshClient">Refresh</button>
-                <button @click="">User Register</button>
-                <button @click="">Password Refresh</button>
+                <button @click="registerClient">User Register</button>
+                <button @click="passwordClient">Password Refresh</button>
               </td>
             </tr>
             <tr>
-              <td>
-              </td>
-              <td>
-                MISC:
-              </td>
-              <td>
+              <td colspan="3"></td>
+            </tr>
+            <tr>
+              <td>MISC:</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="3">
                 <button @click="previewToken">Preview Token Claims</button>
                 <button @click="tokenProxy">Token Proxy</button>
                 <button @click="nothingProxy">Nothing Proxy</button>
               </td>
             </tr>
           </table>
-          <div v-for="(item, index) in items" :key="index">
+          <hr />
+          Current CRM cookies:
+          <div v-if="items.length > 0" v-for="(item, index) in items" :key="index">
             <p>
               <b>{{ item.header }}</b><br />
-              <textarea style="border:0; width:600px;">{{ item.data }}</textarea>
+              <textarea :style="{border:0, width:500+'px', height: (item.data.length > 100 ? Math.min(200, item.data.length * 10) + 'px': 20+'px' )}">{{ item.data }}</textarea>
             </p>
           </div>
+          <p v-else>
+            No cookies set
+          </p>
         </td>
         <td></td>
-        <td style="vertical-align: top;">
-          <!-- DATA -->
+        <td style="vertical-align: top;padding-left:50px">
+          <!--DATA -->
+          <!--  User loged in: {{ authClientProxy.isLoggedIn }}<br /> -->
+          <!--  User name: {{ authClientProxy.username }}<br /> -->
+
         </td>
       </tr>
     </table>
