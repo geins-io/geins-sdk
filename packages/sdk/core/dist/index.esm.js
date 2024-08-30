@@ -11,195 +11,6 @@ var Environment;
     Environment["TEST"] = "qa";
 })(Environment || (Environment = {}));
 
-/*! js-cookie v3.0.5 | MIT */
-/* eslint-disable no-var */
-function assign$1 (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-    for (var key in source) {
-      target[key] = source[key];
-    }
-  }
-  return target
-}
-/* eslint-enable no-var */
-
-/* eslint-disable no-var */
-var defaultConverter = {
-  read: function (value) {
-    if (value[0] === '"') {
-      value = value.slice(1, -1);
-    }
-    return value.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent)
-  },
-  write: function (value) {
-    return encodeURIComponent(value).replace(
-      /%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,
-      decodeURIComponent
-    )
-  }
-};
-/* eslint-enable no-var */
-
-/* eslint-disable no-var */
-
-function init (converter, defaultAttributes) {
-  function set (name, value, attributes) {
-    if (typeof document === 'undefined') {
-      return
-    }
-
-    attributes = assign$1({}, defaultAttributes, attributes);
-
-    if (typeof attributes.expires === 'number') {
-      attributes.expires = new Date(Date.now() + attributes.expires * 864e5);
-    }
-    if (attributes.expires) {
-      attributes.expires = attributes.expires.toUTCString();
-    }
-
-    name = encodeURIComponent(name)
-      .replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent)
-      .replace(/[()]/g, escape);
-
-    var stringifiedAttributes = '';
-    for (var attributeName in attributes) {
-      if (!attributes[attributeName]) {
-        continue
-      }
-
-      stringifiedAttributes += '; ' + attributeName;
-
-      if (attributes[attributeName] === true) {
-        continue
-      }
-
-      // Considers RFC 6265 section 5.2:
-      // ...
-      // 3.  If the remaining unparsed-attributes contains a %x3B (";")
-      //     character:
-      // Consume the characters of the unparsed-attributes up to,
-      // not including, the first %x3B (";") character.
-      // ...
-      stringifiedAttributes += '=' + attributes[attributeName].split(';')[0];
-    }
-
-    return (document.cookie =
-      name + '=' + converter.write(value, name) + stringifiedAttributes)
-  }
-
-  function get (name) {
-    if (typeof document === 'undefined' || (arguments.length && !name)) {
-      return
-    }
-
-    // To prevent the for loop in the first place assign an empty array
-    // in case there are no cookies at all.
-    var cookies = document.cookie ? document.cookie.split('; ') : [];
-    var jar = {};
-    for (var i = 0; i < cookies.length; i++) {
-      var parts = cookies[i].split('=');
-      var value = parts.slice(1).join('=');
-
-      try {
-        var found = decodeURIComponent(parts[0]);
-        jar[found] = converter.read(value, found);
-
-        if (name === found) {
-          break
-        }
-      } catch (e) {}
-    }
-
-    return name ? jar[name] : jar
-  }
-
-  return Object.create(
-    {
-      set,
-      get,
-      remove: function (name, attributes) {
-        set(
-          name,
-          '',
-          assign$1({}, attributes, {
-            expires: -1
-          })
-        );
-      },
-      withAttributes: function (attributes) {
-        return init(this.converter, assign$1({}, this.attributes, attributes))
-      },
-      withConverter: function (converter) {
-        return init(assign$1({}, this.converter, converter), this.attributes)
-      }
-    },
-    {
-      attributes: { value: Object.freeze(defaultAttributes) },
-      converter: { value: Object.freeze(converter) }
-    }
-  )
-}
-
-var api = init(defaultConverter, { path: '/' });
-
-var CookieService = /** @class */ (function () {
-    function CookieService(config) {
-        this.path = '/';
-        this.domain = '';
-        this.secure = true;
-        this.maxAge = 0;
-        if (config) {
-            if (config.path) {
-                this.path = config.path;
-            }
-            if (config.domain) {
-                this.domain = config.domain;
-            }
-            if (config.secure) {
-                this.secure = config.secure;
-            }
-            if (config.maxAge) {
-                this.maxAge = config.maxAge;
-            }
-        }
-    }
-    CookieService.prototype.getConfig = function () {
-        return {
-            path: this.path,
-            domain: this.domain,
-            secure: this.secure,
-            maxAge: this.maxAge,
-        };
-    };
-    CookieService.prototype.getAll = function () {
-        return api.get();
-    };
-    CookieService.prototype.set = function (cookie, config) {
-        var options = config || this.getConfig();
-        if (cookie.domain) {
-            options.domain = cookie.domain;
-        }
-        if (cookie.path) {
-            options.path = cookie.path;
-        }
-        if (cookie.secure) {
-            options.secure = cookie.secure;
-        }
-        if (cookie.maxAge) {
-            options.maxAge = cookie.maxAge;
-        }
-        api.set(cookie.name, cookie.payload, options);
-    };
-    CookieService.prototype.get = function (cookieName) {
-        return api.get(cookieName);
-    };
-    CookieService.prototype.remove = function (cookieName) {
-        api.remove(cookieName);
-    };
-    return CookieService;
-}());
-
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 function getDefaultExportFromCjs (x) {
@@ -230,6 +41,75 @@ function getAugmentedNamespace(n) {
 	});
 	return a;
 }
+
+var cookieUniversalCommon=function(e){function t(o){if(r[o])return r[o].exports;var n=r[o]={i:o,l:!1,exports:{}};return e[o].call(n.exports,n,n.exports,t),n.l=!0,n.exports}var r={};return t.m=e,t.c=r,t.d=function(e,r,o){t.o(e,r)||Object.defineProperty(e,r,{configurable:!1,enumerable:!0,get:o});},t.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(r,"a",r),r},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,r){var o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},n=r(1);e.exports=function(t,r){var i=!(arguments.length>2&&void 0!==arguments[2])||arguments[2],a="object"===("undefined"==typeof document?"undefined":o(document))&&"string"==typeof document.cookie,s="object"===(void 0===t?"undefined":o(t))&&"object"===(void 0===r?"undefined":o(r))&&void 0!==e,u=!a&&!s||a&&s,f=function(e){if(s){var o=t.headers.cookie||"";return e&&(o=r.getHeaders(),o=o["set-cookie"]?o["set-cookie"].map(function(e){return e.split(";")[0]}).join(";"):""),o}if(a)return document.cookie||""},c=function(){var e=r.getHeader("Set-Cookie");return (e="string"==typeof e?[e]:e)||[]},p=function(e){return r.setHeader("Set-Cookie",e)},d=function(e,t){if(!t)return e;try{return JSON.parse(e)}catch(t){return e}},l={parseJSON:i,set:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"",t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"",r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{path:"/"};if(!u)if(t="object"===(void 0===t?"undefined":o(t))?JSON.stringify(t):t,s){var i=c();i.push(n.serialize(e,t,r)),p(i);}else document.cookie=n.serialize(e,t,r);},setAll:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[];u||Array.isArray(e)&&e.forEach(function(e){var t=e.name,r=void 0===t?"":t,o=e.value,n=void 0===o?"":o,i=e.opts,a=void 0===i?{path:"/"}:i;l.set(r,n,a);});},get:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"",t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{fromRes:!1,parseJSON:l.parseJSON};if(u)return "";var r=n.parse(f(t.fromRes)),o=r[e];return d(o,t.parseJSON)},getAll:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{fromRes:!1,parseJSON:l.parseJSON};if(u)return {};var t=n.parse(f(e.fromRes));for(var r in t)t[r]=d(t[r],e.parseJSON);return t},remove:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"",t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{path:"/"};u||(t.expires=new Date(0),l.set(e,"",t));},removeAll:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{path:"/"};if(!u){var t=n.parse(f());for(var r in t)l.remove(r,e);}},nodeCookie:n};return l};},function(e,t,r){function o(e,t){if("string"!=typeof e)throw new TypeError("argument str must be a string");for(var r={},o=t||{},n=e.split(u),s=o.decode||a,f=0;f<n.length;f++){var c=n[f],p=c.indexOf("=");if(!(p<0)){var d=c.substr(0,p).trim(),l=c.substr(++p,c.length).trim();'"'==l[0]&&(l=l.slice(1,-1)),void 0==r[d]&&(r[d]=i(l,s));}}return r}function n(e,t,r){var o=r||{},n=o.encode||s;if("function"!=typeof n)throw new TypeError("option encode is invalid");if(!f.test(e))throw new TypeError("argument name is invalid");var i=n(t);if(i&&!f.test(i))throw new TypeError("argument val is invalid");var a=e+"="+i;if(null!=o.maxAge){var u=o.maxAge-0;if(isNaN(u))throw new Error("maxAge should be a Number");a+="; Max-Age="+Math.floor(u);}if(o.domain){if(!f.test(o.domain))throw new TypeError("option domain is invalid");a+="; Domain="+o.domain;}if(o.path){if(!f.test(o.path))throw new TypeError("option path is invalid");a+="; Path="+o.path;}if(o.expires){if("function"!=typeof o.expires.toUTCString)throw new TypeError("option expires is invalid");a+="; Expires="+o.expires.toUTCString();}if(o.httpOnly&&(a+="; HttpOnly"),o.secure&&(a+="; Secure"),o.sameSite){switch("string"==typeof o.sameSite?o.sameSite.toLowerCase():o.sameSite){case!0:a+="; SameSite=Strict";break;case"lax":a+="; SameSite=Lax";break;case"strict":a+="; SameSite=Strict";break;case"none":a+="; SameSite=None";break;default:throw new TypeError("option sameSite is invalid")}}return a}function i(e,t){try{return t(e)}catch(t){return e}}/*!
+ * cookie
+ * Copyright(c) 2012-2014 Roman Shtylman
+ * Copyright(c) 2015 Douglas Christopher Wilson
+ * MIT Licensed
+ */
+t.parse=o,t.serialize=n;var a=decodeURIComponent,s=encodeURIComponent,u=/; */,f=/^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;}]);
+
+var Cookie = /*@__PURE__*/getDefaultExportFromCjs(cookieUniversalCommon);
+
+//import Cookies from 'js-cookie';
+var CookieService = /** @class */ (function () {
+    function CookieService(config) {
+        this.path = '/';
+        this.domain = '';
+        this.secure = true;
+        this.maxAge = 0;
+        this.cookie = Cookie();
+        if (config) {
+            if (config.path) {
+                this.path = config.path;
+            }
+            if (config.domain) {
+                this.domain = config.domain;
+            }
+            if (config.secure) {
+                this.secure = config.secure;
+            }
+            if (config.maxAge) {
+                this.maxAge = config.maxAge;
+            }
+        }
+    }
+    CookieService.prototype.getConfig = function () {
+        return {
+            path: this.path,
+            domain: this.domain,
+            secure: this.secure,
+            maxAge: this.maxAge,
+        };
+    };
+    CookieService.prototype.getAll = function () {
+        return this.cookie.getAll();
+    };
+    CookieService.prototype.set = function (cookie, config) {
+        var options = config || this.getConfig();
+        if (cookie.domain) {
+            options.domain = cookie.domain;
+        }
+        if (cookie.path) {
+            options.path = cookie.path;
+        }
+        if (cookie.secure) {
+            options.secure = cookie.secure;
+        }
+        if (cookie.maxAge) {
+            options.maxAge = cookie.maxAge;
+        }
+        this.cookie.set(cookie.name, cookie.payload, options);
+    };
+    CookieService.prototype.get = function (cookieName) {
+        return this.cookie.get(cookieName);
+    };
+    CookieService.prototype.remove = function (cookieName) {
+        this.cookie.remove(cookieName);
+    };
+    return CookieService;
+}());
 
 var lib = {};
 

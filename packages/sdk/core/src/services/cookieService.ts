@@ -17,6 +17,7 @@ export class CookieService {
   private domain = '';
   private secure = true;
   private maxAge = 0;
+  private cookie = Cookie();
   constructor(config?: CookieServiceConfig) {
     if (config) {
       if (config.path) {
@@ -46,7 +47,7 @@ export class CookieService {
   }
 
   public getAll() {
-    return Cookies.get();
+    return this.cookie.getAll();
   }
 
   public set(cookie: CookieType, config?: CookieServiceConfig) {
@@ -67,14 +68,14 @@ export class CookieService {
       options.maxAge = cookie.maxAge;
     }
 
-    Cookies.set(cookie.name, cookie.payload, options);
+    this.cookie.set(cookie.name, cookie.payload, options);
   }
 
   public get(cookieName: string) {
-    return Cookies.get(cookieName);
+    return this.cookie.get(cookieName);
   }
 
   public remove(cookieName: string) {
-    Cookies.remove(cookieName);
+    this.cookie.remove(cookieName);
   }
 }

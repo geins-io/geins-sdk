@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt dev --turbo --port 3000",
+    "dev": "nuxt dev --turbo --port 3020",
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",

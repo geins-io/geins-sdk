@@ -1,3 +1,4 @@
+import { checkPrimeSync } from 'crypto';
 import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './helpers';
 interface Credentials {
@@ -155,6 +156,7 @@ export class AuthService {
       user.expiered = false;
       user.expiresSoon = timeLeft < 100;
     }
+    console.log('getUserObjectFromToken() timeLeft:', timeLeft);
     return user;
   }
 

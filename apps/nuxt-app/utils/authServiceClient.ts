@@ -1,5 +1,4 @@
-import { compileScript } from 'vue/compiler-sfc';
-
+import { CookieService } from '@geins/core';
 export class AuthServiceClient {
   private authEndpoint: string;
   private signEndpoint: string;
@@ -24,6 +23,7 @@ export class AuthServiceClient {
   }
 
   private setTokenData(data: { token: string; maxAge: number }): void {
+    console.log('setTokenData:', data);
     this.token = data.token;
     this.maxAge = data.maxAge;
   }

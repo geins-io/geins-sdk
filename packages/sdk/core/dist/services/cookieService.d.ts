@@ -13,6 +13,7 @@ export declare class CookieService {
     private domain;
     private secure;
     private maxAge;
+    private cookie;
     constructor(config?: CookieServiceConfig);
     protected getConfig(): {
         path: string;
@@ -20,10 +21,8 @@ export declare class CookieService {
         secure: boolean;
         maxAge: number;
     };
-    getAll(): {
-        [key: string]: string;
-    };
+    getAll(): object;
     set(cookie: CookieType, config?: CookieServiceConfig): void;
-    get(cookieName: string): string | undefined;
+    get(cookieName: string): any;
     remove(cookieName: string): void;
 }

@@ -30,6 +30,10 @@ const geinsCore = new GeinsCore(geinsCredentials, channel, { marketId, languageI
 const authClientProxy = new AuthClient(ConnectionType.Proxy);
 const authClientClientSide = new AuthClient(ConnectionType.ClientSide, endpoints.authSign, endpoints.auth);
 
+// 2024-08-30T14:41:43.105Z - no remember
+
+// 604800 -2024-09-06T14:13:33.667Z - remember
+
 let username = ref<string>('arvidsson@geins.io');
 let password = ref<string>('MuDwzsBLq4Tx45X');
 let remeberUser = ref<Boolean>(true);

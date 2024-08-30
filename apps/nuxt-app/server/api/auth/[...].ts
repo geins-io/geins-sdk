@@ -100,11 +100,9 @@ const hasRefreshTokenCookie = async (event: any) => {
 };
 
 const refreshCookieTokenSet = async (event: any, token: string) => {
-  // console.log('SET Token request');
-  // refresh token is set as a cookie
   event.res.setHeader(
     'Set-Cookie',
-    `refresh=${token}; Path=/; HttpOnly; Secure; SameSite=None Max-age=604800`,
+    `refresh=${token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=900`,
   );
 };
 
@@ -126,9 +124,7 @@ const login = async (
   try {
     const credentials = { username, password, rememberUser };
     const user = await authService.login(credentials);
-    //console.log('ts login user', user);
     if (user.refreshToken) {
-      console.log('ts login user.refreshToken', user.refreshToken);
       refreshCookieTokenSet(event, user.refreshToken);
     }
 
