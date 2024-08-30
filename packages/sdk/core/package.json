@@ -11,11 +11,12 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.4",
+    "@geins/types": "*",
     "broadcast-channel": "^7.0.0",
+    "cookie-universal": "^2.2.2",
     "graphql": "^16.9.0",
     "js-cookie": "^3.0.5",
-    "node-cache": "^5.1.2",
-    "@geins/types": "*"
+    "node-cache": "^5.1.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",

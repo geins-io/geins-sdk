@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { GeinsCore, buildEndpoints, authClaimsTokenSerializeToObject } from '@geins/core';
+import { GeinsCore, buildEndpoints } from '@geins/core';
 import { AuthClient, ConnectionType } from '../utils/authClient';
+import { authClaimsTokenSerializeToObject } from '../utils/helpers';
 
 import type { Channel, MerchantApiCredentials } from '@geins/core';
 
@@ -33,6 +34,7 @@ let username = ref<string>('arvidsson@geins.io');
 let password = ref<string>('MuDwzsBLq4Tx45X');
 let remeberUser = ref<Boolean>(true);
 let slug = ref<string>('');
+let user = ref<User>({});
 
 const getCredentials = () => {
   return {
@@ -44,89 +46,96 @@ const getCredentials = () => {
 const credentials = ref(getCredentials());
 
 onMounted(() => {
-  dumpCookies();
+  //user.value = authClientClientSide.getUser();
+  dumpCookiesAndUpdateUser();
+
 });
 
 const loginProxyGood = async () => {
 
   const result = await authClientProxy.login(credentials.value);
   console.log('loginProxyGood() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const loginClientGood = async () => {
   const result = await authClientClientSide.login(credentials.value);
   console.log('loginClientGood() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const loginProxyBad = async () => {
   const result = await authClientProxy.login({ username: 'error', password: 'error', rememberUser: true });
   console.log('loginProxyBad() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const loginClientBad = async () => {
-
   const result = await authClientClientSide.login({ username: 'error', password: 'error', rememberUser: true });
   console.log('loginClientBad() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const logoutProxy = async () => {
   const result = await authClientProxy.logout();
   console.log('refreshProxy() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const logoutClient = async () => {
   const result = await authClientClientSide.logout();
   console.log('refreshProxy() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const refreshProxy = async () => {
   const result = await authClientProxy.refresh();
   console.log('refreshProxy() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const refreshClient = async () => {
   const result = await authClientClientSide.refresh();
   console.log('refreshProxy() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const registerProxy = async () => {
   const result = await authClientProxy.register();
   console.log('registerProxy() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const registerClient = async () => {
   const result = await authClientClientSide.register();
   console.log('registerClient() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const passwordProxy = async () => {
   const result = await authClientProxy.passwordReset();
   console.log('passwordProxy() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 };
 
 const passwordClient = async () => {
   const result = await authClientClientSide.passwordReset();
   console.log('passwordClient() result', result);
-  dumpCookies();
+  dumpCookiesAndUpdateUser();
 }
 
-const dumpCookies = () => {
+const dumpCookiesAndUpdateUser = async () => {
+
+
+
   items.value = [];
   const allCookies = geinsCore.cookies.getAll();
+  // console.log('dumpCookiesAndUpdateUser() allCookies', allCookies);
   for (const key in allCookies) {
     items.value.push({ header: key, data: JSON.stringify(allCookies[key], null, 2) });
   }
+
+  user.value = await authClientClientSide.getUser();
 };
 
 const tokenProxy = async () => {
@@ -140,6 +149,14 @@ const nothingProxy = async () => {
 };
 
 const previewToken = async () => {
+  items.value = [];
+  const allCookies = geinsCore.cookies.getAll();
+  for (const key in allCookies) {
+    if(key === 'geins-auth') {
+      const t1 = allCookies[key];
+      console.log('previewToken()', authClaimsTokenSerializeToObject(t1));
+    }
+  }
   // console.log('previewToken() helperkvp BR new', authClaimsTokenSerializeToObject(t1));
 }
 
@@ -230,10 +247,8 @@ const previewToken = async () => {
         </td>
         <td></td>
         <td style="vertical-align: top;padding-left:50px">
-          <!--DATA -->
-          <!--  User loged in: {{ authClientProxy.isLoggedIn }}<br /> -->
-          <!--  User name: {{ authClientProxy.username }}<br /> -->
-
+           <b>User:</b>
+           <pre>{{ JSON.stringify(user, null, 2) }}</pre>
         </td>
       </tr>
     </table>

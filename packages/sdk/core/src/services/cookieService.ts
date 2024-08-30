@@ -1,4 +1,5 @@
-import Cookies from 'js-cookie';
+//import Cookies from 'js-cookie';
+import Cookie from 'cookie-universal';
 
 export interface CookieType extends CookieServiceConfig {
   name: string;
@@ -8,21 +9,16 @@ export interface CookieServiceConfig {
   domain?: string | undefined;
   path?: string;
   secure?: boolean;
-  expires?: number;
+  maxAge?: number;
 }
 
 export class CookieService {
-  private expires = 1;
   private path = '/';
-  private expiresDate = new Date(new Date().getTime() + 31536000000);
   private domain = '';
   private secure = true;
+  private maxAge = 0;
   constructor(config?: CookieServiceConfig) {
     if (config) {
-      if (config.expires) {
-        this.expires = config.expires;
-      }
-
       if (config.path) {
         this.path = config.path;
       }
@@ -34,14 +30,18 @@ export class CookieService {
       if (config.secure) {
         this.secure = config.secure;
       }
+
+      if (config.maxAge) {
+        this.maxAge = config.maxAge;
+      }
     }
   }
   protected getConfig() {
     return {
-      expires: this.expires,
       path: this.path,
       domain: this.domain,
       secure: this.secure,
+      maxAge: this.maxAge,
     };
   }
 
@@ -54,21 +54,24 @@ export class CookieService {
     if (cookie.domain) {
       options.domain = cookie.domain;
     }
+
     if (cookie.path) {
       options.path = cookie.path;
     }
+
     if (cookie.secure) {
       options.secure = cookie.secure;
     }
-    if (cookie.expires) {
-      options.expires = cookie.expires;
+
+    if (cookie.maxAge) {
+      options.maxAge = cookie.maxAge;
     }
 
     Cookies.set(cookie.name, cookie.payload, options);
   }
 
-  public get(cookie: CookieType) {
-    return Cookies.get(cookie.name);
+  public get(cookieName: string) {
+    return Cookies.get(cookieName);
   }
 
   public remove(cookieName: string) {

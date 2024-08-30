@@ -1,11 +1,24 @@
 import { AuthServiceClient } from './authServiceClient';
-
+import { authClaimsTokenSerializeToObject } from './helpers';
 interface Credentials {
   username: string;
   password: string;
   rememberUser?: boolean;
 }
-
+export interface User {
+  authenticated?: boolean;
+  userId?: string;
+  username?: string;
+  customerType?: string;
+  memberDiscount?: string;
+  memberType?: string;
+  memberId?: string;
+  token?: string;
+  refreshToken?: string;
+  expiered?: boolean;
+  expires?: string;
+  expiresSoon?: boolean;
+}
 export class AuthService {
   private signEndpoint: string;
   private authEndpoint: string;
@@ -28,17 +41,18 @@ export class AuthService {
     this.client.setRefreshToken(refreshToken);
   }
 
-  public async login(
-    credentials: Credentials,
-  ): Promise<ReturnType<AuthService['getUserObject']>> {
+  public async login(credentials: Credentials): Promise<any> {
     try {
       if (!this.client) {
         this.initClient();
       }
       if (this.client) {
         await this.client.connect(credentials, 'login');
-      }
-      return this.getUserObject();
+        return this.getUser();
+      } else
+        throw new Error(
+          'AuthServiceClient is not initialized. Failed to login.',
+        );
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -46,7 +60,6 @@ export class AuthService {
   }
 
   public async logout(): Promise<boolean> {
-    // check if the client is initialized
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
@@ -70,10 +83,6 @@ export class AuthService {
       await this.client.connect();
       const refreshToken = this.client.getRefreshToken();
       const token = this.client.getToken();
-      //console.log('Token', token);
-      //console.log('Token refreshed', refreshToken);
-      // console.log('use :', this.getUserObject());
-      console.log('authService.ts Token refreshed');
       return { token, refreshToken };
     } catch (error) {
       console.error('Token refresh failed:', error);
@@ -113,67 +122,58 @@ export class AuthService {
     }
   }
 
-  private getUserObject() {
-    if (!this.client) {
-      throw new Error('AuthServiceClient is not initialized');
+  async getUserObjectFromToken(claimsToken: string) {
+    let token;
+    let userFromToken;
+    try {
+      userFromToken = authClaimsTokenSerializeToObject(claimsToken) || {};
+    } catch (error) {
+      return undefined;
     }
-
-    const refreshToken = this.client.getRefreshToken();
-
-    const user = {
-      username: 'unknown',
+    if (!userFromToken) {
+      return undefined;
+    }
+    token = claimsToken;
+    const user: User = {
       authenticated: false,
-      customerType: 'unknown',
-      role: 'unknown',
-      memberId: 0,
-      memberDiscount: 0,
-      token: '',
-      expires: 0,
-      refreshToken,
+      userId: userFromToken.sid || '',
+      username: userFromToken.name || 'unknown',
+      customerType: userFromToken.customerType || 'unknown',
+      memberDiscount: userFromToken.memberDiscout || '0',
+      memberType: userFromToken.memberType || 'unknown',
+      memberId: userFromToken.memberId || '0',
+      token: token || '',
+      expires: userFromToken.exp,
+      expiresSoon: false,
+      expiered: true,
     };
-
-    if (!this.client.authorized) {
-      return user;
+    user.customerType = user?.customerType?.toUpperCase();
+    const now = Math.floor(Date.now() / 1000);
+    const timeLeft = parseInt(user.expires || '0') - now;
+    if (user.expires && now < parseInt(user.expires)) {
+      user.authenticated = true;
+      user.expiered = false;
+      user.expiresSoon = timeLeft < 100;
     }
-
-    if (!this.client.serializedClaims) {
-      return user;
-    }
-
-    const claimPairs = this.client.serializedClaims.split(';').map((pair) => {
-      let [key, value] = pair.split('=');
-      if (key.includes('/')) {
-        key = key.split('/').pop() || '';
-      }
-      key = key.charAt(0).toLowerCase() + key.slice(1);
-      return { key, value };
-    });
-
-    const role = claimPairs.find((pair) => pair.key === 'role');
-    const username = claimPairs.find((pair) => pair.key === 'name');
-    const memberId = claimPairs.find((pair) => pair.key === 'memberId');
-    const memberDiscount = claimPairs.find(
-      (pair) => pair.key === 'memberDiscount',
-    );
-    const customerType = claimPairs.find((pair) => pair.key === 'customerType');
-    const token = this.client.getToken();
-    const expires = new Date(Date.now() + this.client.getMaxAge() * 1000); // Assuming maxAge is in seconds
-
-    // add the values to the user object
-    if (role) user.role = role.value;
-    if (username) user.username = username.value;
-    if (memberId) user.memberId = parseInt(memberId.value, 10);
-    if (memberDiscount) user.memberDiscount = parseFloat(memberDiscount.value);
-    if (customerType) user.customerType = customerType.value;
-
-    user.token = token;
-    user.expires = expires.getTime();
-    user.authenticated = true;
     return user;
   }
 
-  public get user() {
-    return this.getUserObject();
+  async getUser(token?: string) {
+    if (token) {
+      return await this.getUserObjectFromToken(token);
+    }
+    if (this.client) {
+      token = this.client.getToken();
+      if (token) {
+        const refreshToken = this.client.getRefreshToken();
+        const user = await this.getUserObjectFromToken(token);
+        if (user && refreshToken) {
+          user.refreshToken = refreshToken;
+        }
+        return user;
+      }
+    }
+    return undefined;
   }
 
   public get refreshToken() {

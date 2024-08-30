@@ -1,3 +1,13 @@
+/*
+Might be an options for the gein-nuxt module?
+https://nuxt.com/docs/getting-started/data-fetching#passing-headers-and-cookies
+https://nuxt.com/docs/getting-started/data-fetching#pass-cookies-from-server-side-api-calls-on-ssr-response
+
+set refreshgetToken in cookie named 'refresh' to pass for the next request
+
+
+*/
+
 import { MerchantApiCredentials, buildEndpoints } from '@geins/core';
 import { AuthService } from '../../../utils/authService';
 
@@ -24,7 +34,6 @@ interface AuthApiQuery {
 export default defineEventHandler(async (event) => {
   const refreshToken = await hasRefreshTokenCookie(event);
   if (refreshToken) {
-    // console.log('Refresh Token:', refreshToken);
     authService.setRefreshToken(refreshToken);
   }
 
@@ -32,6 +41,7 @@ export default defineEventHandler(async (event) => {
   if (!params) {
     return nothing();
   }
+
   const authMethod = params._;
   if (!authMethod) {
     return nothing();
@@ -78,6 +88,7 @@ export default defineEventHandler(async (event) => {
 
 const hasRefreshTokenCookie = async (event: any) => {
   const cookies = event.req.headers.cookie || '';
+  // console.log('hasRefreshTokenCookie() cookies:', cookies);
   const refreshCookie: string | undefined = cookies
     .split(';')
     .find((cookie: string) => cookie.trim().startsWith('refresh='));
@@ -93,7 +104,7 @@ const refreshCookieTokenSet = async (event: any, token: string) => {
   // refresh token is set as a cookie
   event.res.setHeader(
     'Set-Cookie',
-    `refresh=${token}; Path=/; HttpOnly; Secure; SameSite=None max-age=604800`,
+    `refresh=${token}; Path=/; HttpOnly; Secure; SameSite=None Max-age=604800`,
   );
 };
 
@@ -115,8 +126,9 @@ const login = async (
   try {
     const credentials = { username, password, rememberUser };
     const user = await authService.login(credentials);
-    // console.log('ts login user', user);
+    //console.log('ts login user', user);
     if (user.refreshToken) {
+      console.log('ts login user.refreshToken', user.refreshToken);
       refreshCookieTokenSet(event, user.refreshToken);
     }
 
@@ -160,7 +172,7 @@ const logout = async () => {
 const refresh = async (event: any) => {
   try {
     const { token, refreshToken } = await authService.refresh();
-    // console.log('refresh() Refresh Token:', refreshToken);
+    console.log('refresh() Refresh Token:', refreshToken);
     if (refreshToken) {
       refreshCookieTokenSet(event, refreshToken);
     }

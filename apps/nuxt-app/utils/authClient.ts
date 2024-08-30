@@ -1,11 +1,13 @@
 import { AuthService } from './authService';
 import { CookieService, AUTH_COOKIES } from '@geins/core';
+import { authClaimsTokenSerializeToObject } from './helpers';
+import { clear } from 'console';
 
-interface Credentials {
+export interface Credentials {
   username: string;
   password: string;
   newPassword?: string;
-  rememberUser?: boolean;
+  rememberUser?: boolean | undefined;
 }
 
 export enum ConnectionType {
@@ -95,13 +97,18 @@ export class AuthClient {
     if (!result.body || !result.body.data) {
       return;
     }
-    return result.body.data;
+    const user = result.body.data;
+    //console.log('loginProxy() result:', user);
+    return user;
   }
 
   private async loginClientSide(credentials: Credentials) {
     if (!this.authService) {
       throw new Error('AuthService not initialized');
     }
+    const result = await this.authService.login(credentials);
+    //console.log('loginClientSide() result:', result);
+    return result;
     return await this.authService.login(credentials);
   }
 
@@ -115,7 +122,7 @@ export class AuthClient {
       throw new Error('Invalid credentials');
     }
 
-    this.setCookiesLogin(user);
+    this.setCookiesLogin(user, credentials.rememberUser || false);
     return user;
   }
 
@@ -194,20 +201,93 @@ export class AuthClient {
     // register logic
   }
 
-  ///// COOOKIES
+  private async getUserProxy() {
+    const result = await fetch(this.AUTH_ENDPOINT_APP + '/refresh', {
+      method: 'GET',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((res) => res.json());
+    if (result.status !== 200) {
+      return;
+    }
 
-  private setCookiesLogin(user: any) {
+    if (!result.body || !result.body.data) {
+      return;
+    }
+
+    return result.body.data;
+  }
+
+  private async getUserClientSide(): Promise<any> {
+    let user: any = {};
+    if (!this.authService) {
+      return user;
+    }
+    try {
+      user = await this.authService.getUser();
+    } catch (error) {
+      console.error('Failed to get user:', error);
+    }
+
+    // if user is missing token, get it from cookie
+    if (!user?.token || user?.token === '') {
+      const token = this.cookieService.get(AUTH_COOKIES.USER_AUTH);
+      ////console.log('this.cookieService.get(AUTH_COOKIES.USER_AUTH)', token);
+      user = await this.authService?.getUser(token);
+    }
+
+    ////console.log('getUserClientSide() user:', user);
+    // use the auth cookie to get the user
+    // check expires and refresh if needed
+
+    return user;
+  }
+
+  async getUser(): Promise<any> {
+    let user =
+      this.connectionType === ConnectionType.Proxy
+        ? await this.getUserProxy()
+        : await this.getUserClientSide();
+
+    // handle token expiration here
+    if (user && user.token) {
+      if (!user.expiered && user.expiresSoon) {
+        const result = await this.refresh();
+        user = await this.authService?.getUserObjectFromToken(result);
+      } else if (user.expiered) {
+        console.log('EXPIRED TOKEN');
+        this.clearCookies();
+      }
+    }
+    return user;
+  }
+
+  // COOOKIES
+  private setCookiesLogin(user: any, rememberUser: boolean) {
+    const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes - This is matching the lifetime of the refresh cookie from the auth service
+    //  const exp = 5;
+    // console.log('expires:', expires);
     this.cookieService.set({
       name: AUTH_COOKIES.USER,
       payload: user.username,
+      maxAge: maxAge,
     });
     this.cookieService.set({
       name: AUTH_COOKIES.USER_AUTH,
       payload: user.token,
+      maxAge: maxAge,
     });
     this.cookieService.set({
       name: AUTH_COOKIES.USER_TYPE,
       payload: user.customerType,
+      maxAge: maxAge,
+    });
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_MAX_AGE,
+      payload: maxAge.toString(),
+      maxAge: maxAge,
     });
   }
 
@@ -222,10 +302,10 @@ export class AuthClient {
     this.cookieService.remove(AUTH_COOKIES.USER);
     this.cookieService.remove(AUTH_COOKIES.USER_AUTH);
     this.cookieService.remove(AUTH_COOKIES.USER_TYPE);
+    this.cookieService.remove(AUTH_COOKIES.USER_MAX_AGE);
   }
 
-  // CLAIMs
-
+  // CLAIM
   kvpClaims(serializedClaims: string) {
     const keyValuePairs = serializedClaims.split(';').map((pair) => {
       let [key, value] = pair.split('=');

@@ -145,15 +145,11 @@ var api = init(defaultConverter, { path: '/' });
 
 var CookieService = /** @class */ (function () {
     function CookieService(config) {
-        this.expires = 1;
         this.path = '/';
-        this.expiresDate = new Date(new Date().getTime() + 31536000000);
         this.domain = '';
         this.secure = true;
+        this.maxAge = 0;
         if (config) {
-            if (config.expires) {
-                this.expires = config.expires;
-            }
             if (config.path) {
                 this.path = config.path;
             }
@@ -163,14 +159,17 @@ var CookieService = /** @class */ (function () {
             if (config.secure) {
                 this.secure = config.secure;
             }
+            if (config.maxAge) {
+                this.maxAge = config.maxAge;
+            }
         }
     }
     CookieService.prototype.getConfig = function () {
         return {
-            expires: this.expires,
             path: this.path,
             domain: this.domain,
             secure: this.secure,
+            maxAge: this.maxAge,
         };
     };
     CookieService.prototype.getAll = function () {
@@ -178,13 +177,22 @@ var CookieService = /** @class */ (function () {
     };
     CookieService.prototype.set = function (cookie, config) {
         var options = config || this.getConfig();
-        if (cookie.expires) {
-            options.expires = cookie.expires;
+        if (cookie.domain) {
+            options.domain = cookie.domain;
+        }
+        if (cookie.path) {
+            options.path = cookie.path;
+        }
+        if (cookie.secure) {
+            options.secure = cookie.secure;
+        }
+        if (cookie.maxAge) {
+            options.maxAge = cookie.maxAge;
         }
         api.set(cookie.name, cookie.payload, options);
     };
-    CookieService.prototype.get = function (cookie) {
-        return api.get(cookie.name);
+    CookieService.prototype.get = function (cookieName) {
+        return api.get(cookieName);
     };
     CookieService.prototype.remove = function (cookieName) {
         api.remove(cookieName);
@@ -3314,54 +3322,6 @@ function buildEndpoints(accountName, apiKey, environment) {
         authSign: ENDPOINTS.auth_sign.replace('{API-KEY}', apiKey),
         image: ENDPOINTS.image.replace('{ACCOUNT}', accountName),
     };
-}
-function authClaimTokenParse(token) {
-    try {
-        var base64Url = token.split('.')[1];
-        if (!base64Url)
-            throw new Error('Invalid token format: missing payload');
-        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        var decodedString = atob(base64);
-        return JSON.parse(decodedString);
-    }
-    catch (error) {
-        console.error('Failed to decode token claims:', error);
-        return null;
-    }
-}
-function authClaimsTokenSerialize(token) {
-    var claims = authClaimTokenParse(token);
-    if (!claims)
-        return '';
-    return Object.entries(claims)
-        .map(function (_a) {
-        var key = _a[0], value = _a[1];
-        return Array.isArray(value)
-            ? value.map(function (v) { return "".concat(key, "=").concat(v); }).join(';')
-            : "".concat(key, "=").concat(value);
-    })
-        .join(';');
-}
-function authClaimsTokenSerializeToObject(token) {
-    try {
-        var serializedClaims = authClaimsTokenSerialize(token);
-        if (!serializedClaims)
-            return null;
-        var obj = serializedClaims.split(';').reduce(function (acc, pair) {
-            var _a = pair.split('='), key = _a[0], value = _a[1];
-            if (key.includes('/')) {
-                key = key.split('/').pop() || key;
-            }
-            key = key.charAt(0).toLowerCase() + key.slice(1);
-            acc[key] = value;
-            return acc;
-        }, {});
-        return obj;
-    }
-    catch (error) {
-        console.error('Failed to serialize token claims to object:', error);
-        return null;
-    }
 }
 
 var EventService = /** @class */ (function () {
@@ -16203,4 +16163,4 @@ var GeinsCore = /** @class */ (function () {
     return GeinsCore;
 }());
 
-export { API_URL, AUTH_COOKIES, AUTH_URL, BaseApiService, BasePackage, Broadcast, CookieService, CustomerType, ENDPOINTS, Environment, EventService, FetchPolicy, GeinsCore, GeinsRouter, IMAGE_URL, MANAGEMENT_API_URL, ManagementApiClient, MerchantApiClient, SIGN_URL, authClaimTokenParse, authClaimsTokenSerialize, authClaimsTokenSerializeToObject, buildEndpoints, isServerContext };
+export { API_URL, AUTH_COOKIES, AUTH_URL, BaseApiService, BasePackage, Broadcast, CookieService, CustomerType, ENDPOINTS, Environment, EventService, FetchPolicy, GeinsCore, GeinsRouter, IMAGE_URL, MANAGEMENT_API_URL, ManagementApiClient, MerchantApiClient, SIGN_URL, buildEndpoints, isServerContext };

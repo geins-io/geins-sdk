@@ -1,31 +1,29 @@
-export interface CookieType {
+export interface CookieType extends CookieServiceConfig {
     name: string;
-    payload?: any;
-    expires?: number;
+    payload: string;
 }
 export interface CookieServiceConfig {
     domain?: string | undefined;
     path?: string;
     secure?: boolean;
-    expires?: number;
+    maxAge?: number;
 }
 export declare class CookieService {
-    private expires;
     private path;
-    private expiresDate;
     private domain;
     private secure;
+    private maxAge;
     constructor(config?: CookieServiceConfig);
     protected getConfig(): {
-        expires: number;
         path: string;
         domain: string;
         secure: boolean;
+        maxAge: number;
     };
     getAll(): {
         [key: string]: string;
     };
     set(cookie: CookieType, config?: CookieServiceConfig): void;
-    get(cookie: CookieType): string | undefined;
+    get(cookieName: string): string | undefined;
     remove(cookieName: string): void;
 }

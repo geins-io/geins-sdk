@@ -83,7 +83,7 @@ export class AuthServiceClient {
       data = await this.fetchData(url, fetchOptions);
     }
 
-    //console.log('data:', data);
+    ////console.log('data:', data);
 
     if (data?.token) {
       this.setTokenData(data);

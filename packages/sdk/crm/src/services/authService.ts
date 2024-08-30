@@ -73,20 +73,19 @@ export class AuthService {
   update(
     payload: { credentials?: Credentials; refetchQueries?: boolean } = {},
   ) {
-    console.log('update -> payload', payload);
+    /*  console.log('update -> payload', payload);
     const credentials = payload?.credentials;
     let refetchQueries = payload?.refetchQueries || false;
     console.log('update -> credentials', credentials);
-
-    let username: string | null = credentials
+ */
+    /*  let username: string | null = credentials || null;
       ? credentials.username
-      : this.cookies.get({ name: this.COOKIE_NAME_USER }) || null;
-    console.log('update -> username', username);
+      : this.cookies.get(this.COOKIE_NAME_USER); */
+    /*  console.log('update -> username', username); */
     if (this.client?.authorized) {
-      console.log('authorized -- > push event');
+      /*  console.log('authorized -- > push event');
       this.eventsPush();
-      console.log('authorized --- PUSHED');
-
+      console.log('authorized --- PUSHED'); */
       /* this.setTokenTimeout(
         setTimeout(() => {
           if (typeof window !== 'undefined') {
