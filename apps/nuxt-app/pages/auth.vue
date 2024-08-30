@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { GeinsCore, buildEndpoints } from '@geins/core';
+import { GeinsCore, buildEndpoints, authClaimsTokenSerializeToObject } from '@geins/core';
 import { AuthClient, ConnectionType } from '../utils/authClient';
 
 import type { Channel, MerchantApiCredentials } from '@geins/core';
@@ -62,26 +62,58 @@ const refreshProxy = async () => {
   dumpCookies();
 };
 
-const logoutProxy = async () => {
-  const result = await authClientProxy.logout();
-  console.log('logoutProxy() result', result);
+const refreshClient = async () => {
+  const result = await authClientClientSide.refresh();
+  console.log('refreshProxy() result', result);
   dumpCookies();
 };
 
-const logoutClient = async () => {
-  const result = await authClientClientSide.logout();
-  console.log('logoutClient() result', result);
+const registerProxy = async () => {
+  const result = await authClientProxy.registerUser();
+  console.log('registerProxy() result', result);
+  dumpCookies();
+};
+
+const registerClient = async () => {
+  const result = await authClientClientSide.registerUser();
+  console.log('registerClient() result', result);
+  dumpCookies();
+};
+
+const passwordProxy = async () => {
+  const result = await authClientProxy.passwordReset();
+  console.log('passwordProxy() result', result);
+  dumpCookies();
+};
+
+const passwordClient = async () => {
+  const result = await authClientClientSide.passwordReset();
+  console.log('passwordClient() result', result);
   dumpCookies();
 }
 
 const dumpCookies = () => {
   items.value = [];
   const allCookies = geinsCore.cookies.getAll();
-  // loop through all cookies
   for (const key in allCookies) {
     items.value.push({ header: key, data: JSON.stringify(allCookies[key], null, 2) });
   }
 };
+
+const tokenProxy = async () => {
+  const result = await authClientProxy.token();
+  console.log('token() result', result);
+};
+
+const nothingProxy = async () => {
+  const result = await authClientProxy.nothing();
+  console.log('token() result', result);
+};
+
+const previewToken = async () => {
+  // console.log('previewToken() helperkvp BR new', authClaimsTokenSerializeToObject(t1));
+}
+
 
 </script>
 <template>
@@ -112,8 +144,10 @@ const dumpCookies = () => {
               <td>
                 <button @click="loginProxyGood">Login Good</button>
                 <button @click="loginProxyBad">Login Bad</button>
-                <button @click="refreshProxy">Refresh</button>
                 <button @click="logoutProxy">Logout</button>
+                <button @click="refreshProxy">Refresh</button>
+                <button @click="">User Register</button>
+                <button @click="">Password Refresh</button>
               </td>
             </tr>
             <tr>
@@ -126,6 +160,21 @@ const dumpCookies = () => {
                 <button @click="loginClientGood">Login Good</button>
                 <button @click="loginClientBad">Login Bad</button>
                 <button @click="logoutClient">Logout</button>
+                <button @click="refreshClient">Refresh</button>
+                <button @click="">User Register</button>
+                <button @click="">Password Refresh</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+              </td>
+              <td>
+                MISC:
+              </td>
+              <td>
+                <button @click="previewToken">Preview Token Claims</button>
+                <button @click="tokenProxy">Token Proxy</button>
+                <button @click="nothingProxy">Nothing Proxy</button>
               </td>
             </tr>
           </table>

@@ -1,7 +1,10 @@
+import { compileScript } from 'vue/compiler-sfc';
+
 export class AuthServiceClient {
   private authEndpoint: string;
   private signEndpoint: string;
   private token: string = '';
+  private refreshToken: string = '';
   private maxAge: number = 0;
 
   constructor(authEndpoint: string, signEndpoint: string) {
@@ -23,6 +26,14 @@ export class AuthServiceClient {
   private setTokenData(data: { token: string; maxAge: number }): void {
     this.token = data.token;
     this.maxAge = data.maxAge;
+  }
+
+  public getRefreshToken(): string {
+    return this.refreshToken;
+  }
+
+  public setRefreshToken(token: string): void {
+    this.refreshToken = token;
   }
 
   public async connect(
@@ -53,6 +64,11 @@ export class AuthServiceClient {
       },
       body: requiresSign ? JSON.stringify(authRequestBody) : undefined,
     };
+    // add refresh token to fetch options if available
+    if (this.refreshToken) {
+      (fetchOptions.headers as Record<string, string>)['Cookie'] =
+        `refresh=${this.refreshToken}`;
+    }
 
     let data = await this.fetchData(url, fetchOptions);
     if (data?.sign) {
@@ -67,9 +83,10 @@ export class AuthServiceClient {
       data = await this.fetchData(url, fetchOptions);
     }
 
+    //console.log('data:', data);
+
     if (data?.token) {
       this.setTokenData(data);
-      //this.setMaxAge(data.maxAge);
     }
   }
 
@@ -127,19 +144,36 @@ export class AuthServiceClient {
 
   private async fetchData(url: string, options: RequestInit): Promise<any> {
     try {
+      //add server side cookie to fetch
+      //options.headers['Cookie'] = this.cookie;
+
       const response = await fetch(url, options);
       if (!response.ok) {
         throw new Error(
           `Failed to fetch data from endpoint: ${response.status} ${response.statusText}`,
         );
       }
-      if (response.type === 'cors') {
-        throw new Error('CORS error');
+
+      const setCookie = response.headers.get('set-cookie');
+      let refreshToken = null;
+      if (setCookie) {
+        const cookies = setCookie.split(';');
+        for (const cookie of cookies) {
+          if (cookie.trim().startsWith('refresh=')) {
+            refreshToken = cookie.split('=')[1];
+            break;
+          }
+        }
       }
+      if (refreshToken) {
+        this.refreshToken = refreshToken;
+      }
+
       const text = await response.text();
       if (!text) {
         return null;
       }
+
       try {
         const retval = JSON.parse(text);
         return retval;

@@ -10,8 +10,8 @@ const endpoints = buildEndpoints(
   geinsCredentials.apiKey,
   'prod',
 );
-const authService = new AuthService(endpoints.authSign, endpoints.auth);
 
+const authService = new AuthService(endpoints.authSign, endpoints.auth);
 interface AuthApiQuery {
   method: string;
   username: string;
@@ -22,6 +22,12 @@ interface AuthApiQuery {
 }
 
 export default defineEventHandler(async (event) => {
+  const refreshToken = await hasRefreshTokenCookie(event);
+  if (refreshToken) {
+    // console.log('Refresh Token:', refreshToken);
+    authService.setRefreshToken(refreshToken);
+  }
+
   const params = event.context.params;
   if (!params) {
     return nothing();
@@ -55,25 +61,64 @@ export default defineEventHandler(async (event) => {
   }
 
   if (authMethod === 'login') {
-    return await login(username, password, rememberUser);
+    return await login(event, username, password, rememberUser);
   } else if (authMethod === 'logout') {
-    return await logout();
+    const result = await logout();
+    refreshCookieTokenClear(event);
+    return result;
   } else if (authMethod === 'refresh') {
-    return await refresh();
+    return await refresh(event);
+  } else if (authMethod === 'token') {
+    hasRefreshTokenCookie(event);
+    return nothing();
   } else {
     return nothing();
   }
 });
 
+const hasRefreshTokenCookie = async (event: any) => {
+  const cookies = event.req.headers.cookie || '';
+  const refreshCookie: string | undefined = cookies
+    .split(';')
+    .find((cookie: string) => cookie.trim().startsWith('refresh='));
+  if (refreshCookie) {
+    return refreshCookie.split('=')[1];
+  } else {
+    return '';
+  }
+};
+
+const refreshCookieTokenSet = async (event: any, token: string) => {
+  // console.log('SET Token request');
+  // refresh token is set as a cookie
+  event.res.setHeader(
+    'Set-Cookie',
+    `refresh=${token}; Path=/; HttpOnly; Secure; SameSite=None max-age=604800`,
+  );
+};
+
+const refreshCookieTokenClear = async (event: any) => {
+  console.log('CLEAR Token request');
+  // refresh token is set as a cookie
+  event.res.setHeader(
+    'Set-Cookie',
+    `refresh=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0`,
+  );
+};
+
 const login = async (
+  event: any,
   username: string,
   password: string,
   rememberUser: boolean,
 ) => {
   try {
     const credentials = { username, password, rememberUser };
-
     const user = await authService.login(credentials);
+    // console.log('ts login user', user);
+    if (user.refreshToken) {
+      refreshCookieTokenSet(event, user.refreshToken);
+    }
 
     return {
       status: user.authenticated ? 200 : 401,
@@ -112,14 +157,18 @@ const logout = async () => {
   }
 };
 
-const refresh = async () => {
+const refresh = async (event: any) => {
   try {
-    const result = await authService.refresh();
-    console.log('ts refresh result', result);
+    const { token, refreshToken } = await authService.refresh();
+    // console.log('refresh() Refresh Token:', refreshToken);
+    if (refreshToken) {
+      refreshCookieTokenSet(event, refreshToken);
+    }
+
     return {
       status: 200,
       body: {
-        data: result,
+        data: token,
       },
     };
   } catch (error: any) {
@@ -135,7 +184,7 @@ const refresh = async () => {
 
 const nothing = async () => {
   return {
-    status: 400,
+    status: 200,
     body: {
       message: 'Invalid request',
     },

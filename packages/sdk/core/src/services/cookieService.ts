@@ -3,6 +3,7 @@ import Cookies from 'js-cookie';
 export interface CookieType {
   name: string;
   payload?: any;
+  expires?: number;
 }
 export interface CookieServiceConfig {
   domain?: string | undefined;
@@ -37,10 +38,10 @@ export class CookieService {
     }
   }
   protected getConfig() {
-    /*    expires: this.expires,
-    path: this.path,
-    domain: this.domain, */
     return {
+      expires: this.expires,
+      path: this.path,
+      domain: this.domain,
       secure: this.secure,
     };
   }
@@ -49,8 +50,12 @@ export class CookieService {
     return Cookies.get();
   }
 
-  public set(cookie: CookieType) {
-    Cookies.set(cookie.name, cookie.payload, this.getConfig());
+  public set(cookie: CookieType, config?: CookieServiceConfig) {
+    const options = config || this.getConfig();
+    if (cookie.expires) {
+      options.expires = cookie.expires;
+    }
+    Cookies.set(cookie.name, cookie.payload, options);
   }
 
   public get(cookie: CookieType) {

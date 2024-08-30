@@ -1,4 +1,3 @@
-import ts from 'typescript';
 import { AuthServiceClient } from './authServiceClient';
 
 interface Credentials {
@@ -18,18 +17,17 @@ export class AuthService {
     this.initClient();
   }
 
-  /**
-   * Initializes the AuthServiceClient instance
-   */
   private initClient(): void {
     this.client = new AuthServiceClient(this.authEndpoint, this.signEndpoint);
   }
 
-  /**
-   * Logs in the user with the provided credentials.
-   * @param credentials The user's login credentials.
-   * @returns The authenticated user object.
-   */
+  public setRefreshToken(refreshToken: string): void {
+    if (!this.client) {
+      throw new Error('AuthServiceClient is not initialized');
+    }
+    this.client.setRefreshToken(refreshToken);
+  }
+
   public async login(
     credentials: Credentials,
   ): Promise<ReturnType<AuthService['getUserObject']>> {
@@ -47,10 +45,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Logs out the current user.
-   * @returns A boolean indicating success.
-   */
   public async logout(): Promise<boolean> {
     // check if the client is initialized
     if (!this.client) {
@@ -67,16 +61,24 @@ export class AuthService {
     }
   }
 
-  /**
-   * Checks the current authentication status.
-   * @returns A boolean indicating whether the user is authenticated.
-   */
-  public async status(): Promise<boolean> {
+  public async refresh(): Promise<{ token: string; refreshToken: string }> {
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
 
-    return this.client.authorized;
+    try {
+      await this.client.connect();
+      const refreshToken = this.client.getRefreshToken();
+      const token = this.client.getToken();
+      //console.log('Token', token);
+      //console.log('Token refreshed', refreshToken);
+      // console.log('use :', this.getUserObject());
+      console.log('authService.ts Token refreshed');
+      return { token, refreshToken };
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return { token: '', refreshToken: '' };
+    }
   }
 
   public async changePassword(
@@ -111,31 +113,12 @@ export class AuthService {
     }
   }
 
-  public async refresh(): Promise<boolean> {
-    if (!this.client) {
-      throw new Error('AuthServiceClient is not initialized');
-    }
-
-    try {
-      await this.client.connect();
-      console.log('Token refreshed');
-      console.log('use :', this.getUserObject());
-
-      return true;
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-      return false;
-    }
-  }
-
-  /**
-   * Returns a user object with authentication details.
-   * @returns The user object containing authentication information.
-   */
   private getUserObject() {
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
+
+    const refreshToken = this.client.getRefreshToken();
 
     const user = {
       username: 'unknown',
@@ -146,6 +129,7 @@ export class AuthService {
       memberDiscount: 0,
       token: '',
       expires: 0,
+      refreshToken,
     };
 
     if (!this.client.authorized) {
@@ -188,11 +172,14 @@ export class AuthService {
     return user;
   }
 
-  /**
-   * A getter for the user object.
-   * @returns The current user object.
-   */
   public get user() {
     return this.getUserObject();
+  }
+
+  public get refreshToken() {
+    if (!this.client) {
+      throw new Error('AuthServiceClient is not initialized');
+    }
+    return this.client.getRefreshToken();
   }
 }

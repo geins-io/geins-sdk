@@ -1,6 +1,7 @@
 export interface CookieType {
     name: string;
     payload?: any;
+    expires?: number;
 }
 export interface CookieServiceConfig {
     domain?: string | undefined;
@@ -16,12 +17,15 @@ export declare class CookieService {
     private secure;
     constructor(config?: CookieServiceConfig);
     protected getConfig(): {
+        expires: number;
+        path: string;
+        domain: string;
         secure: boolean;
     };
     getAll(): {
         [key: string]: string;
     };
-    set(cookie: CookieType): void;
+    set(cookie: CookieType, config?: CookieServiceConfig): void;
     get(cookie: CookieType): string | undefined;
     remove(cookieName: string): void;
 }

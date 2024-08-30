@@ -35,6 +35,49 @@ export class AuthClient {
     this.authService = new AuthService(signEndpoint, authEndpoint);
   }
 
+  async token() {
+    const result = await fetch(this.AUTH_ENDPOINT_APP + '/token', {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    }).then((res) => res.json());
+
+    if (result.status !== 200) {
+      return;
+    }
+
+    // GET THE SET COOKIE
+
+    if (!result.body || !result.body.data) {
+      return;
+    }
+    return result.body.data;
+  }
+
+  async nothing() {
+    const result = await fetch(this.AUTH_ENDPOINT_APP + '/nothing', {
+      method: 'GET',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((res) => res.json());
+
+    if (result.status !== 200) {
+      return;
+    }
+
+    // GET THE SET COOKIE
+
+    if (!result.body || !result.body.data) {
+      return;
+    }
+    return result.body.data;
+  }
+
   private async loginProxy(credentials: Credentials) {
     const result = await fetch(this.AUTH_ENDPOINT_APP + '/login', {
       method: 'POST',
@@ -115,14 +158,23 @@ export class AuthClient {
         'Content-Type': 'application/json',
       },
     }).then((res) => res.json());
-    return result.status === 200;
+    if (result.status !== 200) {
+      return;
+    }
+
+    if (!result.body || !result.body.data) {
+      return;
+    }
+
+    return result.body.data;
   }
 
   private async refreshClientSide() {
     if (!this.authService) {
       throw new Error('AuthService not initialized');
     }
-    return await this.authService.refresh();
+    const result = await this.authService.refresh();
+    return result.token;
   }
 
   async refresh() {
@@ -130,18 +182,20 @@ export class AuthClient {
       this.connectionType === ConnectionType.Proxy
         ? await this.refreshProxy()
         : await this.refreshClientSide();
-
-    console.log('--refresh', result);
+    console.log('** result:', result);
+    this.setCookiesRefresh(result);
     return result;
   }
 
-  authenticateded() {
-    // authenticated logic
-  }
-
-  passwordReset() {
+  async passwordReset() {
     // password reset logic
   }
+
+  async register() {
+    // register logic
+  }
+
+  ///// COOOKIES
 
   private setCookiesLogin(user: any) {
     this.cookieService.set({
@@ -157,10 +211,65 @@ export class AuthClient {
       payload: user.customerType,
     });
   }
-
+  private setCookiesRefresh(userToken: any) {
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_AUTH,
+      payload: userToken,
+    });
+  }
   private clearCookies() {
     this.cookieService.remove(AUTH_COOKIES.USER);
     this.cookieService.remove(AUTH_COOKIES.USER_AUTH);
     this.cookieService.remove(AUTH_COOKIES.USER_TYPE);
+  }
+
+  // CLAIMs
+
+  kvpClaims(serializedClaims: string) {
+    const keyValuePairs = serializedClaims.split(';').map((pair) => {
+      let [key, value] = pair.split('=');
+      if (key.includes('/')) {
+        key = key.split('/').pop() || '';
+      }
+      key = key.charAt(0).toLowerCase() + key.slice(1);
+      return { key, value };
+    });
+
+    const obj: { [key: string]: string } = keyValuePairs.reduce(
+      (accumulator, current) => {
+        accumulator[current.key] = current.value;
+        return accumulator;
+      },
+      {} as { [key: string]: string },
+    );
+
+    return obj;
+  }
+
+  claims(token: string) {
+    try {
+      const base64Url = token.split('.')[1];
+      if (!base64Url) {
+        throw new Error('Invalid token format: missing payload');
+      }
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const decodedString = atob(base64);
+      return JSON.parse(decodedString);
+    } catch (error) {
+      console.error('Failed to decode token claims:', error);
+      return null;
+    }
+  }
+
+  serializedClaims(token: string) {
+    const claims = this.claims(token);
+    if (!claims) return '';
+    return Object.entries(claims)
+      .map(([key, value]) =>
+        Array.isArray(value)
+          ? value.map((v) => `${key}=${v}`).join(';')
+          : `${key}=${value}`,
+      )
+      .join(';');
   }
 }

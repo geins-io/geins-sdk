@@ -166,18 +166,22 @@ var CookieService = /** @class */ (function () {
         }
     }
     CookieService.prototype.getConfig = function () {
-        /*    expires: this.expires,
-        path: this.path,
-        domain: this.domain, */
         return {
+            expires: this.expires,
+            path: this.path,
+            domain: this.domain,
             secure: this.secure,
         };
     };
     CookieService.prototype.getAll = function () {
         return api.get();
     };
-    CookieService.prototype.set = function (cookie) {
-        api.set(cookie.name, cookie.payload, this.getConfig());
+    CookieService.prototype.set = function (cookie, config) {
+        var options = config || this.getConfig();
+        if (cookie.expires) {
+            options.expires = cookie.expires;
+        }
+        api.set(cookie.name, cookie.payload, options);
     };
     CookieService.prototype.get = function (cookie) {
         return api.get(cookie.name);
@@ -3310,6 +3314,54 @@ function buildEndpoints(accountName, apiKey, environment) {
         authSign: ENDPOINTS.auth_sign.replace('{API-KEY}', apiKey),
         image: ENDPOINTS.image.replace('{ACCOUNT}', accountName),
     };
+}
+function authClaimTokenParse(token) {
+    try {
+        var base64Url = token.split('.')[1];
+        if (!base64Url)
+            throw new Error('Invalid token format: missing payload');
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var decodedString = atob(base64);
+        return JSON.parse(decodedString);
+    }
+    catch (error) {
+        console.error('Failed to decode token claims:', error);
+        return null;
+    }
+}
+function authClaimsTokenSerialize(token) {
+    var claims = authClaimTokenParse(token);
+    if (!claims)
+        return '';
+    return Object.entries(claims)
+        .map(function (_a) {
+        var key = _a[0], value = _a[1];
+        return Array.isArray(value)
+            ? value.map(function (v) { return "".concat(key, "=").concat(v); }).join(';')
+            : "".concat(key, "=").concat(value);
+    })
+        .join(';');
+}
+function authClaimsTokenSerializeToObject(token) {
+    try {
+        var serializedClaims = authClaimsTokenSerialize(token);
+        if (!serializedClaims)
+            return null;
+        var obj = serializedClaims.split(';').reduce(function (acc, pair) {
+            var _a = pair.split('='), key = _a[0], value = _a[1];
+            if (key.includes('/')) {
+                key = key.split('/').pop() || key;
+            }
+            key = key.charAt(0).toLowerCase() + key.slice(1);
+            acc[key] = value;
+            return acc;
+        }, {});
+        return obj;
+    }
+    catch (error) {
+        console.error('Failed to serialize token claims to object:', error);
+        return null;
+    }
 }
 
 var EventService = /** @class */ (function () {
@@ -16151,4 +16203,4 @@ var GeinsCore = /** @class */ (function () {
     return GeinsCore;
 }());
 
-export { API_URL, AUTH_COOKIES, AUTH_URL, BaseApiService, BasePackage, Broadcast, CookieService, CustomerType, ENDPOINTS, Environment, EventService, FetchPolicy, GeinsCore, GeinsRouter, IMAGE_URL, MANAGEMENT_API_URL, ManagementApiClient, MerchantApiClient, SIGN_URL, buildEndpoints, isServerContext };
+export { API_URL, AUTH_COOKIES, AUTH_URL, BaseApiService, BasePackage, Broadcast, CookieService, CustomerType, ENDPOINTS, Environment, EventService, FetchPolicy, GeinsCore, GeinsRouter, IMAGE_URL, MANAGEMENT_API_URL, ManagementApiClient, MerchantApiClient, SIGN_URL, authClaimTokenParse, authClaimsTokenSerialize, authClaimsTokenSerializeToObject, buildEndpoints, isServerContext };
