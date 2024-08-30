@@ -6,7 +6,7 @@ export default defineNuxtConfig({
 
   // modules: [
   //   '@geins/nuxt',
-  // ], 
+  // ],
 
   runtimeConfig: {
     public: {

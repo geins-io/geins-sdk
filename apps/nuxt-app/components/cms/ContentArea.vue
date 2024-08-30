@@ -3,8 +3,6 @@ import type { PropType } from 'vue';
 import type { ContentAreaType } from '@geins/core';
 import ContentContainer from './ContentContainer.vue';
 
-
-
 // Define props interface
 const props = defineProps({
   family: {
@@ -30,8 +28,12 @@ const props = defineProps({
         <br />
         <b>tags:</b> {{ JSON.stringify(props.data.tags, null, 2) }}
       </p>
-      <div style="border:2px solid gray;padding: 5px;">
-        <ContentContainer v-for="container in props.data.containers" :key="container.id" :data="container" />
+      <div style="border: 2px solid gray; padding: 5px">
+        <ContentContainer
+          v-for="container in props.data.containers"
+          :key="container.id"
+          :data="container"
+        />
       </div>
     </div>
   </div>

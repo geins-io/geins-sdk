@@ -11,7 +11,7 @@ const props = defineProps({
 });
 </script>
 <template>
-  <div style="border:2px groove red; margin-bottom: 5px;">
+  <div style="border: 2px groove red; margin-bottom: 5px">
     <div>
       <pre>{{ JSON.stringify(props.data, null, 2) }}</pre>
     </div>
