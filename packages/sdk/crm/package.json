@@ -7,17 +7,21 @@
   "type": "module",
   "scripts": {
     "build": "rollup -c",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "yarn build",
+    "lint": "eslint --fix ."
   },
   "dependencies": {
-    "@geins/core": "*"
+    "@apollo/client": "^3.10.5",
+    "graphql": "^16.8.2",
+    "@geins/core": "*",
+    "@geins/eslint-config": "*"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-graphql": "^2.0.4",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@types/js-cookie": "^3.0.6",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "eslint": "^9"
   }
 }
