@@ -36,7 +36,11 @@ const authClientClientSide = new AuthClient(ConnectionType.ClientSide, endpoints
 
 let username = ref<string>('arvidsson@geins.io');
 let password = ref<string>('MuDwzsBLq4Tx45X');
-let remeberUser = ref<Boolean>(true);
+let rememberUser = ref<Boolean>(true);
+
+// store checkbox value
+let rememberUser2 = ref<Boolean>(false);
+
 let slug = ref<string>('');
 let user = ref<User>({});
 
@@ -44,10 +48,10 @@ const getCredentials = () => {
   return {
     username: username.value,
     password: password.value,
-    remeberUser: remeberUser.value,
+    rememberUser: rememberUser.value.valueOf(),
   };
 };
-const credentials = ref(getCredentials());
+const credentials = getCredentials();
 
 onMounted(() => {
   //user.value = authClientClientSide.getUser();
@@ -56,14 +60,13 @@ onMounted(() => {
 });
 
 const loginProxyGood = async () => {
-
-  const result = await authClientProxy.login(credentials.value);
+  const result = await authClientProxy.login(credentials);
   console.log('loginProxyGood() result', result);
   dumpCookiesAndUpdateUser();
 };
 
 const loginClientGood = async () => {
-  const result = await authClientClientSide.login(credentials.value);
+  const result = await authClientClientSide.login(credentials);
   console.log('loginClientGood() result', result);
   dumpCookiesAndUpdateUser();
 };
@@ -117,28 +120,36 @@ const registerClient = async () => {
 };
 
 const passwordProxy = async () => {
-  const result = await authClientProxy.passwordReset();
+  const newPasswordCredentials = {
+    username: username.value,
+    password: password.value,
+    rememberUser: rememberUser.value.valueOf(),
+    newPassword: password.value + '-1',
+  };
+  const result = await authClientProxy.changePassword(newPasswordCredentials);
   console.log('passwordProxy() result', result);
   dumpCookiesAndUpdateUser();
 };
 
 const passwordClient = async () => {
-  const result = await authClientClientSide.passwordReset();
+  const newPasswordCredentials = {
+    username: username.value,
+    password: password.value,
+    rememberUser: rememberUser.value.valueOf(),
+    newPassword: password.value + '-1',
+  };
+  const result = await authClientClientSide.changePassword(newPasswordCredentials);
   console.log('passwordClient() result', result);
   dumpCookiesAndUpdateUser();
 }
 
 const dumpCookiesAndUpdateUser = async () => {
-
-
-
   items.value = [];
-  const allCookies = geinsCore.cookies.getAll();
+  const allCookies = geinsCore.cookies.getAll() as any;
   // console.log('dumpCookiesAndUpdateUser() allCookies', allCookies);
   for (const key in allCookies) {
     items.value.push({ header: key, data: JSON.stringify(allCookies[key], null, 2) });
   }
-
   user.value = await authClientClientSide.getUser();
 };
 
@@ -154,14 +165,13 @@ const nothingProxy = async () => {
 
 const previewToken = async () => {
   items.value = [];
-  const allCookies = geinsCore.cookies.getAll();
+  const allCookies = geinsCore.cookies.getAll() as any;
   for (const key in allCookies) {
-    if(key === 'geins-auth') {
+    if (key === 'geins-auth') {
       const t1 = allCookies[key];
       console.log('previewToken()', authClaimsTokenSerializeToObject(t1));
     }
   }
-  // console.log('previewToken() helperkvp BR new', authClaimsTokenSerializeToObject(t1));
 }
 
 
@@ -183,7 +193,7 @@ const previewToken = async () => {
               <td>
                 <input v-model="password" type="password" />
               </td>
-              <td> <input type="checkbox" v-model="remeberUser" /> Remember me </td>
+              <td> <input type="checkbox" :value="rememberUser2" v-model="rememberUser" /> Remember me </td>
             </tr>
             <tr>
               <td colspan="3"></td>
@@ -201,6 +211,7 @@ const previewToken = async () => {
                 <button @click="refreshProxy">Refresh</button>
                 <button @click="registerProxy">User Register</button>
                 <button @click="passwordProxy">Password Refresh</button>
+                <button @click="getUserProxy">Get User Refresh</button>
               </td>
             </tr>
             <tr>
@@ -219,6 +230,7 @@ const previewToken = async () => {
                 <button @click="refreshClient">Refresh</button>
                 <button @click="registerClient">User Register</button>
                 <button @click="passwordClient">Password Refresh</button>
+                <button @click="getUserClient">Get User Refresh</button>
               </td>
             </tr>
             <tr>
@@ -242,7 +254,8 @@ const previewToken = async () => {
           <div v-if="items.length > 0" v-for="(item, index) in items" :key="index">
             <p>
               <b>{{ item.header }}</b><br />
-              <textarea :style="{border:0, width:500+'px', height: (item.data.length > 100 ? Math.min(200, item.data.length * 10) + 'px': 20+'px' )}">{{ item.data }}</textarea>
+              <textarea
+                :style="{ border: 0, width: 500 + 'px', height: (item.data.length > 100 ? Math.min(200, item.data.length * 10) + 'px' : 20 + 'px') }">{{ item.data }}</textarea>
             </p>
           </div>
           <p v-else>
@@ -251,8 +264,8 @@ const previewToken = async () => {
         </td>
         <td></td>
         <td style="vertical-align: top;padding-left:50px">
-           <b>User:</b>
-           <pre>{{ JSON.stringify(user, null, 2) }}</pre>
+          <b>User:</b>
+          <pre>{{ JSON.stringify(user, null, 2) }}</pre>
         </td>
       </tr>
     </table>

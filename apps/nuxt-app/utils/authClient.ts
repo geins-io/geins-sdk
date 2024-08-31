@@ -81,6 +81,9 @@ export class AuthClient {
   }
 
   private async loginProxy(credentials: Credentials) {
+    const b = JSON.stringify(credentials);
+    console.log('loginProxy() credentials:', b);
+
     const result = await fetch(this.AUTH_ENDPOINT_APP + '/login', {
       method: 'POST',
       cache: 'no-cache',
@@ -113,6 +116,7 @@ export class AuthClient {
   }
 
   async login(credentials: Credentials) {
+    console.log('login', credentials);
     const user =
       this.connectionType === ConnectionType.Proxy
         ? await this.loginProxy(credentials)
@@ -193,7 +197,10 @@ export class AuthClient {
     return result;
   }
 
-  async passwordReset() {
+  async changePassword(credentials: Credentials) {
+
+
+
     // password reset logic
   }
 
@@ -253,10 +260,10 @@ export class AuthClient {
 
     // handle token expiration here
     if (user && user.token) {
-      if (!user.expiered && user.expiresSoon) {
+      if (!user.expired && user.expiresSoon) {
         const result = await this.refresh();
         user = await this.authService?.getUserObjectFromToken(result);
-      } else if (user.expiered) {
+      } else if (user.expired) {
         console.log('EXPIRED TOKEN');
         this.clearCookies();
       }
@@ -267,6 +274,7 @@ export class AuthClient {
   // COOOKIES
   private setCookiesLogin(user: any, rememberUser: boolean) {
     const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes - This is matching the lifetime of the refresh cookie from the auth service
+    console.log('rememberUser:', rememberUser, maxAge);
     //  const exp = 5;
     // console.log('expires:', expires);
     this.cookieService.set({
@@ -305,52 +313,4 @@ export class AuthClient {
     this.cookieService.remove(AUTH_COOKIES.USER_MAX_AGE);
   }
 
-  // CLAIM
-  kvpClaims(serializedClaims: string) {
-    const keyValuePairs = serializedClaims.split(';').map((pair) => {
-      let [key, value] = pair.split('=');
-      if (key.includes('/')) {
-        key = key.split('/').pop() || '';
-      }
-      key = key.charAt(0).toLowerCase() + key.slice(1);
-      return { key, value };
-    });
-
-    const obj: { [key: string]: string } = keyValuePairs.reduce(
-      (accumulator, current) => {
-        accumulator[current.key] = current.value;
-        return accumulator;
-      },
-      {} as { [key: string]: string },
-    );
-
-    return obj;
-  }
-
-  claims(token: string) {
-    try {
-      const base64Url = token.split('.')[1];
-      if (!base64Url) {
-        throw new Error('Invalid token format: missing payload');
-      }
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const decodedString = atob(base64);
-      return JSON.parse(decodedString);
-    } catch (error) {
-      console.error('Failed to decode token claims:', error);
-      return null;
-    }
-  }
-
-  serializedClaims(token: string) {
-    const claims = this.claims(token);
-    if (!claims) return '';
-    return Object.entries(claims)
-      .map(([key, value]) =>
-        Array.isArray(value)
-          ? value.map((v) => `${key}=${v}`).join(';')
-          : `${key}=${value}`,
-      )
-      .join(';');
-  }
 }

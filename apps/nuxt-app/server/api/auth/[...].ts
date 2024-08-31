@@ -69,6 +69,7 @@ export default defineEventHandler(async (event) => {
       resetPassword = body.resetPassword;
     }
   }
+  console.log('ts.. rememberUser:', rememberUser);
 
   if (authMethod === 'login') {
     return await login(event, username, password, rememberUser);

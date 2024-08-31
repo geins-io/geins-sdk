@@ -16,7 +16,7 @@ export interface User {
   memberId?: string;
   token?: string;
   refreshToken?: string;
-  expiered?: boolean;
+  expired?: boolean;
   expires?: string;
   expiresSoon?: boolean;
 }
@@ -146,14 +146,14 @@ export class AuthService {
       token: token || '',
       expires: userFromToken.exp,
       expiresSoon: false,
-      expiered: true,
+      expired: true,
     };
     user.customerType = user?.customerType?.toUpperCase();
     const now = Math.floor(Date.now() / 1000);
     const timeLeft = parseInt(user.expires || '0') - now;
     if (user.expires && now < parseInt(user.expires)) {
       user.authenticated = true;
-      user.expiered = false;
+      user.expired = false;
       user.expiresSoon = timeLeft < 100;
     }
     console.log('getUserObjectFromToken() timeLeft:', timeLeft);
