@@ -51,13 +51,15 @@ export default defineEventHandler(async (event) => {
 
   let username = '';
   let password = '';
+  let newPassword = '';
   let rememberUser = false;
   let resetPassword = false;
 
   if (method === 'GET') {
-    const qs = await getQuery(event);
+    const qs = getQuery(event);
     username = qs.username?.toString() ?? '';
     password = qs.password?.toString() ?? '';
+    newPassword = qs.newPassword?.toString() ?? '';
     rememberUser = Boolean(qs.rememberUser) ?? false;
     resetPassword = Boolean(qs.resetPassword) ?? false;
   } else {
@@ -65,11 +67,11 @@ export default defineEventHandler(async (event) => {
     if (body) {
       username = body.username;
       password = body.password;
+      newPassword = body.newPassword;
       rememberUser = body.rememberUser;
       resetPassword = body.resetPassword;
     }
   }
-  console.log('ts.. rememberUser:', rememberUser);
 
   if (authMethod === 'login') {
     return await login(event, username, password, rememberUser);
@@ -82,38 +84,42 @@ export default defineEventHandler(async (event) => {
   } else if (authMethod === 'token') {
     hasRefreshTokenCookie(event);
     return nothing();
+  } else if (authMethod === 'password') {
+    return await changePassword(event,username, password, newPassword,rememberUser);
   } else {
     return nothing();
   }
 });
 
-const hasRefreshTokenCookie = async (event: any) => {
-  const cookies = event.req.headers.cookie || '';
-  // console.log('hasRefreshTokenCookie() cookies:', cookies);
-  const refreshCookie: string | undefined = cookies
-    .split(';')
-    .find((cookie: string) => cookie.trim().startsWith('refresh='));
-  if (refreshCookie) {
-    return refreshCookie.split('=')[1];
-  } else {
-    return '';
+const changePassword = async (
+  event: any,
+  username: string,
+  password: string,
+  newPassword: string,
+  rememberUser: boolean,
+) => {
+  try {
+    const credentials = { username, password, newPassword, rememberUser };
+    const authReponse = await authService.changePassword(credentials);
+   if (authReponse.data.refreshToken) {
+      refreshCookieTokenSet(event, authReponse.data.refreshToken);
+    }
+
+    return {
+      status: authReponse.succeded ? 200 : 401,
+      body: {
+        data: authReponse,
+      },
+    };
+  } catch (error: any) {
+    return {
+      status: 500,
+      body: {
+        message: 'Change Password failed',
+        error: error.message,
+      },
+    };
   }
-};
-
-const refreshCookieTokenSet = async (event: any, token: string) => {
-  event.res.setHeader(
-    'Set-Cookie',
-    `refresh=${token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=900`,
-  );
-};
-
-const refreshCookieTokenClear = async (event: any) => {
-  console.log('CLEAR Token request');
-  // refresh token is set as a cookie
-  event.res.setHeader(
-    'Set-Cookie',
-    `refresh=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0`,
-  );
 };
 
 const login = async (
@@ -124,15 +130,15 @@ const login = async (
 ) => {
   try {
     const credentials = { username, password, rememberUser };
-    const user = await authService.login(credentials);
-    if (user.refreshToken) {
-      refreshCookieTokenSet(event, user.refreshToken);
+    const authReponse = await authService.login(credentials);
+    if (authReponse.data.refreshToken) {
+      refreshCookieTokenSet(event, authReponse.data.refreshToken);
     }
 
     return {
-      status: user.authenticated ? 200 : 401,
+      status: authReponse.data.authenticated ? 200 : 401,
       body: {
-        data: user,
+        data: authReponse,
       },
     };
   } catch (error: any) {
@@ -148,11 +154,11 @@ const login = async (
 
 const logout = async () => {
   try {
-    const success = await authService.logout();
+    const authReponse = await authService.logout();
     return {
-      status: success ? 200 : 500,
+      status: authReponse.succeded ? 200 : 500,
       body: {
-        message: success ? 'Logout successful' : 'Logout failed',
+        message: authReponse.succeded ? 'Logout successful' : 'Logout failed',
       },
     };
   } catch (error: any) {
@@ -160,7 +166,7 @@ const logout = async () => {
       status: 500,
       body: {
         message: 'Logout failed',
-        error: error.message,
+        error: error.message
       },
     };
   }
@@ -168,16 +174,15 @@ const logout = async () => {
 
 const refresh = async (event: any) => {
   try {
-    const { token, refreshToken } = await authService.refresh();
-    console.log('refresh() Refresh Token:', refreshToken);
-    if (refreshToken) {
-      refreshCookieTokenSet(event, refreshToken);
+    const authReponse = await authService.refresh();
+    if (authReponse.succeded && authReponse.data.refreshToken) {
+      refreshCookieTokenSet(event, authReponse.data.refreshToken);
     }
 
     return {
-      status: 200,
+      status: authReponse.succeded ? 200 : 401,
       body: {
-        data: token,
+        data: authReponse.succeded ? authReponse.data : undefined,
       },
     };
   } catch (error: any) {
@@ -198,4 +203,32 @@ const nothing = async () => {
       message: 'Invalid request',
     },
   };
+};
+
+
+const hasRefreshTokenCookie = async (event: any) => {
+  const cookies = event.req.headers.cookie || '';
+  const refreshCookie = cookies
+    .split(';')
+    .find((cookie: string) => cookie.trim().startsWith('refresh='));
+
+  if (refreshCookie) {
+    return refreshCookie.split('=')[1];
+  } else {
+    return '';
+  }
+};
+
+const refreshCookieTokenSet = async (event: any, token: string) => {
+  event.res.setHeader(
+    'Set-Cookie',
+    `refresh=${token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=900`,
+  );
+};
+
+const refreshCookieTokenClear = async (event: any) => {
+  event.res.setHeader(
+    'Set-Cookie',
+    `refresh=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0`,
+  );
 };

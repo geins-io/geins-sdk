@@ -1,12 +1,25 @@
 import { checkPrimeSync } from 'crypto';
 import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './helpers';
-interface Credentials {
+interface AuthCredentials {
   username: string;
   password: string;
+  newPassword?: string;
   rememberUser?: boolean;
 }
-export interface User {
+interface AuthResponse {
+  succeded: boolean;
+  data?: AuthToken | AuthUser | any;
+}
+
+interface AuthToken {
+  token?: string;
+  refreshToken?: string;
+  expired?: boolean;
+  expiresIn?: number;
+  expiresSoon?: boolean;
+}
+export interface AuthUser {
   authenticated?: boolean;
   userId?: string;
   username?: string;
@@ -31,10 +44,6 @@ export class AuthService {
     this.initClient();
   }
 
-  private initClient(): void {
-    this.client = new AuthServiceClient(this.authEndpoint, this.signEndpoint);
-  }
-
   public setRefreshToken(refreshToken: string): void {
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
@@ -42,69 +51,81 @@ export class AuthService {
     this.client.setRefreshToken(refreshToken);
   }
 
-  public async login(credentials: Credentials): Promise<any> {
-    try {
-      if (!this.client) {
-        this.initClient();
-      }
-      if (this.client) {
-        await this.client.connect(credentials, 'login');
-        return this.getUser();
-      } else
-        throw new Error(
-          'AuthServiceClient is not initialized. Failed to login.',
-        );
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    }
+  private initClient(): void {
+    this.client = new AuthServiceClient(this.authEndpoint, this.signEndpoint);
   }
 
-  public async logout(): Promise<boolean> {
+  public async login(credentials: AuthCredentials): Promise<AuthResponse> {
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
+
+    const authReponse: AuthResponse  = { succeded: false, data: {} as AuthUser };
+
+    try {
+      await this.client.connect(credentials, 'login');
+      authReponse.data = await this.getUser();
+      authReponse.succeded = authReponse.data.authenticated;
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+
+    return authReponse;
+  }
+
+  public async logout(): Promise<AuthResponse> {
+    if (!this.client) {
+      throw new Error('AuthServiceClient is not initialized');
+    }
+
+    const authReponse: AuthResponse  = { succeded: false };
 
     try {
       await this.client.connect(undefined, 'logout');
       this.client = undefined;
-      return true;
+      authReponse.succeded = true;
     } catch (error) {
       console.error('Logout failed:', error);
-      return false;
     }
+    return authReponse;
   }
 
-  public async refresh(): Promise<{ token: string; refreshToken: string }> {
+  public async refresh(): Promise<AuthResponse> {
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
+
+    const authReponse: AuthResponse  = { succeded: false, data: {} as AuthToken };
 
     try {
       await this.client.connect();
-      const refreshToken = this.client.getRefreshToken();
-      const token = this.client.getToken();
-      return { token, refreshToken };
+
+      authReponse.data.token = this.client.getToken();
+      authReponse.data.refreshToken = this.client.getRefreshToken();
+      authReponse.data.expiresIn =this.client.getMaxAge();
+      authReponse.succeded = true;
     } catch (error) {
       console.error('Token refresh failed:', error);
-      return { token: '', refreshToken: '' };
     }
+    return authReponse;
   }
 
-  public async changePassword(
-    credentials: Credentials & { newPassword: string },
-  ): Promise<boolean> {
+  public async changePassword(credentials: AuthCredentials): Promise<AuthResponse> {
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
 
+    const authReponse: AuthResponse  = { succeded: false, data: {} as AuthToken };
+
     try {
       await this.client.connect(credentials, 'password');
-      return true;
+      authReponse.data.token = this.client.getToken();
+      authReponse.data.refreshToken = this.client.getRefreshToken();
+      authReponse.succeded = true;
     } catch (error) {
       console.error('Password change failed:', error);
-      return false;
     }
+    return authReponse;
   }
 
   public async register(
@@ -123,6 +144,7 @@ export class AuthService {
     }
   }
 
+
   async getUserObjectFromToken(claimsToken: string) {
     let token;
     let userFromToken;
@@ -135,7 +157,7 @@ export class AuthService {
       return undefined;
     }
     token = claimsToken;
-    const user: User = {
+    const user: AuthUser = {
       authenticated: false,
       userId: userFromToken.sid || '',
       username: userFromToken.name || 'unknown',
@@ -156,7 +178,7 @@ export class AuthService {
       user.expired = false;
       user.expiresSoon = timeLeft < 100;
     }
-    console.log('getUserObjectFromToken() timeLeft:', timeLeft);
+    // console.log('getUserObjectFromToken() timeLeft:', timeLeft);
     return user;
   }
 

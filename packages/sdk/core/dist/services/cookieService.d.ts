@@ -3,10 +3,10 @@ export interface CookieType extends CookieServiceConfig {
     payload: string;
 }
 export interface CookieServiceConfig {
-    domain?: string | undefined;
+    domain?: string;
     path?: string;
     secure?: boolean;
-    maxAge?: number;
+    maxAge?: number | string;
 }
 export declare class CookieService {
     private path;
@@ -19,8 +19,9 @@ export declare class CookieService {
         path: string;
         domain: string;
         secure: boolean;
-        maxAge: number;
+        maxAge: number | undefined;
     };
+    private parseMaxAge;
     getAll(): object;
     set(cookie: CookieType, config?: CookieServiceConfig): void;
     get(cookieName: string): any;

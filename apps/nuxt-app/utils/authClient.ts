@@ -1,7 +1,7 @@
 import { AuthService } from './authService';
 import { CookieService, AUTH_COOKIES } from '@geins/core';
 import { authClaimsTokenSerializeToObject } from './helpers';
-import { clear } from 'console';
+
 
 export interface Credentials {
   username: string;
@@ -19,6 +19,7 @@ export class AuthClient {
   private AUTH_ENDPOINT_APP = '/api/auth';
   private authService: AuthService | null = null;
   private cookieService: CookieService = new CookieService();
+
 
   constructor(
     private connectionType: ConnectionType,
@@ -82,7 +83,7 @@ export class AuthClient {
 
   private async loginProxy(credentials: Credentials) {
     const b = JSON.stringify(credentials);
-    console.log('loginProxy() credentials:', b);
+
 
     const result = await fetch(this.AUTH_ENDPOINT_APP + '/login', {
       method: 'POST',
@@ -100,34 +101,29 @@ export class AuthClient {
     if (!result.body || !result.body.data) {
       return;
     }
-    const user = result.body.data;
-    //console.log('loginProxy() result:', user);
-    return user;
+    return result.body.data;
   }
 
   private async loginClientSide(credentials: Credentials) {
     if (!this.authService) {
       throw new Error('AuthService not initialized');
     }
-    const result = await this.authService.login(credentials);
-    //console.log('loginClientSide() result:', result);
-    return result;
     return await this.authService.login(credentials);
   }
 
   async login(credentials: Credentials) {
-    console.log('login', credentials);
-    const user =
+    const authReponse =
       this.connectionType === ConnectionType.Proxy
         ? await this.loginProxy(credentials)
         : await this.loginClientSide(credentials);
 
-    if (!user || !user.authenticated) {
+
+    if (!authReponse) {
       throw new Error('Invalid credentials');
     }
 
-    this.setCookiesLogin(user, credentials.rememberUser || false);
-    return user;
+    this.setCookiesLogin(authReponse.data, credentials.rememberUser || false);
+    return authReponse.data;
   }
 
   private async logoutProxy() {
@@ -185,7 +181,7 @@ export class AuthClient {
       throw new Error('AuthService not initialized');
     }
     const result = await this.authService.refresh();
-    return result.token;
+    return result.data.token;
   }
 
   async refresh() {
@@ -193,15 +189,53 @@ export class AuthClient {
       this.connectionType === ConnectionType.Proxy
         ? await this.refreshProxy()
         : await this.refreshClientSide();
+
     this.setCookiesRefresh(result);
     return result;
   }
 
+  private async changePasswordProxy(credentials: Credentials) {
+    const result = await fetch(this.AUTH_ENDPOINT_APP + '/password', {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    }).then((res) => res.json());
+    if (result.status !== 200) {
+      return;
+    }
+
+    if (!result.body || !result.body.data) {
+      return;
+    }
+
+    return result.body.data;
+  }
+
+  private async changePasswordClientSide(credentials: Credentials) {
+    if (!this.authService) {
+      throw new Error('AuthService not initialized');
+    }
+    return await this.authService.changePassword(credentials);
+  }
+
   async changePassword(credentials: Credentials) {
+    if (!credentials.newPassword) {
+      throw new Error('New password is required');
+    }
 
+    const result =
+      this.connectionType === ConnectionType.Proxy
+        ? await this.changePasswordProxy(credentials)
+        : await this.changePasswordClientSide(credentials);
 
+    if (!result) {
+      throw new Error('Change password failed');
+    }
+    return
 
-    // password reset logic
   }
 
   async register() {
@@ -238,16 +272,10 @@ export class AuthClient {
       console.error('Failed to get user:', error);
     }
 
-    // if user is missing token, get it from cookie
     if (!user?.token || user?.token === '') {
       const token = this.cookieService.get(AUTH_COOKIES.USER_AUTH);
-      ////console.log('this.cookieService.get(AUTH_COOKIES.USER_AUTH)', token);
       user = await this.authService?.getUser(token);
     }
-
-    ////console.log('getUserClientSide() user:', user);
-    // use the auth cookie to get the user
-    // check expires and refresh if needed
 
     return user;
   }
@@ -264,34 +292,36 @@ export class AuthClient {
         const result = await this.refresh();
         user = await this.authService?.getUserObjectFromToken(result);
       } else if (user.expired) {
-        console.log('EXPIRED TOKEN');
         this.clearCookies();
       }
     }
     return user;
   }
 
-  // COOOKIES
-  private setCookiesLogin(user: any, rememberUser: boolean) {
+
+  private setCookiesLogin(user: AuthUser, rememberUser: boolean) {
     const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes - This is matching the lifetime of the refresh cookie from the auth service
-    console.log('rememberUser:', rememberUser, maxAge);
-    //  const exp = 5;
-    // console.log('expires:', expires);
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER,
-      payload: user.username,
-      maxAge: maxAge,
-    });
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER_AUTH,
-      payload: user.token,
-      maxAge: maxAge,
-    });
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER_TYPE,
-      payload: user.customerType,
-      maxAge: maxAge,
-    });
+    if(user.username) {
+      this.cookieService.set({
+        name: AUTH_COOKIES.USER,
+        payload: user.username,
+        maxAge: maxAge,
+      });
+    }
+    if(user.token) {
+      this.cookieService.set({
+        name: AUTH_COOKIES.USER_AUTH,
+        payload: user.token,
+        maxAge: maxAge,
+      });
+    }
+    if(user.customerType) {
+      this.cookieService.set({
+        name: AUTH_COOKIES.USER_TYPE,
+        payload: user.customerType,
+        maxAge: maxAge,
+      });
+    }
     this.cookieService.set({
       name: AUTH_COOKIES.USER_MAX_AGE,
       payload: maxAge.toString(),
@@ -300,9 +330,16 @@ export class AuthClient {
   }
 
   private setCookiesRefresh(userToken: any) {
+    let maxAge = 1800;
+    const maxAgeCookie = this.cookieService.get(AUTH_COOKIES.USER_MAX_AGE);
+    if (maxAgeCookie) {
+      maxAge = parseInt(maxAgeCookie);
+    }
+
     this.cookieService.set({
       name: AUTH_COOKIES.USER_AUTH,
       payload: userToken,
+      maxAge: maxAge,
     });
   }
 

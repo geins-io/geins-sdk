@@ -1,23 +1,24 @@
-//import Cookies from 'js-cookie';
 import Cookie from 'cookie-universal';
 
 export interface CookieType extends CookieServiceConfig {
   name: string;
   payload: string;
 }
+
 export interface CookieServiceConfig {
-  domain?: string | undefined;
+  domain?: string;
   path?: string;
   secure?: boolean;
-  maxAge?: number;
+  maxAge?: number | string;  // maxAge can be a number or string here
 }
 
 export class CookieService {
   private path = '/';
   private domain = '';
   private secure = true;
-  private maxAge = 0;
+  private maxAge: number | undefined = undefined;  // Ensure maxAge is a number or undefined
   private cookie = Cookie();
+
   constructor(config?: CookieServiceConfig) {
     if (config) {
       if (config.path) {
@@ -28,15 +29,16 @@ export class CookieService {
         this.domain = config.domain;
       }
 
-      if (config.secure) {
+      if (config.secure !== undefined) {
         this.secure = config.secure;
       }
 
-      if (config.maxAge) {
-        this.maxAge = config.maxAge;
+      if (config.maxAge !== undefined) {
+        this.maxAge = this.parseMaxAge(config.maxAge);
       }
     }
   }
+
   protected getConfig() {
     return {
       path: this.path,
@@ -46,12 +48,25 @@ export class CookieService {
     };
   }
 
+  private parseMaxAge(maxAge: string | number): number | undefined {
+    if (typeof maxAge === 'string') {
+      const parsed = parseInt(maxAge, 10);
+      return isNaN(parsed) ? undefined : parsed;
+    }
+    return maxAge;
+  }
+
   public getAll() {
     return this.cookie.getAll();
   }
 
   public set(cookie: CookieType, config?: CookieServiceConfig) {
-    const options = config || this.getConfig();
+    const options = config ? {
+      ...this.getConfig(),
+      ...config,
+      maxAge: config.maxAge !== undefined ? this.parseMaxAge(config.maxAge) : undefined
+    } : this.getConfig();
+
     if (cookie.domain) {
       options.domain = cookie.domain;
     }
@@ -60,12 +75,14 @@ export class CookieService {
       options.path = cookie.path;
     }
 
-    if (cookie.secure) {
+    if (cookie.secure !== undefined) {
       options.secure = cookie.secure;
     }
 
-    if (cookie.maxAge) {
-      options.maxAge = cookie.maxAge;
+    if (cookie.maxAge !== undefined) {
+      options.maxAge = this.parseMaxAge(cookie.maxAge);
+    } else if (options.maxAge === undefined) {
+      delete options.maxAge;
     }
 
     this.cookie.set(cookie.name, cookie.payload, options);

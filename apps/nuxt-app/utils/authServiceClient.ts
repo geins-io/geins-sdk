@@ -1,4 +1,3 @@
-import { CookieService } from '@geins/core';
 export class AuthServiceClient {
   private authEndpoint: string;
   private signEndpoint: string;
@@ -22,14 +21,13 @@ export class AuthServiceClient {
     return this.token;
   }
 
-  private setTokenData(data: { token: string; maxAge: number }): void {
-    console.log('setTokenData:', data);
-    this.token = data.token;
-    this.maxAge = data.maxAge;
-  }
-
   public getRefreshToken(): string {
     return this.refreshToken;
+  }
+
+  private setTokenData(data: { token: string; maxAge: number }): void {
+    this.token = data.token;
+    this.maxAge = data.maxAge;
   }
 
   public setRefreshToken(token: string): void {
@@ -82,8 +80,6 @@ export class AuthServiceClient {
       fetchOptions.body = JSON.stringify(authRequestBody);
       data = await this.fetchData(url, fetchOptions);
     }
-
-    ////console.log('data:', data);
 
     if (data?.token) {
       this.setTokenData(data);
