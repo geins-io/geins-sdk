@@ -9,14 +9,14 @@ export interface CookieServiceConfig {
   domain?: string;
   path?: string;
   secure?: boolean;
-  maxAge?: number | string;  // maxAge can be a number or string here
+  maxAge?: number | string; // maxAge can be a number or string here
 }
 
 export class CookieService {
   private path = '/';
   private domain = '';
   private secure = true;
-  private maxAge: number | undefined = undefined;  // Ensure maxAge is a number or undefined
+  private maxAge: number | undefined = undefined; // Ensure maxAge is a number or undefined
   private cookie = Cookie();
 
   constructor(config?: CookieServiceConfig) {
@@ -61,11 +61,16 @@ export class CookieService {
   }
 
   public set(cookie: CookieType, config?: CookieServiceConfig) {
-    const options = config ? {
-      ...this.getConfig(),
-      ...config,
-      maxAge: config.maxAge !== undefined ? this.parseMaxAge(config.maxAge) : undefined
-    } : this.getConfig();
+    const options = config
+      ? {
+          ...this.getConfig(),
+          ...config,
+          maxAge:
+            config.maxAge !== undefined
+              ? this.parseMaxAge(config.maxAge)
+              : undefined,
+        }
+      : this.getConfig();
 
     if (cookie.domain) {
       options.domain = cookie.domain;

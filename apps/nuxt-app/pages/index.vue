@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-
 </script>
 <template>
   <div>
@@ -13,7 +12,5 @@ import { ref } from 'vue';
 
 
     </pre>
-
-
   </div>
 </template>

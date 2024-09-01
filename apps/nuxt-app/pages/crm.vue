@@ -18,28 +18,30 @@ const geinsCredentials: MerchantApiCredentials = {
 const languageId = runtimeConfig.public.defaultLanguage;
 const marketId = runtimeConfig.public.defaultMarket;
 
-const geinsCore = new GeinsCore(geinsCredentials, channel, { marketId, languageId });
+const geinsCore = new GeinsCore(geinsCredentials, channel, {
+  marketId,
+  languageId,
+});
 // const geinsCRM = new GeinsCRM(geinsCore);
-
 
 let username = ref<string>('');
 let password = ref<string>('');
 let slug = ref<string>('');
 
-const resetCompnentData = () => {
-
-};
+const resetCompnentData = () => {};
 
 const dumpCookies = () => {
   const allCookies = geinsCore.cookies.getAllCookies();
   // loop through all cookies
   for (const key in allCookies) {
-    items.value.push({ header: key, data: JSON.stringify(allCookies[key], null, 2) });
+    items.value.push({
+      header: key,
+      data: JSON.stringify(allCookies[key], null, 2),
+    });
   }
 };
 
 const eventTest = () => {
-
   var myEventHandler = function (message: any) {
     console.log('I hear a scream! --- ' + message);
     items.value.push({ header: 'I hear a scream!', data: message });
@@ -65,7 +67,11 @@ const eventTest = () => {
 };
 
 const eventTest2 = () => {
-  geinsCore.events.push('scream', { test: 'test', test2: 'test2', olle: { pelle: 'pellee' } });
+  geinsCore.events.push('scream', {
+    test: 'test',
+    test2: 'test2',
+    olle: { pelle: 'pellee' },
+  });
 };
 
 const loginServer = () => {
@@ -94,15 +100,13 @@ const logout = () => {
   //geinsCRM.auth.logout();
   dumpCookies();
 };
-
-
 </script>
 <template>
   <div>
     <h2>Nuxt @geins/CRM Test</h2>
     <table>
       <tr>
-        <td style="vertical-align: top;">
+        <td style="vertical-align: top">
           <table>
             <tr>
               <td>username:</td>
@@ -134,17 +138,19 @@ const logout = () => {
           </table>
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b><br />
-              <textarea style="border:0; width:600px;">{{ item.data }}</textarea>
+              <b>{{ item.header }}</b
+              ><br />
+              <textarea style="border: 0; width: 600px">{{
+                item.data
+              }}</textarea>
             </p>
           </div>
         </td>
         <td></td>
-        <td style="vertical-align: top;">
+        <td style="vertical-align: top">
           <!-- DATA -->
         </td>
       </tr>
     </table>
-
   </div>
 </template>

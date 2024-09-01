@@ -9,7 +9,6 @@ import type { Channel, MerchantApiCredentials } from '@geins/core';
 const runtimeConfig = useRuntimeConfig();
 const items = ref<any[]>([]);
 
-
 const channel: Channel = {
   siteId: runtimeConfig.public.channel.siteId,
   siteTopDomain: runtimeConfig.public.channel.siteTopDomain,
@@ -27,9 +26,16 @@ const endpoints = buildEndpoints(
 const languageId = runtimeConfig.public.defaultLanguage;
 const marketId = runtimeConfig.public.defaultMarket;
 
-const geinsCore = new GeinsCore(geinsCredentials, channel, { marketId, languageId });
+const geinsCore = new GeinsCore(geinsCredentials, channel, {
+  marketId,
+  languageId,
+});
 const authClientProxy = new AuthClient(ConnectionType.Proxy);
-const authClientClientSide = new AuthClient(ConnectionType.ClientSide, endpoints.authSign, endpoints.auth);
+const authClientClientSide = new AuthClient(
+  ConnectionType.ClientSide,
+  endpoints.authSign,
+  endpoints.auth,
+);
 
 let username = ref<string>('arvidsson@geins.io');
 let password = ref<string>('m7d8xdxi8ohbdzzrw3txvo');
@@ -45,7 +51,10 @@ const credentials = computed(() => {
   };
 });
 const newPassword = computed(() => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
 });
 
 const userLoggedIn = computed(() => {
@@ -76,7 +85,7 @@ const loginProxyBad = async () => {
   const result = await authClientProxy.login({
     username: 'error',
     password: 'error',
-    rememberUser: true
+    rememberUser: true,
   });
   console.log('loginProxyBad() result', result);
   dumpCookiesAndUpdateUser();
@@ -87,7 +96,7 @@ const loginClientBad = async () => {
   const result = await authClientClientSide.login({
     username: 'error',
     password: 'error',
-    rememberUser: true
+    rememberUser: true,
   });
   console.log('loginClientBad() result', result);
   dumpCookiesAndUpdateUser();
@@ -172,11 +181,13 @@ const newPasswordClient = async () => {
     rememberUser: rememberUser.value.valueOf(),
     newPassword: np,
   };
-  const result = await authClientClientSide.changePassword(newPasswordCredentials);
+  const result = await authClientClientSide.changePassword(
+    newPasswordCredentials,
+  );
   console.log('newPasswordClient() newPassword=' + np + ' result', result);
   password.value = np;
   dumpCookiesAndUpdateUser();
-}
+};
 
 const dumpCookiesAndUpdateUser = async (noUser?: boolean) => {
   console.log('dumpCookiesAndUpdateUser()');
@@ -184,13 +195,15 @@ const dumpCookiesAndUpdateUser = async (noUser?: boolean) => {
   const allCookies = geinsCore.cookies.getAll() as any;
   // console.log('dumpCookiesAndUpdateUser() allCookies', allCookies);
   for (const key in allCookies) {
-    items.value.push({ header: key, data: JSON.stringify(allCookies[key], null, 2) });
+    items.value.push({
+      header: key,
+      data: JSON.stringify(allCookies[key], null, 2),
+    });
   }
   if (noUser === false || noUser === undefined) {
     console.log('dumpCookiesAndUpdateUser() running getUser()');
     getUser();
   }
-
 };
 
 const getUser = async () => {
@@ -199,29 +212,26 @@ const getUser = async () => {
     const result = await authClientProxy.getUser();
     console.log('getUser() from [' + connectionType.value + '] result', result);
     user.value = result;
-
   } else {
     const result = await authClientClientSide.getUser();
     console.log('getUser() from [' + connectionType.value + '] result', result);
     user.value = result;
   }
-
-
-
-}
+};
 
 const getToken = async () => {
-
-  const result = connectionType.value === ConnectionType.Proxy ?
-    await authClientProxy.token() :
-    await authClientClientSide.token();
+  const result =
+    connectionType.value === ConnectionType.Proxy
+      ? await authClientProxy.token()
+      : await authClientClientSide.token();
   console.log('getToken() from [' + connectionType.value + '] result', result);
 };
 
 const doNothing = async () => {
-  const result = connectionType.value === ConnectionType.Proxy ?
-    await authClientProxy.nothing() :
-    await authClientClientSide.nothing();
+  const result =
+    connectionType.value === ConnectionType.Proxy
+      ? await authClientProxy.nothing()
+      : await authClientClientSide.nothing();
   console.log('doNothing() from [' + connectionType.value + '] result', result);
 };
 
@@ -230,13 +240,16 @@ const previewCookieToken = async () => {
   const allCookies = geinsCore.cookies.getAll() as any;
   console.log('previewCookieToken() allCookies', allCookies);
   for (const key in allCookies) {
-    items.value.push({ header: key, data: JSON.stringify(allCookies[key], null, 2) });
+    items.value.push({
+      header: key,
+      data: JSON.stringify(allCookies[key], null, 2),
+    });
     if (key === 'geins-auth') {
       const t1 = allCookies[key];
       console.log('previewToken()', authClaimsTokenSerializeToObject(t1));
     }
   }
-}
+};
 </script>
 
 <template>
@@ -244,7 +257,7 @@ const previewCookieToken = async () => {
     <h2>Nuxt @geins/crm AUTH Test</h2>
     <table>
       <tr>
-        <td style="vertical-align: top;">
+        <td style="vertical-align: top">
           <table>
             <tr>
               <td>CREDENTIALS:</td>
@@ -261,7 +274,7 @@ const previewCookieToken = async () => {
                     </td>
                     <td>
                       password:<br />
-                      <input v-model="password" style="width:250px" />
+                      <input v-model="password" style="width: 250px" />
                     </td>
                     <td>
                       remember user: <br />
@@ -273,7 +286,7 @@ const previewCookieToken = async () => {
             </tr>
             <tr>
               <td colspan="3">
-                <hr>
+                <hr />
               </td>
             </tr>
             <tr>
@@ -283,27 +296,66 @@ const previewCookieToken = async () => {
             </tr>
             <tr>
               <td colspan="3">
-                <button :disabled="connectionType === ConnectionType.ClientSide || userLoggedIn"
-                  @click="loginProxyGood">Login
-                  Good</button>
-                <button :disabled="connectionType === ConnectionType.ClientSide || userLoggedIn"
-                  @click="loginProxyBad">Login
-                  Bad</button>
-                <button :disabled="connectionType === ConnectionType.ClientSide || !userLoggedIn"
-                  @click="logoutProxy">Logout</button>
-                <button :disabled="connectionType === ConnectionType.ClientSide || !userLoggedIn"
-                  @click="refreshProxy">Refresh</button>
-                <button :disabled="connectionType === ConnectionType.ClientSide" @click="registerProxy">User
-                  Register</button>
-                <button :disabled="connectionType === ConnectionType.ClientSide || !userLoggedIn"
-                  @click="newPasswordProxy">Change
-                  Password</button>
-                <button :disabled="connectionType === ConnectionType.ClientSide" @click="getUserProxy">Get User</button>
+                <button
+                  :disabled="
+                    connectionType === ConnectionType.ClientSide || userLoggedIn
+                  "
+                  @click="loginProxyGood"
+                >
+                  Login Good
+                </button>
+                <button
+                  :disabled="
+                    connectionType === ConnectionType.ClientSide || userLoggedIn
+                  "
+                  @click="loginProxyBad"
+                >
+                  Login Bad
+                </button>
+                <button
+                  :disabled="
+                    connectionType === ConnectionType.ClientSide ||
+                    !userLoggedIn
+                  "
+                  @click="logoutProxy"
+                >
+                  Logout
+                </button>
+                <button
+                  :disabled="
+                    connectionType === ConnectionType.ClientSide ||
+                    !userLoggedIn
+                  "
+                  @click="refreshProxy"
+                >
+                  Refresh
+                </button>
+                <button
+                  :disabled="connectionType === ConnectionType.ClientSide"
+                  @click="registerProxy"
+                >
+                  User Register
+                </button>
+                <button
+                  :disabled="
+                    connectionType === ConnectionType.ClientSide ||
+                    !userLoggedIn
+                  "
+                  @click="newPasswordProxy"
+                >
+                  Change Password
+                </button>
+                <button
+                  :disabled="connectionType === ConnectionType.ClientSide"
+                  @click="getUserProxy"
+                >
+                  Get User
+                </button>
               </td>
             </tr>
             <tr>
               <td colspan="3">
-                <hr>
+                <hr />
               </td>
             </tr>
             <tr>
@@ -313,25 +365,63 @@ const previewCookieToken = async () => {
             </tr>
             <tr>
               <td colspan="3">
-                <button :disabled="connectionType === ConnectionType.Proxy || userLoggedIn"
-                  @click="loginClientGood">Login Good</button>
-                <button :disabled="connectionType === ConnectionType.Proxy || userLoggedIn"
-                  @click="loginClientBad">Login Bad</button>
-                <button :disabled="connectionType === ConnectionType.Proxy || !userLoggedIn"
-                  @click="logoutClient">Logout</button>
-                <button :disabled="connectionType === ConnectionType.Proxy || !userLoggedIn"
-                  @click="refreshClient">Refresh</button>
-                <button :disabled="connectionType === ConnectionType.Proxy" @click="registerClient">User
-                  Register</button>
-                <button :disabled="connectionType === ConnectionType.Proxy || !userLoggedIn"
-                  @click="newPasswordClient">Change
-                  Password</button>
-                <button :disabled="connectionType === ConnectionType.Proxy" @click="getUserClient">Get User</button>
+                <button
+                  :disabled="
+                    connectionType === ConnectionType.Proxy || userLoggedIn
+                  "
+                  @click="loginClientGood"
+                >
+                  Login Good
+                </button>
+                <button
+                  :disabled="
+                    connectionType === ConnectionType.Proxy || userLoggedIn
+                  "
+                  @click="loginClientBad"
+                >
+                  Login Bad
+                </button>
+                <button
+                  :disabled="
+                    connectionType === ConnectionType.Proxy || !userLoggedIn
+                  "
+                  @click="logoutClient"
+                >
+                  Logout
+                </button>
+                <button
+                  :disabled="
+                    connectionType === ConnectionType.Proxy || !userLoggedIn
+                  "
+                  @click="refreshClient"
+                >
+                  Refresh
+                </button>
+                <button
+                  :disabled="connectionType === ConnectionType.Proxy"
+                  @click="registerClient"
+                >
+                  User Register
+                </button>
+                <button
+                  :disabled="
+                    connectionType === ConnectionType.Proxy || !userLoggedIn
+                  "
+                  @click="newPasswordClient"
+                >
+                  Change Password
+                </button>
+                <button
+                  :disabled="connectionType === ConnectionType.Proxy"
+                  @click="getUserClient"
+                >
+                  Get User
+                </button>
               </td>
             </tr>
             <tr>
               <td colspan="3">
-                <hr>
+                <hr />
               </td>
             </tr>
             <tr>
@@ -348,35 +438,43 @@ const previewCookieToken = async () => {
             </tr>
           </table>
           <hr />
-          <div>
-
-          </div>
+          <div></div>
           Current CRM cookies:
-          <div v-if="items.length > 0" v-for="(item, index) in items" :key="index">
+          <div
+            v-if="items.length > 0"
+            v-for="(item, index) in items"
+            :key="index"
+          >
             <p>
               <b>{{ item.header }}</b>
               <br />
               <textarea
-                :style="{ border: 0, width: 500 + 'px', height: (item.data.length > 100 ? Math.min(200, item.data.length * 10) + 'px' : 20 + 'px') }">{{ item.data }}</textarea>
+                :style="{
+                  border: 0,
+                  width: 500 + 'px',
+                  height:
+                    item.data.length > 100
+                      ? Math.min(200, item.data.length * 10) + 'px'
+                      : 20 + 'px',
+                }"
+                >{{ item.data }}</textarea
+              >
             </p>
           </div>
-          <i v-else>
-            ... no cookies set
-          </i>
+          <i v-else> ... no cookies set </i>
         </td>
         <td></td>
-        <td style="vertical-align: top;padding-left:50px">
+        <td style="vertical-align: top; padding-left: 50px">
           <div v-if="connectionType">
             <b>Connection Type:</b>
             <pre>{{ connectionType }}</pre>
           </div>
-          <div v-if="user" style="width: 500px; overflow-x: scroll;">
+          <div v-if="user" style="width: 500px; overflow-x: scroll">
             <b>User Object:</b>
             <pre>{{ JSON.stringify(user, null, 2) }}</pre>
           </div>
         </td>
       </tr>
     </table>
-
   </div>
 </template>

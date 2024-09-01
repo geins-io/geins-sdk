@@ -59,12 +59,14 @@ export class AuthServiceClient {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
-        ...(this.refreshToken ? { 'Cookie': `refresh=${this.refreshToken}` } : {})
+        ...(this.refreshToken
+          ? { Cookie: `refresh=${this.refreshToken}` }
+          : {}),
       },
       body: requiresSign ? JSON.stringify(authRequestBody) : undefined,
     };
 
-  /*   if (this.refreshToken) {
+    /*   if (this.refreshToken) {
       fetchOptions?.headers?['Cookie'] = `refresh=${this.refreshToken}`;
     } */
 
