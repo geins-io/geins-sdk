@@ -114,7 +114,7 @@ const changePassword = async (
     }
 
     return {
-      status: authReponse.succeded ? 200 : 401,
+      status: authReponse.succeeded ? 200 : 401,
       body: {
         data: authReponse,
       },
@@ -142,7 +142,6 @@ const login = async (
     if (authReponse.tokens !== undefined && authReponse.tokens.refreshToken) {
       refreshCookieTokenSet(event, authReponse.tokens.refreshToken);
     }
-
     return {
       status: authReponse.user?.authenticated ? 200 : 401,
       body: {
@@ -163,9 +162,9 @@ const logout = async () => {
   try {
     const authReponse = await authService.logout();
     return {
-      status: authReponse.succeded ? 200 : 500,
+      status: authReponse.succeeded ? 200 : 500,
       body: {
-        message: authReponse.succeded ? 'Logout successful' : 'Logout failed',
+        message: authReponse.succeeded ? 'Logout successful' : 'Logout failed',
       },
     };
   } catch (error: any) {
@@ -182,7 +181,6 @@ const logout = async () => {
 const getUser = async (event: any) => {
   try {
     const authReponse = await authService.getUser();
-
     if (
       authReponse &&
       authReponse?.tokens &&
@@ -192,7 +190,7 @@ const getUser = async (event: any) => {
     }
 
     return {
-      status: authReponse?.succeded ? 200 : 401,
+      status: authReponse?.succeeded ? 200 : 401,
       body: {
         data: authReponse,
       },
@@ -211,21 +209,16 @@ const getUser = async (event: any) => {
 const refresh = async (event: any) => {
   try {
     const authReponse = await authService.refresh();
-    console.log(
-      '[..].ts [2- 1] -- PROXY refresh() returned refresh',
-      authReponse,
-    );
 
     if (
-      authReponse.succeded &&
+      authReponse.succeeded &&
       authReponse.tokens &&
       authReponse.tokens.refreshToken
     ) {
       refreshCookieTokenSet(event, authReponse.tokens.refreshToken);
     }
-    console.log('[..].ts [2- 2] -- PROXY refresh() set refresh token');
     return {
-      status: authReponse.succeded ? 200 : 401,
+      status: authReponse.succeeded ? 200 : 401,
       body: {
         data: authReponse,
       },

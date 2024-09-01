@@ -6,6 +6,7 @@ import { authClaimsTokenSerializeToObject } from '../utils/helpers';
 
 import type { Channel, MerchantApiCredentials } from '@geins/core';
 
+
 const runtimeConfig = useRuntimeConfig();
 const items = ref<any[]>([]);
 
@@ -38,7 +39,7 @@ const authClientClientSide = new AuthClient(
 );
 
 let username = ref<string>('arvidsson@geins.io');
-let password = ref<string>('m7d8xdxi8ohbdzzrw3txvo');
+let password = ref<string>('735c2lwps575jy0be8wioo');
 let rememberUser = ref<Boolean>(true);
 let connectionType = ref<string>('');
 let user = ref<any>({});
@@ -62,21 +63,22 @@ const userLoggedIn = computed(() => {
 });
 
 onMounted(async () => {
-  user.value = await authClientClientSide.getUser();
-  dumpCookiesAndUpdateUser();
+  getUser();
+  //user.value = await authClientClientSide.getUser();
+  //dumpCookiesAndUpdateUser();
 });
 
 const loginProxyGood = async () => {
   connectionType.value = ConnectionType.Proxy;
   const result = await authClientProxy.login(credentials.value);
-  console.log('loginProxyGood() result', result);
+  console.log('[auth.vue] - [auth.vue] loginProxyGood() result', result);
   dumpCookiesAndUpdateUser();
 };
 
 const loginClientGood = async () => {
   connectionType.value = ConnectionType.ClientSide;
   const result = await authClientClientSide.login(credentials.value);
-  console.log('loginClientGood() result', result);
+  console.log('[auth.vue] - loginClientGood() result', result);
   dumpCookiesAndUpdateUser();
 };
 
@@ -87,7 +89,7 @@ const loginProxyBad = async () => {
     password: 'error',
     rememberUser: true,
   });
-  console.log('loginProxyBad() result', result);
+  console.log('[auth.vue] - loginProxyBad() result', result);
   dumpCookiesAndUpdateUser();
 };
 
@@ -98,63 +100,63 @@ const loginClientBad = async () => {
     password: 'error',
     rememberUser: true,
   });
-  console.log('loginClientBad() result', result);
+  console.log('[auth.vue] - loginClientBad() result', result);
   dumpCookiesAndUpdateUser();
 };
 
 const logoutProxy = async () => {
   connectionType.value = '';
   const result = await authClientProxy.logout();
-  console.log('refreshProxy() result', result);
+  console.log('[auth.vue] - refreshProxy() result', result);
   dumpCookiesAndUpdateUser();
 };
 
 const logoutClient = async () => {
   connectionType.value = '';
   const result = await authClientClientSide.logout();
-  console.log('refreshProxy() result', result);
+  console.log('[auth.vue] - refreshProxy() result', result);
   dumpCookiesAndUpdateUser();
 };
 
 const refreshProxy = async () => {
   connectionType.value = ConnectionType.Proxy;
   const result = await authClientProxy.refresh();
-  console.log('refreshProxy() result', result);
+  console.log('[auth.vue] - refreshProxy() result', result);
   dumpCookiesAndUpdateUser();
 };
 
 const refreshClient = async () => {
   connectionType.value = ConnectionType.ClientSide;
   const result = await authClientClientSide.refresh();
-  console.log('refreshProxy() result', result);
+  console.log('[auth.vue] - refreshProxy() result', result);
   dumpCookiesAndUpdateUser();
 };
 
 const registerProxy = async () => {
   connectionType.value = ConnectionType.Proxy;
-  const result = await authClientProxy.register();
-  console.log('registerProxy() result', result);
+  const result = await authClientProxy.register(credentials.value);
+  console.log('[auth.vue] - registerProxy() result', result);
   dumpCookiesAndUpdateUser();
 };
 
 const registerClient = async () => {
   connectionType.value = ConnectionType.ClientSide;
-  const result = await authClientClientSide.register();
-  console.log('registerClient() result', result);
+  const result = await authClientClientSide.register(credentials.value);
+  console.log('[auth.vue] - registerClient() result', result);
   dumpCookiesAndUpdateUser();
 };
 
 const getUserProxy = async () => {
   connectionType.value = ConnectionType.Proxy;
   const result = await authClientProxy.getUser();
-  console.log('[auth.vue] getUserProxy() result', result);
+  console.log('[auth.vue] - [auth.vue] getUserProxy() -- result', result);
   dumpCookiesAndUpdateUser(true);
 };
 
 const getUserClient = async () => {
   connectionType.value = ConnectionType.ClientSide;
   const result = await authClientClientSide.getUser();
-  console.log('[auth.vue] getUserClient() result', result);
+  console.log('[auth.vue] - [auth.vue] getUserClient() -- result', result);
   dumpCookiesAndUpdateUser(true);
 };
 
@@ -166,9 +168,9 @@ const newPasswordProxy = async () => {
     rememberUser: rememberUser.value.valueOf(),
     newPassword: newPassword.value,
   };
-  console.log('newPasswordProxy() newPassword=' + newPassword.value);
+  console.log('[auth.vue] - newPasswordProxy() newPassword=' + newPassword.value);
   const result = await authClientProxy.changePassword(newPasswordCredentials);
-  console.log('newPasswordProxy() result', result);
+  console.log('[auth.vue] - newPasswordProxy() result', result);
   dumpCookiesAndUpdateUser();
 };
 
@@ -184,16 +186,17 @@ const newPasswordClient = async () => {
   const result = await authClientClientSide.changePassword(
     newPasswordCredentials,
   );
-  console.log('newPasswordClient() newPassword=' + np + ' result', result);
+  console.log('[auth.vue] - newPasswordClient() newPassword=' + np + ' result', result);
   password.value = np;
   dumpCookiesAndUpdateUser();
 };
 
 const dumpCookiesAndUpdateUser = async (noUser?: boolean) => {
-  console.log('dumpCookiesAndUpdateUser()');
+
+
   items.value = [];
   const allCookies = geinsCore.cookies.getAll() as any;
-  // console.log('dumpCookiesAndUpdateUser() allCookies', allCookies);
+  // console.log('[auth.vue] - dumpCookiesAndUpdateUser() allCookies', allCookies);
   for (const key in allCookies) {
     items.value.push({
       header: key,
@@ -201,7 +204,6 @@ const dumpCookiesAndUpdateUser = async (noUser?: boolean) => {
     });
   }
   if (noUser === false || noUser === undefined) {
-    console.log('dumpCookiesAndUpdateUser() running getUser()');
     getUser();
   }
 };
@@ -210,11 +212,11 @@ const getUser = async () => {
   user.value = { l: 'loading...' };
   if (connectionType.value === ConnectionType.Proxy) {
     const result = await authClientProxy.getUser();
-    console.log('getUser() from [' + connectionType.value + '] result', result);
+    console.log('[auth.vue] - [auth.vue] - getUser() from authClientProxy [' + connectionType.value + '] result', result);
     user.value = result;
   } else {
     const result = await authClientClientSide.getUser();
-    console.log('getUser() from [' + connectionType.value + '] result', result);
+    console.log('[auth.vue] - [auth.vue] - getUser() from authClientClientSide [' + connectionType.value + '] result', result);
     user.value = result;
   }
 };
@@ -224,7 +226,7 @@ const getToken = async () => {
     connectionType.value === ConnectionType.Proxy
       ? await authClientProxy.token()
       : await authClientClientSide.token();
-  console.log('getToken() from [' + connectionType.value + '] result', result);
+  console.log('[auth.vue] - getToken() from [' + connectionType.value + '] result', result);
 };
 
 const doNothing = async () => {
@@ -232,13 +234,13 @@ const doNothing = async () => {
     connectionType.value === ConnectionType.Proxy
       ? await authClientProxy.nothing()
       : await authClientClientSide.nothing();
-  console.log('doNothing() from [' + connectionType.value + '] result', result);
+  console.log('[auth.vue] - doNothing() from [' + connectionType.value + '] result', result);
 };
 
 const previewCookieToken = async () => {
   items.value = [];
   const allCookies = geinsCore.cookies.getAll() as any;
-  console.log('previewCookieToken() allCookies', allCookies);
+  console.log('[auth.vue] - previewCookieToken() allCookies', allCookies);
   for (const key in allCookies) {
     items.value.push({
       header: key,
@@ -246,7 +248,7 @@ const previewCookieToken = async () => {
     });
     if (key === 'geins-auth') {
       const t1 = allCookies[key];
-      console.log('previewToken()', authClaimsTokenSerializeToObject(t1));
+      console.log('[auth.vue] - previewToken()', authClaimsTokenSerializeToObject(t1));
     }
   }
 };
@@ -296,59 +298,33 @@ const previewCookieToken = async () => {
             </tr>
             <tr>
               <td colspan="3">
-                <button
-                  :disabled="
-                    connectionType === ConnectionType.ClientSide || userLoggedIn
-                  "
-                  @click="loginProxyGood"
-                >
+                <button :disabled="connectionType === ConnectionType.ClientSide || userLoggedIn
+                  " @click="loginProxyGood">
                   Login Good
                 </button>
-                <button
-                  :disabled="
-                    connectionType === ConnectionType.ClientSide || userLoggedIn
-                  "
-                  @click="loginProxyBad"
-                >
+                <button :disabled="connectionType === ConnectionType.ClientSide || userLoggedIn
+                  " @click="loginProxyBad">
                   Login Bad
                 </button>
-                <button
-                  :disabled="
-                    connectionType === ConnectionType.ClientSide ||
-                    !userLoggedIn
-                  "
-                  @click="logoutProxy"
-                >
+                <button :disabled="connectionType === ConnectionType.ClientSide ||
+                  !userLoggedIn
+                  " @click="logoutProxy">
                   Logout
                 </button>
-                <button
-                  :disabled="
-                    connectionType === ConnectionType.ClientSide ||
-                    !userLoggedIn
-                  "
-                  @click="refreshProxy"
-                >
+                <button :disabled="connectionType === ConnectionType.ClientSide ||
+                  !userLoggedIn
+                  " @click="refreshProxy">
                   Refresh
                 </button>
-                <button
-                  :disabled="connectionType === ConnectionType.ClientSide"
-                  @click="registerProxy"
-                >
+                <button :disabled="connectionType === ConnectionType.ClientSide" @click="registerProxy">
                   User Register
                 </button>
-                <button
-                  :disabled="
-                    connectionType === ConnectionType.ClientSide ||
-                    !userLoggedIn
-                  "
-                  @click="newPasswordProxy"
-                >
+                <button :disabled="connectionType === ConnectionType.ClientSide ||
+                  !userLoggedIn
+                  " @click="newPasswordProxy">
                   Change Password
                 </button>
-                <button
-                  :disabled="connectionType === ConnectionType.ClientSide"
-                  @click="getUserProxy"
-                >
+                <button :disabled="connectionType === ConnectionType.ClientSide" @click="getUserProxy">
                   Get User
                 </button>
               </td>
@@ -365,56 +341,30 @@ const previewCookieToken = async () => {
             </tr>
             <tr>
               <td colspan="3">
-                <button
-                  :disabled="
-                    connectionType === ConnectionType.Proxy || userLoggedIn
-                  "
-                  @click="loginClientGood"
-                >
+                <button :disabled="connectionType === ConnectionType.Proxy || userLoggedIn
+                  " @click="loginClientGood">
                   Login Good
                 </button>
-                <button
-                  :disabled="
-                    connectionType === ConnectionType.Proxy || userLoggedIn
-                  "
-                  @click="loginClientBad"
-                >
+                <button :disabled="connectionType === ConnectionType.Proxy || userLoggedIn
+                  " @click="loginClientBad">
                   Login Bad
                 </button>
-                <button
-                  :disabled="
-                    connectionType === ConnectionType.Proxy || !userLoggedIn
-                  "
-                  @click="logoutClient"
-                >
+                <button :disabled="connectionType === ConnectionType.Proxy || !userLoggedIn
+                  " @click="logoutClient">
                   Logout
                 </button>
-                <button
-                  :disabled="
-                    connectionType === ConnectionType.Proxy || !userLoggedIn
-                  "
-                  @click="refreshClient"
-                >
+                <button :disabled="connectionType === ConnectionType.Proxy || !userLoggedIn
+                  " @click="refreshClient">
                   Refresh
                 </button>
-                <button
-                  :disabled="connectionType === ConnectionType.Proxy"
-                  @click="registerClient"
-                >
+                <button :disabled="connectionType === ConnectionType.Proxy" @click="registerClient">
                   User Register
                 </button>
-                <button
-                  :disabled="
-                    connectionType === ConnectionType.Proxy || !userLoggedIn
-                  "
-                  @click="newPasswordClient"
-                >
+                <button :disabled="connectionType === ConnectionType.Proxy || !userLoggedIn
+                  " @click="newPasswordClient">
                   Change Password
                 </button>
-                <button
-                  :disabled="connectionType === ConnectionType.Proxy"
-                  @click="getUserClient"
-                >
+                <button :disabled="connectionType === ConnectionType.Proxy" @click="getUserClient">
                   Get User
                 </button>
               </td>
@@ -440,25 +390,18 @@ const previewCookieToken = async () => {
           <hr />
           <div></div>
           Current CRM cookies:
-          <div
-            v-if="items.length > 0"
-            v-for="(item, index) in items"
-            :key="index"
-          >
+          <div v-if="items.length > 0" v-for="(item, index) in items" :key="index">
             <p>
               <b>{{ item.header }}</b>
               <br />
-              <textarea
-                :style="{
-                  border: 0,
-                  width: 500 + 'px',
-                  height:
-                    item.data.length > 100
-                      ? Math.min(200, item.data.length * 10) + 'px'
-                      : 20 + 'px',
-                }"
-                >{{ item.data }}</textarea
-              >
+              <textarea :style="{
+                border: 0,
+                width: 500 + 'px',
+                height:
+                  item.data.length > 100
+                    ? Math.min(200, item.data.length * 10) + 'px'
+                    : 20 + 'px',
+              }">{{ item.data }}</textarea>
             </p>
           </div>
           <i v-else> ... no cookies set </i>
