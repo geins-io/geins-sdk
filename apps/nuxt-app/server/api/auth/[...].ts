@@ -81,11 +81,19 @@ export default defineEventHandler(async (event) => {
     return result;
   } else if (authMethod === 'refresh') {
     return await refresh(event);
+  } else if (authMethod === 'user') {
+    return await getUser(event);
   } else if (authMethod === 'token') {
     hasRefreshTokenCookie(event);
     return nothing();
   } else if (authMethod === 'password') {
-    return await changePassword(event,username, password, newPassword,rememberUser);
+    return await changePassword(
+      event,
+      username,
+      password,
+      newPassword,
+      rememberUser,
+    );
   } else {
     return nothing();
   }
@@ -101,8 +109,8 @@ const changePassword = async (
   try {
     const credentials = { username, password, newPassword, rememberUser };
     const authReponse = await authService.changePassword(credentials);
-   if (authReponse.data.refreshToken) {
-      refreshCookieTokenSet(event, authReponse.data.refreshToken);
+    if (authReponse.tokens && authReponse.tokens.refreshToken) {
+      refreshCookieTokenSet(event, authReponse.tokens.refreshToken);
     }
 
     return {
@@ -131,12 +139,12 @@ const login = async (
   try {
     const credentials = { username, password, rememberUser };
     const authReponse = await authService.login(credentials);
-    if (authReponse.data.refreshToken) {
-      refreshCookieTokenSet(event, authReponse.data.refreshToken);
+    if (authReponse.tokens !== undefined && authReponse.tokens.refreshToken) {
+      refreshCookieTokenSet(event, authReponse.tokens.refreshToken);
     }
 
     return {
-      status: authReponse.data.authenticated ? 200 : 401,
+      status: authReponse.user?.authenticated ? 200 : 401,
       body: {
         data: authReponse,
       },
@@ -146,7 +154,6 @@ const login = async (
       status: 500,
       body: {
         message: 'Login failed',
-        error: error.message,
       },
     };
   }
@@ -166,7 +173,36 @@ const logout = async () => {
       status: 500,
       body: {
         message: 'Logout failed',
-        error: error.message
+        error: error.message,
+      },
+    };
+  }
+};
+
+const getUser = async (event: any) => {
+  try {
+    const authReponse = await authService.getUser();
+
+    if (
+      authReponse &&
+      authReponse?.tokens &&
+      authReponse?.tokens?.refreshToken
+    ) {
+      refreshCookieTokenSet(event, authReponse.tokens.refreshToken);
+    }
+
+    return {
+      status: authReponse?.succeded ? 200 : 401,
+      body: {
+        data: authReponse,
+      },
+    };
+  } catch (error: any) {
+    return {
+      status: 500,
+      body: {
+        message: 'Failed to retrieve status',
+        error: error.message,
       },
     };
   }
@@ -175,14 +211,23 @@ const logout = async () => {
 const refresh = async (event: any) => {
   try {
     const authReponse = await authService.refresh();
-    if (authReponse.succeded && authReponse.data.refreshToken) {
-      refreshCookieTokenSet(event, authReponse.data.refreshToken);
-    }
+    console.log(
+      '[..].ts [2- 1] -- PROXY refresh() returned refresh',
+      authReponse,
+    );
 
+    if (
+      authReponse.succeded &&
+      authReponse.tokens &&
+      authReponse.tokens.refreshToken
+    ) {
+      refreshCookieTokenSet(event, authReponse.tokens.refreshToken);
+    }
+    console.log('[..].ts [2- 2] -- PROXY refresh() set refresh token');
     return {
       status: authReponse.succeded ? 200 : 401,
       body: {
-        data: authReponse.succeded ? authReponse.data : undefined,
+        data: authReponse,
       },
     };
   } catch (error: any) {
@@ -204,7 +249,6 @@ const nothing = async () => {
     },
   };
 };
-
 
 const hasRefreshTokenCookie = async (event: any) => {
   const cookies = event.req.headers.cookie || '';

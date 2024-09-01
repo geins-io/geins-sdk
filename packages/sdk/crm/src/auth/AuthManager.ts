@@ -2,7 +2,6 @@
 
 import AuthClient from './authClient';
 import { BroadcastChannel } from 'broadcast-channel';
-import Cookies from 'js-cookie';
 
 interface Credentials {
   username: string;
@@ -89,66 +88,7 @@ class AuthManager {
 
   update(
     payload: { credentials?: Credentials; refetchQueries?: boolean } = {},
-  ) {
-    console.log('update -> payload', payload);
-    const credentials = payload?.credentials;
-    let refetchQueries = payload?.refetchQueries || false;
-    let broadcast = typeof window !== 'undefined';
-
-    let username: string | null = credentials
-      ? credentials.username
-      : Cookies.get('geins-user') || null;
-    if (this.client?.authorized) {
-      this.setTokenTimeout(
-        setTimeout(() => {
-          if (typeof window !== 'undefined') {
-            this.refresh(true);
-          }
-        }, this.client!.getMaxAge() * 900),
-      );
-
-      const maxAgeDays = this.client.getMaxAge() / (3600 * 24);
-
-      Cookies.set('geins-auth', this.client.getToken(), {
-        path: '/',
-        expires: maxAgeDays,
-      });
-
-      let maxage: number = credentials
-        ? credentials.rememberUser
-          ? 604800
-          : 1800
-        : parseInt(Cookies.get('geins-user-maxage') || '604800', 10);
-
-      this.setUser(username);
-      Cookies.set('geins-user', username!, { path: '/', expires: maxAgeDays });
-      Cookies.set('geins-user-maxage', maxage.toString(), {
-        path: '/',
-        expires: maxAgeDays,
-      });
-    } else if (this.user !== null) {
-      username = null;
-      this.clearTokenTimeout();
-      this.setUser(username);
-      [
-        'geins-auth',
-        'geins-user',
-        'geins-user-maxage',
-        'geins-user-type',
-      ].forEach((key) => Cookies.remove(key, { path: '/' }));
-    } else {
-      refetchQueries = false;
-      broadcast = false;
-    }
-
-    if (broadcast && this.broadcastChannel) {
-      this.eventsPush({ type: 'auth' });
-    }
-
-    if (refetchQueries) {
-      this.refetchQueries();
-    }
-  }
+  ) {}
 
   private eventsPush(event: { type: string }) {
     console.log('eventsPush ', event);
@@ -177,10 +117,7 @@ class AuthManager {
 
   get getUser(): string | null {
     if (!this.user) {
-      const user = Cookies.get('geins-user') || null;
-      if (user) {
-        this.setUser(user);
-      }
+      return null;
     }
     return this.user;
   }

@@ -1,7 +1,6 @@
-import { AuthService } from './authService';
+import { AuthService, type AuthResponse } from './authService';
 import { CookieService, AUTH_COOKIES } from '@geins/core';
 import { authClaimsTokenSerializeToObject } from './helpers';
-
 
 export interface Credentials {
   username: string;
@@ -19,7 +18,6 @@ export class AuthClient {
   private AUTH_ENDPOINT_APP = '/api/auth';
   private authService: AuthService | null = null;
   private cookieService: CookieService = new CookieService();
-
 
   constructor(
     private connectionType: ConnectionType,
@@ -82,8 +80,7 @@ export class AuthClient {
   }
 
   private async loginProxy(credentials: Credentials) {
-    const b = JSON.stringify(credentials);
-
+    console.log('authClient.ts loginProxy -> credentials', credentials);
 
     const result = await fetch(this.AUTH_ENDPOINT_APP + '/login', {
       method: 'POST',
@@ -93,6 +90,8 @@ export class AuthClient {
       },
       body: JSON.stringify(credentials),
     }).then((res) => res.json());
+
+    console.log('authClient.ts loginProxy -> result', result);
 
     if (result.status !== 200) {
       return;
@@ -117,13 +116,14 @@ export class AuthClient {
         ? await this.loginProxy(credentials)
         : await this.loginClientSide(credentials);
 
+    console.log('authClient.ts login() -> authReponse', authReponse);
 
     if (!authReponse) {
       throw new Error('Invalid credentials');
     }
 
-    this.setCookiesLogin(authReponse.data, credentials.rememberUser || false);
-    return authReponse.data;
+    this.setCookiesLogin(authReponse, credentials.rememberUser || false);
+    return authReponse;
   }
 
   private async logoutProxy() {
@@ -158,6 +158,7 @@ export class AuthClient {
   }
 
   private async refreshProxy() {
+    console.log('[2]-- refreshProxy() running');
     const result = await fetch(this.AUTH_ENDPOINT_APP + '/refresh', {
       method: 'GET',
       cache: 'no-cache',
@@ -165,6 +166,8 @@ export class AuthClient {
         'Content-Type': 'application/json',
       },
     }).then((res) => res.json());
+    console.log('[3] authClient.ts refreshProxy -> result', result);
+
     if (result.status !== 200) {
       return;
     }
@@ -180,18 +183,22 @@ export class AuthClient {
     if (!this.authService) {
       throw new Error('AuthService not initialized');
     }
-    const result = await this.authService.refresh();
-    return result.data.token;
+    return await this.authService.refresh();
   }
 
   async refresh() {
-    const result =
+    console.log('[1] authClient.ts refresh() running');
+    const authResponse =
       this.connectionType === ConnectionType.Proxy
         ? await this.refreshProxy()
         : await this.refreshClientSide();
 
-    this.setCookiesRefresh(result);
-    return result;
+    console.log('authClient.ts refresh() -> authResponse', authResponse);
+    if (authResponse && authResponse.tokens && authResponse.tokens.token) {
+      console.log('authResponse.tokens.token', authResponse.tokens.token);
+      this.setCookiesRefresh(authResponse.tokens.token);
+    }
+    return authResponse;
   }
 
   private async changePasswordProxy(credentials: Credentials) {
@@ -206,6 +213,8 @@ export class AuthClient {
     if (result.status !== 200) {
       return;
     }
+
+    console.log('authClient.ts changePasswordProxy -> result', result);
 
     if (!result.body || !result.body.data) {
       return;
@@ -234,22 +243,21 @@ export class AuthClient {
     if (!result) {
       throw new Error('Change password failed');
     }
-    return
-
-  }
-
-  async register() {
-    // register logic
+    return;
   }
 
   private async getUserProxy() {
-    const result = await fetch(this.AUTH_ENDPOINT_APP + '/refresh', {
+    // TODO USING REFRESH TOKEN to get USER....
+    const result = await fetch(this.AUTH_ENDPOINT_APP + '/user', {
       method: 'GET',
       cache: 'no-cache',
       headers: {
         'Content-Type': 'application/json',
       },
     }).then((res) => res.json());
+
+    console.log('3 - authClient.ts getUserProxy -> result', result);
+
     if (result.status !== 200) {
       return;
     }
@@ -261,64 +269,97 @@ export class AuthClient {
     return result.body.data;
   }
 
-  private async getUserClientSide(): Promise<any> {
-    let user: any = {};
+  private async getUserClientSide(): Promise<AuthResponse> {
+    let authResponse: AuthResponse = { succeded: false };
     if (!this.authService) {
-      return user;
+      return authResponse;
     }
     try {
-      user = await this.authService.getUser();
+      const userAuthResponse = await this.authService.getUser();
+      if (
+        userAuthResponse &&
+        userAuthResponse.user &&
+        userAuthResponse.tokens
+      ) {
+        authResponse = userAuthResponse;
+      }
     } catch (error) {
       console.error('Failed to get user:', error);
     }
 
-    if (!user?.token || user?.token === '') {
+    // console.log('getUserClientSide -> authResponse', authResponse);
+
+    if (!authResponse.tokens?.token || authResponse.tokens?.token === '') {
       const token = this.cookieService.get(AUTH_COOKIES.USER_AUTH);
-      user = await this.authService?.getUser(token);
+      authResponse = (await this.authService?.getUser(token)) || authResponse;
     }
 
-    return user;
+    return authResponse;
   }
 
   async getUser(): Promise<any> {
-    let user =
+    // TODO: check for tolkens....???
+
+    let authResponse =
       this.connectionType === ConnectionType.Proxy
         ? await this.getUserProxy()
         : await this.getUserClientSide();
 
+    console.log('authClient.ts getUser() -> authResponse', authResponse);
+    if (!authResponse || !authResponse.succeded) {
+      return; //  'xx --- --- --- --- ';
+    }
+
     // handle token expiration here
-    if (user && user.token) {
-      if (!user.expired && user.expiresSoon) {
-        const result = await this.refresh();
-        user = await this.authService?.getUserObjectFromToken(result);
-      } else if (user.expired) {
+    if (authResponse && authResponse.tokens.token) {
+      console.log(
+        'authResponse.hasTokens.token is it exp?',
+        authResponse.tokens,
+      );
+
+      if (authResponse.tokens.expired) {
+        console.log('Token expired clearing cookies');
         this.clearCookies();
+        return 'yy';
+      } else if (authResponse.tokens.expiresSoon) {
+        console.log(
+          'Token need refresh ->  return await this.refresh();',
+          authResponse,
+        );
+
+        const refreshResult = await this.refresh();
+        console.log('getUser() refreshResult', refreshResult);
       }
     }
-    return user;
+
+    return authResponse.user;
   }
 
+  async register() {
+    // register logic
+  }
 
-  private setCookiesLogin(user: AuthUser, rememberUser: boolean) {
+  private setCookiesLogin(authReponse: AuthResponse, rememberUser: boolean) {
+    console.log('authClient.ts setCookiesLogin -> authReponse', authReponse);
     const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes - This is matching the lifetime of the refresh cookie from the auth service
-    if(user.username) {
+    if (authReponse.user && authReponse.user.username) {
       this.cookieService.set({
         name: AUTH_COOKIES.USER,
-        payload: user.username,
+        payload: authReponse.user.username,
         maxAge: maxAge,
       });
     }
-    if(user.token) {
+    if (authReponse.tokens && authReponse.tokens.token) {
       this.cookieService.set({
         name: AUTH_COOKIES.USER_AUTH,
-        payload: user.token,
+        payload: authReponse.tokens.token,
         maxAge: maxAge,
       });
     }
-    if(user.customerType) {
+    if (authReponse.user && authReponse.user.customerType) {
       this.cookieService.set({
         name: AUTH_COOKIES.USER_TYPE,
-        payload: user.customerType,
+        payload: authReponse.user.customerType,
         maxAge: maxAge,
       });
     }
@@ -330,11 +371,14 @@ export class AuthClient {
   }
 
   private setCookiesRefresh(userToken: any) {
+    console.log('setCookiesRefresh -> userToken', userToken);
+
     let maxAge = 1800;
     const maxAgeCookie = this.cookieService.get(AUTH_COOKIES.USER_MAX_AGE);
     if (maxAgeCookie) {
       maxAge = parseInt(maxAgeCookie);
     }
+    console.log('setCookiesRefresh -> userToken', userToken);
 
     this.cookieService.set({
       name: AUTH_COOKIES.USER_AUTH,
@@ -344,10 +388,10 @@ export class AuthClient {
   }
 
   private clearCookies() {
+    console.log('clearCookies');
     this.cookieService.remove(AUTH_COOKIES.USER);
     this.cookieService.remove(AUTH_COOKIES.USER_AUTH);
     this.cookieService.remove(AUTH_COOKIES.USER_TYPE);
     this.cookieService.remove(AUTH_COOKIES.USER_MAX_AGE);
   }
-
 }

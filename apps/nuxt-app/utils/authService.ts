@@ -1,21 +1,25 @@
-import { checkPrimeSync } from 'crypto';
 import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './helpers';
-interface AuthCredentials {
+const EXPIRES_SOON_THRESHOLD = 895;
+
+export interface AuthCredentials {
   username: string;
   password: string;
   newPassword?: string;
   rememberUser?: boolean;
 }
-interface AuthResponse {
+export interface AuthResponse {
   succeded: boolean;
-  data?: AuthToken | AuthUser | any;
+  user?: AuthUser;
+  tokens?: AuthTokens;
 }
 
-interface AuthToken {
+export interface AuthTokens {
   token?: string;
   refreshToken?: string;
+  maxAge?: number;
   expired?: boolean;
+  expires?: number;
   expiresIn?: number;
   expiresSoon?: boolean;
 }
@@ -57,15 +61,20 @@ export class AuthService {
 
   public async login(credentials: AuthCredentials): Promise<AuthResponse> {
     if (!this.client) {
+      this.initClient();
+    }
+
+    if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
 
-    const authReponse: AuthResponse  = { succeded: false, data: {} as AuthUser };
+    let authReponse: AuthResponse = { succeded: false };
 
     try {
       await this.client.connect(credentials, 'login');
-      authReponse.data = await this.getUser();
-      authReponse.succeded = authReponse.data.authenticated;
+      const userResponse = await this.getUser();
+      authReponse = userResponse || { succeded: false };
+      authReponse.succeded = authReponse?.user?.authenticated || false;
     } catch (error) {
       console.error('Login failed:', error);
     }
@@ -78,7 +87,7 @@ export class AuthService {
       throw new Error('AuthServiceClient is not initialized');
     }
 
-    const authReponse: AuthResponse  = { succeded: false };
+    const authReponse: AuthResponse = { succeded: false };
 
     try {
       await this.client.connect(undefined, 'logout');
@@ -95,32 +104,47 @@ export class AuthService {
       throw new Error('AuthServiceClient is not initialized');
     }
 
-    const authReponse: AuthResponse  = { succeded: false, data: {} as AuthToken };
+    const authReponse: AuthResponse = {
+      succeded: false,
+      tokens: {} as AuthTokens,
+    };
 
     try {
       await this.client.connect();
 
-      authReponse.data.token = this.client.getToken();
-      authReponse.data.refreshToken = this.client.getRefreshToken();
-      authReponse.data.expiresIn =this.client.getMaxAge();
+      console.log('[2 - 1] Token refreshed');
+
+      authReponse.tokens = {};
+      authReponse.tokens.token = this.client.getToken();
+      authReponse.tokens.refreshToken = this.client.getRefreshToken();
+      authReponse.tokens.maxAge = this.client.getMaxAge();
       authReponse.succeded = true;
+
+      console.log('[2 - 2] Token refreshed authReponse', authReponse);
     } catch (error) {
       console.error('Token refresh failed:', error);
     }
     return authReponse;
   }
 
-  public async changePassword(credentials: AuthCredentials): Promise<AuthResponse> {
+  public async changePassword(
+    credentials: AuthCredentials,
+  ): Promise<AuthResponse> {
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
 
-    const authReponse: AuthResponse  = { succeded: false, data: {} as AuthToken };
+    const authReponse: AuthResponse = {
+      succeded: false,
+      tokens: {} as AuthTokens,
+    };
 
     try {
       await this.client.connect(credentials, 'password');
-      authReponse.data.token = this.client.getToken();
-      authReponse.data.refreshToken = this.client.getRefreshToken();
+
+      authReponse.tokens = {};
+      authReponse.tokens.token = this.client.getToken();
+      authReponse.tokens.refreshToken = this.client.getRefreshToken();
       authReponse.succeded = true;
     } catch (error) {
       console.error('Password change failed:', error);
@@ -144,8 +168,13 @@ export class AuthService {
     }
   }
 
-
   async getUserObjectFromToken(claimsToken: string) {
+    const authReponse: AuthResponse = {
+      succeded: false,
+      tokens: {} as AuthTokens,
+      user: {} as AuthUser,
+    };
+
     let token;
     let userFromToken;
     try {
@@ -157,47 +186,55 @@ export class AuthService {
       return undefined;
     }
     token = claimsToken;
-    const user: AuthUser = {
-      authenticated: false,
-      userId: userFromToken.sid || '',
-      username: userFromToken.name || 'unknown',
-      customerType: userFromToken.customerType || 'unknown',
-      memberDiscount: userFromToken.memberDiscout || '0',
-      memberType: userFromToken.memberType || 'unknown',
-      memberId: userFromToken.memberId || '0',
-      token: token || '',
-      expires: userFromToken.exp,
-      expiresSoon: false,
-      expired: true,
-    };
-    user.customerType = user?.customerType?.toUpperCase();
+
+    authReponse.succeded = true;
+
+    authReponse.user = {} as AuthUser;
+    authReponse.user.authenticated = false;
+    authReponse.user.userId = userFromToken.sid || '';
+    authReponse.user.username = userFromToken.name || 'unknown';
+    authReponse.user.customerType = (
+      userFromToken.customerType || 'unknown'
+    ).toUpperCase();
+    authReponse.user.memberDiscount = userFromToken.memberDiscout || '0';
+    authReponse.user.memberType = userFromToken.memberType || 'unknown';
+    authReponse.user.memberId = userFromToken.memberId || '0';
+
+    authReponse.tokens = {} as AuthTokens;
+    authReponse.tokens.token = token;
+    authReponse.tokens.expires = parseInt(userFromToken.exp || '0');
+
+    authReponse.tokens.expiresSoon = false;
+    authReponse.tokens.expired = true;
+
     const now = Math.floor(Date.now() / 1000);
-    const timeLeft = parseInt(user.expires || '0') - now;
-    if (user.expires && now < parseInt(user.expires)) {
-      user.authenticated = true;
-      user.expired = false;
-      user.expiresSoon = timeLeft < 100;
+    if (now < parseInt(userFromToken.exp)) {
+      authReponse.user.authenticated = true;
+      authReponse.tokens.expired = false;
+      const timeLeft = parseInt(userFromToken.exp || '0') - now;
+      authReponse.tokens.expiresIn = timeLeft;
+      authReponse.tokens.expiresSoon = timeLeft < EXPIRES_SOON_THRESHOLD;
     }
-    // console.log('getUserObjectFromToken() timeLeft:', timeLeft);
-    return user;
+
+    return authReponse;
   }
 
   async getUser(token?: string) {
     if (token) {
       return await this.getUserObjectFromToken(token);
     }
+
     if (this.client) {
       token = this.client.getToken();
       if (token) {
-        const refreshToken = this.client.getRefreshToken();
-        const user = await this.getUserObjectFromToken(token);
-        if (user && refreshToken) {
-          user.refreshToken = refreshToken;
+        const authReponse = await this.getUserObjectFromToken(token);
+        if (authReponse && authReponse.tokens) {
+          authReponse.tokens.refreshToken = this.client.getRefreshToken();
         }
-        return user;
+        return authReponse;
       }
     }
-    return undefined;
+    return;
   }
 
   public get refreshToken() {

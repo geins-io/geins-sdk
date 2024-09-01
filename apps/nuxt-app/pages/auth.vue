@@ -35,7 +35,7 @@ let username = ref<string>('arvidsson@geins.io');
 let password = ref<string>('m7d8xdxi8ohbdzzrw3txvo');
 let rememberUser = ref<Boolean>(true);
 let connectionType = ref<string>('');
-let user = ref<User>({});
+let user = ref<any>({});
 
 const credentials = computed(() => {
   return {
@@ -138,15 +138,15 @@ const registerClient = async () => {
 const getUserProxy = async () => {
   connectionType.value = ConnectionType.Proxy;
   const result = await authClientProxy.getUser();
-  console.log('getUserProxy() result', result);
-  dumpCookiesAndUpdateUser();
+  console.log('[auth.vue] getUserProxy() result', result);
+  dumpCookiesAndUpdateUser(true);
 };
 
 const getUserClient = async () => {
   connectionType.value = ConnectionType.ClientSide;
   const result = await authClientClientSide.getUser();
-  console.log('getUserClient() result', result);
-  dumpCookiesAndUpdateUser();
+  console.log('[auth.vue] getUserClient() result', result);
+  dumpCookiesAndUpdateUser(true);
 };
 
 const newPasswordProxy = async () => {
@@ -157,8 +157,9 @@ const newPasswordProxy = async () => {
     rememberUser: rememberUser.value.valueOf(),
     newPassword: newPassword.value,
   };
+  console.log('newPasswordProxy() newPassword=' + newPassword.value);
   const result = await authClientProxy.changePassword(newPasswordCredentials);
-  console.log('newPasswordProxy() newPassword=' + newPassword.value + ' result', result);
+  console.log('newPasswordProxy() result', result);
   dumpCookiesAndUpdateUser();
 };
 
@@ -177,15 +178,37 @@ const newPasswordClient = async () => {
   dumpCookiesAndUpdateUser();
 }
 
-const dumpCookiesAndUpdateUser = async () => {
+const dumpCookiesAndUpdateUser = async (noUser?: boolean) => {
+  console.log('dumpCookiesAndUpdateUser()');
   items.value = [];
   const allCookies = geinsCore.cookies.getAll() as any;
   // console.log('dumpCookiesAndUpdateUser() allCookies', allCookies);
   for (const key in allCookies) {
     items.value.push({ header: key, data: JSON.stringify(allCookies[key], null, 2) });
   }
-  user.value = await authClientClientSide.getUser();
+  if (noUser === false || noUser === undefined) {
+    console.log('dumpCookiesAndUpdateUser() running getUser()');
+    getUser();
+  }
+
 };
+
+const getUser = async () => {
+  user.value = { l: 'loading...' };
+  if (connectionType.value === ConnectionType.Proxy) {
+    const result = await authClientProxy.getUser();
+    console.log('getUser() from [' + connectionType.value + '] result', result);
+    user.value = result;
+
+  } else {
+    const result = await authClientClientSide.getUser();
+    console.log('getUser() from [' + connectionType.value + '] result', result);
+    user.value = result;
+  }
+
+
+
+}
 
 const getToken = async () => {
 
