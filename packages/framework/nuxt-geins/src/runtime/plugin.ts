@@ -1,5 +1,7 @@
 import { defineNuxtPlugin } from '#app';
 
-export default defineNuxtPlugin((_nuxtApp) => {
-  console.log('Plugin injected by nuxt-geins!');
+export default defineNuxtPlugin((nuxtApp) => {
+  const { geinsLogInfo } = useGeinsLog();
+
+  geinsLogInfo('module active');
 });

@@ -1,7 +1,11 @@
 import { defu } from 'defu';
-import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit';
-
-// Module options TypeScript interface definition
+import {
+  defineNuxtModule,
+  addImportsDir,
+  addPlugin,
+  createResolver,
+  logger,
+} from '@nuxt/kit';
 export interface ModuleOptions {
   /**
    * Geins API key
@@ -18,7 +22,7 @@ export interface ModuleOptions {
   /**
    * Geins environment
    * @default process.env.GEINS_ENV || 'prod'
-   * @example 'qa'
+   * @example 'prod'
    * @type string
    */
   env: 'prod' | 'qa' | 'dev';
@@ -50,6 +54,12 @@ export interface ModuleOptions {
    * @type string
    */
   defaultMarket: string;
+  /**
+   * Enable debug mode
+   * @default false
+   * @type boolean
+   */
+  debug: boolean;
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -80,9 +90,40 @@ export default defineNuxtModule<ModuleOptions>({
       options,
     );
 
-    const resolver = createResolver(import.meta.url);
+    const { resolve } = createResolver(import.meta.url);
 
-    // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
-    addPlugin(resolver.resolve('./runtime/plugin'));
+    // Transpile runtime
+    const runtimeDir = resolve('./runtime');
+    nuxt.options.build.transpile.push(runtimeDir);
+
+    // Add plugins
+    addPlugin(resolve(runtimeDir, 'plugin'));
+
+    // Add composables
+    addImportsDir(resolve(runtimeDir, 'composables'));
+
+    const message = 'Using Geins Nuxt Module';
+
+    const greenCheckmark = '\x1b[32m✔\x1b[0m';
+    const boxWidth = 8; // Fixed width for the box
+
+    // Function to center-align the message
+    function centerAlign(text, width) {
+      return ' '.repeat(width) + text;
+    }
+
+    // Combine styled checkmark with the centered message
+    const centeredMessage = centerAlign(
+      `${greenCheckmark}  ${message}`,
+      boxWidth,
+    );
+
+    logger.box({
+      message: centeredMessage,
+      style: {
+        borderColor: 'green',
+        borderStyle: 'round',
+      },
+    });
   },
 });
