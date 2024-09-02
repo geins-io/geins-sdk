@@ -3,6 +3,7 @@ import globals from 'globals';
 import turbo from 'eslint-plugin-turbo';
 import onlyWarn from 'eslint-plugin-only-warn';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
+import { createConfigForNuxt } from '@nuxt/eslint-config/flat';
 
 /** @type {import('eslint-config')} */
 export const geinsSharedConfig = [
@@ -28,3 +29,9 @@ export const geinsSharedConfig = [
   },
   prettierRecommended,
 ];
+
+const nuxtConfig = createConfigForNuxt();
+geinsSharedConfig.forEach((config) => {
+  nuxtConfig.append(config);
+});
+export const geinsSharedConfigNuxt = nuxtConfig;

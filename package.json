@@ -17,8 +17,14 @@
     "start:nuxt": "turbo start --filter=nuxt-app",
     "build:nuxt": "turbo build --filter=nuxt-app",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md,vue,js}\"",
+    "format": "prettier --write \"**/*.{ts,md,vue,js}\"",
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,md,vue,js}": [
+      "yarn format",
+      "yarn lint"
+    ]
   },
   "devDependencies": {
     "prettier": "^3.2.5",
