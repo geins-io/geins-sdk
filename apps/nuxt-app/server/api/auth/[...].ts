@@ -6,10 +6,21 @@ https://nuxt.com/docs/getting-started/data-fetching#pass-cookies-from-server-sid
 set refreshgetToken in cookie named 'refresh' to pass for the next request
 */
 
-import { MerchantApiCredentials, buildEndpoints } from '@geins/core';
-import { AuthService } from '@geins/crm';
+import { MerchantApiCredentials, buildEndpoints, GeinsCore } from '@geins/core';
+import { AuthService } from '@geins/auth';
+import type {
+  Channel,
+  ContentAreaVariables,
+  MenuType,
+  ContentAreaType,
+} from '@geins/types';
 
 const runtimeConfig = useRuntimeConfig();
+const channel: Channel = {
+  siteId: runtimeConfig.public.channel.siteId,
+  siteTopDomain: runtimeConfig.public.channel.siteTopDomain,
+};
+
 const geinsCredentials: MerchantApiCredentials = {
   ...runtimeConfig.public.geins,
 };
@@ -18,6 +29,14 @@ const endpoints = buildEndpoints(
   geinsCredentials.apiKey,
   'prod',
 );
+
+const languageId = runtimeConfig.public.defaultLanguage;
+const marketId = runtimeConfig.public.defaultMarket;
+
+const geinsCore = new GeinsCore(geinsCredentials, channel, {
+  marketId,
+  languageId,
+});
 
 const authService = new AuthService(endpoints.authSign, endpoints.auth);
 interface AuthApiQuery {

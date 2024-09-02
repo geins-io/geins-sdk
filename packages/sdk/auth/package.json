@@ -1,7 +1,7 @@
 {
-  "name": "@geins/crm",
+  "name": "@geins/auth",
   "version": "0.0.1",
-  "main": "dist/index.cjs.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -18,7 +18,6 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
-    "@rollup/plugin-graphql": "^2.0.4",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "@geins/eslint-config": "*",

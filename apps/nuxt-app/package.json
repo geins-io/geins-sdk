@@ -19,7 +19,7 @@
     "cookie-universal": "^2.2.2",
     "@geins/core": "*",
     "@geins/cms": "*",
-    "@geins/crm": "*"
+    "@geins/auth": "*"
   },
   "devDependencies": {
     "@geins/types": "*",

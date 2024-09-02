@@ -1,0 +1,19 @@
+#import "./menu-item-base.graphql"
+query getMenuAtLocation(
+  $menuLocationId: String
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
+  getMenuAtLocation(
+    menuLocationId: $menuLocationId
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $marketId
+  ) {
+    title
+    menuItems {
+      ...MenuItemBase
+    }
+  }
+}

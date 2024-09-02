@@ -1,0 +1,58 @@
+#import "./meta.graphql"
+
+query widgetArea(
+  $family: String = null
+  $areaName: String = null
+  $widgetAlias: String = null
+  $displaySetting: String = null
+  $filters: [PageWidgetCollectionFilterInputType] = null
+  $preview: Boolean = null
+  $customerType: CustomerType
+  $channelId: String
+  $languageId: String
+  $url: String
+  $marketId: String
+) {
+  widgetArea(
+    family: $family
+    areaName: $areaName
+    alias: $widgetAlias
+    displaySetting: $displaySetting
+    filters: $filters
+    preview: $preview
+    customerType: $customerType
+    channelId: $channelId
+    languageId: $languageId
+    url: $url
+    marketId: $marketId
+  ) {
+    meta {
+      ...Meta
+    }
+    tags
+    containers {
+      id
+      name
+      sortOrder
+      layout
+      responsiveMode
+      design
+
+      widgets {
+        id
+        name
+        sortOrder
+        type
+        size
+        configuration
+        images {
+          fileName
+          largestSize {
+            imageWidth
+            imageHeight
+          }
+        }
+      }
+    }
+  }
+}
