@@ -1,8 +1,6 @@
 import { GeinsCore, BasePackage } from '@geins/core';
-import { AuthService } from './services';
 
 class GeinsCRM extends BasePackage {
-  private authService: AuthService | undefined;
   private authServiceConfig: any;
   constructor(core: GeinsCore) {
     super(core);
@@ -13,17 +11,6 @@ class GeinsCRM extends BasePackage {
       cookies: core.cookies,
       events: core.events,
     };
-  }
-
-  initAuthService() {
-    this.authService = new AuthService(this.authServiceConfig);
-  }
-
-  get auth() {
-    if (!this.authService) {
-      this.initAuthService();
-    }
-    return this.authService;
   }
 }
 

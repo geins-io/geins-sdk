@@ -5,6 +5,7 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "yarn build",
@@ -13,13 +14,13 @@
   "dependencies": {
     "@apollo/client": "^3.10.5",
     "graphql": "^16.8.2",
-    "@geins/core": "*",
-    "@geins/eslint-config": "*"
+    "@geins/core": "*"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@geins/eslint-config": "*",
     "typescript": "^5.4.5",
     "eslint": "^9"
   }

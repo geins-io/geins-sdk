@@ -9,7 +9,6 @@ export function authClaimTokenParse(token: string): any {
     const decodedString = atob(base64);
     return JSON.parse(decodedString);
   } catch (error) {
-    //console.error('Failed to decode token claims:', error);
     return null;
   }
 }

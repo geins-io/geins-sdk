@@ -1,156 +1,145 @@
-// THE CLIENT WITH ALL LOGIC FOR AUTHENTICATION
+import type { AuthResponse, AuthCredentials } from '@geins/types';
+import { CookieService, AUTH_COOKIES } from '@geins/core';
 
-export default class AuthClient {
-  private authEndpoint: string;
-  private signAccount: (sign: string) => Promise<string>;
-  private token: string = '';
-  private maxAge: number = 0;
+/**
+ * Abstract class representing an authentication client.
+ * Provides base functionality for managing authentication processes,
+ * such as login, logout, and password change.
+ */
+export abstract class AuthClient {
+  /**
+   * A service for managing cookies, used for storing authentication-related data.
+   */
+  protected cookieService: CookieService;
 
-  constructor(
-    signEndpoint: (sign: string) => Promise<string>,
-    authEndpoint: string,
-  ) {
-    if (!signEndpoint || !authEndpoint) {
-      throw new Error('An endpoint that can verify identities is required');
+  /**
+   * Initializes a new instance of the `AuthClient` class.
+   */
+  constructor() {
+    this.cookieService = new CookieService();
+  }
+
+  /**
+   * Abstract method to be implemented by subclasses to handle user login.
+   *
+   * @param credentials - The authentication credentials.
+   * @returns A promise resolving to the authentication response.
+   */
+  abstract login(credentials: AuthCredentials): Promise<AuthResponse>;
+
+  /**
+   * Abstract method to be implemented by subclasses to handle user logout.
+   *
+   * @returns A promise resolving to a boolean indicating whether the logout was successful.
+   */
+  abstract logout(): Promise<boolean>;
+
+  /**
+   * Abstract method to be implemented by subclasses to handle token refresh.
+   *
+   * @returns A promise resolving to the authentication response or undefined if the refresh fails.
+   */
+  abstract refresh(): Promise<AuthResponse | undefined>;
+
+  /**
+   * Abstract method to be implemented by subclasses to retrieve the currently authenticated user.
+   *
+   * @returns A promise resolving to the authentication response or undefined if no user is authenticated.
+   */
+  abstract getUser(): Promise<AuthResponse | undefined>;
+
+  /**
+   * Changes the password for the authenticated user.
+   *
+   * @param credentials - The authentication credentials, including the new password.
+   * @returns A promise resolving to the authentication response after the password change.
+   * @throws An error if the new password is not provided.
+   */
+  public async changePassword(
+    credentials: AuthCredentials,
+  ): Promise<AuthResponse> {
+    if (!credentials.newPassword) {
+      throw new Error('New password is required');
     }
-    this.authEndpoint = authEndpoint;
-    this.signAccount = signEndpoint;
+    return await this.changePasswordImplementation(credentials);
   }
 
-  getMaxAge(): number {
-    return this.maxAge;
-  }
+  /**
+   * Abstract method to be implemented by subclasses to handle the password change process.
+   *
+   * @param credentials - The authentication credentials, including the new password.
+   * @returns A promise resolving to the authentication response after the password change.
+   */
+  protected abstract changePasswordImplementation(
+    credentials: AuthCredentials,
+  ): Promise<AuthResponse>;
 
-  getToken(): string {
-    return this.token;
-  }
+  /**
+   * Sets the authentication cookies after a successful login.
+   *
+   * @param authResponse - The response from the authentication containing user and token data.
+   * @param rememberUser - A boolean indicating whether to remember the user on this device.
+   */
+  protected setCookiesLogin(
+    authResponse: AuthResponse,
+    rememberUser: boolean,
+  ): void {
+    const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes
+    const { user, tokens } = authResponse;
 
-  setTokenData(data: { token: string; maxAge: number }): void {
-    this.token = data.token;
-    this.maxAge = data.maxAge;
-  }
-
-  async connect(
-    credentials?: {
-      username: string;
-      password: string;
-      newPassword?: string;
-      rememberUser?: boolean;
-    },
-    action: string = 'login',
-  ): Promise<void> {
-    this.setTokenData({ token: '', maxAge: 0 });
-    const url = `${this.authEndpoint}${action}`;
-    const getSign = !!credentials;
-    const auth: Record<string, any> = { username: credentials?.username };
-    const fetchOptions: RequestInit = {
-      method: getSign ? 'POST' : 'GET',
-      cache: 'no-cache',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
-    if (getSign) {
-      fetchOptions.body = JSON.stringify(auth);
+    if (user?.username) {
+      this.cookieService.set({
+        name: AUTH_COOKIES.USER,
+        payload: user.username,
+        maxAge,
+      });
     }
 
-    const addCredentials = async (sign: string) => {
-      auth.signature = JSON.parse(await this.signAccount(sign));
-      auth.password = await this.digest(credentials!.password);
-      if (action === 'password') {
-        auth.newPassword = await this.digest(credentials!.newPassword!);
-      }
-      if (!credentials!.rememberUser) {
-        auth.sessionLifetime = 30;
-      }
-      fetchOptions.body = JSON.stringify(auth);
-    };
-
-    let data = await fetch(url, fetchOptions)
-      .then((response) => response.json())
-      .catch(() => {});
-
-    if (data?.sign) {
-      await addCredentials(data.sign);
-      data = await fetch(url, fetchOptions)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data?.token) {
-            this.setTokenData(data);
-          }
-        })
-        .catch(() => {});
-    } else if (data?.token) {
-      this.setTokenData(data);
+    if (tokens?.token) {
+      this.cookieService.set({
+        name: AUTH_COOKIES.USER_AUTH,
+        payload: tokens.token,
+        maxAge,
+      });
     }
-  }
 
-  async digest(password: string): Promise<string> {
-    const salt =
-      'Dd1dfLonNy6Am2fXQl2AcoI+IbhLhXvaibnDNn8uEa6vbJ05eyJajSuGFm9uQSmD';
-    const buffer = await crypto.subtle.digest(
-      'SHA-384',
-      new TextEncoder().encode(password + salt),
-    );
-    const byteArray = new Uint8Array(buffer);
+    if (user?.customerType) {
+      this.cookieService.set({
+        name: AUTH_COOKIES.USER_TYPE,
+        payload: user.customerType,
+        maxAge,
+      });
+    }
 
-    // Convert bytes to string
-    let binaryString = '';
-    byteArray.forEach((byte) => {
-      binaryString += String.fromCharCode(byte);
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_MAX_AGE,
+      payload: maxAge.toString(),
+      maxAge,
     });
-
-    // Encode to base64
-    return btoa(binaryString);
   }
 
-  get authorized(): boolean {
-    return !!this.token;
+  /**
+   * Updates the authentication token cookie when refreshing the session.
+   *
+   * @param userToken - The new authentication token.
+   */
+  protected setCookiesRefresh(userToken: string): void {
+    const maxAgeCookie = this.cookieService.get(AUTH_COOKIES.USER_MAX_AGE);
+    const maxAge = maxAgeCookie ? parseInt(maxAgeCookie, 10) : 1800;
+
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_AUTH,
+      payload: userToken,
+      maxAge,
+    });
   }
 
-  get claims(): Record<string, any> | null {
-    try {
-      // Ensure that the token is correctly formatted
-      let base64Url = this.token.split('.')[1];
-      if (!base64Url) {
-        throw new Error('Invalid token format: missing payload');
-      }
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const decodedString = atob(base64);
-      return JSON.parse(decodedString);
-    } catch (error) {
-      console.error('Failed to decode token claims:', error);
-      return null;
-    }
-  }
-
-  get serializedClaims(): string {
-    const c = this.claims;
-    let r = '';
-    for (const name in c) {
-      if (c[name].push) {
-        for (const item of c[name]) {
-          r += `;${name}=${item}`;
-        }
-      } else {
-        r += `;${name}=${c[name]}`;
-      }
-    }
-    return r.substr(1);
-  }
-
-  get(endpoint: string): Promise<any> {
-    return this.sendRequest('GET', endpoint);
-  }
-
-  async sendRequest(method: string, endpoint: string): Promise<any> {
-    try {
-      const response = await fetch(endpoint, { method, cache: 'no-cache' });
-      return await response.json();
-    } catch (err) {
-      console.error('Geins auth client error', err);
-    }
+  /**
+   * Clears all authentication-related cookies, effectively logging out the user.
+   */
+  protected clearCookies(): void {
+    Object.values(AUTH_COOKIES).forEach((cookieName) => {
+      this.cookieService.remove(cookieName);
+    });
   }
 }

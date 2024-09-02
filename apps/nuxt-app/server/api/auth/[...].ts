@@ -4,12 +4,10 @@ https://nuxt.com/docs/getting-started/data-fetching#passing-headers-and-cookies
 https://nuxt.com/docs/getting-started/data-fetching#pass-cookies-from-server-side-api-calls-on-ssr-response
 
 set refreshgetToken in cookie named 'refresh' to pass for the next request
-
-
 */
 
 import { MerchantApiCredentials, buildEndpoints } from '@geins/core';
-import { AuthService } from '../../../utils/authService';
+import { AuthService } from '@geins/crm';
 
 const runtimeConfig = useRuntimeConfig();
 const geinsCredentials: MerchantApiCredentials = {
@@ -164,7 +162,7 @@ const logout = async () => {
     return {
       status: authReponse.succeeded ? 200 : 500,
       body: {
-        message: authReponse.succeeded ? 'Logout successful' : 'Logout failed',
+        data: authReponse,
       },
     };
   } catch (error: any) {

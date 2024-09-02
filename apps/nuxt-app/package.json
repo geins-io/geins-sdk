@@ -16,11 +16,14 @@
     "nuxt": "^3.12.4",
     "vue": "^3.4.31",
     "vue-router": "^4.4.0",
+    "cookie-universal": "^2.2.2",
     "@geins/core": "*",
     "@geins/cms": "*",
-    "@geins/eslint-config": "*"
+    "@geins/crm": "*"
   },
   "devDependencies": {
+    "@geins/types": "*",
+    "@geins/eslint-config": "*",
     "@nuxt/eslint-config": "^0.3.13",
     "@types/node": "^20",
     "typescript": "^5.4.5",
