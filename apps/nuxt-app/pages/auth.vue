@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { GeinsCore, buildEndpoints } from '@geins/core';
 import type { Channel, MerchantApiCredentials } from '@geins/core';
-import { AuthClientDirect, AuthClientProxy } from '@geins/auth';
+import { AuthClientDirect, AuthClientProxy } from '@geins/crm';
 /* import { AuthClientDirect } from '../utils/authClientDirect';
 import { AuthClientProxy } from '../utils/authClientProxy'; */
 

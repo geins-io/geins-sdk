@@ -7,7 +7,7 @@ set refreshgetToken in cookie named 'refresh' to pass for the next request
 */
 
 import { MerchantApiCredentials, buildEndpoints, GeinsCore } from '@geins/core';
-import { AuthService } from '@geins/auth';
+import { AuthService } from '@geins/crm';
 import type {
   Channel,
   ContentAreaVariables,
