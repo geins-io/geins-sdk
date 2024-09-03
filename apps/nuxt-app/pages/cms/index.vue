@@ -154,7 +154,7 @@ const getMenu = () => {
 </script>
 <template>
   <div>
-    <h2>Nuxt @geins/CMS Test</h2>
+    <h2>Nuxt @geins/cms content</h2>
     <table>
       <tr>
         <td style="vertical-align: top">
@@ -192,23 +192,16 @@ const getMenu = () => {
           </table>
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b
-              ><br />
+              <b>{{ item.header }}</b><br />
               <textarea style="border: 0; width: 600px; height: 300px">
- {{ item.data }}</textarea
-              >
+ {{ item.data }}</textarea>
             </p>
           </div>
         </td>
         <td></td>
         <td style="vertical-align: top">
           <Menu v-if="menuData" :menu="menuData" />
-          <ContentArea
-            v-if="pageData"
-            :family="family"
-            :area="area"
-            :data="pageData"
-          />
+          <ContentArea v-if="pageData" :family="family" :area="area" :data="pageData" />
         </td>
       </tr>
     </table>

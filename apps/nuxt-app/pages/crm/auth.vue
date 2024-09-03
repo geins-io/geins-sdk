@@ -159,7 +159,7 @@ const updateCookiesDisplay = () => {
 
 <template>
   <div>
-    <h2>Nuxt @geins/crm AUTH Test</h2>
+    <h2>Nuxt @geins/crm auth</h2>
     <table>
       <tr>
         <td style="vertical-align: top">

@@ -51,7 +51,7 @@ onMounted(() => {
 </script>
 <template>
   <div>
-    <h2>Nuxt @geins/CRM Test</h2>
+    <h2>Nuxt @geins/core event</h2>
     <table>
       <tr>
         <td style="vertical-align: top">
@@ -78,8 +78,7 @@ onMounted(() => {
           </table>
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b
-              ><br />
+              <b>{{ item.header }}</b><br />
               <textarea style="border: 0; width: 600px; height: 100px">{{
                 item.data
               }}</textarea>
