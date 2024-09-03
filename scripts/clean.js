@@ -80,7 +80,24 @@ const processDirectory = (dir) => {
   });
 };
 
+
+// Clear the Yarn cache
+const clearYarnCache = () => {
+  try {
+    execSync('yarn cache clean', { stdio: 'inherit' });
+    console.log('Yarn cache cleared.');
+  } catch (err) {
+    console.error(`Error clearing Yarn cache: ${err.message}`);
+  }
+};
+
+
 // Start the cleanup process from the repo root
 processDirectory(repoRoot);
 
 console.log('Cleanup complete!');
+
+// Clear Yarn cache after cleaning the repository
+clearYarnCache();
+
+console.log('Cache cleared!');
