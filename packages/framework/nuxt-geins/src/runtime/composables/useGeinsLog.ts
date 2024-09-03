@@ -1,3 +1,5 @@
+import { useRuntimeConfig } from '#app';
+
 export function useGeinsLog() {
   const config = useRuntimeConfig();
   const debug = config.public.geins.debug;
@@ -5,44 +7,22 @@ export function useGeinsLog() {
   const logStyle =
     'background-color: #e8452c; color: #FFFFFF; padding: 3px 8px 5px; border-radius: 8px; font-weight:bold; letter-spacing:0.2em; font-size:1.1em; margin-right:5px;';
 
-  // Will only log if debug is enabled
-  const geinsLog = (message: string, ...args: string[]) => {
-    if (!debug) {
-      return;
-    }
-    if (args.length) {
-      console.log(logTag, logStyle, message, ...args);
-    } else {
-      console.log(logTag, logStyle, message);
-    }
+  const createLogger = (
+    method: 'log' | 'warn' | 'error' | 'info',
+    alwaysLog = false,
+  ) => {
+    return (message: string, ...args: string[]) => {
+      if (!alwaysLog && !debug) {
+        return;
+      }
+      console[method](logTag, logStyle, message, ...args);
+    };
   };
 
-  // Will always log a waring
-  const geinsLogWarn = (message: string, ...args: string[]) => {
-    if (args.length) {
-      console.warn(logTag, logStyle, message, ...args);
-    } else {
-      console.warn(logTag, logStyle, message);
-    }
-  };
-
-  // Will always log an error
-  const geinsLogError = (message: string, ...args: string[]) => {
-    if (args.length) {
-      console.error(logTag, logStyle, message, ...args);
-    } else {
-      console.error(logTag, logStyle, message);
-    }
-  };
-
-  // Will always log an info message
-  const geinsLogInfo = (message: string, ...args: string[]) => {
-    if (args.length) {
-      console.info(logTag, logStyle, message, ...args);
-    } else {
-      console.info(logTag, logStyle, message);
-    }
-  };
+  const geinsLog = createLogger('log'); // Will only log if debug is enabled
+  const geinsLogWarn = createLogger('warn', true); // Will always log a warning
+  const geinsLogError = createLogger('error', true); // Will always log an error
+  const geinsLogInfo = createLogger('info', true); // Will always log an info message
 
   return {
     geinsLog,

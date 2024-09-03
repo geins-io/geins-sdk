@@ -1,5 +1,6 @@
 import { GeinsCMS } from '@geins/cms';
 import type { ContentAreaVariables } from '@geins/types';
+import { useGeinsCore } from './useGeinsCore';
 
 export function useGeinsCMS() {
   const { geinsCore } = useGeinsCore();

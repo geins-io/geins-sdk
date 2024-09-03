@@ -6,6 +6,7 @@ import {
   createResolver,
   logger,
 } from '@nuxt/kit';
+
 export interface ModuleOptions {
   /**
    * Geins API key
@@ -25,7 +26,7 @@ export interface ModuleOptions {
    * @example 'prod'
    * @type string
    */
-  env: 'prod' | 'qa' | 'dev';
+  environment: 'prod' | 'qa' | 'dev';
   /**
    * Geins default channel
    * @default process.env.GEINS_CHANNEL
@@ -62,6 +63,10 @@ export interface ModuleOptions {
   debug: boolean;
 }
 
+export interface ModulePublicRuntimeConfig {
+  geins: ModuleOptions;
+}
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-geins',
@@ -85,10 +90,10 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.options.runtimeConfig.public.geins,
       options,
     );
-    nuxt.options.runtimeConfig.strapi = defu(
-      nuxt.options.runtimeConfig.geins,
-      options,
-    );
+    // nuxt.options.runtimeConfig.geins = defu(
+    //   nuxt.options.runtimeConfig.geins,
+    //   options,
+    // );
 
     const { resolve } = createResolver(import.meta.url);
 
@@ -102,27 +107,22 @@ export default defineNuxtModule<ModuleOptions>({
     // Add composables
     addImportsDir(resolve(runtimeDir, 'composables'));
 
+    // Add log message
     const message = 'Using Geins Nuxt Module';
-
     const greenCheckmark = '\x1B[32m✔\x1B[0m';
-    const boxWidth = 8; // Fixed width for the box
+    const boxSpace = 8;
 
-    // Function to center-align the message
-    function centerAlign(text, width) {
+    const align = (text: string, width: number) => {
       return ' '.repeat(width) + text;
-    }
+    };
 
-    // Combine styled checkmark with the centered message
-    const centeredMessage = centerAlign(
-      `${greenCheckmark}  ${message}`,
-      boxWidth,
-    );
+    const centeredMessage = align(`${greenCheckmark}  ${message}`, boxSpace);
 
     logger.box({
       message: centeredMessage,
       style: {
-        borderColor: 'green',
-        borderStyle: 'round',
+        borderColor: 'whiteBright',
+        borderStyle: 'double',
       },
     });
   },

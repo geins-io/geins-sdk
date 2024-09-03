@@ -1,5 +1,6 @@
 import { GeinsCore } from '@geins/core';
 import type { Channel, MerchantApiCredentials } from '@geins/types';
+import { useRuntimeConfig } from '#app';
 
 export function useGeinsCore() {
   const config = useRuntimeConfig();
