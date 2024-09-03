@@ -104,7 +104,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     const message = 'Using Geins Nuxt Module';
 
-    const greenCheckmark = '\x1b[32m✔\x1b[0m';
+    const greenCheckmark = '\x1B[32m✔\x1B[0m';
     const boxWidth = 8; // Fixed width for the box
 
     // Function to center-align the message
