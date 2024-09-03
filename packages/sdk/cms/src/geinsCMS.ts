@@ -1,20 +1,6 @@
-import { GeinsCore } from '@geins/core';
+import { GeinsCore, BasePackage } from '@geins/core';
 import type { Channel, ContentAreaVariables } from '@geins/types';
 import { MenuService, PageService, ContentAreaService } from './services';
-
-export abstract class BasePackage {
-  constructor(core: GeinsCore) {
-    if (!core) {
-      throw new Error('Core is required');
-    }
-    if (!core.client) {
-      throw new Error('Merchant API Client is not set');
-    }
-    if (!core.channel) {
-      throw new Error('Channel is required');
-    }
-  }
-}
 
 class GeinsCMS extends BasePackage {
   public menu: MenuService;

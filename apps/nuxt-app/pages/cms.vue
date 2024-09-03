@@ -4,7 +4,13 @@ import Menu from '@/components/cms/Menu.vue';
 import ContentArea from '~/components/cms/ContentArea.vue';
 import { GeinsCore } from '@geins/core';
 import { GeinsCMS } from '@geins/cms';
-import type { Channel, MerchantApiCredentials, ContentAreaVariables, MenuType, ContentAreaType } from '@geins/types';
+import type {
+  Channel,
+  MerchantApiCredentials,
+  ContentAreaVariables,
+  MenuType,
+  ContentAreaType,
+} from '@geins/types';
 
 const runtimeConfig = useRuntimeConfig();
 const items = ref<any[]>([]);
@@ -20,7 +26,10 @@ const geinsCredentials: MerchantApiCredentials = {
 const languageId = runtimeConfig.public.defaultLanguage;
 const marketId = runtimeConfig.public.defaultMarket;
 
-const geinsCore = new GeinsCore(geinsCredentials, channel, { marketId, languageId });
+const geinsCore = new GeinsCore(geinsCredentials, channel, {
+  marketId,
+  languageId,
+});
 const geinsCMS = new GeinsCMS(geinsCore);
 
 let slug = ref<string>('hej');
@@ -38,7 +47,13 @@ const resetCompnentData = () => {
 
 const getContentArea = () => {
   resetCompnentData();
-  console.log('getting content area with family:""', family.value, '"and area:""', area.value, '"');
+  console.log(
+    'getting content area with family:""',
+    family.value,
+    '"and area:""',
+    area.value,
+    '"',
+  );
   geinsCMS.content.area(family.value, area.value).then((response) => {
     if (response.loading) {
       console.info('loading');
@@ -51,19 +66,22 @@ const getContentArea = () => {
     const data = response.data;
     items.value.unshift({
       header: `:: geinsCMS.content.area :: ----------------- :: [${new Date().toISOString()}]`,
-      data: JSON.stringify(data)
+      data: JSON.stringify(data),
     });
   });
-  geinsCMS.content.areaParsed(family.value, area.value).then((result) => {
-    return result as ContentAreaType;
-  }).then((contentArea) => {
-    console.log('widgetArea:', contentArea);
-    pageData.value = contentArea;
-    items.value.unshift({
-      header: `:: geinsCMS.content.areaParsed :: ----------------- :: [${new Date().toISOString()}]`,
-      data: JSON.stringify(contentArea)
+  geinsCMS.content
+    .areaParsed(family.value, area.value)
+    .then((result) => {
+      return result as ContentAreaType;
+    })
+    .then((contentArea) => {
+      console.log('widgetArea:', contentArea);
+      pageData.value = contentArea;
+      items.value.unshift({
+        header: `:: geinsCMS.content.areaParsed :: ----------------- :: [${new Date().toISOString()}]`,
+        data: JSON.stringify(contentArea),
+      });
     });
-  });
 };
 
 const getPage = () => {
@@ -82,19 +100,22 @@ const getPage = () => {
     const data = response.data;
     items.value.unshift({
       header: `:: geinsCMS.page.alias :: ----------------- :: [${new Date().toISOString()}]`,
-      data: JSON.stringify(data)
+      data: JSON.stringify(data),
     });
   });
-  geinsCMS.page.aliasParsed(slug.value).then((result) => {
-    return result as ContentAreaType;
-  }).then((contentArea) => {
-    console.log('widgetArea:', contentArea);
-    pageData.value = contentArea;
-    items.value.unshift({
-      header: `:: geinsCMS.page.aliasParsed :: ----------------- :: [${new Date().toISOString()}]`,
-      data: JSON.stringify(contentArea)
+  geinsCMS.page
+    .aliasParsed(slug.value)
+    .then((result) => {
+      return result as ContentAreaType;
+    })
+    .then((contentArea) => {
+      console.log('widgetArea:', contentArea);
+      pageData.value = contentArea;
+      items.value.unshift({
+        header: `:: geinsCMS.page.aliasParsed :: ----------------- :: [${new Date().toISOString()}]`,
+        data: JSON.stringify(contentArea),
+      });
     });
-  });
 };
 
 const getMenu = () => {
@@ -113,30 +134,30 @@ const getMenu = () => {
     const data = response.data;
     items.value.unshift({
       header: `:: geinsCMS.menu.locationParsed :: ----------------- :: [${new Date().toISOString()}]`,
-      data: JSON.stringify(data)
+      data: JSON.stringify(data),
     });
   });
 
-  geinsCMS.menu.locationParsed(menuLocation.value).then((result) => {
-    return result as MenuType;
-  }).then((menu) => {
-    menuData.value = menu;
-    items.value.unshift({
-      header: `:: geinsCMS.menu.locationParsed :: ----------------- :: [${new Date().toISOString()}]`,
-      data: JSON.stringify(menu)
+  geinsCMS.menu
+    .locationParsed(menuLocation.value)
+    .then((result) => {
+      return result as MenuType;
+    })
+    .then((menu) => {
+      menuData.value = menu;
+      items.value.unshift({
+        header: `:: geinsCMS.menu.locationParsed :: ----------------- :: [${new Date().toISOString()}]`,
+        data: JSON.stringify(menu),
+      });
     });
-
-  });
-
 };
-
 </script>
 <template>
   <div>
     <h2>Nuxt @geins/CMS Test</h2>
     <table>
       <tr>
-        <td style="vertical-align: top;">
+        <td style="vertical-align: top">
           <table>
             <tr>
               <td>family:</td>
@@ -169,20 +190,27 @@ const getMenu = () => {
               <td><button @click="getMenu">Get Menu</button></td>
             </tr>
           </table>
-          <div v-for=" (item, index) in items" :key="index">
+          <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b><br />
-              <textarea style="border:0; width:600px; height:300px; "> {{ item.data }}</textarea>
+              <b>{{ item.header }}</b
+              ><br />
+              <textarea style="border: 0; width: 600px; height: 300px">
+ {{ item.data }}</textarea
+              >
             </p>
           </div>
         </td>
         <td></td>
-        <td style="vertical-align: top;">
+        <td style="vertical-align: top">
           <Menu v-if="menuData" :menu="menuData" />
-          <ContentArea v-if="pageData" :family="family" :area="area" :data="pageData" />
+          <ContentArea
+            v-if="pageData"
+            :family="family"
+            :area="area"
+            :data="pageData"
+          />
         </td>
       </tr>
     </table>
-
   </div>
 </template>

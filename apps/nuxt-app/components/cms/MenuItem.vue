@@ -22,7 +22,10 @@ const props = defineProps({
 </style>
 <template>
   <div class="menu-item">
-    <a :href="item.canonicalUrl" :target="item.targetBlank ? '_blank' : '_self'">
+    <a
+      :href="item.canonicalUrl"
+      :target="item.targetBlank ? '_blank' : '_self'"
+    >
       {{ item.title }}
     </a>
     <div v-if="item.children.length > 0" class="children">

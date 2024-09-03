@@ -4,3 +4,5 @@ export * from './api-client';
 export * from './base';
 export * from './base/basePackage';
 export * from './geinsCore';
+export * from './utils';
+export * from './constants';
