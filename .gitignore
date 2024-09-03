@@ -2,7 +2,7 @@
 .turbo
 .DS_Store
 
-node_modules
-.nuxt
 .output
+.nuxt
+node_modules
 dist
