@@ -32,6 +32,7 @@ export class MerchantApiClient {
       },
     });
   }
+
   getClient(): ApolloClient<NormalizedCacheObject> | undefined {
     return this.client;
   }

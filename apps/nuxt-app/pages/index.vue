@@ -12,7 +12,8 @@ import { ref } from 'vue';
       </tr>
       <tr>
         <td>
-          <pre><NuxtLink to="/core/event">Go to Event</NuxtLink></pre>
+          <NuxtLink to="/core/event">Go to Event</NuxtLink>
+          <NuxtLink to="/core/routing">Go to Routing</NuxtLink>
         </td>
         <td>
           <pre><NuxtLink to="/crm/auth">Go to Auth Test</NuxtLink></pre>
