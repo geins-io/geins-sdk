@@ -38,7 +38,7 @@ const buildDeletePatterns = (gitignorePath) => {
     const gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8');
     const patterns = gitignoreContent.split('\n').filter(Boolean);
 
-    patterns.forEach(pattern => {
+    patterns.forEach((pattern) => {
       pattern = pattern.trim();
       if (!pattern.startsWith('#') && pattern !== '') {
         // Exclude specific patterns
@@ -64,22 +64,25 @@ const processDirectory = (dir) => {
   const deletePatterns = buildDeletePatterns(gitignorePath);
 
   // Recursively process subdirectories first to ensure we clean from the bottom up
-  fs.readdirSync(dir).forEach(file => {
+  fs.readdirSync(dir).forEach((file) => {
     const subDir = path.join(dir, file);
-    if (fs.existsSync(subDir) && fs.lstatSync(subDir).isDirectory() && !excludePatterns.includes(file)) {
+    if (
+      fs.existsSync(subDir) &&
+      fs.lstatSync(subDir).isDirectory() &&
+      !excludePatterns.includes(file)
+    ) {
       processDirectory(subDir);
     }
   });
 
   // Delete items that match the deletePatterns for this directory
-  deletePatterns.forEach(pattern => {
+  deletePatterns.forEach((pattern) => {
     const fullPattern = path.join(dir, pattern);
     if (fs.existsSync(fullPattern)) {
       deleteItem(fullPattern);
     }
   });
 };
-
 
 // Clear the Yarn cache
 const clearYarnCache = () => {
@@ -90,7 +93,6 @@ const clearYarnCache = () => {
     console.error(`Error clearing Yarn cache: ${err.message}`);
   }
 };
-
 
 // Start the cleanup process from the repo root
 processDirectory(repoRoot);
