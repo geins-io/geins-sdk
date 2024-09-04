@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   // modules: [
   //   '@geins/nuxt',
   // ],
-
+// https://merchantapi.geins.io/redirect/urlhistory/CF2FF80B-6F85-4CD9-ACE5-F41962891E07`?offset=`{DATE_TIME}`
   runtimeConfig: {
     public: {
       geins: {
