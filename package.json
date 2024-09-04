@@ -18,7 +18,8 @@
     "build:nuxt": "turbo build --filter=nuxt-app",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,md,vue,js}\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "clean": "node scripts/clean.js"
   },
   "lint-staged": {
     "*.{ts,md,vue,js}": [

@@ -5,9 +5,8 @@ import type {
   MarketLanguage,
 } from '@geins/types';
 import { MerchantApiClient, ENDPOINTS } from './api-client';
-import { Broadcast, BroadcastMessage } from './services/';
-
-const BROADCAST_CHANNEL = 'geins-channel';
+import { CookieService, EventService } from './services/';
+import { isServerContext, buildEndpoints } from './utils';
 
 export class GeinsCore {
   // api client
@@ -23,9 +22,11 @@ export class GeinsCore {
   // default market language
   private useDefaultMarketLanguage: MarketLanguage | undefined;
 
-  // broadcast channel
-  private broadcastChannelId: string = BROADCAST_CHANNEL;
-  private bc: Broadcast | undefined;
+  // cookie service
+  private cookieService: CookieService | undefined;
+
+  // events
+  private eventService: EventService;
 
   constructor(
     credentials: MerchantApiCredentials,
@@ -50,14 +51,11 @@ export class GeinsCore {
 
     // Initialize API Client
     if (this.apiKey && this.accountName) {
-      this.endpointsUrls = {
-        main: ENDPOINTS.main,
-        auth: ENDPOINTS.auth
-          .replace('{ACCOUNT}', this.accountName)
-          .replace('{ENV}', this.environment),
-        authSign: ENDPOINTS.auth_sign.replace('{API-KEY}', this.apiKey),
-        image: ENDPOINTS.image.replace('{ACCOUNT}', this.accountName),
-      };
+      this.endpointsUrls = buildEndpoints(
+        this.accountName,
+        this.apiKey,
+        this.environment,
+      );
     }
 
     if (defualtMarketLanguage) {
@@ -65,13 +63,11 @@ export class GeinsCore {
     }
 
     // Initialize BroadcastChannel
-    if (!this.serverContext()) {
-      this.initBroadcastChannel();
+    if (!isServerContext()) {
+      this.cookieService = new CookieService();
     }
-  }
 
-  private serverContext() {
-    return typeof window === 'undefined';
+    this.eventService = new EventService();
   }
 
   // Initialize API Client
@@ -86,19 +82,6 @@ export class GeinsCore {
     }
   }
 
-  // Initialize Broadcast Channel
-  private initBroadcastChannel() {
-    try {
-      this.bc = new Broadcast(this.broadcastChannelId);
-      const handler = (message: BroadcastMessage) => {
-        console.log('Broadcast message received:', message);
-      };
-      this.bc.addEventListener(handler);
-    } catch (error) {
-      console.error('Broadcas Channel initialization failed', error);
-    }
-  }
-
   get client(): any {
     if (!this.endpointsUrls) {
       throw new Error('Endpoints are not set');
@@ -107,16 +90,6 @@ export class GeinsCore {
       this.initApiClient();
     }
     return this.apiClient;
-  }
-  // Get Broadcast Channel
-  get broadcastChannel(): Broadcast | undefined {
-    if (!this.serverContext()) {
-      if (!this.bc) {
-        this.initBroadcastChannel();
-      }
-      return this.bc;
-    }
-    return undefined;
   }
 
   get endpoints(): any {
@@ -127,7 +100,18 @@ export class GeinsCore {
     return this.useChannel;
   }
 
+  get events(): EventService {
+    return this.eventService;
+  }
+
   get defaultMarketLanguage(): MarketLanguage | undefined {
     return this.useDefaultMarketLanguage;
+  }
+
+  get cookies(): CookieService {
+    if (!this.cookieService) {
+      this.cookieService = new CookieService();
+    }
+    return this.cookieService;
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@geins/cms",
+  "name": "@geins/crm",
   "version": "0.0.1",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
@@ -21,6 +21,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "@geins/eslint-config": "*",
+    "@geins/types": "*",
     "typescript": "^5.4.5",
     "eslint": "^9"
   }

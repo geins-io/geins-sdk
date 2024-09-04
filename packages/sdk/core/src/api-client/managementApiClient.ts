@@ -1,4 +1,4 @@
-import { MANAGEMENT_API_URL } from './endpoints';
+import { MANAGEMENT_API_URL } from '../constants/endpoints';
 import type { ManagementApiCredentials } from '@geins/types';
 
 export class ManagementApiClient {
