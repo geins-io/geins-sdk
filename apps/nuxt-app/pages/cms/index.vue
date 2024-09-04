@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import Menu from '@/components/cms/Menu.vue';
-import ContentArea from '~/components/cms/ContentArea.vue';
 import { GeinsCore } from '@geins/core';
 import { GeinsCMS } from '@geins/cms';
 import type {
   Channel,
   MerchantApiCredentials,
-  ContentAreaVariables,
   MenuType,
   ContentAreaType,
 } from '@geins/types';
@@ -32,10 +29,10 @@ const geinsCore = new GeinsCore(geinsCredentials, channel, {
 });
 const geinsCMS = new GeinsCMS(geinsCore);
 
-let slug = ref<string>('hej');
-let family = ref<string>('Frontpage');
-let area = ref<string>('The front page area');
-let menuLocation = ref<string>('main-desktop');
+const slug = ref<string>('hej');
+const family = ref<string>('Frontpage');
+const area = ref<string>('The front page area');
+const menuLocation = ref<string>('main-desktop');
 
 const menuData = ref<MenuType>();
 const pageData = ref<ContentAreaType>();
@@ -192,16 +189,24 @@ const getMenu = () => {
           </table>
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b><br />
-              <textarea style="border: 0; width: 600px; height: 300px">
- {{ item.data }}</textarea>
+              <b>{{ item.header }}</b
+              ><br />
+              <textarea
+                v-model="item.data"
+                style="border: 0; width: 600px; height: 300px"
+              ></textarea>
             </p>
           </div>
         </td>
         <td></td>
         <td style="vertical-align: top">
           <Menu v-if="menuData" :menu="menuData" />
-          <ContentArea v-if="pageData" :family="family" :area="area" :data="pageData" />
+          <ContentArea
+            v-if="pageData"
+            :family="family"
+            :area="area"
+            :data="pageData"
+          />
         </td>
       </tr>
     </table>

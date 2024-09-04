@@ -17,14 +17,14 @@
     "start:nuxt": "turbo start --filter=nuxt-app",
     "build:nuxt": "turbo build --filter=nuxt-app",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md,vue,js}\"",
+    "format": "prettier --write \"**/*.{ts,md,vue,js}\"",
     "prepare": "husky",
     "clean": "node scripts/clean.js"
   },
   "lint-staged": {
-    "*.{ts,tsx,md,vue,js}": [
-      "prettier --write",
-      "eslint --fix ."
+    "*.{ts,md,vue,js}": [
+      "yarn format",
+      "yarn lint"
     ]
   },
   "devDependencies": {
