@@ -1,14 +1,8 @@
-export enum CustomerType {
-  PERSON = 'PERSON',
-  ORGANIZATION = 'ORGANIZATION',
-}
+export type CustomerType = 'PERSON' | 'ORGANIZATION';
 
-export enum Environment {
-  PRODUCTION = 'prod',
-  TEST = 'qa',
-}
+export type Environment = 'prod' | 'qa' | 'dev';
 
-export type KeyValue = {
+export interface KeyValue {
   key: string;
   value: string;
 };

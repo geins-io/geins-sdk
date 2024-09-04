@@ -1,23 +1,34 @@
 import { Environment } from '../common';
 
-export type MerchantApiCredentials = {
+export interface MerchantApiCredentials {
   apiKey: string;
   accountName: string;
-  environment?: Environment | string | null;
+  environment?: Environment;
 };
 
-export type ManagementApiCredentials = {
+export interface ManagementApiCredentials {
   apiKey: string;
   username: string;
   password: string;
 };
 
-export type Channel = {
+export interface Channel {
   siteId: string;
   siteTopDomain: string;
 };
 
-export type MarketLanguage = {
+export interface MarketLanguage {
   languageId: string;
   marketId: string;
 };
+
+
+export interface GeinsCredentials {
+  apiKey: string;
+  accountName: string;
+  channelId: number;
+  tld: string;
+  locale: string;
+  market: string;
+  environment?: Environment;
+}

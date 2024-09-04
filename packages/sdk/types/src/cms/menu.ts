@@ -1,4 +1,4 @@
-export type MenuItemType = {
+export interface MenuItemType {
   id: string;
   label: string;
   title: string;
@@ -9,12 +9,12 @@ export type MenuItemType = {
   children: MenuItemType[];
 };
 
-export type MenuType = {
+export interface MenuType {
   title: string;
   menuItems: MenuItemType[];
 };
 
-export type MenuServiceResult = {
+export interface MenuServiceResult {
   data: {
     getMenuAtLocation: MenuType;
   };

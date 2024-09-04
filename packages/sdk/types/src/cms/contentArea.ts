@@ -1,6 +1,6 @@
 import { CustomerType, KeyValue } from '../common';
 
-export type ContentAreaVariables = {
+export interface ContentAreaVariables {
   url?: string | null;
   alias?: string | null;
   areaName?: string | null;
@@ -14,17 +14,17 @@ export type ContentAreaVariables = {
   languageId?: string | null;
 };
 
-export type ContentImageSizeType = {
+export interface ContentImageSizeType {
   imageWidth: number;
   imageHeight: number;
 };
 
-export type ContentImageType = {
+export interface ContentImageType {
   fileName: string;
   largestSize: ContentImageSizeType;
 };
 
-export type ContentType = {
+export interface ContentType {
   id: string;
   name: string;
   sortOrder: number;
@@ -34,7 +34,7 @@ export type ContentType = {
   images: ContentImageType[];
 };
 
-export type ContentContainerType = {
+export interface ContentContainerType {
   id: string;
   name: string;
   sortOrder: number;
@@ -44,12 +44,12 @@ export type ContentContainerType = {
   content: ContentType[];
 };
 
-export type ContentAreaType = {
+export interface ContentAreaType {
   meta: any; // Adjust based on real meta type if available
   tags: string[];
   containers: ContentContainerType[];
 };
 
-export type PageServiceResult = {
+export interface PageServiceResult {
   contentArea: ContentAreaType;
 };
