@@ -3,33 +3,25 @@ import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 import * as contentParsers from '../util/contentParsers';
 export class ContentAreaService extends BaseApiService {
-  private async areaVars(
-    family: string,
-    areaName: string,
-    variables?: ContentAreaVariables,
+  private async generateVars(
+    variables: ContentAreaVariables
   ) {
-    if (!areaName || !family) {
+    if (!variables.areaName || !variables.family) {
       throw new Error('areaName and family is required');
     }
-
-    const combinedVariables = { ...variables, areaName, family };
-    return this.createVariables(combinedVariables);
+    return this.createVariables(variables);
   }
-  async area(
-    family: string,
-    areaName: string,
-    variables?: ContentAreaVariables,
+  async get(
+    variables: ContentAreaVariables,
   ) {
-    const vars = await this.areaVars(family, areaName, variables);
+    const vars = await this.generateVars(variables);
     return await this.runQuery(queries.contentArea, vars);
   }
 
-  async areaParsed(
-    family: string,
-    areaName: string,
-    variables?: ContentAreaVariables,
+  async getParsed(
+    variables: ContentAreaVariables,
   ) {
-    const vars = await this.areaVars(family, areaName, variables);
+    const vars = await this.generateVars(variables);
     return await this.runQueryParsed(queries.contentArea, vars);
   }
 

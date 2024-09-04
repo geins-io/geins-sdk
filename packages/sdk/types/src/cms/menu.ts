@@ -1,3 +1,9 @@
+import type { GeinsBaseApiVars } from '../api-client';
+
+export interface MenuVars extends GeinsBaseApiVars {
+  menuLocationId: string;
+}
+
 export interface MenuItemType {
   id: string;
   label: string;

@@ -1,18 +1,20 @@
 import { CustomerType, KeyValue } from '../common';
+import type { GeinsBaseApiVars } from '../api-client';
 
-export interface ContentAreaVariables {
-  url?: string | null;
-  alias?: string | null;
-  areaName?: string | null;
-  widgetAlias?: string | null;
-  family?: string | null;
-  filters?: Array<KeyValue> | null;
+export interface PageVariables extends BaseCmsVariables {
+  alias: string;
+};
+export interface ContentAreaVariables extends BaseCmsVariables {
+  areaName: string;
+  family: string;
+};
+
+export interface BaseCmsVariables extends GeinsBaseApiVars {
   customerType?: CustomerType | null;
   preview?: boolean | null;
+  filters?: Array<KeyValue> | null;
   displaySetting?: string | null;
-  marketId?: string | null;
-  languageId?: string | null;
-};
+}
 
 export interface ContentImageSizeType {
   imageWidth: number;

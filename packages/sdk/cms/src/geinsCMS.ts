@@ -1,19 +1,20 @@
 import { GeinsCore, BasePackage } from '@geins/core';
-import type { Channel, ContentAreaVariables } from '@geins/types';
+import type { GeinsCredentials, ContentAreaVariables } from '@geins/types';
 import { MenuService, PageService, ContentAreaService } from './services';
 
 class GeinsCMS extends BasePackage {
   public menu: MenuService;
   public page: PageService;
-  public content: ContentAreaService;
+  public contentArea: ContentAreaService;
 
   constructor(core: GeinsCore) {
+    console.log("🚀 ~ GeinsCMS ~ constructor ~ core:", core)
     super(core);
-    const { client, channel, defaultMarketLanguage: marketLanguage } = core;
+    const { client, credentials } = core;
 
-    this.menu = new MenuService(client, channel, marketLanguage);
-    this.page = new PageService(client, channel, marketLanguage);
-    this.content = new ContentAreaService(client, channel, marketLanguage);
+    this.menu = new MenuService(client, credentials);
+    this.page = new PageService(client, credentials);
+    this.contentArea = new ContentAreaService(client, credentials);
   }
 }
 

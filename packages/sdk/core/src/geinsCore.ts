@@ -1,8 +1,5 @@
-import { Environment } from '@geins/types';
 import type {
-  MerchantApiCredentials,
-  Channel,
-  MarketLanguage,
+  GeinsCredentials
 } from '@geins/types';
 import { MerchantApiClient, ENDPOINTS } from './api-client';
 import { CookieService, EventService } from './services/';
@@ -12,15 +9,7 @@ export class GeinsCore {
   // api client
   private endpointsUrls: any;
   private apiClient: any;
-  private apiKey: string = '';
-  private accountName: string = '';
-  private environment: Environment = Environment.PRODUCTION;
-
-  // channel information
-  private useChannel: Channel;
-
-  // default market language
-  private useDefaultMarketLanguage: MarketLanguage | undefined;
+  private geinsCredentials: GeinsCredentials;
 
   // cookie service
   private cookieService: CookieService | undefined;
@@ -29,38 +18,27 @@ export class GeinsCore {
   private eventService: EventService;
 
   constructor(
-    credentials: MerchantApiCredentials,
-    channel: Channel,
-    defualtMarketLanguage?: MarketLanguage,
+    credentials: GeinsCredentials
   ) {
-    if (!channel) {
+    console.log("🚀 ~ GeinsCore ~ credentials:", credentials)
+    if (!credentials.channel) {
       throw new Error('Channel is required');
     }
 
-    if (!credentials) {
-      throw new Error('Credentials are required');
+    if (!credentials.apiKey) {
+      throw new Error('API Key is required');
     }
 
-    this.useChannel = channel;
-
-    // Set authentication information
-    this.apiKey = credentials.apiKey;
-    this.accountName = credentials.accountName;
-    this.environment =
-      (credentials.environment as Environment) || Environment.PRODUCTION;
-
     // Initialize API Client
-    if (this.apiKey && this.accountName) {
+    if (this.credentials.apiKey && this.credentials.accountName) {
       this.endpointsUrls = buildEndpoints(
-        this.accountName,
-        this.apiKey,
-        this.environment,
+        this.credentials.accountName,
+        this.credentials.apiKey,
+        this.credentials.environment,
       );
     }
 
-    if (defualtMarketLanguage) {
-      this.useDefaultMarketLanguage = defualtMarketLanguage;
-    }
+    this.geinsCredentials = credentials;
 
     // Initialize BroadcastChannel
     if (!isServerContext()) {
@@ -72,10 +50,10 @@ export class GeinsCore {
 
   // Initialize API Client
   private initApiClient() {
-    if (this.apiKey && this.accountName) {
+    if (this.geinsCredentials.apiKey && this.geinsCredentials.accountName) {
       this.apiClient = new MerchantApiClient(
         this.endpointsUrls.main,
-        this.apiKey,
+        this.geinsCredentials.apiKey,
       );
     } else {
       throw new Error('API Key and Account Name are required');
@@ -96,16 +74,12 @@ export class GeinsCore {
     return this.endpointsUrls;
   }
 
-  get channel(): Channel {
-    return this.useChannel;
+  get credentials(): GeinsCredentials { 
+    return this.geinsCredentials;
   }
 
   get events(): EventService {
     return this.eventService;
-  }
-
-  get defaultMarketLanguage(): MarketLanguage | undefined {
-    return this.useDefaultMarketLanguage;
   }
 
   get cookies(): CookieService {

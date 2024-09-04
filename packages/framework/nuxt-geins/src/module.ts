@@ -7,7 +7,9 @@ import {
   logger,
 } from '@nuxt/kit';
 
-export interface ModuleOptions {
+import type { GeinsCredentials } from '@geins/types';
+
+export interface ModuleOptionsCredentials extends GeinsCredentials {
   /**
    * Geins API key
    * @default process.env.GEINS_API_KEY
@@ -33,28 +35,36 @@ export interface ModuleOptions {
    * @example '1'
    * @type string
    */
-  defaultChannelId: string;
+  channel: string;
   /**
    * Geins default top level domain
    * @default process.env.GEINS_TLD
    * @example 'se'
    * @type string
    */
-  defaultTLD: string;
+  tld: string;
   /**
    * Geins default locale
    * @default process.env.GEINS_LOCALE
    * @example 'sv-SE'
    * @type string
    */
-  defaultLocale: string;
+  locale: string;
   /**
    * Geins default market
    * @default process.env.GEINS_MARKET
    * @example 'se'
    * @type string
    */
-  defaultMarket: string;
+  market: string;
+}
+
+export interface ModuleOptions {
+  /**
+   * Geins credentials
+   * @type GeinsCredentials
+   */
+  credentials: ModuleOptionsCredentials;
   /**
    * Enable debug mode
    * @default false
@@ -77,12 +87,15 @@ export default defineNuxtModule<ModuleOptions>({
   },
   // Default configuration options of the Nuxt module
   defaults: {
-    apiKey: process.env.GEINS_API_KEY || '',
-    accountName: process.env.GEINS_ACCOUNT_NAME || '',
-    defaultChannelId: process.env.GEINS_CHANNEL || '',
-    defaultTLD: process.env.GEINS_TLD || '',
-    defaultLocale: process.env.GEINS_LOCALE || '',
-    defaultMarket: process.env.GEINS_MARKET || '',
+    credentials: {
+      apiKey: process.env.GEINS_API_KEY || '',
+      accountName: process.env.GEINS_ACCOUNT_NAME || '',
+      channel: process.env.GEINS_CHANNEL || '',
+      tld: process.env.GEINS_TLD || '',
+      locale: process.env.GEINS_LOCALE || '',
+      market: process.env.GEINS_MARKET || '',
+      environment: (process.env.GEINS_ENV as 'prod' | 'qa' | 'dev') || 'prod',
+    },
   },
   setup(options, nuxt) {
     // Default runtimeConfig
