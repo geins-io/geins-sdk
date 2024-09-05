@@ -1,11 +1,9 @@
 import { EndpointApiClient } from '@geins/core';
 import NodeCache from 'node-cache';
-
 let instance: RoutingService | null = null;
 
 const ttlSeconds = 60 * 60 * 24; // 24 hours
 const oneHourMs = 60 * 60 * 1000; // 1 hour in milliseconds
-
 export class RoutingService {
   private cache: NodeCache;
   private apiKey: string;
