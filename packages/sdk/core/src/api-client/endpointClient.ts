@@ -1,10 +1,6 @@
-import {
-  API_ENDPOINT_URL_HISTORY,
-  API_ENDPOINT_SLUG_HISTORY,
-} from '../constants';
+import { API_ENDPOINT_URL_HISTORY, API_ENDPOINT_SLUG_HISTORY } from '../constants/endpoints';
 export class EndpointApiClient {
   private apiKey: string;
-
   constructor(apiKey: string) {
     this.apiKey = apiKey;
   }
@@ -14,41 +10,20 @@ export class EndpointApiClient {
   }
 
   private async request(endpointUrl: string) {
-    try {
-      const options = {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      };
-      console.log('Fetching data from:', endpointUrl);
-      const response = await fetch(endpointUrl, options);
-
-      if (!response.ok) {
-        throw new Error(
-          `Request failed with status ${response.status}: ${response.statusText}`,
-        );
+    const options = {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       }
+    };
 
-      return await response.json();
-    } catch (error) {
-      console.error(`Error fetching data from ${endpointUrl}:`, error);
-      throw error;
-    }
+    const reponse = await fetch(this.getEndpointUrl(endpointUrl), options).then((response) => {
+      return response.json();
+    });
+    return reponse;
   }
 
-  async getUrlHistory(lastFetchTime?: string) {
-    const endpoint =
-      this.getEndpointUrl(API_ENDPOINT_URL_HISTORY) +
-      (lastFetchTime ? `?offset=${lastFetchTime}` : '');
-    console.log('endpoint', endpoint);
-    return this.request(endpoint);
-  }
-
-  async getSlugHistory(lastFetchTime?: string) {
-    const endpoint =
-      this.getEndpointUrl(API_ENDPOINT_SLUG_HISTORY) +
-      (lastFetchTime ? `?offset=${lastFetchTime}` : '');
-    return this.request(endpoint);
+  async getUrlHistory(offset?: string) {
+    return this.request(`${API_ENDPOINT_URL_HISTORY}`) + (offset ? '?offset=${offset}': '');
   }
 }
