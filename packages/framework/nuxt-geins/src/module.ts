@@ -7,7 +7,7 @@ import {
   logger,
 } from '@nuxt/kit';
 
-import type { GeinsCredentials } from '@geins/types';
+import type { GeinsCredentials, Environment } from '@geins/types';
 
 export interface ModuleOptionsCredentials extends GeinsCredentials {
   /**
@@ -24,11 +24,11 @@ export interface ModuleOptionsCredentials extends GeinsCredentials {
   accountName: string;
   /**
    * Geins environment
-   * @default process.env.GEINS_ENV || 'prod'
+   * @default process.env.GEINS_ENV
    * @example 'prod'
-   * @type string
+   * @type Environment
    */
-  environment: 'prod' | 'qa' | 'dev';
+  environment: Environment;
   /**
    * Geins default channel
    * @default process.env.GEINS_CHANNEL
@@ -61,16 +61,16 @@ export interface ModuleOptionsCredentials extends GeinsCredentials {
 
 export interface ModuleOptions {
   /**
-   * Geins credentials
-   * @type GeinsCredentials
-   */
-  credentials: ModuleOptionsCredentials;
-  /**
    * Enable debug mode
    * @default false
    * @type boolean
    */
   debug: boolean;
+  /**
+   * Geins credentials
+   * @type GeinsCredentials
+   */
+  credentials: ModuleOptionsCredentials;
 }
 
 export interface ModulePublicRuntimeConfig {
@@ -94,7 +94,7 @@ export default defineNuxtModule<ModuleOptions>({
       tld: process.env.GEINS_TLD || '',
       locale: process.env.GEINS_LOCALE || '',
       market: process.env.GEINS_MARKET || '',
-      environment: (process.env.GEINS_ENV as 'prod' | 'qa' | 'dev') || 'prod',
+      environment: (process.env.GEINS_ENV as Environment) || 'prod',
     },
   },
   setup(options, nuxt) {

@@ -19,7 +19,8 @@
     "cookie-universal": "^2.2.2",
     "@geins/core": "*",
     "@geins/cms": "*",
-    "@geins/crm": "*"
+    "@geins/crm": "*",
+    "nuxt-geins": "*"
   },
   "devDependencies": {
     "@geins/types": "*",

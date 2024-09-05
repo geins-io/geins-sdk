@@ -1,21 +1,23 @@
 import { GeinsCore, BasePackage } from '@geins/core';
-import type { GeinsCredentials, ContentAreaVariables } from '@geins/types';
-import { MenuService, PageService, ContentAreaService } from './services';
+import {
+  MenuService,
+  ContentPageService,
+  ContentAreaService,
+} from './services';
 
 class GeinsCMS extends BasePackage {
   public menu: MenuService;
-  public page: PageService;
-  public contentArea: ContentAreaService;
+  public page: ContentPageService;
+  public area: ContentAreaService;
 
   constructor(core: GeinsCore) {
-    console.log("🚀 ~ GeinsCMS ~ constructor ~ core:", core)
     super(core);
     const { client, credentials } = core;
 
     this.menu = new MenuService(client, credentials);
-    this.page = new PageService(client, credentials);
-    this.contentArea = new ContentAreaService(client, credentials);
+    this.page = new ContentPageService(client, credentials);
+    this.area = new ContentAreaService(client, credentials);
   }
 }
 
-export { GeinsCMS, ContentAreaVariables };
+export { GeinsCMS };

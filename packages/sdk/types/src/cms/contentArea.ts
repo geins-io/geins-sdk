@@ -1,13 +1,13 @@
 import { CustomerType, KeyValue } from '../common';
 import type { GeinsBaseApiVars } from '../api-client';
 
-export interface PageVariables extends BaseCmsVariables {
+export interface ContentPageVariables extends BaseCmsVariables {
   alias: string;
-};
+}
 export interface ContentAreaVariables extends BaseCmsVariables {
   areaName: string;
   family: string;
-};
+}
 
 export interface BaseCmsVariables extends GeinsBaseApiVars {
   customerType?: CustomerType | null;
@@ -19,12 +19,12 @@ export interface BaseCmsVariables extends GeinsBaseApiVars {
 export interface ContentImageSizeType {
   imageWidth: number;
   imageHeight: number;
-};
+}
 
 export interface ContentImageType {
   fileName: string;
   largestSize: ContentImageSizeType;
-};
+}
 
 export interface ContentType {
   id: string;
@@ -34,7 +34,7 @@ export interface ContentType {
   size: string;
   configuration: string;
   images: ContentImageType[];
-};
+}
 
 export interface ContentContainerType {
   id: string;
@@ -44,14 +44,14 @@ export interface ContentContainerType {
   responsiveMode: string;
   design: string;
   content: ContentType[];
-};
+}
 
 export interface ContentAreaType {
   meta: any; // Adjust based on real meta type if available
   tags: string[];
   containers: ContentContainerType[];
-};
+}
 
-export interface PageServiceResult {
+export interface ContentPageServiceResult {
   contentArea: ContentAreaType;
-};
+}

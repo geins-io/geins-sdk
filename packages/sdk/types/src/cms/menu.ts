@@ -1,6 +1,6 @@
 import type { GeinsBaseApiVars } from '../api-client';
 
-export interface MenuVars extends GeinsBaseApiVars {
+export interface MenuVariables extends GeinsBaseApiVars {
   menuLocationId: string;
 }
 
@@ -13,15 +13,15 @@ export interface MenuItemType {
   order: number;
   targetBlank: boolean;
   children: MenuItemType[];
-};
+}
 
 export interface MenuType {
   title: string;
   menuItems: MenuItemType[];
-};
+}
 
 export interface MenuServiceResult {
   data: {
     getMenuAtLocation: MenuType;
   };
-};
+}

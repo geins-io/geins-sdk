@@ -1,19 +1,19 @@
-import type { MenuVars, MenuType, MenuItemType } from '@geins/types';
+import type { MenuVariables, MenuType, MenuItemType } from '@geins/types';
 import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 export class MenuService extends BaseApiService {
-  private async generateVars(variables: MenuVars) {
+  private async generateVars(variables: MenuVariables) {
     if (!variables.menuLocationId) {
       throw new Error('LocationId is required');
     }
     const vars = this.createVariables(variables);
     return vars;
   }
-  async get(variables: MenuVars) {
+  async get(variables: MenuVariables) {
     const vars = await this.generateVars(variables);
     return await this.runQuery(queries.menu, vars);
   }
-  async getParsed(variables: MenuVars) {
+  async getParsed(variables: MenuVariables) {
     const vars = await this.generateVars(variables);
     return await this.runQueryParsed(queries.menu, vars);
   }

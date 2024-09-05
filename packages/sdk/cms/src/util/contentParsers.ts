@@ -2,10 +2,19 @@ import { ContentAreaType, ContentContainerType } from '@geins/core';
 import { parse } from 'graphql';
 
 export function parseContentArea(result: any): ContentAreaType {
-  if (!result || !result.data || !result.data.widgetArea) {
+  if (!result || !result.data) {
     throw new Error('Invalid result structure for content area');
   }
   const area = result.data.widgetArea;
+
+  if (!area) {
+    console.warn('No area found');
+    return {
+      meta: {},
+      tags: [],
+      containers: [],
+    };
+  }
 
   const parsedResult = {
     meta: area.meta ? parseMetaData(area.meta) : {},

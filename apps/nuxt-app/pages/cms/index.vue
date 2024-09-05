@@ -1,149 +1,110 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import { GeinsCore } from '@geins/core';
-import { GeinsCMS } from '@geins/cms';
-import type {
-  Channel,
-  MerchantApiCredentials,
-  MenuType,
-  ContentAreaType,
-} from '@geins/types';
+import type { MenuType, ContentAreaType } from '@geins/types';
 
-const runtimeConfig = useRuntimeConfig();
-const items = ref<any[]>([]);
-const channel: Channel = {
-  siteId: runtimeConfig.public.channel.siteId,
-  siteTopDomain: runtimeConfig.public.channel.siteTopDomain,
-};
+const { getContentArea, getContentPage, getMenu, geinsCMS } = useGeinsCMS();
 
-const geinsCredentials: MerchantApiCredentials = {
-  ...runtimeConfig.public.geins,
-};
-
-const languageId = runtimeConfig.public.defaultLanguage;
-const marketId = runtimeConfig.public.defaultMarket;
-
-const geinsCore = new GeinsCore(geinsCredentials, channel, {
-  marketId,
-  languageId,
-});
-const geinsCMS = new GeinsCMS(geinsCore);
-
-const slug = ref<string>('hej');
-const family = ref<string>('Frontpage');
-const area = ref<string>('The front page area');
-const menuLocation = ref<string>('main-desktop');
-
+const items = ref<{ header: string; data: string }[]>([]);
 const menuData = ref<MenuType>();
 const pageData = ref<ContentAreaType>();
 
-const resetCompnentData = () => {
+const resetComponentData = () => {
   menuData.value = undefined;
   pageData.value = undefined;
 };
 
-const getContentArea = () => {
-  resetCompnentData();
+const family = ref('Frontpage');
+const areaName = ref('The front page area');
+const getAreaData = async () => {
+  resetComponentData();
   console.log(
     'getting content area with family:""',
     family.value,
     '"and area:""',
-    area.value,
+    areaName.value,
     '"',
   );
-  geinsCMS.content.area(family.value, area.value).then((response) => {
-    if (response.loading) {
-      console.info('loading');
-      return;
-    }
-    if (!response.data) {
-      console.info('no data');
-      return;
-    }
-    const data = response.data;
-    items.value.unshift({
-      header: `:: geinsCMS.content.area :: ----------------- :: [${new Date().toISOString()}]`,
-      data: JSON.stringify(data),
-    });
+
+  const { data } = await useAsyncData('contentArea', () =>
+    getContentArea({ family: family.value, areaName: areaName.value }),
+  );
+
+  const contentArea = data.value?.data;
+
+  items.value.unshift({
+    header: `:: useGeinsCMS.getContentArea :: ----------------- :: [${new Date().toISOString()}]`,
+    data: JSON.stringify(contentArea),
   });
-  geinsCMS.content
-    .areaParsed(family.value, area.value)
+
+  geinsCMS.area
+    .getParsed({ family: family.value, areaName: areaName.value })
     .then((result) => {
       return result as ContentAreaType;
     })
-    .then((contentArea) => {
+    .then((contentArea: ContentAreaType) => {
       console.log('widgetArea:', contentArea);
       pageData.value = contentArea;
       items.value.unshift({
-        header: `:: geinsCMS.content.areaParsed :: ----------------- :: [${new Date().toISOString()}]`,
+        header: `:: geinsCMS.area.getParsed :: ----------------- :: [${new Date().toISOString()}]`,
         data: JSON.stringify(contentArea),
       });
     });
 };
 
-const getPage = () => {
-  resetCompnentData();
+const slug = ref('hej');
+const getPage = async () => {
+  resetComponentData();
   console.log('getting page with slug:', slug.value);
 
-  geinsCMS.page.alias(slug.value).then((response) => {
-    if (response.loading) {
-      console.info('loading');
-      return;
-    }
-    if (!response.data) {
-      console.info('no data');
-      return;
-    }
-    const data = response.data;
-    items.value.unshift({
-      header: `:: geinsCMS.page.alias :: ----------------- :: [${new Date().toISOString()}]`,
-      data: JSON.stringify(data),
-    });
+  const { data } = await useAsyncData('page', () =>
+    getContentPage({ alias: slug.value }),
+  );
+
+  const contentPage = data.value?.data;
+
+  items.value.unshift({
+    header: `:: useGeinsCMS.getContentPage :: ----------------- :: [${new Date().toISOString()}]`,
+    data: JSON.stringify(contentPage),
   });
   geinsCMS.page
-    .aliasParsed(slug.value)
+    .getParsed({ alias: slug.value })
     .then((result) => {
       return result as ContentAreaType;
     })
-    .then((contentArea) => {
+    .then((contentArea: ContentAreaType) => {
       console.log('widgetArea:', contentArea);
       pageData.value = contentArea;
       items.value.unshift({
-        header: `:: geinsCMS.page.aliasParsed :: ----------------- :: [${new Date().toISOString()}]`,
+        header: `:: geinsCMS.page.getParsed :: ----------------- :: [${new Date().toISOString()}]`,
         data: JSON.stringify(contentArea),
       });
     });
 };
 
-const getMenu = () => {
-  resetCompnentData();
+const menuLocation = ref('main-desktop');
+const fetchMenu = async () => {
+  resetComponentData();
   console.log('getting menu at location slug:', menuLocation.value);
 
-  geinsCMS.menu.location(menuLocation.value).then((response) => {
-    if (response.loading) {
-      console.info('loading');
-      return;
-    }
-    if (!response.data) {
-      console.info('no data');
-      return;
-    }
-    const data = response.data;
-    items.value.unshift({
-      header: `:: geinsCMS.menu.locationParsed :: ----------------- :: [${new Date().toISOString()}]`,
-      data: JSON.stringify(data),
-    });
+  const { data } = await useAsyncData('menu', () =>
+    getMenu({ menuLocationId: menuLocation.value }),
+  );
+
+  const menu = data.value?.data;
+
+  items.value.unshift({
+    header: `:: useGeinsCMS.getMenu :: ----------------- :: [${new Date().toISOString()}]`,
+    data: JSON.stringify(menu),
   });
 
   geinsCMS.menu
-    .locationParsed(menuLocation.value)
+    .getParsed({ menuLocationId: menuLocation.value })
     .then((result) => {
       return result as MenuType;
     })
-    .then((menu) => {
+    .then((menu: MenuType) => {
       menuData.value = menu;
       items.value.unshift({
-        header: `:: geinsCMS.menu.locationParsed :: ----------------- :: [${new Date().toISOString()}]`,
+        header: `:: geinsCMS.menu.getParsed :: ----------------- :: [${new Date().toISOString()}]`,
         data: JSON.stringify(menu),
       });
     });
@@ -163,8 +124,8 @@ const getMenu = () => {
             </tr>
             <tr>
               <td><input v-model="family" /></td>
-              <td><input v-model="area" /></td>
-              <td><button @click="getContentArea">Get Content Area</button></td>
+              <td><input v-model="areaName" /></td>
+              <td><button @click="getAreaData">Get Content Area</button></td>
             </tr>
             <tr>
               <td></td>
@@ -178,13 +139,13 @@ const getMenu = () => {
             </tr>
             <tr>
               <td></td>
-              <td>slug:</td>
+              <td>menu location id:</td>
               <td></td>
             </tr>
             <tr>
               <td></td>
               <td><input v-model="menuLocation" /></td>
-              <td><button @click="getMenu">Get Menu</button></td>
+              <td><button @click="fetchMenu">Get Menu</button></td>
             </tr>
           </table>
           <div v-for="(item, index) in items" :key="index">
@@ -200,11 +161,11 @@ const getMenu = () => {
         </td>
         <td></td>
         <td style="vertical-align: top">
-          <Menu v-if="menuData" :menu="menuData" />
-          <ContentArea
+          <CmsMenu v-if="menuData" :menu="menuData" />
+          <CmsContentArea
             v-if="pageData"
             :family="family"
-            :area="area"
+            :area="areaName"
             :data="pageData"
           />
         </td>
