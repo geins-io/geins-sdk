@@ -13,20 +13,21 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@geins/cms": "*",
-    "@geins/core": "*",
-    "@geins/crm": "*",
-    "cookie-universal": "^2.2.2",
     "nuxt": "^3.12.4",
     "vue": "^3.4.31",
-    "vue-router": "^4.4.0"
+    "vue-router": "^4.4.0",
+    "cookie-universal": "^2.2.2",
+    "@geins/core": "*",
+    "@geins/cms": "*",
+    "@geins/crm": "*",
+    "nuxt-geins": "*"
   },
   "devDependencies": {
-    "@geins/eslint-config": "*",
     "@geins/types": "*",
+    "@geins/eslint-config": "*",
     "@nuxt/eslint-config": "^0.3.13",
-    "@types/node": "^20.16.5",
-    "eslint": "^9",
-    "typescript": "^5.4.5"
+    "@types/node": "^20",
+    "typescript": "^5.4.5",
+    "eslint": "^9"
   }
 }
