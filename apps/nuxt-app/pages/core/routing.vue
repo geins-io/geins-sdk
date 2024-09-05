@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-
-import { RoutingService } from '../../utils/routingService'
+import { RoutingService } from '../../utils/routingService';
+import { RoutingStoreNodeCache } from '../../utils/routingStoreNodeCache';
 import DataDump from '~/components/DataDump.vue';
 
 const runtimeConfig = useRuntimeConfig();
 const items = ref<any[]>([]);
 const url = ref('/sv/skor/kvinna/skor-164/');
 
-
-const routingService = new RoutingService(runtimeConfig.public.geins.apiKey);
+const apiKey = runtimeConfig.public.geins.apiKey;
+const store = new RoutingStoreNodeCache();
+const routingService = new RoutingService(apiKey, store);
 
 const fillRoutes = async () => {
   const routes = await routingService.fillUrlHistory();
-  console.log('routes', routes);
+  console.log('routes filled', routes);
 };
 
 const refreshRoutes = async () => {
@@ -24,6 +25,7 @@ const get301Pages = async () => {
   const all = await routingService.getAllRoutes();
   console.log('all routes', all);
 };
+
 const get301Length = async () => {
   const all = await routingService.getAllRoutes();
   console.log('all routes count', all.length);
@@ -33,23 +35,24 @@ const getLatestRefresh = async () => {
   console.log('Last fetch time for URL history:', lastUrlFetchTime);
   const all = await routingService.getAllRoutes();
   console.log('all routes count', all.length);
-
 };
 const getLocalRoutes = async () => {
   const all = await routingService.getAllRoutes();
   console.log('all routes count', all.length);
-
 };
-
 const testRoute = async () => {
   const route = await routingService.getRoute(url.value);
   console.log('route', route);
-  const all = await routingService.getAllRoutes();
-  console.log('all routes count', all);
-  //items.value = [{ header: 'from: ' + url.value, data: route }];
 };
 
-
+const testRouteRedirect = async () => {
+  const route = await routingService.getRoute(url.value);
+  console.log('route', route);
+  if (route) {
+    // redirect to new tab
+    window.open(route, '_blank');
+  }
+};
 
 onMounted(async () => {
   const routes = await routingService.fillUrlHistory();
@@ -64,9 +67,7 @@ onMounted(async () => {
         <td style="vertical-align: top">
           <table>
             <tr>
-              <td>
-                Fill / Refresh
-              </td>
+              <td>Fill / Refresh</td>
             </tr>
             <tr>
               <td>
@@ -76,9 +77,7 @@ onMounted(async () => {
               </td>
             </tr>
             <tr>
-              <td>
-                Routing for 301
-              </td>
+              <td>Routing for 301</td>
             </tr>
             <tr>
               <td>
@@ -91,7 +90,9 @@ onMounted(async () => {
             </tr>
             <tr>
               <td>
-                <button @click="getLocalRoutes">Get Local Canonicals Routes</button>
+                <button @click="getLocalRoutes">
+                  Get Local Canonicals Routes
+                </button>
               </td>
             </tr>
             <tr>
@@ -99,8 +100,11 @@ onMounted(async () => {
             </tr>
             <tr>
               <td>
-                <input style="width:450px" type="text" v-model="url" />
+                <input v-model="url" style="width: 300px" type="text" />
                 <button @click="testRoute">Test Route</button>
+                <button @click="testRouteRedirect">
+                  Test Route Redirect New Tab
+                </button>
               </td>
             </tr>
           </table>
