@@ -1,6 +1,4 @@
-import type {
-  GeinsCredentials
-} from '@geins/types';
+import type { GeinsCredentials } from '@geins/types';
 import { MerchantApiClient, ENDPOINTS } from './api-client';
 import { CookieService, EventService } from './services/';
 import { isServerContext, buildEndpoints } from './utils';
@@ -17,10 +15,7 @@ export class GeinsCore {
   // events
   private eventService: EventService;
 
-  constructor(
-    credentials: GeinsCredentials
-  ) {
-    console.log("🚀 ~ GeinsCore ~ credentials:", credentials)
+  constructor(credentials: GeinsCredentials) {
     if (!credentials.channel) {
       throw new Error('Channel is required');
     }
@@ -30,11 +25,11 @@ export class GeinsCore {
     }
 
     // Initialize API Client
-    if (this.credentials.apiKey && this.credentials.accountName) {
+    if (credentials.apiKey && credentials.accountName) {
       this.endpointsUrls = buildEndpoints(
-        this.credentials.accountName,
-        this.credentials.apiKey,
-        this.credentials.environment,
+        credentials.accountName,
+        credentials.apiKey,
+        credentials.environment,
       );
     }
 
@@ -74,7 +69,7 @@ export class GeinsCore {
     return this.endpointsUrls;
   }
 
-  get credentials(): GeinsCredentials { 
+  get credentials(): GeinsCredentials {
     return this.geinsCredentials;
   }
 

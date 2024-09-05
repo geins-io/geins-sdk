@@ -10,7 +10,7 @@ const family = ref('Frontpage');
 const areaName = ref('The front page area');
 
 const { data } = await useAsyncData('contentArea', () =>
-  getContentArea({family: family.value, areaName: areaName.value}),
+  getContentArea({ family: family.value, areaName: areaName.value }),
 );
 
 const contentArea = data.value?.data;

@@ -4,7 +4,9 @@ import { useGeinsCore } from './useGeinsCore';
 
 export function useGeinsCMS() {
   const { geinsCore } = useGeinsCore();
+  console.log('🚀 ~ useGeinsCMS ~ geinsCore:', geinsCore);
   const geinsCMS = new GeinsCMS(geinsCore);
+  console.log('🚀 ~ useGeinsCMS ~ geinsCMS:', geinsCMS);
 
   const getContentArea = async (variables: ContentAreaVariables) => {
     return await geinsCMS.contentArea.get(variables);
