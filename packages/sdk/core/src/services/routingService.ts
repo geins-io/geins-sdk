@@ -2,22 +2,22 @@ import { EndpointApiClient } from '../api-client/endpointClient';
 import NodeCache from 'node-cache';
 const ttlSeconds = 60 * 60 * 24; // 24 hours
 
-// https://merchantapi.geins.io/redirect/urlhistory/`{API-KEY}`?offset=`{DATE_TIME}`
-// https://merchantapi.geins.io/redirect/aliashistory/`{API-KEY}`?offset=`{DATE_TIME}`
-
-
-
 export class RoutingService {
   //protected client: GeinsManagementApiClient;
   protected endpoints: any;
   private cache: NodeCache;
+  private lastFetchTimes: NodeCache;
   private apiKey: string;
   private apiClient: EndpointApiClient;
+  private lastFetchTime: Date | null = null;
+
   constructor(apiKey: string) {
     this.apiKey = apiKey;
-    this.cache = this.initCache();
     this.apiClient = new EndpointApiClient(apiKey);
+    this.cache = this.initCache();
+    this.lastFetchTimes = this.initCache();
   }
+
   private initCache() {
     return new NodeCache({
       stdTTL: ttlSeconds,
@@ -30,22 +30,25 @@ export class RoutingService {
     return this.cache;
   }
 
-  fillRoutes() {
-    // dummy data for loop
-    let count = 0;
-    // forloop to fill routes 100 times
-    for (let i = 0; i < 100000; i++) {
-      // get ms from date and randon number
-      const ms = new Date().getMilliseconds();
-      const random = Math.random();
-      const path = `path${ms}${random}`;
-      this.saveRouteInCache(`path${count}/${path}`, `route${count}`);
-      count++;
+  async fillRoutes() {
+   const urlHistory = await this.fillUrlhistory();
+   //const slugHistory = await this.fillSlugHistory();
+   // console.log(urlHistory, slugHistory);
+   return { urlHistory };
+
+  }
+  async fillUrlhistory() {
+    const history =  await this.apiClient.getUrlHistory();
+    for (const item of history) {
+      if(item.oldUrl && item.newUrl && item.deleted === false) {
+        this.saveRouteInCache(item.oldUrl, item.newUrl);
+      }
     }
+    return history;
   }
 
   async fillSlugHistory() {
-    return this.apiClient.getUrlHistory();
+   return await this.apiClient.getSlugHistory();
   }
 
   saveRouteInCache(path: string, route: string) {
