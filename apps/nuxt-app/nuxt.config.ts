@@ -18,7 +18,6 @@ export default defineNuxtConfig({
       market: process.env.GEINS_MARKET || 'se',
     },
   },
-  // https://merchantapi.geins.io/redirect/urlhistory/CF2FF80B-6F85-4CD9-ACE5-F41962891E07`?offset=`{DATE_TIME}`
   runtimeConfig: {
     public: {
       geins: {
@@ -34,13 +33,5 @@ export default defineNuxtConfig({
       defaultMarket: process.env.GEINS_MARKET_ID || 'se',
     },
     apiCredentials: {}, // Add this line
-  },
-  routeRules: {
-    '/from': {
-      redirect: {
-        to: '/routes',
-        statusCode: 302,
-      },
-    },
   },
 });
