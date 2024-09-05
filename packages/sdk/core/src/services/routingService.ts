@@ -21,29 +21,6 @@ export interface RoutingItem {
   fromUrl: string;
   toUrl: string;
 }
-import { EndpointApiClient } from '../api-client';
-
-let instance: RoutingService | null = null;
-const oneHourMs = 60 * 60 * 1000; // 1 hour in milliseconds
-const KEY_URL_HISTORY = 'urlHistory';
-const KEY_LAST_FETCH_TIME = 'urlHistory:lastFetchTime';
-
-export enum RoutingServiceState {
-  INIT,
-  FETCHING,
-  READY,
-  ERROR,
-}
-
-export interface RoutingRule extends RoutingItem {
-  httpStatusCode?: number;
-  isCanonical?: boolean;
-}
-
-export interface RoutingItem {
-  fromUrl: string;
-  toUrl: string;
-}
 
 export class RoutingService {
   private store: any;

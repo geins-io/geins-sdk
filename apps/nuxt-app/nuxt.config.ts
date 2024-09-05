@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-08-19',
   // ... other configuration options
 
-  modules: ['nuxt-geins'],
+  // modules: ['nuxt-geins'],
   geins: {
     debug: true,
     credentials: {

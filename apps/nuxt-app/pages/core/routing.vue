@@ -13,16 +13,7 @@ const routingService = new RoutingService(apiKey, store);
 
 const fillRoutes = async () => {
   const routes = await routingService.fillUrlHistory();
-<<<<<<< HEAD
   console.log('routes', routes);
-=======
-  if (routes.length > 0) {
-    console.log('routes filled', routes.length);
-    url.value = routes[0];
-  }
-
-  console.log('routes filled', routes.length);
->>>>>>> 3008167 (add: progress)
 };
 
 const refreshRoutes = async () => {
