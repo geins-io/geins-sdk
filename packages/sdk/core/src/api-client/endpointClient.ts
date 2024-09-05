@@ -1,4 +1,7 @@
-import { API_ENDPOINT_URL_HISTORY, API_ENDPOINT_SLUG_HISTORY } from '../constants/endpoints';
+import {
+  API_ENDPOINT_URL_HISTORY,
+  API_ENDPOINT_SLUG_HISTORY,
+} from '../constants';
 export class EndpointApiClient {
   private apiKey: string;
 
@@ -7,7 +10,6 @@ export class EndpointApiClient {
   }
 
   private getEndpointUrl(endpointUrl: string) {
-    this.apiKey = '81966EA4-AB03-44C0-A736-755E68DBC4C1';
     return `${endpointUrl}/${this.apiKey}`;
   }
 
@@ -19,10 +21,13 @@ export class EndpointApiClient {
           'Content-Type': 'application/json',
         },
       };
-
+      console.log('Fetching data from:', endpointUrl);
       const response = await fetch(endpointUrl, options);
+
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
+        throw new Error(
+          `Request failed with status ${response.status}: ${response.statusText}`,
+        );
       }
 
       return await response.json();
@@ -32,13 +37,18 @@ export class EndpointApiClient {
     }
   }
 
-  async getUrlHistory(offset?: string) {
-    const endpoint = this.getEndpointUrl(API_ENDPOINT_URL_HISTORY) + (offset ? `?offset=${offset}` : '');
+  async getUrlHistory(lastFetchTime?: string) {
+    const endpoint =
+      this.getEndpointUrl(API_ENDPOINT_URL_HISTORY) +
+      (lastFetchTime ? `?offset=${lastFetchTime}` : '');
+    console.log('endpoint', endpoint);
     return this.request(endpoint);
   }
 
-  async getSlugHistory(offset?: string) {
-    const endpoint = this.getEndpointUrl(API_ENDPOINT_SLUG_HISTORY) + (offset ? `?offset=${offset}` : '');
+  async getSlugHistory(lastFetchTime?: string) {
+    const endpoint =
+      this.getEndpointUrl(API_ENDPOINT_SLUG_HISTORY) +
+      (lastFetchTime ? `?offset=${lastFetchTime}` : '');
     return this.request(endpoint);
   }
 }

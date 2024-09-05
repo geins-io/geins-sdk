@@ -1,5 +1,5 @@
 import NodeCache from 'node-cache';
-import { BaseRoutingStore } from './baseRoutingStore';
+import { BaseRoutingStore } from '../base';
 
 const ttlSeconds = 60 * 60 * 24; // 24 hours
 

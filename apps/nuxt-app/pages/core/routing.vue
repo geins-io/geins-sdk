@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { RoutingService } from '../../utils/routingService';
-import { RoutingStoreNodeCache } from '../../utils/routingStoreNodeCache';
+import { RoutingService, RoutingStoreNodeCache } from '@geins/core';
 import DataDump from '~/components/DataDump.vue';
 
 const runtimeConfig = useRuntimeConfig();
 const items = ref<any[]>([]);
-const url = ref('/sv/skor/kvinna/skor-164/');
+const url = ref('');
 
 const apiKey = runtimeConfig.public.geins.apiKey;
 const store = new RoutingStoreNodeCache();
@@ -14,7 +13,12 @@ const routingService = new RoutingService(apiKey, store);
 
 const fillRoutes = async () => {
   const routes = await routingService.fillUrlHistory();
-  console.log('routes filled', routes);
+  if (routes.length > 0) {
+    console.log('routes filled', routes.length);
+    url.value = routes[0];
+  }
+
+  console.log('routes filled', routes.length);
 };
 
 const refreshRoutes = async () => {
@@ -22,24 +26,30 @@ const refreshRoutes = async () => {
 };
 
 const get301Pages = async () => {
-  const all = await routingService.getAllRoutes();
-  console.log('all routes', all);
+  const all = await routingService.getRoutingRules();
+  for (let i = 0; i < 100; i++) {
+    const item = all[i];
+    items.value.push({ header: item.fromUrl, data: item });
+  }
 };
 
 const get301Length = async () => {
   const all = await routingService.getAllRoutes();
   console.log('all routes count', all.length);
 };
+
 const getLatestRefresh = async () => {
   const lastUrlFetchTime = await routingService.getLastFetchTime();
   console.log('Last fetch time for URL history:', lastUrlFetchTime);
   const all = await routingService.getAllRoutes();
   console.log('all routes count', all.length);
 };
+
 const getLocalRoutes = async () => {
   const all = await routingService.getAllRoutes();
   console.log('all routes count', all.length);
 };
+
 const testRoute = async () => {
   const route = await routingService.getRoute(url.value);
   console.log('route', route);
@@ -54,10 +64,7 @@ const testRouteRedirect = async () => {
   }
 };
 
-onMounted(async () => {
-  const routes = await routingService.fillUrlHistory();
-  console.log('routes', routes);
-});
+onMounted(async () => { });
 </script>
 <template>
   <div>
