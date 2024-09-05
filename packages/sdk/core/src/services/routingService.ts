@@ -144,6 +144,7 @@ export class RoutingService {
       // If no last fetch time, initiate a fetch
       await this.fillUrlHistory();
     }
+    return history;
   }
 
   async getLastFetchTime() {
