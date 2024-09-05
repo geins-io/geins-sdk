@@ -1,16 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
- import { RoutingService } from './utils/routingService';
-
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
   compatibilityDate: '2024-08-19',
-  // ... other configuration options
-
-  // modules: [
-  //   '@geins/nuxt',
-  // ],
-// https://merchantapi.geins.io/redirect/urlhistory/CF2FF80B-6F85-4CD9-ACE5-F41962891E07`?offset=`{DATE_TIME}`
   runtimeConfig: {
     public: {
       geins: {
@@ -27,19 +19,5 @@ export default defineNuxtConfig({
     },
     apiCredentials: {}, // Add this line
   },
-
-  // routingService.ts
-  hooks: {
-    'nitro:build:before': async () => {
-      const apiKey =  process.env.GEINS_API_KEY || 'CF2FF80B-6F85-4CD9-ACE5-F41962891E07';
-      const routingService = RoutingService.getInstance(apiKey);
-
-      // Preload URL history during the build process
-      await routingService.fillUrlHistory();
-      console.log('RoutingService: URL history loaded during build');
-
-    }
-  }
-
 });
 
