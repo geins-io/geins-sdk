@@ -34,12 +34,4 @@ export default defineNuxtConfig({
     },
     apiCredentials: {}, // Add this line
   },
-  routeRules: {
-    '/from': {
-      redirect: {
-        to: '/routes',
-        statusCode: 302,
-      },
-    },
-  },
 });
