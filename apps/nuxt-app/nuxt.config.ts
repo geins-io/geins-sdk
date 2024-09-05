@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-// import { RoutingService } from './utils/routingService';
+ import { RoutingService } from './utils/routingService';
 
-import cache from './server/utils/cache';
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
   compatibilityDate: '2024-08-19',
@@ -31,18 +31,13 @@ export default defineNuxtConfig({
   // routingService.ts
   hooks: {
     'nitro:build:before': async () => {
-        // Assuming you are fetching data from some API or database
-      const dataToCache: { [key: string]: string } = {
-        exampleKey: 'exampleValue',
-        anotherKey: 'anotherValue',
-      };
+      const apiKey =  process.env.GEINS_API_KEY || 'CF2FF80B-6F85-4CD9-ACE5-F41962891E07';
+      const routingService = RoutingService.getInstance(apiKey);
 
-      // Populate the cache
-      Object.keys(dataToCache).forEach(key => {
-        cache.set(key, dataToCache[key]);
-      });
+      // Preload URL history during the build process
+      await routingService.fillUrlHistory();
+      console.log('RoutingService: URL history loaded during build');
 
-      console.log('Cache contents after population:', cache.keys(), cache.mget(cache.keys()));
     }
   }
 
