@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { GeinsCore, buildEndpoints } from '@geins/core';
-import type { Channel, MerchantApiCredentials } from '@geins/core';
+import type { GeinsCredentials } from '@geins/core';
 import { AuthClientDirect, AuthClientProxy } from '@geins/crm';
 /* import { AuthClientDirect } from '../utils/authClientDirect';
 import { AuthClientProxy } from '../utils/authClientProxy'; */
 
-enum ConnectionType {
+enum Connection {
   Proxy = 'Proxy',
   Direct = 'Direct',
 }
 
-const runtimeConfig = useRuntimeConfig();
+type ConnectionType = Connection.Proxy | Connection.Direct;
+
+const config = useRuntimeConfig();
 const items = ref<any[]>([]);
 const user = ref<any>({});
 const connectionType = ref<ConnectionType | ''>('');
@@ -19,30 +21,17 @@ const username = ref<string>('arvidsson@geins.io');
 const password = ref<string>('8yifjxvujx95ie2vdkml8d');
 const rememberUser = ref<boolean>(true);
 
-const channel: Channel = {
-  siteId: runtimeConfig.public.channel.siteId,
-  siteTopDomain: runtimeConfig.public.channel.siteTopDomain,
-};
-
-const geinsCredentials: MerchantApiCredentials = {
-  ...runtimeConfig.public.geins,
-};
+const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 
 const endpoints = buildEndpoints(
   geinsCredentials.accountName,
   geinsCredentials.apiKey,
-  'prod',
+  geinsCredentials.environment,
 );
 
-const languageId = runtimeConfig.public.defaultLanguage;
-const marketId = runtimeConfig.public.defaultMarket;
+const geinsCore = new GeinsCore(geinsCredentials);
 
-const geinsCore = new GeinsCore(geinsCredentials, channel, {
-  marketId,
-  languageId,
-});
-
-const authClientProxy = new AuthClientProxy('api/auth');
+const authClientProxy = new AuthClientProxy('/api/auth');
 const authClientDirect = new AuthClientDirect(
   endpoints.authSign,
   endpoints.auth,
@@ -73,8 +62,7 @@ onMounted(() => {
  */
 const handleLogin = async (type: ConnectionType, validCredentials = true) => {
   connectionType.value = type;
-  const client =
-    type === ConnectionType.Proxy ? authClientProxy : authClientDirect;
+  const client = type === Connection.Proxy ? authClientProxy : authClientDirect;
   const loginCredentials = validCredentials
     ? credentials.value
     : {
@@ -92,7 +80,7 @@ const handleLogin = async (type: ConnectionType, validCredentials = true) => {
  */
 const handleLogout = async () => {
   const client =
-    connectionType.value === ConnectionType.Proxy
+    connectionType.value === Connection.Proxy
       ? authClientProxy
       : authClientDirect;
   const result = await client.logout();
@@ -106,7 +94,7 @@ const handleLogout = async () => {
  */
 const handleRefresh = async () => {
   const client =
-    connectionType.value === ConnectionType.Proxy
+    connectionType.value === Connection.Proxy
       ? authClientProxy
       : authClientDirect;
   const result = await client.refresh();
@@ -119,7 +107,7 @@ const handleRefresh = async () => {
  */
 const handleRegister = async () => {
   const client =
-    connectionType.value === ConnectionType.Proxy
+    connectionType.value === Connection.Proxy
       ? authClientProxy
       : authClientDirect;
   const result = await client.register(credentials.value);
@@ -132,7 +120,7 @@ const handleRegister = async () => {
  */
 const handleChangePassword = async () => {
   const client =
-    connectionType.value === ConnectionType.Proxy
+    connectionType.value === Connection.Proxy
       ? authClientProxy
       : authClientDirect;
   const newPasswordCredentials = {
@@ -150,7 +138,7 @@ const handleChangePassword = async () => {
  */
 const updateUser = async () => {
   const client =
-    connectionType.value === ConnectionType.Proxy
+    connectionType.value === Connection.Proxy
       ? authClientProxy
       : authClientDirect;
   const result = await client.getUser();
@@ -216,23 +204,23 @@ const updateCookiesDisplay = () => {
               <td colspan="3">
                 <button
                   :disabled="
-                    connectionType === ConnectionType.Direct || userLoggedIn
+                    connectionType === Connection.Direct || userLoggedIn
                   "
-                  @click="handleLogin(ConnectionType.Proxy, true)"
+                  @click="handleLogin(Connection.Proxy, true)"
                 >
                   Login Good
                 </button>
                 <button
                   :disabled="
-                    connectionType === ConnectionType.Direct || userLoggedIn
+                    connectionType === Connection.Direct || userLoggedIn
                   "
-                  @click="handleLogin(ConnectionType.Proxy, false)"
+                  @click="handleLogin(Connection.Proxy, false)"
                 >
                   Login Bad
                 </button>
                 <button
                   :disabled="
-                    connectionType === ConnectionType.Direct || !userLoggedIn
+                    connectionType === Connection.Direct || !userLoggedIn
                   "
                   @click="handleLogout"
                 >
@@ -240,28 +228,28 @@ const updateCookiesDisplay = () => {
                 </button>
                 <button
                   :disabled="
-                    connectionType === ConnectionType.Direct || !userLoggedIn
+                    connectionType === Connection.Direct || !userLoggedIn
                   "
                   @click="handleRefresh"
                 >
                   Refresh
                 </button>
                 <button
-                  :disabled="connectionType === ConnectionType.Direct"
+                  :disabled="connectionType === Connection.Direct"
                   @click="handleRegister"
                 >
                   Register
                 </button>
                 <button
                   :disabled="
-                    connectionType === ConnectionType.Direct || !userLoggedIn
+                    connectionType === Connection.Direct || !userLoggedIn
                   "
                   @click="handleChangePassword"
                 >
                   Change Password
                 </button>
                 <button
-                  :disabled="connectionType === ConnectionType.Direct"
+                  :disabled="connectionType === Connection.Direct"
                   @click="updateUser"
                 >
                   Get User
@@ -280,23 +268,23 @@ const updateCookiesDisplay = () => {
               <td colspan="3">
                 <button
                   :disabled="
-                    connectionType === ConnectionType.Proxy || userLoggedIn
+                    connectionType === Connection.Proxy || userLoggedIn
                   "
-                  @click="handleLogin(ConnectionType.Direct, true)"
+                  @click="handleLogin(Connection.Direct, true)"
                 >
                   Login Good
                 </button>
                 <button
                   :disabled="
-                    connectionType === ConnectionType.Proxy || userLoggedIn
+                    connectionType === Connection.Proxy || userLoggedIn
                   "
-                  @click="handleLogin(ConnectionType.Direct, false)"
+                  @click="handleLogin(Connection.Direct, false)"
                 >
                   Login Bad
                 </button>
                 <button
                   :disabled="
-                    connectionType === ConnectionType.Proxy || !userLoggedIn
+                    connectionType === Connection.Proxy || !userLoggedIn
                   "
                   @click="handleLogout"
                 >
@@ -304,28 +292,28 @@ const updateCookiesDisplay = () => {
                 </button>
                 <button
                   :disabled="
-                    connectionType === ConnectionType.Proxy || !userLoggedIn
+                    connectionType === Connection.Proxy || !userLoggedIn
                   "
                   @click="handleRefresh"
                 >
                   Refresh
                 </button>
                 <button
-                  :disabled="connectionType === ConnectionType.Proxy"
+                  :disabled="connectionType === Connection.Proxy"
                   @click="handleRegister"
                 >
                   Register
                 </button>
                 <button
                   :disabled="
-                    connectionType === ConnectionType.Proxy || !userLoggedIn
+                    connectionType === Connection.Proxy || !userLoggedIn
                   "
                   @click="handleChangePassword"
                 >
                   Change Password
                 </button>
                 <button
-                  :disabled="connectionType === ConnectionType.Proxy"
+                  :disabled="connectionType === Connection.Proxy"
                   @click="updateUser"
                 >
                   Get User
