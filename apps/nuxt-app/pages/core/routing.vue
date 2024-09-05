@@ -13,12 +13,7 @@ const routingService = new RoutingService(apiKey, store);
 
 const fillRoutes = async () => {
   const routes = await routingService.fillUrlHistory();
-  if (routes.length > 0) {
-    console.log('routes filled', routes.length);
-    url.value = routes[0];
-  }
-
-  console.log('routes filled', routes.length);
+  console.log('routes', routes);
 };
 
 const refreshRoutes = async () => {
@@ -49,7 +44,6 @@ const getLocalRoutes = async () => {
   const all = await routingService.getAllRoutes();
   console.log('all routes count', all.length);
 };
-
 const testRoute = async () => {
   const route = await routingService.getRoute(url.value);
   console.log('route', route);
