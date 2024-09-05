@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { RoutingService, RoutingStoreNodeCache } from '@geins/core';
+import { RoutingService } from '../../utils/routingService';
+import { RoutingStoreNodeCache } from '../../utils/routingStoreNodeCache';
 import DataDump from '~/components/DataDump.vue';
 
 const runtimeConfig = useRuntimeConfig();
@@ -49,7 +50,6 @@ const getLocalRoutes = async () => {
   const all = await routingService.getAllRoutes();
   console.log('all routes count', all.length);
 };
-
 const testRoute = async () => {
   const route = await routingService.getRoute(url.value);
   console.log('route', route);

@@ -1,33 +1,69 @@
 import { EndpointApiClient } from '@geins/core';
-import NodeCache from 'node-cache';
-let instance: RoutingService | null = null;
+import type { BaseRoutingStore } from './baseRoutingStore';
 
-const ttlSeconds = 60 * 60 * 24; // 24 hours
+let instance: RoutingService | null = null;
 const oneHourMs = 60 * 60 * 1000; // 1 hour in milliseconds
+const KEY_URL_HISTORY = 'urlHistory';
+const KEY_LAST_FETCH_TIME = 'urlHistory:lastFetchTime';
+
+enum RoutingServiceState {
+  INIT,
+  FETCHING,
+  READY,
+  ERROR,
+}
+
 export class RoutingService {
-  private cache: NodeCache;
+  private store: any;
   private apiKey: string;
   private apiClient: EndpointApiClient;
+  private state: RoutingServiceState;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, store: any) {
+    if (!apiKey) {
+      this.state = RoutingServiceState.ERROR;
+      throw new Error('API key is required');
+    }
+
+    if (!store) {
+      this.state = RoutingServiceState.ERROR;
+      throw new Error('Store is required');
+    }
+
+    this.state = RoutingServiceState.INIT;
+    this.store = store;
     this.apiKey = apiKey;
     this.apiClient = new EndpointApiClient(apiKey);
-    this.cache = new NodeCache({ stdTTL: ttlSeconds }); // Initialize NodeCache with TTL
+    this.state = RoutingServiceState.READY;
   }
 
-  public static getInstance(apiKey: string) {
+  public static getInstance(apiKey: string, store: BaseRoutingStore) {
     if (!instance) {
-      instance = new RoutingService(apiKey);
+      instance = new RoutingService(apiKey, store);
     }
     return instance;
   }
 
+  setKey(key: string, value: string): void {
+    this.store.setKey(key, value);
+  }
+
+  getKey(key: string): string {
+    return this.store.getKey(key);
+  }
+
   // Fetch URL history from the cache if available, otherwise fetch from API
   async fillUrlHistory() {
-    const cacheKey = 'urlHistory';
-    const lastFetchTimeKey = 'urlHistory:lastFetchTime';
+    if (this.state === RoutingServiceState.FETCHING) {
+      console.log('Already fetching URL history, skipping...');
+      return;
+    }
 
-    const lastFetchTime = this.cache.get(lastFetchTimeKey);
+    this.state = RoutingServiceState.FETCHING;
+    const cacheKey = KEY_URL_HISTORY;
+    const lastFetchTimeKey = KEY_LAST_FETCH_TIME;
+
+    const lastFetchTime = this.getKey(lastFetchTimeKey);
     const now = new Date();
 
     // Check if less than 1 hour has passed since last fetch
@@ -38,7 +74,7 @@ export class RoutingService {
       if (timeElapsed < oneHourMs) {
         // Less than 1 hour passed, return cached data
         console.log('Returning cached URL history from NodeCache');
-        const cachedRoutes = this.cache.get(cacheKey);
+        const cachedRoutes = this.getKey(cacheKey);
         if (cachedRoutes) return cachedRoutes;
       }
     }
@@ -48,33 +84,32 @@ export class RoutingService {
     const history = await this.apiClient.getUrlHistory();
     for (const item of history) {
       if (item.oldUrl && item.newUrl && !item.deleted) {
-        this.cache.set(item.oldUrl, item.newUrl);
+        this.setKey(item.oldUrl, item.newUrl);
       }
     }
 
     // Set the new last fetch time in the cache
-    this.cache.set(lastFetchTimeKey, now.toISOString());
-
-    return this.cache.keys(); // Return all cached keys
+    this.setKey(lastFetchTimeKey, now.toISOString());
+    this.state = RoutingServiceState.READY;
+    return this.store.getKeys(); // Return all cached keys
   }
 
   // Get a specific route from the cache
   async getRoute(path: string) {
     console.log('Getting route for path:', path);
-    return this.cache.get(path);
+    return this.getKey(path);
   }
 
   // Get all routes from the cache
   async getAllRoutes() {
-    return this.cache.keys();
+    return this.store.getKeys();
   }
 
   // Refresh URL history if needed (if more than 1 hour has passed)
   async refreshUrlHistoryIfNeeded() {
-    const lastFetchTimeKey = 'urlHistory:lastFetchTime';
     const now = new Date();
 
-    const lastFetchTime = this.cache.get(lastFetchTimeKey);
+    const lastFetchTime = this.getKey(KEY_LAST_FETCH_TIME);
     if (lastFetchTime) {
       const lastFetchDate = new Date(lastFetchTime as string);
       const timeElapsed = now.getTime() - lastFetchDate.getTime();
@@ -94,13 +129,13 @@ export class RoutingService {
 
   // get last fetch time
   async getLastFetchTime() {
-    return this.cache.get('urlHistory:lastFetchTime');
+    return this.getKey(KEY_LAST_FETCH_TIME);
   }
 
   async fillRoutes() {
     await this.fillUrlHistory();
     return {
-      urlHistory: this.cache.keys(), // Return all cached routes or relevant info
+      urlHistory: this.store.getKeys(), // Return all cached routes or relevant info
     };
   }
 }
