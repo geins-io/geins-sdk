@@ -10,7 +10,6 @@ export class EndpointApiClient {
   }
 
   private getEndpointUrl(endpointUrl: string) {
-    this.apiKey = '81966EA4-AB03-44C0-A736-755E68DBC4C1';
     return `${endpointUrl}/${this.apiKey}`;
   }
 
