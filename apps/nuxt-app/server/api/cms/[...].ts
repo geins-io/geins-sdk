@@ -1,43 +1,9 @@
-import { buildEndpoints, GeinsCore } from '@geins/core';
-import { GeinsCMS } from '@geins/cms';
-import { AuthService } from '@geins/crm';
-import type {
-  Channel,
-  MerchantApiCredentials,
-  ContentAreaVariables,
-  MenuType,
-  ContentAreaType,
-} from '@geins/types';
-const runtimeConfig = useRuntimeConfig();
-const channel: Channel = {
-  siteId: runtimeConfig.public.channel.siteId,
-  siteTopDomain: runtimeConfig.public.channel.siteTopDomain,
-};
+// import { useGeinsCMS, useGeinsLog } from '#imports';
 
-const geinsCredentials: MerchantApiCredentials = {
-  ...runtimeConfig.public.geins,
-};
+// export default defineEventHandler(async (event) => {
+//   const { getMenu } = useGeinsCMS();
+//   const { geinsLog } = useGeinsLog();
+//   const menu = await getMenu({ menuLocationId: 'Frontpage' });
 
-const languageId = runtimeConfig.public.defaultLanguage;
-const marketId = runtimeConfig.public.defaultMarket;
-
-const geinsCore = new GeinsCore(geinsCredentials, channel, {
-  marketId,
-  languageId,
-});
-
-export default defineEventHandler(async (event) => {
-  const geinsCMS = new GeinsCMS(geinsCore);
-  geinsCMS.menu.location('Frontpage').then((response) => {
-    if (response.loading) {
-      console.info('loading');
-      return;
-    }
-    if (!response.data) {
-      console.info('no data');
-      return;
-    }
-    const data = response.data;
-    console.info(data);
-  });
-});
+//   geinsLog(menu);
+// });

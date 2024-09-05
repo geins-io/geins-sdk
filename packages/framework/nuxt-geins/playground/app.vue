@@ -7,10 +7,10 @@
 const { getContentArea } = useGeinsCMS();
 const { geinsLog } = useGeinsLog();
 const family = ref('Frontpage');
-const area = ref('The front page area');
+const areaName = ref('The front page area');
 
 const { data } = await useAsyncData('contentArea', () =>
-  getContentArea(family.value, area.value),
+  getContentArea({ family: family.value, areaName: areaName.value }),
 );
 
 const contentArea = data.value?.data;

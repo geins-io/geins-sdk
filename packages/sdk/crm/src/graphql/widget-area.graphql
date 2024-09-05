@@ -3,7 +3,7 @@
 query widgetArea(
   $family: String = null
   $areaName: String = null
-  $widgetAlias: String = null
+  $alias: String = null
   $displaySetting: String = null
   $filters: [PageWidgetCollectionFilterInputType] = null
   $preview: Boolean = null
@@ -16,7 +16,7 @@ query widgetArea(
   widgetArea(
     family: $family
     areaName: $areaName
-    alias: $widgetAlias
+    alias: $alias
     displaySetting: $displaySetting
     filters: $filters
     preview: $preview

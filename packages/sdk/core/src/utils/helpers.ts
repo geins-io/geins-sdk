@@ -1,12 +1,13 @@
 import { ENDPOINTS } from '../constants';
+import type { Environment } from '@geins/types';
 export function isServerContext() {
   return typeof window === 'undefined';
 }
 
 export function buildEndpoints(
-  accountName: string,
   apiKey: string,
-  environment: string = 'prod',
+  accountName: string,
+  environment: Environment = 'prod',
 ) {
   return {
     main: ENDPOINTS.main,

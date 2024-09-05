@@ -1,48 +1,42 @@
-import type { Channel, MarketLanguage } from '@geins/types';
+import type { GeinsCredentials } from '@geins/types';
 
 export abstract class BaseApiService {
   protected client: any;
-  protected channel: Channel;
+  protected geinsCredentials: GeinsCredentials;
   protected channelId: string;
-  protected defaultMarketLanguage: MarketLanguage | undefined;
 
   constructor(
     client: any,
-    channel: Channel,
-    defaultMarketLanguage?: MarketLanguage,
+    credentials: GeinsCredentials,
   ) {
     this.client = client;
 
-    if (!channel) {
+    if (!credentials.channel) {
       throw new Error('Channel is required');
     }
 
-    if (defaultMarketLanguage) {
-      this.defaultMarketLanguage = defaultMarketLanguage;
-    }
+    this.geinsCredentials = credentials;
 
-    this.channelId = `${channel.siteId}|${channel.siteTopDomain}`;
-    this.channel = channel;
+    this.channelId = `${credentials.channel}|${credentials.tld}`;
   }
 
   protected createVariables(vars: any) {
     const variables = { ...vars };
 
     if (!variables.languageId) {
-      if (!this.defaultMarketLanguage) {
+      if (!this.geinsCredentials.locale) {
         throw new Error('Language is required');
       }
-      variables.languageId = this.defaultMarketLanguage.languageId;
+      variables.languageId = this.geinsCredentials.locale;
     }
 
     if (!variables.marketId) {
-      if (!this.defaultMarketLanguage) {
+      if (!this.geinsCredentials.market) {
         throw new Error('Market is required');
       }
-      variables.marketId = this.defaultMarketLanguage.marketId;
+      variables.marketId = this.geinsCredentials.market;
     }
 
-    // make override possible
     if (!variables.channelId) {
       variables.channelId = this.channelId;
     }

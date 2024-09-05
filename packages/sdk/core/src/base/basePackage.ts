@@ -7,8 +7,8 @@ export abstract class BasePackage {
     if (!core.client) {
       throw new Error('Merchant API Client is not set');
     }
-    if (!core.channel) {
-      throw new Error('Channel is required');
+    if (!core.credentials) {
+      throw new Error('Credentials are required');
     }
   }
 }

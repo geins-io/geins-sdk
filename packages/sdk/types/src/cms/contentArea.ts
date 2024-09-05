@@ -1,30 +1,32 @@
 import { CustomerType, KeyValue } from '../common';
+import type { GeinsBaseApiVars } from '../api-client';
 
-export type ContentAreaVariables = {
-  url?: string | null;
-  alias?: string | null;
-  areaName?: string | null;
-  widgetAlias?: string | null;
-  family?: string | null;
-  filters?: Array<KeyValue> | null;
+export interface ContentPageVariables extends BaseCmsVariables {
+  alias: string;
+}
+export interface ContentAreaVariables extends BaseCmsVariables {
+  areaName: string;
+  family: string;
+}
+
+export interface BaseCmsVariables extends GeinsBaseApiVars {
   customerType?: CustomerType | null;
   preview?: boolean | null;
+  filters?: Array<KeyValue> | null;
   displaySetting?: string | null;
-  marketId?: string | null;
-  languageId?: string | null;
-};
+}
 
-export type ContentImageSizeType = {
+export interface ContentImageSizeType {
   imageWidth: number;
   imageHeight: number;
-};
+}
 
-export type ContentImageType = {
+export interface ContentImageType {
   fileName: string;
   largestSize: ContentImageSizeType;
-};
+}
 
-export type ContentType = {
+export interface ContentType {
   id: string;
   name: string;
   sortOrder: number;
@@ -32,9 +34,9 @@ export type ContentType = {
   size: string;
   configuration: string;
   images: ContentImageType[];
-};
+}
 
-export type ContentContainerType = {
+export interface ContentContainerType {
   id: string;
   name: string;
   sortOrder: number;
@@ -42,14 +44,14 @@ export type ContentContainerType = {
   responsiveMode: string;
   design: string;
   content: ContentType[];
-};
+}
 
-export type ContentAreaType = {
+export interface ContentAreaType {
   meta: any; // Adjust based on real meta type if available
   tags: string[];
   containers: ContentContainerType[];
-};
+}
 
-export type PageServiceResult = {
+export interface ContentPageServiceResult {
   contentArea: ContentAreaType;
-};
+}
