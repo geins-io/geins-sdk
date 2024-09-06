@@ -1,5 +1,11 @@
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+
+const baseDeletePatterns = ['olleh', 'hello'];
+
+// List of patterns to exclude from deletion
+const excludePatterns = ['.temp', '.env'];
 
 // Set the absolute path to the `geins` repository
 const repoRoot = path.resolve(__dirname, '..');
@@ -28,12 +34,9 @@ const deleteItem = (itemPath) => {
   }
 };
 
-// List of patterns to exclude from deletion
-const excludePatterns = ['.temp', '.env'];
-
 // Function to read .gitignore and build delete patterns
 const buildDeletePatterns = (gitignorePath) => {
-  const deletePatterns = [];
+  const deletePatterns = [...baseDeletePatterns];
   if (fs.existsSync(gitignorePath)) {
     const gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8');
     const patterns = gitignoreContent.split('\n').filter(Boolean);
@@ -53,6 +56,15 @@ const buildDeletePatterns = (gitignorePath) => {
 
 // Function to recursively find and delete patterns based on local .gitignore
 const processDirectory = (dir) => {
+  // check if the directory is root
+  if (dir === repoRoot) {
+    const gitignorePath = path.join(dir, '.gitignore');
+    const deletePatterns = buildDeletePatterns(gitignorePath);
+    if (deletePatterns.length > 0) {
+      baseDeletePatterns.push(...deletePatterns);
+    }
+  }
+
   // Ensure we are only processing within the intended repo
   if (!isWithinRepo(dir)) {
     console.log(`Skipping directory outside of repo: ${dir}`);
@@ -84,13 +96,33 @@ const processDirectory = (dir) => {
   });
 };
 
-// Clear the Yarn cache
+// clear yarn cache with the following command: yarn cache clean
 const clearYarnCache = () => {
   try {
     execSync('yarn cache clean', { stdio: 'inherit' });
-    console.log('Yarn cache cleared.');
+    console.log('Yarn cache cleared!');
   } catch (err) {
     console.error(`Error clearing Yarn cache: ${err.message}`);
+  }
+};
+
+// run yarn install with the following command: yarn install
+const yarnInstall = () => {
+  try {
+    execSync('yarn install', { stdio: 'inherit' });
+    console.log('Yarn install complete!');
+  } catch (err) {
+    console.error(`Error during Yarn install: ${err.message}`);
+  }
+};
+
+// run yarn build with the following command: yarn build
+const yarnBuild = () => {
+  try {
+    execSync('yarn build', { stdio: 'inherit' });
+    console.log('Yarn build complete!');
+  } catch (err) {
+    console.error(`Error during Yarn build: ${err.message}`);
   }
 };
 
@@ -103,3 +135,11 @@ console.log('Cleanup complete!');
 clearYarnCache();
 
 console.log('Cache cleared!');
+
+// Run yarn install
+yarnInstall();
+
+console.log('Yarn install complete!');
+
+// Run yarn build
+yarnBuild();
