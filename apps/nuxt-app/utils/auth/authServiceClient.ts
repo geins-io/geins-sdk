@@ -43,6 +43,7 @@ export class AuthServiceClient {
     },
     action: string = 'login',
   ): Promise<void> {
+    console.log('[authServiceClient] auth SERVICE connect');
     this.resetTokenData();
     const url = `${this.authEndpoint}/${action}`;
     const requiresSign = Boolean(credentials);

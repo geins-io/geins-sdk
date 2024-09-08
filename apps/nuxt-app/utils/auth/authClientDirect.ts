@@ -1,75 +1,40 @@
 import { AuthClient } from './authClient';
+import { AuthService } from './authService';
 import type { AuthResponse, AuthCredentials } from '@geins/types';
 
 /**
- * A concrete implementation of the `AuthClient` class that interacts with an authentication API via HTTP requests.
- * This class is responsible for managing authentication processes such as login, logout, token refresh, and user management
- * by communicating with Geins authentication api through an proxy endpoint.
+ * A concrete implementation of the `AuthClient` class that directly interacts with the `AuthService`.
+ * This class handles authentication operations such as login, logout, token refresh, user retrieval,
+ * and registration by communicating with Geins authentication API.
  *
  * @example
  * ```ts
- * const authClient = new AuthClientProxy('/api/auth');
+ * const authClient = new AuthClientDirect('https://example.com/sign', 'https://example.com/auth');
  * const credentials = { username: 'user@example.com', password: 'password123' };
  * const response = await authClient.login(credentials);
  * console.log(response.succeeded); // true if login was successful
  * ```
  */
-export class AuthClientProxy extends AuthClient {
+export class AuthClientDirect extends AuthClient {
   /**
-   * The base endpoint for the authentication API.
-   * Used to construct full API paths for authentication-related requests.
+   * The service used to perform authentication operations such as login, logout, etc.
    */
-  private readonly authEndpointApp: string;
+  private authService: AuthService;
 
   /**
-   * Initializes a new instance of the `AuthClientProxy` class.
+   * Initializes a new instance of the `AuthClientDirect` class.
    *
-   * @param authEndpointApp - The base endpoint URL for the authentication API.
+   * @param signEndpoint - The endpoint URL used for signing requests.
+   * @param authEndpoint - The endpoint URL used for authentication requests.
    *
    * @example
    * ```ts
-   * const authClient = new AuthClientProxy('/api/auth');
+   * const authClient = new AuthClientDirect('https://example.com/sign', 'https://example.com/auth');
    * ```
    */
-  constructor(authEndpointApp: string) {
+  constructor(signEndpoint: string, authEndpoint: string) {
     super();
-    this.authEndpointApp = authEndpointApp;
-  }
-
-  /**
-   * Sends an HTTP request to the authentication API and returns the response.
-   *
-   * @template T - The expected response type.
-   * @param path - The API path to which the request is sent.
-   * @param options - The options for the HTTP request, such as method, headers, and body.
-   * @returns A promise resolving to the parsed JSON response body of type `T`.
-   * @throws An error if the API request fails.
-   *
-   * @example
-   * ```ts
-   * const userData = await authClient.request<AuthResponse>('/login', {
-   *   method: 'POST',
-   *   body: JSON.stringify(credentials),
-   * });
-   * ```
-   */
-  private async request<T>(path: string, options: RequestInit): Promise<T> {
-    const response = await fetch(`${this.authEndpointApp}${path}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      console.error(result.message || 'API request failed');
-      throw new Error('API request failed');
-    }
-
-    return result.body?.data as T;
+    this.authService = new AuthService(signEndpoint, authEndpoint);
   }
 
   /**
@@ -88,12 +53,7 @@ export class AuthClientProxy extends AuthClient {
    * ```
    */
   async login(credentials: AuthCredentials): Promise<AuthResponse> {
-    const result = await this.request<AuthResponse>('/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    });
-
-    console.log('[authClientProxy] login() result', result);
+    const result = await this.authService.login(credentials);
 
     if (result.succeeded) {
       this.setCookiesLogin(result, credentials.rememberUser || false);
@@ -116,9 +76,9 @@ export class AuthClientProxy extends AuthClient {
    * ```
    */
   async logout(): Promise<boolean> {
-    const result = await this.request<any>('/logout', { method: 'GET' });
+    const result = await this.authService.logout();
     this.clearCookies();
-    return result.status === 200 ? true : false;
+    return result.succeeded;
   }
 
   /**
@@ -135,9 +95,7 @@ export class AuthClientProxy extends AuthClient {
    * ```
    */
   async refresh(): Promise<AuthResponse | undefined> {
-    const result = await this.request<AuthResponse>('/refresh', {
-      method: 'GET',
-    });
+    const result = await this.authService.refresh();
 
     if (result && result.tokens?.token) {
       this.setCookiesRefresh(result.tokens.token);
@@ -162,8 +120,7 @@ export class AuthClientProxy extends AuthClient {
    * ```
    */
   async getUser(): Promise<AuthResponse | undefined> {
-    const result = await this.request<AuthResponse>('/user', { method: 'GET' });
-
+    const result = await this.authService.getUser();
     if (result && result.succeeded && result.tokens?.token) {
       if (result.tokens.expired) {
         this.clearCookies();
@@ -194,10 +151,7 @@ export class AuthClientProxy extends AuthClient {
    * ```
    */
   async register(credentials: AuthCredentials): Promise<AuthResponse> {
-    const result = await this.request<AuthResponse>('/register', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    });
+    const result = await this.authService.register(credentials);
 
     if (result.succeeded) {
       this.setCookiesLogin(result, credentials.rememberUser || false);
@@ -207,7 +161,7 @@ export class AuthClientProxy extends AuthClient {
   }
 
   /**
-   * Changes the user's password by sending a request to the authentication API.
+   * Changes the user's password by calling the authentication service.
    *
    * @param credentials - The authentication credentials, including the new password.
    * @returns A promise resolving to the authentication response after the password change.
@@ -224,11 +178,6 @@ export class AuthClientProxy extends AuthClient {
   protected async changePasswordImplementation(
     credentials: AuthCredentials,
   ): Promise<AuthResponse> {
-    const result = await this.request<AuthResponse>('/password', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    });
-
-    return result || { succeeded: false };
+    return await this.authService.changePassword(credentials);
   }
 }

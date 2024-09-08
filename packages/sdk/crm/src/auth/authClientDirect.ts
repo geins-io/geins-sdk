@@ -120,7 +120,9 @@ export class AuthClientDirect extends AuthClient {
    * ```
    */
   async getUser(): Promise<AuthResponse | undefined> {
+    console.log('[authClientDirect] getUser()');
     const result = await this.authService.getUser();
+    console.log('[authClientDirect] getUser() result', result);
 
     if (result && result.succeeded && result.tokens?.token) {
       if (result.tokens.expired) {

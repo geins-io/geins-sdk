@@ -217,15 +217,19 @@ export class AuthService {
    */
   public async getUser(token?: string): Promise<AuthResponse | undefined> {
     token = token || this.client?.getToken();
-    console.log('[autService.ts] getUser() -> token', token);
-    if (!token) return undefined;
+    if (!token) {
+      if (this.client) {
+        await this.client?.connect();
+        token = await this.client?.getToken();
+      } else {
+        return undefined;
+      }
+    }
 
     const authResponse = await this.getUserObjectFromToken(token);
-    console.log('[autService.ts] getUser() -> 1. authResponse', authResponse);
     if (authResponse && this.client) {
       authResponse.tokens!.refreshToken = this.client.getRefreshToken();
     }
-    console.log('[autService.ts] getUser() -> 2. authResponse', authResponse);
     return authResponse;
   }
 

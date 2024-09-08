@@ -7,8 +7,13 @@ set refreshgetToken in cookie named 'refresh' to pass for the next request
 */
 
 import { buildEndpoints, GeinsCore } from '@geins/core';
-import { AuthService } from '@geins/crm';
+
 import type { GeinsCredentials } from '@geins/types';
+import { AuthService } from '../../../utils/auth';
+import LogService from '../../../utils/logService';
+import { EndOfLineState } from 'typescript';
+
+// '@geins/crm';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);
@@ -16,12 +21,10 @@ export default defineEventHandler(async (event) => {
   const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 
   const endpoints = buildEndpoints(
-    geinsCredentials.accountName,
     geinsCredentials.apiKey,
+    geinsCredentials.accountName,
     geinsCredentials.environment,
   );
-
-  const geinsCore = new GeinsCore(geinsCredentials);
 
   const authService = new AuthService(endpoints.authSign, endpoints.auth);
 
@@ -65,9 +68,12 @@ export default defineEventHandler(async (event) => {
     try {
       const credentials = { username, password, rememberUser };
       const authReponse = await authService.login(credentials);
+      LogService.debug('authReponse', authReponse);
       if (authReponse.tokens !== undefined && authReponse.tokens.refreshToken) {
+        LogService.debug('set refreshToken', authReponse.tokens.refreshToken);
         refreshCookieTokenSet(event, authReponse.tokens.refreshToken);
       }
+
       return {
         status: authReponse.user?.authenticated ? 200 : 401,
         body: {
@@ -107,11 +113,13 @@ export default defineEventHandler(async (event) => {
   const getUser = async (event: any) => {
     try {
       const authReponse = await authService.getUser();
+      LogService.debug('authReponse', authReponse);
       if (
         authReponse &&
         authReponse?.tokens &&
         authReponse?.tokens?.refreshToken
       ) {
+        LogService.debug('has token', authReponse?.tokens?.refreshToken);
         refreshCookieTokenSet(event, authReponse.tokens.refreshToken);
       }
 
@@ -174,7 +182,7 @@ export default defineEventHandler(async (event) => {
     const refreshCookie = cookies
       .split(';')
       .find((cookie: string) => cookie.trim().startsWith('refresh='));
-
+    LogService.debug('refreshCookie', refreshCookie);
     if (refreshCookie) {
       return refreshCookie.split('=')[1];
     } else {
@@ -187,6 +195,7 @@ export default defineEventHandler(async (event) => {
       'Set-Cookie',
       `refresh=${token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=900`,
     );
+    //LogService.debug('token set headers', token);
   };
 
   const refreshCookieTokenClear = async (event: any) => {
@@ -194,6 +203,7 @@ export default defineEventHandler(async (event) => {
       'Set-Cookie',
       `refresh=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0`,
     );
+    //LogService.debug('heders', event.res.getHeaders());
   };
 
   const refreshToken = await hasRefreshTokenCookie(event);
