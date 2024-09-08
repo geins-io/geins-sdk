@@ -93,8 +93,6 @@ export class AuthClientProxy extends AuthClient {
       body: JSON.stringify(credentials),
     });
 
-    console.log('[authClientProxy] login() result', result);
-
     if (result.succeeded) {
       this.setCookiesLogin(result, credentials.rememberUser || false);
     }
@@ -163,7 +161,6 @@ export class AuthClientProxy extends AuthClient {
    */
   async getUser(): Promise<AuthResponse | undefined> {
     const result = await this.request<AuthResponse>('/user', { method: 'GET' });
-
     if (result && result.succeeded && result.tokens?.token) {
       if (result.tokens.expired) {
         this.clearCookies();
@@ -174,7 +171,6 @@ export class AuthClientProxy extends AuthClient {
     } else {
       this.clearCookies();
     }
-
     return result;
   }
 

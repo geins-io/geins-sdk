@@ -6,12 +6,9 @@ https://nuxt.com/docs/getting-started/data-fetching#pass-cookies-from-server-sid
 set refreshgetToken in cookie named 'refresh' to pass for the next request
 */
 
-import { buildEndpoints, GeinsCore } from '@geins/core';
-
+import { LogService, buildEndpoints, GeinsCore } from '@geins/core';
 import type { GeinsCredentials } from '@geins/types';
-import { AuthService } from '../../../utils/auth';
-import LogService from '../../../utils/logService';
-import { EndOfLineState } from 'typescript';
+import { AuthService } from '@geins/crm';
 
 // '@geins/crm';
 

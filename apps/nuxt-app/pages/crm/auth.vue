@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { GeinsCore, buildEndpoints } from '@geins/core';
+import { LogService, GeinsCore, buildEndpoints } from '@geins/core';
 import type { GeinsCredentials } from '@geins/core';
-import { AuthClientDirect, AuthClientProxy } from '../../utils/auth';
-import LogService from '../../utils/logService';
+import { AuthClientDirect, AuthClientProxy } from '@geins/crm';
 // // '@geins/crm';
 /* import { AuthClientDirect } from '../utils/authClientDirect';
 import { AuthClientProxy } from '../utils/authClientProxy'; */
@@ -65,23 +64,17 @@ const authClient = computed(() => {
 });
 
 onMounted(() => {
-  // LogService.debug('onMounted');
-  //  LogService.debug('This is a debug log');
-  //LogService.error('This is an error log', { error: new Error('Oops') });
-  //LogService.trace('Tracing execution flow');
-  // console.info('** [auth.vue] - onMounted()');
-  //console.debug(authClientDirect);
-  //console.time('** [auth.vue] - onMounted()');
-  // console.log('** [auth.vue] - onMounted()');
-  // console.warn('** [auth.vue] - onMounted()');
-  //updateUser();
-  //console.timeEnd('** [auth.vue] - onMounted()');
+  updateCookiesDisplay();
 });
 
 /**
  * Fetches and updates the user information.
  */
 const setConnectionType = async (type: ConnectionType) => {
+  if (type === Connection.None) {
+    return;
+  }
+  handleLogout();
   connectionType.value = type;
   updateUser();
 };
@@ -263,49 +256,6 @@ const handleChangePassword = async () => {
             <tr>
               <td colspan="3">
                 <button @click="handleRegister">Register</button>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="3">
-                <hr />
-              </td>
-            </tr>
-            <!--             <tr>
-              <td>AuthClient - <b>Direct</b>:</td>
-            </tr>
-            <tr>
-              <td colspan="3">
-                <button :disabled="connectionType === Connection.Proxy || userLoggedIn
-                  " @click="handleLogin(Connection.Direct, true)">
-                  Login Good
-                </button>
-                <button :disabled="connectionType === Connection.Proxy || userLoggedIn
-                  " @click="handleLogin(Connection.Direct, false)">
-                  Login Bad
-                </button>
-                <button :disabled="connectionType === Connection.Proxy || !userLoggedIn
-                  " @click="handleLogout">
-                  Logout
-                </button>
-                <button :disabled="connectionType === Connection.Proxy || !userLoggedIn
-                  " @click="handleRefresh">
-                  Refresh
-                </button>
-                <button :disabled="connectionType === Connection.Proxy" @click="handleRegister">
-                  Register
-                </button>
-                <button :disabled="connectionType === Connection.Proxy || !userLoggedIn
-                  " @click="handleChangePassword">
-                  Change Password
-                </button>
-                <button :disabled="connectionType === Connection.Proxy" @click="updateUser">
-                  Get User
-                </button>
-              </td>
-            </tr> -->
-            <tr>
-              <td colspan="3">
-                <hr />
               </td>
             </tr>
           </table>

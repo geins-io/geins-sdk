@@ -189,7 +189,7 @@ const frameworkPatterns: { [framework: string]: RegExp } = {
   Astro: /\/astro\//,
 };
 
-class LogService {
+export class LogService {
   private static configIsEnabled: boolean = true;
   private static configLogLevel: LogLevel = 'debug';
 
@@ -421,5 +421,3 @@ class LogService {
     return null; // Return null if the file type is not identified
   }
 }
-
-export default LogService;
