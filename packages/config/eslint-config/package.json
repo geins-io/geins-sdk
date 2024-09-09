@@ -1,9 +1,12 @@
 {
   "name": "@geins/eslint-config",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "module": "./eslint-config.js",
+  "scripts": {
+    "link": "yarn link"
+  },
   "devDependencies": {
     "@eslint/js": "9.9.1",
     "eslint-plugin-turbo": "^2.1.0",

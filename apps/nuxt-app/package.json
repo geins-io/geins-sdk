@@ -10,12 +10,14 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "start": "nuxt start",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "link-module": "yarn link nuxt-geins"
   },
   "dependencies": {
     "@geins/cms": "*",
     "@geins/core": "*",
     "@geins/crm": "*",
+    "nuxt-geins": "0.1.0",
     "cookie-universal": "^2.2.2",
     "nuxt": "^3.12.4",
     "vue": "^3.4.31",
