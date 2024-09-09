@@ -1,5 +1,5 @@
-export * from './cookieService';
 export * from './broadcastService';
-export * from './routingService';
+export * from './cookieService';
 export * from './eventService';
+export * from './logService';
 export * from './routingService';

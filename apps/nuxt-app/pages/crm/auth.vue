@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { GeinsCore, buildEndpoints } from '@geins/core';
+import { logWrite, GeinsCore, buildEndpoints } from '@geins/core';
 import type { GeinsCredentials } from '@geins/core';
 import { AuthClientDirect, AuthClientProxy } from '@geins/crm';
-/* import { AuthClientDirect } from '../utils/authClientDirect';
-import { AuthClientProxy } from '../utils/authClientProxy'; */
+//import { AuthClientDirect, AuthClientProxy } from '../../utils/auth';
 
 enum Connection {
   Proxy = 'Proxy',
   Direct = 'Direct',
+  None = 'None',
 }
 
-type ConnectionType = Connection.Proxy | Connection.Direct;
+type ConnectionType = Connection.Proxy | Connection.Direct | Connection.None;
 
 const config = useRuntimeConfig();
 const items = ref<any[]>([]);
 const user = ref<any>({});
-const connectionType = ref<ConnectionType | ''>('');
+const connectionType = ref<ConnectionType>(Connection.Proxy);
 const username = ref<string>('arvidsson@geins.io');
 const password = ref<string>('8yifjxvujx95ie2vdkml8d');
 const rememberUser = ref<boolean>(true);
@@ -24,13 +24,12 @@ const rememberUser = ref<boolean>(true);
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 
 const endpoints = buildEndpoints(
-  geinsCredentials.accountName,
   geinsCredentials.apiKey,
+  geinsCredentials.accountName,
   geinsCredentials.environment,
 );
 
 const geinsCore = new GeinsCore(geinsCredentials);
-
 const authClientProxy = new AuthClientProxy('/api/auth');
 const authClientDirect = new AuthClientDirect(
   endpoints.authSign,
@@ -49,87 +48,31 @@ const newPassword = computed(
     Math.random().toString(36).substring(2, 15),
 );
 
-const userLoggedIn = computed(() => !!user.value);
+const userLoggedIn = computed(() => {
+  return user.value && user.value?.tokens?.expired === false;
+});
+
+const authClient = computed(() => {
+  if (connectionType.value === Connection.Proxy) {
+    return authClientProxy;
+  } else {
+    return authClientDirect;
+  }
+});
 
 onMounted(() => {
-  updateUser();
+  updateCookiesDisplay();
 });
 
 /**
- * Helper function to handle user login using Proxy or Direct connection.
- * @param {ConnectionType} type - The connection type.
- * @param {boolean} validCredentials - Whether to use valid or invalid credentials.
+ * Fetches and updates the user information.
  */
-const handleLogin = async (type: ConnectionType, validCredentials = true) => {
+const setConnectionType = async (type: ConnectionType) => {
+  if (type === Connection.None) {
+    return;
+  }
+  handleLogout();
   connectionType.value = type;
-  const client = type === Connection.Proxy ? authClientProxy : authClientDirect;
-  const loginCredentials = validCredentials
-    ? credentials.value
-    : {
-        username: 'error',
-        password: 'error',
-        rememberUser: true,
-      };
-  const result = await client.login(loginCredentials);
-  console.log(`[auth.vue] - handleLogin(${type}) result`, result);
-  updateUser();
-};
-
-/**
- * Handles logout based on the current connection type.
- */
-const handleLogout = async () => {
-  const client =
-    connectionType.value === Connection.Proxy
-      ? authClientProxy
-      : authClientDirect;
-  const result = await client.logout();
-  console.log(`[auth.vue] - handleLogout() result`, result);
-  connectionType.value = '';
-  updateUser();
-};
-
-/**
- * Handles token refresh based on the current connection type.
- */
-const handleRefresh = async () => {
-  const client =
-    connectionType.value === Connection.Proxy
-      ? authClientProxy
-      : authClientDirect;
-  const result = await client.refresh();
-  console.log(`[auth.vue] - handleRefresh() result`, result);
-  updateUser();
-};
-
-/**
- * Handles user registration based on the current connection type.
- */
-const handleRegister = async () => {
-  const client =
-    connectionType.value === Connection.Proxy
-      ? authClientProxy
-      : authClientDirect;
-  const result = await client.register(credentials.value);
-  console.log(`[auth.vue] - handleRegister() result`, result);
-  updateUser();
-};
-
-/**
- * Handles password change based on the current connection type.
- */
-const handleChangePassword = async () => {
-  const client =
-    connectionType.value === Connection.Proxy
-      ? authClientProxy
-      : authClientDirect;
-  const newPasswordCredentials = {
-    ...credentials.value,
-    newPassword: newPassword.value,
-  };
-  const result = await client.changePassword(newPasswordCredentials);
-  console.log(`[auth.vue] - handleChangePassword() result`, result);
-  password.value = newPassword.value;
   updateUser();
 };
 
@@ -137,13 +80,11 @@ const handleChangePassword = async () => {
  * Fetches and updates the user information.
  */
 const updateUser = async () => {
-  const client =
-    connectionType.value === Connection.Proxy
-      ? authClientProxy
-      : authClientDirect;
-  const result = await client.getUser();
-  console.log(`[auth.vue] - updateUser() result`, result);
-  user.value = result;
+  const result = await authClient.value?.getUser();
+  logWrite(`Getting user by: ${connectionType.value}`, result);
+  if (result) {
+    user.value = result;
+  }
   updateCookiesDisplay();
 };
 
@@ -160,11 +101,79 @@ const updateCookiesDisplay = () => {
     });
   }
 };
+
+/**
+ * Helper function to handle user login using Proxy or Direct connection.
+ * @param {ConnectionType} type - The connection type.
+ * @param {boolean} validCredentials - Whether to use valid or invalid credentials.
+ */
+const handleLogin = async (validCredentials = true) => {
+  const loginCredentials = validCredentials
+    ? credentials.value
+    : {
+      username: 'error',
+      password: 'error',
+      rememberUser: true,
+    };
+  const result = await authClient.value?.login(loginCredentials);
+  user.value = result;
+  updateUser();
+};
+
+/**
+ * Handles logout based on the current connection type.
+ */
+const handleLogout = async () => {
+  const result = await authClient.value?.logout();
+  user.value = undefined;
+  updateUser();
+};
+
+/**
+ * Handles token refresh based on the current connection type.
+ */
+const handleRefresh = async () => {
+  const result = await authClient.value?.refresh();
+
+  updateUser();
+};
+
+/**
+ * Handles user registration based on the current connection type.
+ */
+const handleRegister = async () => {
+  logWrite(`Not yet implemented`, credentials.value);
+  //const result = await authClient.value?.register(credentials.value);
+  //updateUser();
+};
+
+/**
+ * Handles password change based on the current connection type.
+ */
+const handleChangePassword = async () => {
+  const newPasswordCredentials = {
+    ...credentials.value,
+    newPassword: newPassword.value,
+  };
+  const result = await authClient.value?.changePassword(newPasswordCredentials);
+  console.log(`[auth.vue] - handleChangePassword() result`, result);
+  password.value = newPassword.value;
+  updateUser();
+};
 </script>
 
 <template>
   <div>
     <h2>Nuxt @geins/crm auth</h2>
+
+    <p>
+      This page demonstrates the usage of the AuthClientProxy and
+      AuthClientDirect classes.
+    </p>
+    <p>
+      <b><a href="/"> GO BACK </a></b>
+    </p>
+
     <table>
       <tr>
         <td style="vertical-align: top">
@@ -186,7 +195,7 @@ const updateCookiesDisplay = () => {
                     </td>
                     <td>
                       remember user: <br />
-                      <input type="checkbox" v-model="rememberUser" />
+                      <input v-model="rememberUser" type="checkbox" />
                     </td>
                   </tr>
                 </table>
@@ -198,61 +207,17 @@ const updateCookiesDisplay = () => {
               </td>
             </tr>
             <tr>
-              <td>AuthClient - <b>Proxy</b>:</td>
+              <td>
+                SET CONNECTION TYPE - <b>{{ connectionType }}</b>:
+              </td>
             </tr>
             <tr>
               <td colspan="3">
-                <button
-                  :disabled="
-                    connectionType === Connection.Direct || userLoggedIn
-                  "
-                  @click="handleLogin(Connection.Proxy, true)"
-                >
-                  Login Good
+                <button :disabled="connectionType === Connection.Direct" @click="setConnectionType(Connection.Direct)">
+                  Set to Direct
                 </button>
-                <button
-                  :disabled="
-                    connectionType === Connection.Direct || userLoggedIn
-                  "
-                  @click="handleLogin(Connection.Proxy, false)"
-                >
-                  Login Bad
-                </button>
-                <button
-                  :disabled="
-                    connectionType === Connection.Direct || !userLoggedIn
-                  "
-                  @click="handleLogout"
-                >
-                  Logout
-                </button>
-                <button
-                  :disabled="
-                    connectionType === Connection.Direct || !userLoggedIn
-                  "
-                  @click="handleRefresh"
-                >
-                  Refresh
-                </button>
-                <button
-                  :disabled="connectionType === Connection.Direct"
-                  @click="handleRegister"
-                >
-                  Register
-                </button>
-                <button
-                  :disabled="
-                    connectionType === Connection.Direct || !userLoggedIn
-                  "
-                  @click="handleChangePassword"
-                >
-                  Change Password
-                </button>
-                <button
-                  :disabled="connectionType === Connection.Direct"
-                  @click="updateUser"
-                >
-                  Get User
+                <button :disabled="connectionType === Connection.Proxy" @click="setConnectionType(Connection.Proxy)">
+                  Set to Proxy
                 </button>
               </td>
             </tr>
@@ -262,92 +227,52 @@ const updateCookiesDisplay = () => {
               </td>
             </tr>
             <tr>
-              <td>AuthClient - <b>Direct</b>:</td>
+              <td>AuthClient actions</td>
             </tr>
             <tr>
               <td colspan="3">
-                <button
-                  :disabled="
-                    connectionType === Connection.Proxy || userLoggedIn
-                  "
-                  @click="handleLogin(Connection.Direct, true)"
-                >
+                <button :disabled="userLoggedIn" @click="handleLogin(true)">
                   Login Good
                 </button>
-                <button
-                  :disabled="
-                    connectionType === Connection.Proxy || userLoggedIn
-                  "
-                  @click="handleLogin(Connection.Direct, false)"
-                >
+                <button :disabled="userLoggedIn" @click="handleLogin(false)">
                   Login Bad
                 </button>
-                <button
-                  :disabled="
-                    connectionType === Connection.Proxy || !userLoggedIn
-                  "
-                  @click="handleLogout"
-                >
-                  Logout
-                </button>
-                <button
-                  :disabled="
-                    connectionType === Connection.Proxy || !userLoggedIn
-                  "
-                  @click="handleRefresh"
-                >
-                  Refresh
-                </button>
-                <button
-                  :disabled="connectionType === Connection.Proxy"
-                  @click="handleRegister"
-                >
-                  Register
-                </button>
-                <button
-                  :disabled="
-                    connectionType === Connection.Proxy || !userLoggedIn
-                  "
-                  @click="handleChangePassword"
-                >
+                <button :disabled="!userLoggedIn" @click="handleChangePassword">
                   Change Password
                 </button>
-                <button
-                  :disabled="connectionType === Connection.Proxy"
-                  @click="updateUser"
-                >
-                  Get User
+                <button :disabled="!userLoggedIn" @click="handleLogout">
+                  Logout
                 </button>
               </td>
             </tr>
             <tr>
               <td colspan="3">
-                <hr />
+                <button @click="updateUser">Get User</button>
+                <button :disabled="!userLoggedIn" @click="handleRefresh">
+                  Refresh
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <button @click="handleRegister">Register</button>
               </td>
             </tr>
           </table>
           <hr />
           <div>
             Current CRM cookies:
-            <div
-              v-if="items.length > 0"
-              v-for="(item, index) in items"
-              :key="index"
-            >
+            <div v-for="(item, index) in items" v-if="items.length > 0" :key="index">
               <p>
-                <b>{{ item.header }}</b
-                ><br />
-                <textarea
-                  :style="{
-                    border: 0,
-                    width: '500px',
-                    height:
-                      item.data.length > 100
-                        ? Math.min(200, item.data.length * 10) + 'px'
-                        : '20px',
-                  }"
-                  >{{ item.data }}</textarea
-                >
+                <b>{{ item.header }}</b><br />
+                <textarea :style="{
+                  border: 0,
+                  width: '400px',
+                  height:
+                    item.data.length > 100
+                      ? Math.min(200, item.data.length * 10) + 'px'
+                      : '20px',
+                }">{{ item.data }}</textarea>
               </p>
             </div>
             <i v-else> ... no cookies set </i>

@@ -1,9 +1,7 @@
-import menu from './menu.graphql';
-import contentArea from './widget-area.graphql';
+import user from './user/user.graphql';
 
 const queries = {
-  menu,
-  contentArea,
+  user,
 };
 
 export { queries };

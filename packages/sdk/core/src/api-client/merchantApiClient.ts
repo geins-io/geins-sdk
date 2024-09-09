@@ -1,3 +1,5 @@
+import { CookieService } from '../services/cookieService';
+import { AUTH_COOKIES } from '../constants';
 import {
   ApolloClient,
   InMemoryCache,
@@ -15,11 +17,13 @@ export enum FetchPolicy {
 }
 
 export class MerchantApiClient {
+  private cookieService: CookieService | undefined;
   private client: ApolloClient<NormalizedCacheObject>;
   fetchPolicy: FetchPolicy = FetchPolicy.NETWORK_ONLY;
   pollInterval: number = 0;
   constructor(apiUrl: string, apiKey: string) {
     this.client = this.createClient(apiUrl, apiKey);
+    this.cookieService = new CookieService();
   }
 
   createClient(apiUrl: string, apiKey: string) {
@@ -42,6 +46,7 @@ export class MerchantApiClient {
   }
 
   async runQuery(query: any, variables: any = {}, options: any = {}) {
+    const loggedInUser = this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
     const q = {
       query,
       variables,
@@ -49,6 +54,13 @@ export class MerchantApiClient {
         fetchPolicy: options.fetchPolicy || this.fetchPolicy,
         pollInterval: options.pollInterval || this.pollInterval,
       },
+      ...(loggedInUser && {
+        context: {
+          headers: {
+            Authorization: `Bearer ${loggedInUser}`,
+          },
+        },
+      }),
     };
     return this.client.query(q);
   }

@@ -66,10 +66,6 @@ export class AuthServiceClient {
       body: requiresSign ? JSON.stringify(authRequestBody) : undefined,
     };
 
-    /*   if (this.refreshToken) {
-      fetchOptions?.headers?['Cookie'] = `refresh=${this.refreshToken}`;
-    } */
-
     let data = await this.fetchData(url, fetchOptions);
     if (data?.sign) {
       authRequestBody = await this.addCredentialsToRequest(
@@ -142,9 +138,7 @@ export class AuthServiceClient {
 
   private async fetchData(url: string, options: RequestInit): Promise<any> {
     try {
-      //add server side cookie to fetch
-      //options.headers['Cookie'] = this.cookie;
-
+      //add server side cookie to fetch request
       const response = await fetch(url, options);
       if (!response.ok) {
         throw new Error(

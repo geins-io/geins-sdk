@@ -1,5 +1,5 @@
-import { AuthServiceClient } from './authServiceClient';
 import type { AuthResponse, AuthCredentials, AuthTokens } from '@geins/types';
+import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 
 const EXPIRES_SOON_THRESHOLD = 60;
@@ -217,7 +217,14 @@ export class AuthService {
    */
   public async getUser(token?: string): Promise<AuthResponse | undefined> {
     token = token || this.client?.getToken();
-    if (!token) return undefined;
+    if (!token) {
+      if (this.client) {
+        await this.client?.connect();
+        token = await this.client?.getToken();
+      } else {
+        return undefined;
+      }
+    }
 
     const authResponse = await this.getUserObjectFromToken(token);
     if (authResponse && this.client) {

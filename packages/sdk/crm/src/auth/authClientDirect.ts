@@ -121,7 +121,6 @@ export class AuthClientDirect extends AuthClient {
    */
   async getUser(): Promise<AuthResponse | undefined> {
     const result = await this.authService.getUser();
-
     if (result && result.succeeded && result.tokens?.token) {
       if (result.tokens.expired) {
         this.clearCookies();
