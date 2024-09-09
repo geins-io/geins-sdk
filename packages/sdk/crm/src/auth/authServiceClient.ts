@@ -43,7 +43,6 @@ export class AuthServiceClient {
     },
     action: string = 'login',
   ): Promise<void> {
-    console.log('[authServiceClient] auth SERVICE connect');
     this.resetTokenData();
     const url = `${this.authEndpoint}/${action}`;
     const requiresSign = Boolean(credentials);
@@ -66,10 +65,6 @@ export class AuthServiceClient {
       },
       body: requiresSign ? JSON.stringify(authRequestBody) : undefined,
     };
-
-    /*   if (this.refreshToken) {
-      fetchOptions?.headers?['Cookie'] = `refresh=${this.refreshToken}`;
-    } */
 
     let data = await this.fetchData(url, fetchOptions);
     if (data?.sign) {
@@ -143,9 +138,7 @@ export class AuthServiceClient {
 
   private async fetchData(url: string, options: RequestInit): Promise<any> {
     try {
-      //add server side cookie to fetch
-      //options.headers['Cookie'] = this.cookie;
-      console.log('auth SERVICE fetchData', url, options);
+      //add server side cookie to fetch request
       const response = await fetch(url, options);
       if (!response.ok) {
         throw new Error(

@@ -3,9 +3,6 @@ import { ref, onMounted, computed } from 'vue';
 import { LogService, GeinsCore, buildEndpoints } from '@geins/core';
 import type { GeinsCredentials } from '@geins/core';
 import { AuthClientDirect, AuthClientProxy } from '@geins/crm';
-// // '@geins/crm';
-/* import { AuthClientDirect } from '../utils/authClientDirect';
-import { AuthClientProxy } from '../utils/authClientProxy'; */
 
 enum Connection {
   Proxy = 'Proxy',
@@ -119,7 +116,6 @@ const handleLogin = async (validCredentials = true) => {
       rememberUser: true,
     };
   const result = await authClient.value?.login(loginCredentials);
-  LogService.debug(`handleLogin() result`, result);
   user.value = result;
   updateUser();
 };
@@ -129,7 +125,6 @@ const handleLogin = async (validCredentials = true) => {
  */
 const handleLogout = async () => {
   const result = await authClient.value?.logout();
-  console.log(`[auth.vue] - handleLogout() result`, result);
   user.value = undefined;
   updateUser();
 };
@@ -140,8 +135,6 @@ const handleLogout = async () => {
 const handleRefresh = async () => {
   const result = await authClient.value?.refresh();
 
-  console.log(`[auth.vue] - handleRefresh() result`, result);
-
   updateUser();
 };
 
@@ -149,11 +142,9 @@ const handleRefresh = async () => {
  * Handles user registration based on the current connection type.
  */
 const handleRegister = async () => {
-  const result = await authClient.value?.register(credentials.value);
-
-  console.log(`[auth.vue] - handleRegister() result`, result);
-
-  updateUser();
+  LogService.debug(`Not yet implemented`, credentials.value);
+  //const result = await authClient.value?.register(credentials.value);
+  //updateUser();
 };
 
 /**

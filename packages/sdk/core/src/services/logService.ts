@@ -421,3 +421,4 @@ export class LogService {
     return null; // Return null if the file type is not identified
   }
 }
+export const logWrite = LogService.debug;

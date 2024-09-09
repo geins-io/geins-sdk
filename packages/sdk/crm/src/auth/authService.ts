@@ -1,5 +1,5 @@
-import { AuthServiceClient } from './authServiceClient';
 import type { AuthResponse, AuthCredentials, AuthTokens } from '@geins/types';
+import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 
 const EXPIRES_SOON_THRESHOLD = 60;
