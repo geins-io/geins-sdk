@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { LogService, GeinsCore, buildEndpoints } from '@geins/core';
+import { logWrite, GeinsCore, buildEndpoints } from '@geins/core';
 import type { GeinsCredentials } from '@geins/core';
 import { AuthClientDirect, AuthClientProxy } from '@geins/crm';
+//import { AuthClientDirect, AuthClientProxy } from '../../utils/auth';
 
 enum Connection {
   Proxy = 'Proxy',
@@ -29,7 +30,6 @@ const endpoints = buildEndpoints(
 );
 
 const geinsCore = new GeinsCore(geinsCredentials);
-
 const authClientProxy = new AuthClientProxy('/api/auth');
 const authClientDirect = new AuthClientDirect(
   endpoints.authSign,
@@ -81,7 +81,7 @@ const setConnectionType = async (type: ConnectionType) => {
  */
 const updateUser = async () => {
   const result = await authClient.value?.getUser();
-  LogService.debug(`Getting user by: ${connectionType.value}`, result);
+  logWrite(`Getting user by: ${connectionType.value}`, result);
   if (result) {
     user.value = result;
   }
@@ -142,7 +142,7 @@ const handleRefresh = async () => {
  * Handles user registration based on the current connection type.
  */
 const handleRegister = async () => {
-  LogService.debug(`Not yet implemented`, credentials.value);
+  logWrite(`Not yet implemented`, credentials.value);
   //const result = await authClient.value?.register(credentials.value);
   //updateUser();
 };
@@ -165,6 +165,15 @@ const handleChangePassword = async () => {
 <template>
   <div>
     <h2>Nuxt @geins/crm auth</h2>
+
+    <p>
+      This page demonstrates the usage of the AuthClientProxy and
+      AuthClientDirect classes.
+    </p>
+    <p>
+      <b><a href="/"> GO BACK </a></b>
+    </p>
+
     <table>
       <tr>
         <td style="vertical-align: top">

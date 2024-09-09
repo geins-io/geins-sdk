@@ -1,3 +1,6 @@
+// TODO: REMOVE THIS FILE
+import { logWrite } from '../services/logService';
+
 import { CookieService } from '../services/cookieService';
 import { AUTH_COOKIES } from '../constants';
 import {
@@ -27,22 +30,12 @@ export class MerchantApiClient {
   }
 
   createClient(apiUrl: string, apiKey: string) {
-    // get cookie from browser
-    let auth = this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
-    console.log('Creating client with user', auth);
-    const user = this.cookieService?.get('user');
-
-    if (this.cookieService && this.cookieService.get(AUTH_COOKIES.USER_AUTH)) {
-      auth = this.cookieService.get(AUTH_COOKIES.USER_AUTH);
-    }
-
     return new ApolloClient({
       uri: apiUrl,
       cache: new InMemoryCache(),
       headers: {
         Accept: 'application/json',
         'x-apikey': apiKey,
-        // ...(apiKey ? { Authorization: apiKey } : {}),
       },
     });
   }
@@ -54,8 +47,8 @@ export class MerchantApiClient {
   clearCache() {
     this.client.clearStore();
   }
-
   async runQuery(query: any, variables: any = {}, options: any = {}) {
+    const loggedInUser = this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
     const q = {
       query,
       variables,
@@ -63,11 +56,14 @@ export class MerchantApiClient {
         fetchPolicy: options.fetchPolicy || this.fetchPolicy,
         pollInterval: options.pollInterval || this.pollInterval,
       },
+      ...(loggedInUser && {
+        context: {
+          headers: {
+            Authorization: `Bearer ${loggedInUser}`,
+          },
+        },
+      }),
     };
-
-    // add authorization to header to client
-    // this.client
-
     return this.client.query(q);
   }
 

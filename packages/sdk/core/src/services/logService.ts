@@ -35,31 +35,6 @@ interface LogFileMeta {
   fileExtensions: string[]; // Added fileExtensions for identifying file type by extension
 }
 
-const logColorServer = {
-  reset: '\x1b[0m',
-  bright: '\x1b[1m',
-  dim: '\x1b[2m',
-  underscore: '\x1b[4m',
-
-  fgBlack: '\x1b[30m',
-  fgRed: '\x1b[31m',
-  fgGreen: '\x1b[32m',
-  fgYellow: '\x1b[33m',
-  fgBlue: '\x1b[34m',
-  fgMagenta: '\x1b[35m',
-  fgCyan: '\x1b[36m',
-  fgWhite: '\x1b[37m',
-
-  bgBlack: '\x1b[40m',
-  bgRed: '\x1b[41m',
-  bgGreen: '\x1b[42m',
-  bgYellow: '\x1b[43m',
-  bgBlue: '\x1b[44m',
-  bgMagenta: '\x1b[45m',
-  bgCyan: '\x1b[46m',
-  bgWhite: '\x1b[47m',
-};
-
 const logLevels = ['trace', 'debug', 'info', 'warn', 'error'] as const; // Fixed logLevels
 type LogLevel = (typeof logLevels)[number];
 
@@ -94,6 +69,31 @@ const logTypes: LogTypes = {
     color: '#D72B1D',
     icon: '❌',
   },
+};
+
+const logColorServer = {
+  reset: '\x1b[0m',
+  bright: '\x1b[1m',
+  dim: '\x1b[2m',
+  underscore: '\x1b[4m',
+
+  fgBlack: '\x1b[30m',
+  fgRed: '\x1b[31m',
+  fgGreen: '\x1b[32m',
+  fgYellow: '\x1b[33m',
+  fgBlue: '\x1b[34m',
+  fgMagenta: '\x1b[35m',
+  fgCyan: '\x1b[36m',
+  fgWhite: '\x1b[37m',
+
+  bgBlack: '\x1b[40m',
+  bgRed: '\x1b[41m',
+  bgGreen: '\x1b[42m',
+  bgYellow: '\x1b[43m',
+  bgBlue: '\x1b[44m',
+  bgMagenta: '\x1b[45m',
+  bgCyan: '\x1b[46m',
+  bgWhite: '\x1b[47m',
 };
 
 const logTypeFiles: LogTypeFiles = {
@@ -265,7 +265,7 @@ export class LogService {
 
     if (LogService.isServer()) {
       console.log(
-        `${boxtColorServer}${icon} ${fileName} ${logColorServer.reset} ${classInfo}${methodInfo}${logColorServer.reset}`,
+        `${boxtColorServer}${logColorServer.fgBlack}${icon} ${fileName} ${logColorServer.reset}${logColorServer.bgWhite}${logColorServer.fgBlack} ${classInfo}${methodInfo}${logColorServer.reset}`,
       );
 
       args.forEach((arg) => {
@@ -278,7 +278,7 @@ export class LogService {
     } else {
       console.log(
         `%c${icon} ${fileName}%c ${classInfo}${methodInfo}`,
-        `background: ${boxColor}; padding: 2px 8px; border-radius: 2px 0 0 2px; color: #fff`,
+        `background: ${boxColor}; color: #000; padding: 2px 8px; border-radius: 2px 0 0 2px;`,
         'background: #D3D3D3; color: #000; padding: 2px 8px; border-radius: 0 2px 2px 0;',
       );
 
