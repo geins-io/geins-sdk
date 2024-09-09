@@ -3,8 +3,6 @@ import type { MenuType, ContentAreaType, GeinsCredentials } from '@geins/types';
 import { logWrite, GeinsCore, AUTH_COOKIES } from '@geins/core';
 import { GeinsCMS } from '@geins/cms';
 import { authClaimsTokenSerializeToObject } from '@geins/crm';
-
-//const { getContentArea, getContentPage, getMenu, geinsCMS } = useGeinsCMS();
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const geinsCore = new GeinsCore(geinsCredentials);
@@ -158,6 +156,16 @@ onMounted(() => {
                   <b>No user logged in</b>
                 </div>
               </td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td>Filters:</td>
+              <td></td>
+              <td></td>
             </tr>
             <tr>
               <td colspan="3">

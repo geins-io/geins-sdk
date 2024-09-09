@@ -1,6 +1,3 @@
-// TODO: REMOVE THIS FILE
-import { logWrite } from '../services/logService';
-
 import { CookieService } from '../services/cookieService';
 import { AUTH_COOKIES } from '../constants';
 import {
@@ -47,6 +44,7 @@ export class MerchantApiClient {
   clearCache() {
     this.client.clearStore();
   }
+
   async runQuery(query: any, variables: any = {}, options: any = {}) {
     const loggedInUser = this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
     const q = {
