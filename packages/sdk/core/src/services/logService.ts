@@ -111,7 +111,7 @@ const logTypeFiles: LogTypeFiles = {
     color: '#F7DF1E',
     colorServer: logColorServer.bgYellow,
     icon: '📙',
-    fileExtensions: ['.js', '.mjs'],
+    fileExtensions: ['.js', '.mjs', 'cjs'],
   },
   vue: {
     abbreviation: 'VUE',
@@ -260,20 +260,30 @@ export class LogService {
     const classInfo = className ? `${className}.` : '';
 
     const boxColor = fileType ? fileType.color : typeMeta.color;
-    const boxtColorServer = fileType ? fileType.colorServer : typeMeta.color;
+    const boxtColorServer = fileType
+      ? fileType.colorServer
+      : logColorServer.bgWhite;
     const icon = fileType ? fileType.icon : typeMeta.icon;
 
     if (LogService.isServer()) {
       console.log(
-        `${boxtColorServer}${logColorServer.fgBlack}${icon} ${fileName} ${logColorServer.reset}${logColorServer.bgWhite}${logColorServer.fgBlack} ${classInfo}${methodInfo}${logColorServer.reset}`,
+        `${boxtColorServer}${logColorServer.fgBlack}${icon} ${fileName} ${logColorServer.reset}${logColorServer.bgWhite}${logColorServer.fgBlack} ${classInfo}${methodInfo}${logColorServer.reset} `,
       );
 
       args.forEach((arg) => {
-        console.log(
-          `%c>>`,
-          `color: ${typeMeta.color}; margin-left: 5px; font-weight: bold;`,
-          arg,
-        );
+        // check type of arg
+        if (typeof arg === 'object') {
+          console.log(
+            `${logColorServer.dim}>> ${logColorServer.reset}`,
+            `${JSON.stringify(arg)}`,
+          );
+          return;
+        } else if (typeof arg === 'string') {
+          console.log(
+            `${logColorServer.dim}>> ${logColorServer.reset}`,
+            `${logColorServer.bright}${arg}${logColorServer.reset}`,
+          );
+        }
       });
     } else {
       console.log(
