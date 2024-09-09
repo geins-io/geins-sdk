@@ -9,7 +9,8 @@
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "yarn build",
-    "lint": "eslint --fix ."
+    "lint": "eslint --fix .",
+    "link": "yarn link"
   },
   "dependencies": {
     "@apollo/client": "^3.10.5",
