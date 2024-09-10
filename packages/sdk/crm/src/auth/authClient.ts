@@ -165,7 +165,7 @@ export abstract class AuthClient {
   /**
    * Clears all authentication-related cookies, effectively logging out the user.
    */
-  protected clearCookies(): void {
+  public clearCookies(): void {
     Object.values(AUTH_COOKIES).forEach((cookieName) => {
       this.cookieService.remove(cookieName);
     });
