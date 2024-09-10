@@ -66,13 +66,36 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8
 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYXJ2aWRzc29uQGdlaW5zLmlvIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc2lkIjoiYzI1OGJmNzktZTliMy05OTY3LWU0ZjctNzJlOWQ4ODA2Yzc1IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUmVnaXN0ZXJlZCIsIk1lbWJlckRpc2NvdW50IjoiMTUiLCJNZW1iZXJJZCI6IjEiLCJDdXN0b21lclR5cGUiOiJQZXJzb24iLCJleHAiOjE3MjQ5Mzc5NjgsImlzcyI6IkNhcmlzbWFyIFNvZnR3YXJlIEFCIn0.qBRuWhTIqbe1QBjtpY5VMKsjtX3SJQ6OBOnvbWYLpCw
 
-
-
 // https://github.com/jhuckaby/megahash
 
 // https://merchantapi.geins.io/redirect/urlhistory/`{API-KEY}`?offset=`{DATE_TIME}`
 // https://merchantapi.geins.io/redirect/aliashistory/`{API-KEY}`?offset=`{DATE_TIME}`
 
-
 ## site ? market? array with caches?
 
+https://demogeins-se.prod.geins.dev/preview-widgets?loginToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW5QcmV2aWV3IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUmVnaXN0ZXJlZCIsIkRyYWZ0SWQiOiIyNCIsIlNwb29mRGF0ZSI6IjIwMjQtMDktMTggMDA6MDA6MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsIlNwb29mZWRCeSI6ImFydmlkc3NvbkBnZWlucy5pbyIsImV4cCI6MTcyNTg5NDQ5OCwiaXNzIjoiQ2FyaXNtYXIgU29mdHdhcmUgQUIifQ.FvfPngMZGa2WvghaTdLviBMJSLwJx8guK2lyX45bRjk&redirect=true
+
+async 'auth.client'(val) {
+if (val && this.$route.query.loginToken) {
+        if (this.$store.getters['auth/authenticated']) {
+await this.$store.dispatch('auth/logout');
+        }
+        // remove cart for new spoofed user
+        this.$store.dispatch('cart/reset');
+this.auth.client.setTokenData({
+token: this.$route.query.loginToken,
+          maxAge: 3600
+        });
+        this.$store.dispatch('auth/update', {
+username: 'preview-user@geins.io',
+rememberUser: false
+});
+if (this.$route.query.redirect) {
+          this.$router.push(this.$getPath('index'));
+} else {
+this.isAuthenticated = true;
+}
+}
+}
+
+https://demogeins.admin.geins.io/Admin/PageWidget/PreviewMode?siteId=1&draftId=19&isFamily=True&spoofDate=2024-09-21T12:00

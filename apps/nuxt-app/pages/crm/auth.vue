@@ -2,7 +2,12 @@
 import { ref, onMounted, computed } from 'vue';
 import { logWrite, GeinsCore, buildEndpoints } from '@geins/core';
 import type { GeinsCredentials } from '@geins/core';
-import { AuthClientDirect, AuthClientProxy } from '@geins/crm';
+import {
+  AuthClientDirect,
+  AuthClientProxy,
+  authClaimsTokenSerialize,
+  authClaimsTokenSerializeToObject,
+} from '@geins/crm';
 //import { AuthClientDirect, AuthClientProxy } from '../../utils/auth';
 
 enum Connection {
@@ -16,7 +21,7 @@ type ConnectionType = Connection.Proxy | Connection.Direct | Connection.None;
 const config = useRuntimeConfig();
 const items = ref<any[]>([]);
 const user = ref<any>({});
-const connectionType = ref<ConnectionType>(Connection.Proxy);
+const connectionType = ref<ConnectionType>(Connection.None);
 const username = ref<string>('arvidsson@geins.io');
 const password = ref<string>('8yifjxvujx95ie2vdkml8d');
 const rememberUser = ref<boolean>(true);
@@ -75,6 +80,8 @@ const setConnectionType = async (type: ConnectionType) => {
   connectionType.value = type;
   updateUser();
 };
+
+const spoofUser = () => { };
 
 /**
  * Fetches and updates the user information.
@@ -179,83 +186,119 @@ const handleChangePassword = async () => {
         <td style="vertical-align: top">
           <table>
             <tr>
-              <td>CREDENTIALS:</td>
-            </tr>
-            <tr>
-              <td colspan="3">
+              <td>
                 <table>
                   <tr>
+                    <td>1. Crentials:</td>
+                  </tr>
+                  <tr>
                     <td>
-                      username:<br />
-                      <input v-model="username" />
-                    </td>
-                    <td>
-                      password:<br />
-                      <input v-model="password" style="width: 250px" />
-                    </td>
-                    <td>
-                      remember user: <br />
-                      <input v-model="rememberUser" type="checkbox" />
+                      <table>
+                        <tr>
+                          <td>
+                            username:<br />
+                            <input v-model="username" />
+                          </td>
+                          <td>
+                            password:<br />
+                            <input v-model="password" style="width: 250px" />
+                          </td>
+                          <td>
+                            remember: <br />
+                            <input v-model="rememberUser" type="checkbox" title="uawe" />
+                          </td>
+                        </tr>
+                      </table>
                     </td>
                   </tr>
                 </table>
               </td>
             </tr>
             <tr>
-              <td colspan="3">
+              <td>
                 <hr />
               </td>
             </tr>
             <tr>
               <td>
-                SET CONNECTION TYPE - <b>{{ connectionType }}</b>:
+                2. Connection Type <b>{{ connectionType }}</b>:
               </td>
             </tr>
             <tr>
-              <td colspan="3">
-                <button :disabled="connectionType === Connection.Direct" @click="setConnectionType(Connection.Direct)">
+              <td>
+                <button :disabled="userLoggedIn || connectionType === Connection.Direct
+                  " @click="setConnectionType(Connection.Direct)">
                   Set to Direct
                 </button>
-                <button :disabled="connectionType === Connection.Proxy" @click="setConnectionType(Connection.Proxy)">
+                <button :disabled="userLoggedIn || connectionType === Connection.Proxy
+                  " @click="setConnectionType(Connection.Proxy)">
                   Set to Proxy
                 </button>
               </td>
             </tr>
             <tr>
-              <td colspan="3">
+              <td>
                 <hr />
               </td>
             </tr>
             <tr>
-              <td>AuthClient actions</td>
+              <td>3. Login</td>
             </tr>
             <tr>
-              <td colspan="3">
-                <button :disabled="userLoggedIn" @click="handleLogin(true)">
+              <td>
+                <button :disabled="userLoggedIn || connectionType === Connection.None" @click="handleLogin(true)">
                   Login Good
                 </button>
-                <button :disabled="userLoggedIn" @click="handleLogin(false)">
+                <button :disabled="userLoggedIn || connectionType === Connection.None" @click="handleLogin(false)">
                   Login Bad
                 </button>
-                <button :disabled="!userLoggedIn" @click="handleChangePassword">
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td>4. Logedin Actions</td>
+            </tr>
+            <tr>
+              <td>
+                <button :disabled="!userLoggedIn || connectionType === Connection.None
+                  " @click="updateUser">
+                  Get User
+                </button>
+                <button :disabled="!userLoggedIn || connectionType === Connection.None
+                  " @click="handleRefresh">
+                  Refresh
+                </button>
+                <button :disabled="!userLoggedIn || connectionType === Connection.None
+                  " @click="handleChangePassword">
                   Change Password
                 </button>
-                <button :disabled="!userLoggedIn" @click="handleLogout">
+                <button :disabled="!userLoggedIn || connectionType === Connection.None
+                  " @click="handleLogout">
                   Logout
                 </button>
               </td>
             </tr>
             <tr>
-              <td colspan="3">
-                <button @click="updateUser">Get User</button>
-                <button :disabled="!userLoggedIn" @click="handleRefresh">
-                  Refresh
-                </button>
+              <td>
+                <hr />
               </td>
             </tr>
             <tr>
-              <td colspan="3">
-                <button @click="handleRegister">Register</button>
+              <td>Other Actions</td>
+            </tr>
+            <tr>
+              <td>
+                <button :disabled="userLoggedIn || connectionType === Connection.None" @click="handleRegister">
+                  Register new User
+                </button>
+
+                <button :disabled="connectionType === Connection.None" @click="spoofUser">
+                  Spoof User
+                </button>
               </td>
             </tr>
           </table>
