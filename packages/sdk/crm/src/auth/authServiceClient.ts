@@ -66,9 +66,11 @@ export class AuthServiceClient {
           ? { 'x-auth-refresh-token': this.refreshToken }
           : {}),
         // dual header for refresh token
+        /*
         ...(this.refreshToken
           ? { Cookie: `refresh=${this.refreshToken}` }
           : {}),
+        */
       },
 
       body: requiresSign ? JSON.stringify(authRequestBody) : undefined,

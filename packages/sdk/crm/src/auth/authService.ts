@@ -295,6 +295,7 @@ export class AuthService {
     this.cookieService.set({
       name: AUTH_COOKIES.REFRESH_TOKEN,
       payload: refreshToken,
+      httpOnly: true,
     });
   }
 

@@ -167,6 +167,7 @@ export abstract class AuthClient {
    */
   public clearCookies(): void {
     Object.values(AUTH_COOKIES).forEach((cookieName) => {
+      console.log('Removing cookie:', cookieName);
       this.cookieService.remove(cookieName);
     });
   }
