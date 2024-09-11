@@ -128,6 +128,10 @@ const fetchMenu = async () => {
     });
 };
 
+const clear = async () => {
+  resetComponentData();
+};
+
 onMounted(() => {
   getUser();
 });
@@ -201,6 +205,19 @@ onMounted(() => {
               <td></td>
               <td><input v-model="menuLocation" /></td>
               <td><button @click="fetchMenu">Get Menu</button></td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3"><button @click="clear">Clear</button></td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <hr />
+              </td>
             </tr>
           </table>
           <div v-for="(item, index) in items" :key="index">

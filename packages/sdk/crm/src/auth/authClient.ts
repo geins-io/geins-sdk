@@ -19,8 +19,8 @@ export abstract class AuthClient {
   constructor() {
     this.cookieService = new CookieService();
   }
-
-  public spoofPreveiwUser(token: string): void {
+  // preview user
+  public spoofPreviewUser(token: string): void {
     this.clearCookies();
     const maxAge = 1800;
     const spoofedUser = authClaimsTokenSerializeToObject(token);
