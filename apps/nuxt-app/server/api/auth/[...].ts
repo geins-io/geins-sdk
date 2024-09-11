@@ -180,7 +180,6 @@ export default defineEventHandler(async (event) => {
     const refreshCookie = cookies
       .split(';')
       .find((cookie: string) => cookie.trim().startsWith('refresh='));
-    logWrite('refreshCookie', refreshCookie);
     if (refreshCookie) {
       return refreshCookie.split('=')[1];
     } else {

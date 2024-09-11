@@ -78,7 +78,6 @@ const setConnectionType = async (type: ConnectionType) => {
   }
   handleLogout();
   connectionType.value = type;
-  updateUser();
 };
 
 const spoofUser = () => {
