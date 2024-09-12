@@ -11,92 +11,19 @@ const geinsCMS = new GeinsCMS(geinsCore);
 const user = ref<any>();
 const items = ref<{ header: string; data: string }[]>([]);
 const menuData = ref<MenuType>();
-const pageData = ref<ContentAreaType>();
 
 const resetComponentData = () => {
   menuData.value = undefined;
-  pageData.value = undefined;
 };
 
-const family = ref('Frontpage');
-const areaName = ref('The front page area');
-const slug = ref('hej');
 const menuLocation = ref('main-desktop');
 
 const getUser = async () => {
   const userAuth = geinsCore.cookies.get(AUTH_COOKIES.USER_AUTH);
-  logWrite('user token:', userAuth);
-
   if (userAuth) {
     const userObj = authClaimsTokenSerializeToObject(userAuth);
-
-    logWrite('user obj:', userObj);
     user.value = userObj;
   }
-};
-
-const getAreaData = async () => {
-  resetComponentData();
-  logWrite(
-    'getting content area with family:""' +
-    family.value +
-    '"and area:""' +
-    areaName.value +
-    '"',
-  );
-
-  const { data } = await useAsyncData('contentArea', () =>
-    geinsCMS.area.get({ family: family.value, areaName: areaName.value }),
-  );
-  const contentArea = data.value?.data;
-
-  items.value.unshift({
-    header: `:: useGeinsCMS.getContentArea  :: [${new Date().toISOString()}]`,
-    data: JSON.stringify(contentArea),
-  });
-
-  geinsCMS.area
-    .getParsed({ family: family.value, areaName: areaName.value })
-    .then((result) => {
-      return result as ContentAreaType;
-    })
-    .then((contentArea: ContentAreaType) => {
-      logWrite('widgetArea:', contentArea);
-      pageData.value = contentArea;
-      items.value.unshift({
-        header: `:: geinsCMS.area.getParsed  :: [${new Date().toISOString()}]`,
-        data: JSON.stringify(contentArea),
-      });
-    });
-};
-
-const getPage = async () => {
-  resetComponentData();
-  logWrite('getting page with slug:', slug.value);
-
-  const { data } = await useAsyncData('page', () =>
-    geinsCMS.page.get({ alias: slug.value }),
-  );
-
-  const contentPage = data.value?.data;
-
-  items.value.unshift({
-    header: `:: useGeinsCMS.getContentPage  :: [${new Date().toISOString()}]`,
-    data: JSON.stringify(contentPage),
-  });
-  geinsCMS.page
-    .getParsed({ alias: slug.value })
-    .then((result) => {
-      return result as ContentAreaType;
-    })
-    .then((contentArea: ContentAreaType) => {
-      logWrite('widgetArea:', contentArea);
-      pageData.value = contentArea;
-      items.value.unshift({
-        header: `:: geinsCMS.page.getParsed  :: [${new Date().toISOString()}]`,
-        data: JSON.stringify(contentArea),
-      });
-    });
 };
 
 const fetchMenu = async () => {
@@ -177,34 +104,14 @@ onMounted(() => {
               </td>
             </tr>
             <tr>
-              <td>family:</td>
-              <td>area:</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><input v-model="family" /></td>
-              <td><input v-model="areaName" /></td>
-              <td><button @click="getAreaData">Get Content Area</button></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td>slug:</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td><input v-model="slug" /></td>
-              <td><button @click="getPage">Get Page</button></td>
-            </tr>
-            <tr>
-              <td></td>
               <td>menu location id:</td>
               <td></td>
+              <td></td>
             </tr>
             <tr>
-              <td></td>
               <td><input v-model="menuLocation" /></td>
               <td><button @click="fetchMenu">Get Menu</button></td>
+              <td></td>
             </tr>
             <tr>
               <td colspan="3">
@@ -228,9 +135,8 @@ onMounted(() => {
           </div>
         </td>
         <td></td>
-        <td style="vertical-align: top">
+        <td style="padding-left: 50px; vertical-align: top">
           <CmsMenu v-if="menuData" :menu="menuData" />
-          <CmsContentArea v-if="pageData" :family="family" :area="areaName" :data="pageData" />
         </td>
       </tr>
     </table>

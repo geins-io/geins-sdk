@@ -12,9 +12,9 @@ import {
   AuthClientDirect,
   AuthClientProxy,
   authClaimsTokenSerialize,
-  authClaimsTokenSerializeToObject,
 } from '@geins/crm';
-import { on } from 'events';
+import { authClaimsTokenSerializeToObject } from '../../utils/authHelpers';
+
 //import { AuthClientDirect, AuthClientProxy } from '../../utils/auth';
 const config = useRuntimeConfig();
 
@@ -33,12 +33,7 @@ const authClientDirect = new AuthClientDirect(
 
 const items = ref<any[]>([]);
 const user = ref<any>({});
-const spoofToken = ref<string>(
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW5QcmV2aWV3IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUmVnaXN0ZXJlZCIsIkRyYWZ0SWQiOiIyNSIsIlNwb29mRGF0ZSI6IjIwMjQtMDktMTggMjI6MDA6MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsIlNwb29mZWRCeSI6ImFydmlkc3NvbkBnZWlucy5pbyIsImV4cCI6MTcyNTg5ODAxNiwiaXNzIjoiQ2FyaXNtYXIgU29mdHdhcmUgQUIifQ.8urktUiZCYpIH8q4YPME-3JC4opOLLoh7P1cmfNXYwA0',
-);
-const spoofTime = ref<any>();
-const username = ref<string>('arvidsson@geins.io');
-
+const spoofToken = ref<string>('');
 const spoofUser = () => {
   const userSerialized = authClaimsTokenSerializeToObject(spoofToken.value);
   user.value = userSerialized;
@@ -58,6 +53,14 @@ const updateCookiesDisplay = () => {
   }
 };
 
+const goToCmsArea = () => {
+  // open new tab with cms area
+  window.open('/cms');
+};
+const goToCmsPage = () => {
+  // open new tab with cms area
+  window.open('/cms');
+};
 const clearCookies = () => {
   authClientDirect.clearCookies();
   updateCookiesDisplay();
@@ -88,34 +91,13 @@ onMounted(() => {
               <td>
                 <table>
                   <tr>
-                    <td>1. Set spoofed user</td>
+                    <td>1. Sppof token from MC</td>
                   </tr>
                   <tr>
                     <td>
                       <textarea v-model="spoofToken" style="width: 500px; height: 200px"></textarea>
                     </td>
                   </tr>
-                  <!--   <tr>
-                    <td>2. Set spoof crentials:</td>
-                  </tr>
-                                                   <tr>
-                    <td>
-                      <table>
-                        <tr>
-                          <td>
-                            username:<br />
-                            <input v-model="username" style="width: 250px" />
-                          </td>
-                          <td>
-                            Spoof Time:<br />
-                            <input v-model="spoofTime" style="width: 250px" />
-                          </td>
-                          <td>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr> -->
                 </table>
               </td>
             </tr>
@@ -126,12 +108,25 @@ onMounted(() => {
               </td>
             </tr>
             <tr>
-              <td>Actions</td>
+              <td>2. Set Spoof cookie</td>
             </tr>
             <tr>
               <td>
-                <button @click="spoofUser">Spoof User</button>
+                <button @click="spoofUser">Set spoof cookie</button>
                 <button @click="clearCookies">Clear Cookies</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <hr />
+              </td>
+            </tr>
+            <tr>
+              <td>3. Try spoof</td>
+            </tr>
+            <tr>
+              <td>
+                <button @click="goToCmsArea">Try CMS AREA</button>
               </td>
             </tr>
           </table>
@@ -158,6 +153,8 @@ onMounted(() => {
           <div v-if="user" style="width: 500px; overflow-x: scroll">
             <b>Spoof Object:</b>
             <pre>{{ JSON.stringify(user, null, 2) }}</pre>
+            <b>Spoof Object changed:</b>
+            <pre>{{ JSON.stringify(user2, null, 2) }}</pre>
           </div>
         </td>
       </tr>

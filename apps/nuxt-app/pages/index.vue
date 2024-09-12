@@ -16,11 +16,13 @@ import { ref } from 'vue';
           <NuxtLink to="/core/routing">Routing</NuxtLink>
         </td>
         <td>
-          <NuxtLink to="/crm/auth">Auth Test</NuxtLink><br />
-          <NuxtLink to="/crm/spoof">Spoof User Test</NuxtLink>
+          <NuxtLink to="/crm/auth">Auth</NuxtLink><br />
+          <NuxtLink to="/crm/spoof">Spoof User</NuxtLink>
         </td>
         <td>
-          <pre><NuxtLink to="/cms/">Go to CMS</NuxtLink></pre>
+          <NuxtLink to="/cms/area">Area</NuxtLink><br />
+          <NuxtLink to="/cms/page">Page</NuxtLink><br />
+          <NuxtLink to="/cms/menu">Menu</NuxtLink>
         </td>
       </tr>
     </table>
