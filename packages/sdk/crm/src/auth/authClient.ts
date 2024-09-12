@@ -19,6 +19,33 @@ export abstract class AuthClient {
   constructor() {
     this.cookieService = new CookieService();
   }
+  // preview user
+  public spoofPreviewUser(token: string): void {
+    this.clearCookies();
+    const maxAge = 1800;
+    const spoofedUser = authClaimsTokenSerializeToObject(token);
+
+    const username = spoofedUser?.spoofedBy || 'preview@geins.io';
+    const spoofDate = spoofedUser?.spoofDate;
+
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER,
+      payload: username,
+      maxAge,
+    });
+
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_AUTH,
+      payload: token,
+      maxAge,
+    });
+
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_MAX_AGE,
+      payload: maxAge.toString(),
+      maxAge,
+    });
+  }
 
   public spoofPreveiwUser(token: string): void {
     this.clearCookies();
@@ -165,8 +192,9 @@ export abstract class AuthClient {
   /**
    * Clears all authentication-related cookies, effectively logging out the user.
    */
-  protected clearCookies(): void {
+  public clearCookies(): void {
     Object.values(AUTH_COOKIES).forEach((cookieName) => {
+      console.log('Removing cookie:', cookieName);
       this.cookieService.remove(cookieName);
     });
   }

@@ -7,11 +7,13 @@ import ContentContainer from './ContentContainer.vue';
 const props = defineProps({
   family: {
     type: String,
-    required: true,
+    required: false,
+    default: 'Frontpage',
   },
   area: {
     type: String,
-    required: true,
+    required: false,
+    default: '',
   },
   data: {
     type: Object as PropType<ContentAreaType>,
@@ -29,11 +31,7 @@ const props = defineProps({
         <b>tags:</b> {{ JSON.stringify(props.data.tags, null, 2) }}
       </p>
       <div style="border: 2px solid gray; padding: 5px">
-        <ContentContainer
-          v-for="container in props.data.containers"
-          :key="container.id"
-          :data="container"
-        />
+        <ContentContainer v-for="container in props.data.containers" :key="container.id" :data="container" />
       </div>
     </div>
   </div>

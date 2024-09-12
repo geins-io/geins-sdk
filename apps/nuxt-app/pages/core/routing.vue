@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { RoutingService, RoutingStoreNodeCache } from '@geins/core';
+import type { GeinsCredentials } from '@geins/types';
+import { logWrite, RoutingService, RoutingStoreNodeCache } from '@geins/core';
 import DataDump from '~/components/DataDump.vue';
 
-const runtimeConfig = useRuntimeConfig();
-const items = ref<any[]>([]);
-const url = ref('');
-
-const apiKey = runtimeConfig.public.geins.apiKey;
+const config = useRuntimeConfig();
+const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
+const apiKey = geinsCredentials.apiKey;
 const store = new RoutingStoreNodeCache();
 const routingService = new RoutingService(apiKey, store);
 
+const items = ref<any[]>([]);
+const url = ref('');
+
 const fillRoutes = async () => {
   const routes = await routingService.fillUrlHistory();
-  console.log('routes', routes);
+  logWrite('routes', routes);
 };
 
 const refreshRoutes = async () => {
@@ -21,38 +23,45 @@ const refreshRoutes = async () => {
 };
 
 const get301Pages = async () => {
+  logWrite('get301Pages');
   const all = await routingService.getRoutingRules();
-  for (let i = 0; i < 100; i++) {
+  logWrite('all routes count', all.length);
+  for (let i = 0; i < (all.length > 100 ? 100 : all.length); i++) {
     const item = all[i];
-    items.value.push({ header: item.fromUrl, data: item });
+    if (!item) {
+      break;
+    }
+    const header = item.fromUrl ? item.fromUrl : 'no fromUrl';
+    items.value.push({ header: header, data: item });
   }
+  logWrite('all routes count', all.length);
 };
 
 const get301Length = async () => {
   const all = await routingService.getAllRoutes();
-  console.log('all routes count', all.length);
+  logWrite('all routes count', all.length);
 };
 
 const getLatestRefresh = async () => {
   const lastUrlFetchTime = await routingService.getLastFetchTime();
-  console.log('Last fetch time for URL history:', lastUrlFetchTime);
+  logWrite('Last fetch time for URL history:', lastUrlFetchTime);
   const all = await routingService.getAllRoutes();
-  console.log('all routes count', all.length);
+  logWrite('all routes count', all.length);
 };
 
 const getLocalRoutes = async () => {
   const all = await routingService.getAllRoutes();
-  console.log('all routes count', all.length);
+  logWrite('all routes count', all.length);
 };
 
 const testRoute = async () => {
   const route = await routingService.getRoute(url.value);
-  console.log('route', route);
+  logWrite('route', route);
 };
 
 const testRouteRedirect = async () => {
   const route = await routingService.getRoute(url.value);
-  console.log('route', route);
+  logWrite('route', route);
   if (route) {
     // redirect to new tab
     window.open(route, '_blank');
@@ -64,6 +73,14 @@ onMounted(async () => { });
 <template>
   <div>
     <h2>Nuxt @geins/core routing</h2>
+
+    <p>This page is used to test the routing service</p>
+
+    <p>
+      <b>
+        <a href="/"> GO BACK </a>
+      </b>
+    </p>
     <table>
       <tr>
         <td style="vertical-align: top">

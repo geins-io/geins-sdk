@@ -1,13 +1,16 @@
 import type { AuthResponse, AuthCredentials, AuthTokens } from '@geins/types';
 import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
+import { AUTH_COOKIES, CookieService, logWrite } from '@geins/core';
 
 const EXPIRES_SOON_THRESHOLD = 60;
+const REFRESH_COOKIE_NAME = 'geins-auth-refresh';
 
 export class AuthService {
   private signEndpoint: string;
   private authEndpoint: string;
   private client: AuthServiceClient | undefined;
+  private cookieService: CookieService;
 
   /**
    * Creates an instance of AuthService.
@@ -19,6 +22,7 @@ export class AuthService {
   constructor(signEndpoint: string, authEndpoint: string) {
     this.signEndpoint = signEndpoint;
     this.authEndpoint = authEndpoint;
+    this.cookieService = new CookieService();
     this.initClient();
   }
 
@@ -57,7 +61,14 @@ export class AuthService {
 
     try {
       await this.client!.connect(credentials, 'login');
+
       const authResponse = await this.getUser();
+
+      let refreshToken = authResponse?.tokens?.refreshToken ?? '';
+      if (refreshToken) {
+        this.refreshCookieTokenSet(refreshToken);
+      }
+
       return authResponse || { succeeded: false };
     } catch (error) {
       return this.handleError('Login failed', error);
@@ -96,6 +107,8 @@ export class AuthService {
    */
   public async refresh(): Promise<AuthResponse> {
     this.ensureClientInitialized();
+    const refreshToken = this.refreshCookieTokenGet();
+    logWrite('refresh() refreshToken', refreshToken);
 
     try {
       await this.client!.connect();
@@ -198,6 +211,7 @@ export class AuthService {
           expired: now >= parseInt(userFromToken.exp || '0'),
           expiresSoon,
           expiresIn,
+          refreshToken: this.refreshToken,
         },
       };
     } catch (error) {
@@ -219,6 +233,9 @@ export class AuthService {
     token = token || this.client?.getToken();
     if (!token) {
       if (this.client) {
+        if (this.refreshToken) {
+          this.client.setRefreshToken(this.refreshToken);
+        }
         await this.client?.connect();
         token = await this.client?.getToken();
       } else {
@@ -226,10 +243,14 @@ export class AuthService {
       }
     }
 
+    logWrite('getUser() this.refreshToken', this.refreshToken);
+
     const authResponse = await this.getUserObjectFromToken(token);
+
     if (authResponse && this.client) {
       authResponse.tokens!.refreshToken = this.client.getRefreshToken();
     }
+
     return authResponse;
   }
 
@@ -244,7 +265,16 @@ export class AuthService {
    */
   public get refreshToken(): string | undefined {
     this.ensureClientInitialized();
-    return this.client!.getRefreshToken();
+    let refreshToken;
+
+    if (this.client) {
+      refreshToken = this.client.getRefreshToken();
+      if (refreshToken) {
+        this.refreshCookieTokenSet(refreshToken);
+        return refreshToken;
+      }
+    }
+    return this.refreshCookieTokenGet();
   }
 
   /**
@@ -259,6 +289,18 @@ export class AuthService {
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
+  }
+
+  public refreshCookieTokenSet(refreshToken: string): void {
+    this.cookieService.set({
+      name: AUTH_COOKIES.REFRESH_TOKEN,
+      payload: refreshToken,
+      httpOnly: true,
+    });
+  }
+
+  public refreshCookieTokenGet(): string {
+    return this.cookieService.get(AUTH_COOKIES.REFRESH_TOKEN);
   }
 
   private handleError(message: string, error: unknown): any {

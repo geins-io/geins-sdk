@@ -6,6 +6,7 @@ export interface CookieType extends CookieServiceConfig {
 }
 
 export interface CookieServiceConfig {
+  httpOnly?: boolean;
   domain?: string;
   path?: string;
   secure?: boolean;
@@ -16,6 +17,7 @@ export class CookieService {
   private path = '/';
   private domain = '';
   private secure = true;
+  private httpOnly = false;
   private maxAge: number | undefined = undefined; // Ensure maxAge is a number or undefined
   private cookie = Cookie();
 
@@ -45,6 +47,7 @@ export class CookieService {
       domain: this.domain,
       secure: this.secure,
       maxAge: this.maxAge,
+      httpOnly: this.httpOnly,
     };
   }
 
@@ -88,6 +91,10 @@ export class CookieService {
       options.maxAge = this.parseMaxAge(cookie.maxAge);
     } else if (options.maxAge === undefined) {
       delete options.maxAge;
+    }
+
+    if (cookie.httpOnly) {
+      options.httpOnly = true;
     }
 
     this.cookie.set(cookie.name, cookie.payload, options);

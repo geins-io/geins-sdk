@@ -1,3 +1,7 @@
+import { logWrite } from '@geins/core';
+
+const REFRESH_TOKEN_HEADER = 'x-auth-refresh-token';
+
 export class AuthServiceClient {
   private authEndpoint: string;
   private signEndpoint: string;
@@ -52,7 +56,6 @@ export class AuthServiceClient {
     if (requiresSign) {
       authRequestBody = await this.prepareAuthRequest(credentials!, action);
     }
-
     const fetchOptions: RequestInit = {
       method: requiresSign ? 'POST' : 'GET',
       cache: 'no-cache',
@@ -60,11 +63,20 @@ export class AuthServiceClient {
       headers: {
         'Content-Type': 'application/json',
         ...(this.refreshToken
+          ? { 'x-auth-refresh-token': this.refreshToken }
+          : {}),
+        // dual header for refresh token
+        /*
+        ...(this.refreshToken
           ? { Cookie: `refresh=${this.refreshToken}` }
           : {}),
+        */
       },
+
       body: requiresSign ? JSON.stringify(authRequestBody) : undefined,
     };
+
+    logWrite('fetchOptions', fetchOptions);
 
     let data = await this.fetchData(url, fetchOptions);
     if (data?.sign) {
@@ -138,7 +150,6 @@ export class AuthServiceClient {
 
   private async fetchData(url: string, options: RequestInit): Promise<any> {
     try {
-      //add server side cookie to fetch request
       const response = await fetch(url, options);
       if (!response.ok) {
         throw new Error(
@@ -146,17 +157,26 @@ export class AuthServiceClient {
         );
       }
 
-      const setCookie = response.headers.get('set-cookie');
       let refreshToken = null;
-      if (setCookie) {
-        const cookies = setCookie.split(';');
-        for (const cookie of cookies) {
-          if (cookie.trim().startsWith('refresh=')) {
-            refreshToken = cookie.split('=')[1];
-            break;
+      const refreshTokenHeader = response.headers.get('x-auth-refresh-token');
+
+      if (refreshTokenHeader) {
+        refreshToken = refreshTokenHeader;
+      }
+
+      if (!refreshToken) {
+        const setCookie = response.headers.get('set-cookie');
+        if (setCookie) {
+          const cookies = setCookie.split(';');
+          for (const cookie of cookies) {
+            if (cookie.trim().startsWith('refresh=')) {
+              refreshToken = cookie.split('=')[1];
+              break;
+            }
           }
         }
       }
+
       if (refreshToken) {
         this.refreshToken = refreshToken;
       }

@@ -78,10 +78,42 @@ const setConnectionType = async (type: ConnectionType) => {
   }
   handleLogout();
   connectionType.value = type;
-  updateUser();
 };
 
-const spoofUser = () => { };
+const spoofUser = () => {
+  const spoofToken1 =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW5QcmV2aWV3IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUmVnaXN0ZXJlZCIsIkRyYWZ0SWQiOiIyNCIsIlNwb29mRGF0ZSI6IjIwMjQtMDktMjEgMTI6MDA6MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsIlNwb29mZWRCeSI6ImFydmlkc3NvbkBnZWlucy5pbyIsImV4cCI6MTcyNTg5NjU5MiwiaXNzIjoiQ2FyaXNtYXIgU29mdHdhcmUgQUIifQ.lU-zyRwoWJjE36Vnn7AmK6xO3WHik1p2_4I4RyoOCUg';
+  const spoofToken2 =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW5QcmV2aWV3IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUmVnaXN0ZXJlZCIsIkRyYWZ0SWQiOiIyNCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNzE1NWViMzctMmQ4OC1mYTNiLTkwZjgtZjJjN2FiNDUzMzY3IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc2lkIjoiNzE1NWViMzctMmQ4OC1mYTNiLTkwZjgtZjJjN2FiNDUzMzY3IiwiU3Bvb2ZlZEJ5IjoiYXJ2aWRzc29uQGdlaW5zLmlvIiwiZXhwIjoxNzI1ODk2ODgyLCJpc3MiOiJDYXJpc21hciBTb2Z0d2FyZSBBQiJ9.ODGfzT9zljVDvkmY3eAZwBKlMQpb_UWEAYDlvq-e_GY';
+  const spoofToken3 =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW5QcmV2aWV3IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUmVnaXN0ZXJlZCIsIkRyYWZ0SWQiOiIyMSIsIlNwb29mRGF0ZSI6IjIwMjQtMDktMjUgMjI6MDA6MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsIlNwb29mZWRCeSI6ImFydmlkc3NvbkBnZWlucy5pbyIsImV4cCI6MTcyNTg5NzA1OCwiaXNzIjoiQ2FyaXNtYXIgU29mdHdhcmUgQUIifQ.D1gfXMw9vkFj5eQVUdVj-Oww2vd-jvWff7uGNFDb3FQ';
+  const spoofToken4 =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW5QcmV2aWV3IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUmVnaXN0ZXJlZCIsIkRyYWZ0SWQiOiIyNSIsIlNwb29mRGF0ZSI6IjIwMjQtMDktMTcgMjI6MDA6MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsIlNwb29mZWRCeSI6ImFydmlkc3NvbkBnZWlucy5pbyIsImV4cCI6MTcyNTg5NzIxMSwiaXNzIjoiQ2FyaXNtYXIgU29mdHdhcmUgQUIifQ.uqXT-hGy4HLqmE5sKggQPcF8bmgxr62dyQ1lAbEwkDM';
+
+  const spoofToken5 =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW5QcmV2aWV3IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUmVnaXN0ZXJlZCIsIkRyYWZ0SWQiOiIyNSIsIlNwb29mRGF0ZSI6IjIwMjQtMDktMTggMjI6MDA6MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsIlNwb29mZWRCeSI6ImFydmlkc3NvbkBnZWlucy5pbyIsImV4cCI6MTcyNTg5ODAxNiwiaXNzIjoiQ2FyaXNtYXIgU29mdHdhcmUgQUIifQ.8urktUiZCYpIH8q4YPME-3JC4opOLLoh7P1cmfNXYwA';
+
+  const spoofToken6 =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQWRtaW5QcmV2aWV3IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUmVnaXN0ZXJlZCIsIkRyYWZ0SWQiOiIyNSIsIlNwb29mRGF0ZSI6IjIwMjQtMDktMTggMjI6MDA6MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6IjcxNTVlYjM3LTJkODgtZmEzYi05MGY4LWYyYzdhYjQ1MzM2NyIsIlNwb29mZWRCeSI6ImFydmlkc3NvbkBnZWlucy5pbyIsImV4cCI6MTcyNTg5ODAxNiwiaXNzIjoiQ2FyaXNtYXIgU29mdHdhcmUgQUIifQ.8urktUiZCYpIH8q4YPME-3JC4opOLLoh7P1cmfNXYwA0';
+
+  const user1 = authClaimsTokenSerializeToObject(spoofToken1);
+  logWrite(`Spoofing user 1`, user1);
+  const user2 = authClaimsTokenSerializeToObject(spoofToken2);
+  logWrite(`Spoofing user 2`, user2);
+  const user3 = authClaimsTokenSerializeToObject(spoofToken3);
+  logWrite(`Spoofing user 3`, user3);
+  const user4 = authClaimsTokenSerializeToObject(spoofToken4);
+  logWrite(`Spoofing user 4`, user4);
+  const user5 = authClaimsTokenSerializeToObject(spoofToken5);
+  logWrite(`Spoofing user 5`, user5);
+  const user6 = authClaimsTokenSerializeToObject(spoofToken6);
+  logWrite(`Spoofing user 6`, user6);
+};
+
+const clearCookies = () => {
+  authClientDirect.clearCookies();
+  updateCookiesDisplay();
+};
 
 /**
  * Fetches and updates the user information.
@@ -296,9 +328,8 @@ const handleChangePassword = async () => {
                   Register new User
                 </button>
 
-                <button :disabled="connectionType === Connection.None" @click="spoofUser">
-                  Spoof User
-                </button>
+                <button @click="spoofUser">Spoof User</button>
+                <button @click="clearCookies">Clear Cookies</button>
               </td>
             </tr>
           </table>

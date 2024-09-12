@@ -1,88 +1,87 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { GeinsCore } from '@geins/core';
-import type { Channel, MerchantApiCredentials } from '@geins/core';
+import type { GeinsCredentials } from '@geins/types';
+import { logWrite, GeinsCore } from '@geins/core';
 
-const runtimeConfig = useRuntimeConfig();
+const config = useRuntimeConfig();
+const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
+const geinsCore = new GeinsCore(geinsCredentials);
+
 const items = ref<any[]>([]);
-const channel: Channel = {
-  siteId: runtimeConfig.public.channel.siteId,
-  siteTopDomain: runtimeConfig.public.channel.siteTopDomain,
+
+const eventPushToast = () => {
+  geinsCore.events.push({ type: 'toast', payload: 'Hello world' });
 };
-
-const geinsCredentials: MerchantApiCredentials = {
-  ...runtimeConfig.public.geins,
-};
-
-const languageId = runtimeConfig.public.defaultLanguage;
-const marketId = runtimeConfig.public.defaultMarket;
-
-const geinsCore = new GeinsCore(geinsCredentials, channel, {
-  marketId,
-  languageId,
-});
-// const geinsCRM = new GeinsCRM(geinsCore);
-
-const eventPush = () => {
-  geinsCore.events.push({ type: 'toast', payload: 'HELLO' });
-};
-const eventPush2 = () => {
+const eventPushAuth = () => {
   geinsCore.events.push({ type: 'auth', payload: { method: 'login' } });
 };
-const eventPush3 = () => {
-  geinsCore.events.push({ type: 'alert', payload: 'HELLO elert' });
+const eventPushAlert = () => {
+  geinsCore.events.push({ type: 'alert', payload: 'Hello world' });
 };
 
 onMounted(() => {
-  var myEventHandler = function (data: any) {
+  const myEventHandler = function (data: any) {
     items.value.push({ header: data.type, data: data });
     if (data.type === 'auth') {
-      console.log('USER OK');
+      logWrite(data.type, data);
     }
     if (data.type === 'toast') {
-      console.log('TOAST OK');
+      logWrite(data.type, data);
     }
     if (data.type === 'alert') {
+      logWrite(data.type, data);
       alert(data.payload);
     }
   };
   geinsCore.events.listnerAdd(myEventHandler);
 });
+
+const clear = async () => {
+  items.value = [];
+};
 </script>
 <template>
   <div>
     <h2>Nuxt @geins/core event</h2>
+    <p>This page is for testing the event system</p>
+    <p>
+      <b>
+        <a href="/"> GO BACK </a>
+      </b>
+    </p>
     <table>
       <tr>
         <td style="vertical-align: top">
           <table>
             <tr>
               <td>
-                <button @click="eventPush">Event push</button>
-                <button @click="eventPush2">Event push</button>
-                <button @click="eventPush3">Event push -> alert</button>
+                <button @click="eventPushToast">Event push</button>
+                <button @click="eventPushAuth">Auth Event push</button>
+                <button @click="eventPushAlert">Event push to alert</button>
               </td>
               <td></td>
               <td></td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td colspan="3">
+                <hr />
+              </td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td colspan="3"><button @click="clear">Clear</button></td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <hr />
+              </td>
             </tr>
           </table>
           <div v-for="(item, index) in items" :key="index">
             <p>
               <b>{{ item.header }}</b><br />
-              <textarea 
-                v-model="item.data" 
-                style="border: 0; width: 600px; height: 100px"
-              ></textarea>
+              <textarea style="border: 0; width: 500px; height: 100px">{{
+                JSON.stringify(item.data)
+              }}</textarea>
             </p>
           </div>
         </td>
