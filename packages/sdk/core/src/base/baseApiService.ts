@@ -5,10 +5,7 @@ export abstract class BaseApiService {
   protected geinsCredentials: GeinsCredentials;
   protected channelId: string;
 
-  constructor(
-    client: any,
-    credentials: GeinsCredentials,
-  ) {
+  constructor(client: any, credentials: GeinsCredentials) {
     this.client = client;
 
     if (!credentials.channel) {
@@ -60,5 +57,7 @@ export abstract class BaseApiService {
     return parsedResult as T;
   }
 
-  protected abstract parseResult(result: any): any;
+  protected parseResult(result: any): any {
+    return result;
+  }
 }

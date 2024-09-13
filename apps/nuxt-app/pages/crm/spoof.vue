@@ -12,8 +12,8 @@ import {
   AuthClientDirect,
   AuthClientProxy,
   authClaimsTokenSerialize,
+  authClaimsTokenSerializeToObject,
 } from '@geins/crm';
-import { authClaimsTokenSerializeToObject } from '../../utils/authHelpers';
 
 //import { AuthClientDirect, AuthClientProxy } from '../../utils/auth';
 const config = useRuntimeConfig();

@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   // ... other configuration options
 
   // modules: ['nuxt-geins'],
-  geins: {
+  /*   geins: {
     debug: true,
     credentials: {
       apiKey:
@@ -17,7 +17,7 @@ export default defineNuxtConfig({
       locale: process.env.GEINS_LOCALE || 'sv-SE',
       market: process.env.GEINS_MARKET || 'se',
     },
-  },
+  }, */
   runtimeConfig: {
     public: {
       geins: {

@@ -1,5 +1,4 @@
 import { ContentAreaType, ContentContainerType } from '@geins/core';
-import { parse } from 'graphql';
 
 export function parseContentArea(result: any): ContentAreaType {
   if (!result || !result.data) {
