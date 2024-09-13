@@ -71,7 +71,7 @@ const getSearch = async () => {
     for (let index = 0; index < facetResultParsed.length; index++) {
       const element = facetResultParsed[index];
       const facetIds = element.values.map((v) => v.facetId).join(', ');
-      items.value.unshift({
+      items.value.push({
         header: `"${element.label}" - type[${element.type}] - group[${element.group}]. Facets:`,
         data: facetIds,
       });
