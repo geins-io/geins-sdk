@@ -1,10 +1,11 @@
 import type { GeinsBaseApiVars } from '../api-client';
-import type { SortType, FilterMode } from '../pim';
+import type { ProductListSortType } from '../pim/list';
+import type { ProductFilterModeType } from '../pim/filter';
 
-export interface ProductSearchVariables extends GeinsBaseApiVars {
+export interface ProductSearchVars extends GeinsBaseApiVars {
   searchText: string;
-  sort?: SortType;
-  filterMode?: FilterMode;
+  sort?: ProductListSortType;
+  filterMode?: ProductFilterModeType;
   facets?: string[];
   skip?: number;
   take?: number;

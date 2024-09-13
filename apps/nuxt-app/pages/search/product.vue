@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import type { GeinsCredentials, ProductSearchVariables } from '@geins/types';
-import { logWrite, GeinsCore, SortType, FilterMode } from '@geins/core';
+import type { GeinsCredentials, ProductSearchVars } from '@geins/types';
+import {
+  logWrite,
+  GeinsCore,
+  ProductListSortType,
+  ProductFilterModeType,
+} from '@geins/core';
 import { GeinsSearch } from '@geins/search';
-import { parseFilters } from '../../utils/filterParsers';
 
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
@@ -13,45 +17,36 @@ const imageUrl = geinsCore.endpoints.image;
 
 const items = ref<{ header: string; data: string }[]>([]);
 const products = ref<any[]>([]);
-
 const optionsTake = ref('50');
 const optionsSkip = ref('0');
-
-const searchTerm = ref('products');
+const searchTerm = ref('test');
 const searching = ref(false);
 const searchHits = ref(0);
-
-const filterSort = ref(SortType.RELEVANCE);
-const filterMode = ref(FilterMode.CURRENT);
-
+const filterSort = ref(ProductListSortType.RELEVANCE);
+const filterMode = ref(ProductFilterModeType.CURRENT);
 const filterFacets = ref('');
-
 const facetOptions = ref<any[]>([]);
 
-const sortOptions = Object.entries(SortType).reduce(
+const sortOptions = Object.entries(ProductListSortType).reduce(
   (acc, [key, value]) => {
     acc[key] = value;
     return acc;
   },
-  {} as Record<string, SortType>,
+  {} as Record<string, ProductListSortType>,
 );
-const filterModeOptions = Object.entries(FilterMode).reduce(
+const filterModeOptions = Object.entries(ProductFilterModeType).reduce(
   (acc, [key, value]) => {
     acc[key] = value;
     return acc;
   },
-  {} as Record<string, FilterMode>,
+  {} as Record<string, ProductFilterModeType>,
 );
 
 const getSearch = async () => {
   searching.value = true;
+  items.value = [];
 
-  logWrite(
-    'facets: ',
-    filterFacets.value.replace(/\n/g, ',').replace(/\s/g, '').split(','),
-  );
-
-  const vars: ProductSearchVariables = {
+  const vars: ProductSearchVars = {
     searchText: searchTerm.value,
     sort: filterSort.value,
     filterMode: filterMode.value,
@@ -65,8 +60,6 @@ const getSearch = async () => {
 
   const searchResult = await geinsSearch.product.get(vars);
 
-  // logWrite('search results: ', searchResult);
-
   if (searchResult.data && searchResult.data.products) {
     const result = searchResult.data.products;
     searchHits.value = result.count;
@@ -74,23 +67,14 @@ const getSearch = async () => {
   }
 
   if (searchHits.value > 0) {
-    const facetResult = await geinsSearch.product.getFilters(vars);
-    if (facetResult.data && facetResult.data.products) {
-      const result = facetResult.data.products;
-      logWrite('filter Result: ', result.filters.facets);
-      const parsedFilters = parseFilters(result.filters);
-      logWrite('parsedFilters: ', parsedFilters);
-      // loop over parsedFilters and add to items
-      for (let index = 0; index < parsedFilters.length; index++) {
-        const element = parsedFilters[index];
-        // get facet ids from values and then add to comma separated string
-        const facetIds = element.values.map((v) => v.facetId).join(', ');
-
-        items.value.unshift({
-          header: `"${element.label}" - type[${element.type}] - group[${element.group}]. Facets:`,
-          data: facetIds,
-        });
-      }
+    const facetResultParsed = await geinsSearch.product.getFiltersParsed(vars);
+    for (let index = 0; index < facetResultParsed.length; index++) {
+      const element = facetResultParsed[index];
+      const facetIds = element.values.map((v) => v.facetId).join(', ');
+      items.value.unshift({
+        header: `"${element.label}" - type[${element.type}] - group[${element.group}]. Facets:`,
+        data: facetIds,
+      });
     }
   }
   searching.value = false;

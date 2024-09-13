@@ -1,40 +1,34 @@
-export enum FilterMode {
+export enum ProductFilterModeType {
   BY_GROUP = 'BY_GROUP',
   CURRENT = 'CURRENT',
 }
 
-export enum SortType {
-  NONE = 'NONE',
-  PRICE = 'PRICE',
-  PRICE_DESC = 'PRICE_DESC',
-  MOST_SOLD = 'MOST_SOLD',
-  VOTES = 'VOTES',
-  BRAND = 'BRAND',
-  LATEST = 'LATEST',
-  RELEVANCE = 'RELEVANCE',
-  FACET_ORDER = 'FACET_ORDER',
-  ALPHABETICAL = 'ALPHABETICAL',
-  ALPHABETICAL_DESC = 'ALPHABETICAL_DESC',
-  AVAILABLE_STOCK = 'AVAILABLE_STOCK',
-  AVAILABLE_STOCK_DESC = 'AVAILABLE_STOCK_DESC',
-  TOTAL_STOCK = 'TOTAL_STOCK',
-  TOTAL_STOCK_DESC = 'TOTAL_STOCK_DESC',
+export enum FilterSystemEntityTypes {
+  Brand = 'Brand',
+  Category = 'Category',
+  Price = 'Price',
+  Sku = 'Sku',
+  StockStatus = 'StockStatus',
+  DiscountCampaign = 'DiscountCampaign',
+  DiscountCampaignNumber = 'DiscountCampaignNumber',
+  Discount = 'Discount',
+  ReducedPrice = 'ReducedPrice',
 }
 
-export interface PriceFilterInputType {
-  lowest: number;
-  highest: number;
-}
+export type FilterFacetType = {
+  filterId: string;
+  label: string;
+  group: string;
+  type: string;
+  isSystem: boolean;
+  values: FilterFacetValueType[];
+};
 
-export interface FilterType {
-  searchText: string;
-  facets: string[];
-  excludeFacets: string[];
-  include: string[];
-  exclude: string[];
-  sort: SortType;
-  price: PriceFilterInputType;
-  filterMode: FilterMode;
-  productIds: number[];
-  includeCollapsed: Boolean;
-}
+export type FilterFacetValueType = {
+  facetId: string;
+  parentId: string;
+  label?: string;
+  count?: number;
+  order?: number;
+  hidden?: boolean;
+};
