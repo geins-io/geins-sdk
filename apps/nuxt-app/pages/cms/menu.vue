@@ -31,25 +31,25 @@ const fetchMenu = async () => {
   logWrite('getting menu at location slug:', menuLocation.value);
 
   const { data } = await useAsyncData('menu', () =>
-    geinsCMS.menu.get({ menuLocationId: menuLocation.value }),
+    geinsCMS.menu.getRaw({ menuLocationId: menuLocation.value }),
   );
 
   const menu = data.value?.data;
 
   items.value.unshift({
-    header: `:: useGeinsCMS.getMenu  :: [${new Date().toISOString()}]`,
+    header: `::  geinsCMS.menu.getRaw(  :: [${new Date().toISOString()}]`,
     data: JSON.stringify(menu),
   });
 
   geinsCMS.menu
-    .getParsed({ menuLocationId: menuLocation.value })
+    .get({ menuLocationId: menuLocation.value })
     .then((result) => {
       return result as MenuType;
     })
     .then((menu: MenuType) => {
       menuData.value = menu;
       items.value.unshift({
-        header: `:: geinsCMS.menu.getParsed  :: [${new Date().toISOString()}]`,
+        header: `:: geinsCMS.menu.get  :: [${new Date().toISOString()}]`,
         data: JSON.stringify(menu),
       });
     });

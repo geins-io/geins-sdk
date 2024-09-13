@@ -11,14 +11,14 @@ export class ContentAreaService extends BaseApiService {
     }
     return this.createVariables(variables);
   }
-  async get(
+  async getRaw(
     variables: ContentAreaVariables,
   ) {
     const vars = await this.generateVars(variables);
     return await this.runQuery(queries.contentArea, vars);
   }
 
-  async getParsed(
+  async get(
     variables: ContentAreaVariables,
   ) {
     const vars = await this.generateVars(variables);

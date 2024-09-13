@@ -37,25 +37,24 @@ const getAreaData = async () => {
   );
 
   const { data } = await useAsyncData('contentArea', () =>
-    geinsCMS.area.get({ family: family.value, areaName: areaName.value }),
+    geinsCMS.area.getRaw({ family: family.value, areaName: areaName.value }),
   );
   const contentArea = data.value?.data;
 
   items.value.unshift({
-    header: `:: useGeinsCMS.getContentArea  :: [${new Date().toISOString()}]`,
+    header: `:: geinsCMS.area.getRaw  :: [${new Date().toISOString()}]`,
     data: JSON.stringify(contentArea),
   });
 
   geinsCMS.area
-    .getParsed({ family: family.value, areaName: areaName.value })
+    .get({ family: family.value, areaName: areaName.value })
     .then((result) => {
       return result as ContentAreaType;
     })
     .then((contentArea: ContentAreaType) => {
-      logWrite('widgetArea:', contentArea);
       pageData.value = contentArea;
       items.value.unshift({
-        header: `:: geinsCMS.area.getParsed  :: [${new Date().toISOString()}]`,
+        header: `:: geinsCMS.area.get :: [${new Date().toISOString()}]`,
         data: JSON.stringify(contentArea),
       });
     });

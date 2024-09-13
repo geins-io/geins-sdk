@@ -11,12 +11,12 @@ export class ContentPageService extends BaseApiService {
     return this.createVariables(variables);
   }
 
-  async get(variables: ContentPageVariables) {
+  async getRaw(variables: ContentPageVariables) {
     const vars = await this.generateVars(variables);
     return await this.runQuery(queries.contentArea, vars);
   }
 
-  async getParsed(variables: ContentPageVariables) {
+  async get(variables: ContentPageVariables) {
     const vars = await this.generateVars(variables);
     return await this.runQueryParsed(queries.contentArea, vars);
   }

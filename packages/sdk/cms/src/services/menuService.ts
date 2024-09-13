@@ -1,6 +1,7 @@
-import type { MenuVariables, MenuType, MenuItemType } from '@geins/types';
+import type { MenuVariables, MenuType } from '@geins/types';
 import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
+import { parseMenuItem } from '../util/contentParsers';
 export class MenuService extends BaseApiService {
   private async generateVars(variables: MenuVariables) {
     if (!variables.menuLocationId) {
@@ -9,11 +10,11 @@ export class MenuService extends BaseApiService {
     const vars = this.createVariables(variables);
     return vars;
   }
-  async get(variables: MenuVariables) {
+  async getRaw(variables: MenuVariables) {
     const vars = await this.generateVars(variables);
     return await this.runQuery(queries.menu, vars);
   }
-  async getParsed(variables: MenuVariables) {
+  async get(variables: MenuVariables) {
     const vars = await this.generateVars(variables);
     return await this.runQueryParsed(queries.menu, vars);
   }
@@ -24,28 +25,14 @@ export class MenuService extends BaseApiService {
     }
 
     const menu = result.data.getMenuAtLocation;
-    // Extract menu items and any other relevant information
+
     const parsedResult = {
       title: menu.title,
-      menuItems: menu.menuItems.map((item: any) => this.parseMenuItem(item)),
+      menuItems: menu.menuItems.map((item: any) => parseMenuItem(item)),
     };
 
     return parsedResult;
   }
 
-  // Helper method to recursively parse menu items
-  private parseMenuItem(item: any): MenuItemType {
-    return {
-      id: item.id,
-      label: item.label,
-      title: item.title,
-      canonicalUrl: item.canonicalUrl,
-      type: item.type,
-      order: item.order,
-      targetBlank: item.targetBlank,
-      children: item.children
-        ? item.children.map((child: any) => this.parseMenuItem(child))
-        : [],
-    };
-  }
+
 }
