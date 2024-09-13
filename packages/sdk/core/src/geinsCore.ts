@@ -27,8 +27,8 @@ export class GeinsCore {
     // Initialize API Client
     if (credentials.apiKey && credentials.accountName) {
       this.endpointsUrls = buildEndpoints(
-        credentials.accountName,
         credentials.apiKey,
+        credentials.accountName,
         credentials.environment,
       );
     }

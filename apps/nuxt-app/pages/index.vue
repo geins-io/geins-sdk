@@ -5,7 +5,7 @@ import { ref } from 'vue';
   <div>
     <h2>Geins SDK Test Bench - Nuxt3</h2>
     <table>
-      <tr>
+      <tr style="background-color: grey; font-size: 20px">
         <td>@geins/core</td>
         <td>@geins/crm</td>
         <td>@geins/cms</td>
@@ -24,6 +24,18 @@ import { ref } from 'vue';
           <NuxtLink to="/cms/page">Page</NuxtLink><br />
           <NuxtLink to="/cms/menu">Menu</NuxtLink>
         </td>
+      </tr>
+      <tr style="background-color: grey; font-size: 20px">
+        <td>@geins/pim</td>
+        <td>@geins/search</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+          <NuxtLink to="/search/product">Product</NuxtLink>
+        </td>
+        <td></td>
       </tr>
     </table>
   </div>

@@ -17,6 +17,7 @@
     "@geins/cms": "*",
     "@geins/core": "*",
     "@geins/crm": "*",
+    "@geins/search": "*",
     "cookie-universal": "^2.2.2",
     "nuxt": "^3.12.4",
     "vue": "^3.4.31",

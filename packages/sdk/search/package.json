@@ -1,0 +1,30 @@
+{
+  "name": "@geins/search",
+  "version": "0.1.0",
+  "main": "dist/index.cjs",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "yarn build",
+    "lint": "eslint --fix .",
+    "link": "yarn link"
+  },
+  "dependencies": {
+    "@geins/core": "*",
+    "@geins/pim": "*",
+    "@apollo/client": "^3.11.8",
+    "graphql": "^16.9.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@geins/eslint-config": "*",
+    "@geins/types": "*",
+    "typescript": "^5.6.2",
+    "eslint": "^9"
+  }
+}
