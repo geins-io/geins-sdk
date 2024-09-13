@@ -58,7 +58,7 @@ const getSearch = async () => {
     skip: parseInt(optionsSkip.value, 10),
   };
 
-  const searchResult = await geinsSearch.product.get(vars);
+  const searchResult = await geinsSearch.product.getRaw(vars);
 
   if (searchResult.data && searchResult.data.products) {
     const result = searchResult.data.products;
@@ -67,7 +67,7 @@ const getSearch = async () => {
   }
 
   if (searchHits.value > 0) {
-    const facetResultParsed = await geinsSearch.product.getFiltersParsed(vars);
+    const facetResultParsed = await geinsSearch.product.getFilters(vars);
     for (let index = 0; index < facetResultParsed.length; index++) {
       const element = facetResultParsed[index];
       const facetIds = element.values.map((v) => v.facetId).join(', ');

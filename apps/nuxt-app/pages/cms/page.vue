@@ -29,17 +29,17 @@ const getPage = async () => {
   logWrite('getting page with slug:', slug.value);
 
   const { data } = await useAsyncData('page', () =>
-    geinsCMS.page.get({ alias: slug.value }),
+    geinsCMS.page.getRaw({ alias: slug.value }),
   );
 
   const contentPage = data.value?.data;
   items.value.unshift({
-    header: `:: useGeinsCMS.getContentPage  :: [${new Date().toISOString()}]`,
+    header: `:: geinsCMS.page.get  :: [${new Date().toISOString()}]`,
     data: JSON.stringify(contentPage),
   });
 
   geinsCMS.page
-    .getParsed({ alias: slug.value })
+    .get({ alias: slug.value })
     .then((result) => {
       return result as ContentAreaType;
     })
@@ -47,7 +47,7 @@ const getPage = async () => {
       logWrite('widgetArea:', contentArea);
       pageData.value = contentArea;
       items.value.unshift({
-        header: `:: geinsCMS.page.getParsed  :: [${new Date().toISOString()}]`,
+        header: `:: geinsCMS.page.get :: [${new Date().toISOString()}]`,
         data: JSON.stringify(contentArea),
       });
     });

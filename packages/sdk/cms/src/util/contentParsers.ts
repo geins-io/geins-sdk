@@ -1,4 +1,20 @@
 import { ContentAreaType, ContentContainerType } from '@geins/core';
+import type { MenuItemType } from '@geins/types';
+
+export function parseMenuItem(item: any): MenuItemType {
+  return {
+    id: item.id,
+    label: item.label,
+    title: item.title,
+    canonicalUrl: item.canonicalUrl,
+    type: item.type,
+    order: item.order,
+    targetBlank: item.targetBlank,
+    children: item.children
+      ? item.children.map((child: any) => parseMenuItem(child))
+      : [],
+  };
+}
 
 export function parseContentArea(result: any): ContentAreaType {
   if (!result || !result.data) {
@@ -114,6 +130,7 @@ export function parseContentDataByType(type: string, data: any) {
       return parseJsonSafe(data);
   }
 }
+
 export function parseJsonSafe(data: any) {
   try {
     return JSON.parse(data);
