@@ -27,8 +27,10 @@ export default defineNuxtConfig({
             process.env.GEINS_API_KEY || 'CF2FF80B-6F85-4CD9-ACE5-F41962891E07',
           accountName: process.env.GEINS_ACCOUNT_NAME || 'demogeins',
           environment: 'prod',
+
           channel: process.env.GEINS_CHANNEL || '1',
           tld: process.env.GEINS_TLD || 'se',
+
           locale: process.env.GEINS_LOCALE || 'sv-SE',
           market: process.env.GEINS_MARKET || 'se',
         },

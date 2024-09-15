@@ -31,7 +31,9 @@ import { ref } from 'vue';
         <td></td>
       </tr>
       <tr>
-        <td></td>
+        <td>
+          <!--  <NuxtLink to="/pim/brand">Brand</NuxtLink> -->
+        </td>
         <td>
           <NuxtLink to="/search/product">Product</NuxtLink>
         </td>
