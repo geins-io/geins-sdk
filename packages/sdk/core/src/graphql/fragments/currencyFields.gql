@@ -1,0 +1,4 @@
+fragment CurrencyFields on CurrencyType {
+  code
+  symbol
+}

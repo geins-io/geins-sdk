@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const baseDeletePatterns = ['olleh', 'hello'];
+const baseDeletePatterns = [];
 
 // List of patterns to exclude from deletion
 const excludePatterns = ['.temp', '.env'];

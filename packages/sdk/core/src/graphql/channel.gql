@@ -1,0 +1,16 @@
+#import './fragments/channelFields.gql'
+#import './fragments/languageFields.gql'
+#import './fragments/marketFields.gql'
+#import './fragments/currencyFields.gql'
+
+query getChannel($channelId: String = null) {
+  channel(channelId: $channelId) {
+    ...ChannelFields
+    markets {
+      ...MarketFields
+    }
+    languages {
+      ...LanguageFields
+    }
+  }
+}

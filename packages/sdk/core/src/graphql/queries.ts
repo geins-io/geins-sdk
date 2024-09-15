@@ -1,7 +1,9 @@
-import brands from './graphql/brands.graphql';
+import channels from './channels.gql';
+import channel from './channel.gql';
 
 const queries = {
-  brands,
+  channels,
+  channel,
 };
 
 export { queries };

@@ -1,0 +1,19 @@
+#import './currencyFields.gql'
+#import './countryFields.gql'
+#import './languageFields.gql'
+fragment MarketFields on MarketType {
+  id
+  alias
+  allowedLanguages {
+    ...LanguageFields
+  }
+  country {
+    ...CountryFields
+  }
+  currency {
+    ...CurrencyFields
+  }
+  onlyDisplayInCheckout
+  virtual
+  groupKey
+}
