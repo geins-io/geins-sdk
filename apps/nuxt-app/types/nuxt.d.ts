@@ -1,7 +1,7 @@
-import type { Channel } from '@geins/core';
+import type { ChannelType } from '@geins/core';
 
 declare module '#app' {
   interface NuxtApp {
-    $currentChannel: Channel;
+    $currentChannel: ChannelType;
   }
 }
