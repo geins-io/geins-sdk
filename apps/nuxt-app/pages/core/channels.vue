@@ -1,34 +1,43 @@
 <script setup lang="ts">
-import type { GeinsCredentials } from '@geins/types';
-import {
-  logWrite,
-  GeinsCore,
-  ProductListSortType,
-  ProductFilterModeType,
-} from '@geins/core';
-import { GeinsPIM } from '@geins/pim';
+import { useNuxtApp } from '#app';
+import { ref, onMounted } from 'vue';
+import type { GeinsCredentials, ChannelType } from '@geins/types';
+import { logWrite, GeinsCore } from '@geins/core';
+const { $currentChannel } = useNuxtApp();
 
 const config = useRuntimeConfig();
-
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const geinsCore = new GeinsCore(geinsCredentials);
-const languageId = ref('en');
-const marketId = ref('en');
+const channel = ref<any>();
+const channels = ref<any>();
 
 const items = ref<{ header: string; data: string }[]>([]);
-const brands = ref<any[]>([]);
 
-const getBrands = async () => { };
+const getChannels = async () => {
+  const result = await geinsCore.channels.get();
+  channels.value = result;
+  logWrite('Channels', result);
+};
+
+const getChannel = async () => {
+  const result = await geinsCore.getChannel();
+  channel.value = result;
+  logWrite('Channel', result);
+};
 
 const clear = async () => {
+  channel.value = undefined;
+  channels.value = undefined;
   items.value = [];
 };
 
-onMounted(() => { });
+onMounted(() => {
+  channel.value = $currentChannel;
+});
 </script>
 <template>
   <div>
-    <h2>Nuxt @geins/pim brand</h2>
+    <h2>Nuxt @geins/core channels</h2>
     <p>This is a brand page for products</p>
     <p>
       <b>
@@ -40,28 +49,9 @@ onMounted(() => { });
         <td style="vertical-align: top">
           <table>
             <tr>
-              <td><b>Options:</b></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>LanguageId:</td>
-              <td><input v-model="languageId" style="width: 100px" /></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>MarketId:</td>
-              <td><input v-model="marketId" style="width: 100px" /></td>
-              <td></td>
-            </tr>
-            <tr>
               <td colspan="3">
-                <hr />
-              </td>
-            </tr>
-            <tr>
-              <td colspan="3">
-                <button @click="getBrands">Get All Brands</button>
+                <button @click="getChannels">Get Account Channels</button>
+                <button @click="getChannel">Get Application Channel</button>
               </td>
             </tr>
             <tr>
@@ -89,16 +79,13 @@ onMounted(() => { });
         <td></td>
 
         <td style="padding-left: 50px; vertical-align: top">
-          <div>
-            <h3>Brands</h3>
-
-            <table>
-              <tr style="font-weight: bold">
-                <td>Id:</td>
-                <td>Image:</td>
-                <td>Name:</td>
-              </tr>
-            </table>
+          <div v-if="channels">
+            <h3>All Account Channels</h3>
+            <pre>{{ channels }}</pre>
+          </div>
+          <div v-if="channel">
+            <h3>Current Application Channel</h3>
+            <pre>{{ channel }}</pre>
           </div>
         </td>
       </tr>

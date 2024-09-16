@@ -1,0 +1,8 @@
+fragment ChannelFields on ChannelType {
+  id
+  name
+  type
+  url
+  defaultLanguageId
+  defaultMarketId
+}

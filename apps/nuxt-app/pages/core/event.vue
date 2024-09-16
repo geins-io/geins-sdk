@@ -46,7 +46,7 @@ const clear = async () => {
     <p>This page is for testing the event system</p>
     <p>
       <b>
-        <a href="/"> GO BACK </a>
+        <NuxtLink to="/">GO BACK</NuxtLink>
       </b>
     </p>
     <table>

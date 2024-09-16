@@ -1,3 +1,3 @@
 export * from './baseApiService';
 export * from './basePackage';
-export * from './baseRoutingStore';
+export * from './baseStore';

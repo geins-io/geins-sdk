@@ -1,6 +1,13 @@
-import type { GeinsCredentials } from '@geins/types';
+import type { GeinsCredentials, ChannelType } from '@geins/types';
 import { MerchantApiClient, ENDPOINTS } from './api-client';
-import { CookieService, EventService } from './services/';
+import {
+  CookieService,
+  EventService,
+  ChannelsService,
+  ChannelService,
+  logWrite,
+} from './services/';
+import { Channel } from './logic';
 import { isServerContext, buildEndpoints } from './utils';
 
 export class GeinsCore {
@@ -14,6 +21,11 @@ export class GeinsCore {
 
   // events
   private eventService: EventService;
+
+  // channel
+  public channels: ChannelsService;
+  public channel: Channel | undefined;
+  // private currentChannel: Channel | undefined;
 
   constructor(credentials: GeinsCredentials) {
     if (!credentials.channel) {
@@ -41,6 +53,8 @@ export class GeinsCore {
     }
 
     this.eventService = new EventService();
+    this.channels = new ChannelsService(this.client, this.credentials);
+    this.channel = new Channel(this.credentials);
   }
 
   // Initialize API Client
@@ -53,6 +67,13 @@ export class GeinsCore {
     } else {
       throw new Error('API Key and Account Name are required');
     }
+  }
+
+  public async getChannel(): Promise<ChannelType | null | undefined> {
+    if (!this.channel) {
+      throw new Error('Channel are not set');
+    }
+    return this.channel?.getChannel();
   }
 
   get client(): any {

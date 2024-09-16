@@ -1,9 +1,9 @@
 import NodeCache from 'node-cache';
-import { BaseRoutingStore } from '../base';
+import { BaseStore } from '../base';
 
 const ttlSeconds = 60 * 60 * 24; // 24 hours
 
-export class RoutingStoreNodeCache extends BaseRoutingStore {
+export class ChannelStore extends BaseStore {
   override store: NodeCache;
 
   constructor() {

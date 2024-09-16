@@ -210,7 +210,9 @@ const handleChangePassword = async () => {
       AuthClientDirect classes.
     </p>
     <p>
-      <b><a href="/"> GO BACK </a></b>
+      <b>
+        <NuxtLink to="/">GO BACK</NuxtLink>
+      </b>
     </p>
 
     <table>

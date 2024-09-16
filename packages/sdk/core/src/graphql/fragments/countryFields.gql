@@ -1,0 +1,4 @@
+fragment CountryFields on CountryType {
+  name
+  code
+}
