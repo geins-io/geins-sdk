@@ -1,4 +1,4 @@
-export abstract class BaseRoutingStore {
+export abstract class BaseStore {
   store: any;
   constructor() {
     this.store = this.initStore();

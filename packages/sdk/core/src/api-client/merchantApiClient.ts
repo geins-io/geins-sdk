@@ -19,11 +19,14 @@ export enum FetchPolicy {
 export class MerchantApiClient {
   private cookieService: CookieService | undefined;
   private client: ApolloClient<NormalizedCacheObject>;
-  fetchPolicy: FetchPolicy = FetchPolicy.NETWORK_ONLY;
+  fetchPolicy: FetchPolicy = FetchPolicy.CACHE_FIRST;
   pollInterval: number = 0;
-  constructor(apiUrl: string, apiKey: string) {
+  constructor(apiUrl: string, apiKey: string, fetchPolicy?: FetchPolicy) {
     this.client = this.createClient(apiUrl, apiKey);
     this.cookieService = new CookieService();
+    if (fetchPolicy) {
+      this.fetchPolicy = fetchPolicy;
+    }
   }
 
   createClient(apiUrl: string, apiKey: string) {

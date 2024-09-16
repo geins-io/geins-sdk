@@ -75,7 +75,7 @@ onMounted(() => {
     <p>This page is used to get content area data from the cms</p>
     <p>
       <b>
-        <a href="/"> GO BACK </a>
+        <NuxtLink to="/">GO BACK</NuxtLink>
       </b>
     </p>
     <table>

@@ -70,7 +70,9 @@ onMounted(() => {
       composition function.
     </p>
     <p>
-      <b><a href="/"> GO BACK </a></b>
+      <b>
+        <NuxtLink to="/">GO BACK</NuxtLink>
+      </b>
     </p>
     <table>
       <tr>

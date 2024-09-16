@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import type { GeinsCredentials } from '@geins/types';
-import { logWrite, RoutingService, RoutingStoreNodeCache } from '@geins/core';
+import { logWrite, RoutingService, RoutingStore } from '@geins/core';
 import DataDump from '~/components/DataDump.vue';
 
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const apiKey = geinsCredentials.apiKey;
-const store = new RoutingStoreNodeCache();
+const store = new RoutingStore();
 const routingService = new RoutingService(apiKey, store);
 
 const items = ref<any[]>([]);
@@ -78,7 +78,7 @@ onMounted(async () => { });
 
     <p>
       <b>
-        <a href="/"> GO BACK </a>
+        <NuxtLink to="/">GO BACK</NuxtLink>
       </b>
     </p>
     <table>

@@ -1,31 +1,39 @@
 <script setup lang="ts">
-import type { GeinsCredentials } from '@geins/types';
+import { useNuxtApp } from '#app';
+import { ref, onMounted } from 'vue';
+import type { GeinsCredentials, ChannelType } from '@geins/types';
 import { logWrite, GeinsCore } from '@geins/core';
+const { $currentChannel } = useNuxtApp();
 
 const config = useRuntimeConfig();
-
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const geinsCore = new GeinsCore(geinsCredentials);
+const channel = ref<any>();
+const channels = ref<any>();
 
 const items = ref<{ header: string; data: string }[]>([]);
 
 const getChannels = async () => {
-  logWrite('Channels', 'Getting channels');
-  const result = await geinsCore.channels.getRaw();
+  const result = await geinsCore.channels.get();
+  channels.value = result;
   logWrite('Channels', result);
 };
 
 const getChannel = async () => {
-  logWrite('geinsCore.channel', 'Getting channel');
-  const result = await geinsCore.getChannel('1|se');
-  logWrite('geinsCore.channel ', result);
+  const result = await geinsCore.getChannel();
+  channel.value = result;
+  logWrite('Channel', result);
 };
 
 const clear = async () => {
+  channel.value = undefined;
+  channels.value = undefined;
   items.value = [];
 };
 
-onMounted(() => { });
+onMounted(() => {
+  channel.value = $currentChannel;
+});
 </script>
 <template>
   <div>
@@ -33,7 +41,7 @@ onMounted(() => { });
     <p>This is a brand page for products</p>
     <p>
       <b>
-        <a href="/"> GO BACK </a>
+        <NuxtLink to="/">GO BACK</NuxtLink>
       </b>
     </p>
     <table>
@@ -42,8 +50,8 @@ onMounted(() => { });
           <table>
             <tr>
               <td colspan="3">
-                <button @click="getChannels">Get Channels</button>
-                <button @click="getChannel">Get Channel</button>
+                <button @click="getChannels">Get Account Channels</button>
+                <button @click="getChannel">Get Application Channel</button>
               </td>
             </tr>
             <tr>
@@ -71,8 +79,13 @@ onMounted(() => { });
         <td></td>
 
         <td style="padding-left: 50px; vertical-align: top">
-          <div>
-            <h3>Channels</h3>
+          <div v-if="channels">
+            <h3>All Account Channels</h3>
+            <pre>{{ channels }}</pre>
+          </div>
+          <div v-if="channel">
+            <h3>Current Application Channel</h3>
+            <pre>{{ channel }}</pre>
           </div>
         </td>
       </tr>

@@ -3,8 +3,8 @@
 #import './fragments/marketFields.gql'
 #import './fragments/currencyFields.gql'
 
-query GetChannels {
-  channel {
+query getChannels {
+  channels {
     ...ChannelFields
     markets {
       ...MarketFields

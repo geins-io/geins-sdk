@@ -7,6 +7,7 @@ import {
   ChannelService,
   logWrite,
 } from './services/';
+import { Channel } from './logic';
 import { isServerContext, buildEndpoints } from './utils';
 
 export class GeinsCore {
@@ -23,6 +24,7 @@ export class GeinsCore {
 
   // channel
   public channels: ChannelsService;
+  public channel: Channel | undefined;
   // private currentChannel: Channel | undefined;
 
   constructor(credentials: GeinsCredentials) {
@@ -52,8 +54,7 @@ export class GeinsCore {
 
     this.eventService = new EventService();
     this.channels = new ChannelsService(this.client, this.credentials);
-
-    // const service = new ChannelService(this.client, this.credentials);
+    this.channel = new Channel(this.credentials);
   }
 
   // Initialize API Client
@@ -68,11 +69,11 @@ export class GeinsCore {
     }
   }
 
-  public async getChannel(channelId: string): Promise<ChannelType | null> {
-    const service = new ChannelService(this.client, this.credentials);
-    const channelData = await service.get(channelId);
-    logWrite('Channel Data', channelData);
-    return channelData;
+  public async getChannel(): Promise<ChannelType | null | undefined> {
+    if (!this.channel) {
+      throw new Error('Channel are not set');
+    }
+    return this.channel?.getChannel();
   }
 
   get client(): any {

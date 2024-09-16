@@ -6,9 +6,11 @@ import type {
   CurrencyType,
 } from '@geins/types';
 
-export function parseChannels(result: any): ChannelType[] | null {
+export function parseChannelsResult(result: any): ChannelType[] | null {
+  console.log('result', result);
+  console.log('result', result?.data);
   if (!result || !result.data) {
-    throw new Error('Invalid result structure for channel');
+    throw new Error('Invalid result structure for channels');
   }
   const channels = result.data.channels;
   if (!channels || channels.length === 0) {
@@ -18,7 +20,7 @@ export function parseChannels(result: any): ChannelType[] | null {
   return channels.map((channel: any) => parseChannel(channel));
 }
 
-export function parseChannel(result: any): ChannelType | null {
+export function parseChannelResult(result: any): ChannelType | null {
   if (!result || !result.data) {
     throw new Error('Invalid result structure for channel');
   }
@@ -26,6 +28,12 @@ export function parseChannel(result: any): ChannelType | null {
   if (!channel) {
     console.warn('No channel found');
     return null;
+  }
+  return parseChannel(channel);
+}
+export function parseChannel(channel: any): ChannelType | null {
+  if (!channel || !channel.id) {
+    throw new Error('Invalid result structure for channel');
   }
 
   return {

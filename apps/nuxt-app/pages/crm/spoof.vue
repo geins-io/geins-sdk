@@ -80,7 +80,9 @@ onMounted(() => {
       used to get preview cms data.
     </p>
     <p>
-      <b><a href="/"> GO BACK </a></b>
+      <b>
+        <NuxtLink to="/">GO BACK</NuxtLink>
+      </b>
     </p>
 
     <table>
