@@ -1,11 +1,9 @@
 import type { AuthResponse, AuthCredentials, AuthTokens } from '@geins/types';
 import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
-import { AUTH_COOKIES, CookieService, logWrite } from '@geins/core';
+import { AUTH_COOKIES, CookieService } from '@geins/core';
 
 const EXPIRES_SOON_THRESHOLD = 60;
-const REFRESH_COOKIE_NAME = 'geins-auth-refresh';
-
 export class AuthService {
   private signEndpoint: string;
   private authEndpoint: string;
@@ -107,12 +105,8 @@ export class AuthService {
    */
   public async refresh(): Promise<AuthResponse> {
     this.ensureClientInitialized();
-    const refreshToken = this.refreshCookieTokenGet();
-    logWrite('refresh() refreshToken', refreshToken);
-
     try {
       await this.client!.connect();
-
       const tokens: AuthTokens = {
         token: this.client!.getToken(),
         refreshToken: this.client!.getRefreshToken(),
@@ -243,8 +237,6 @@ export class AuthService {
       }
     }
 
-    logWrite('getUser() this.refreshToken', this.refreshToken);
-
     const authResponse = await this.getUserObjectFromToken(token);
 
     if (authResponse && this.client) {
@@ -304,8 +296,6 @@ export class AuthService {
   }
 
   private handleError(message: string, error: unknown): any {
-    // Implement your custom error handling or logging here
-    // Example: Log to an external service or format the error response
     console.error(message, error);
     return { succeeded: false, error: { message, details: error } };
   }

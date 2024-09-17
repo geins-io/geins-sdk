@@ -1,3 +1,4 @@
+import { logWrite } from '@geins/core';
 import { AuthClient } from './authClient';
 import type { AuthResponse, AuthCredentials } from '@geins/types';
 
@@ -54,19 +55,30 @@ export class AuthClientProxy extends AuthClient {
    * ```
    */
   private async request<T>(path: string, options: RequestInit): Promise<T> {
+    const refreshToken = this.getCookieRefreshToken();
+
+    if (!options.headers) {
+      options.headers = { 'Content-Type': 'application/json' };
+    }
+    if (refreshToken) {
+      options.headers = {
+        ...options.headers,
+        'x-auth-refresh-token': refreshToken,
+      };
+    }
+
     const response = await fetch(`${this.authEndpointApp}${path}`, {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
     });
 
     const result = await response.json();
-
     if (!response.ok) {
       console.error(result.message || 'API request failed');
       throw new Error('API request failed');
+    }
+
+    if (result.body?.data?.tokens?.refreshToken) {
+      this.setCookiesRefresh(result.body?.data?.tokens?.refreshToken);
     }
 
     return result.body?.data as T;
@@ -136,11 +148,6 @@ export class AuthClientProxy extends AuthClient {
     const result = await this.request<AuthResponse>('/refresh', {
       method: 'GET',
     });
-
-    if (result && result.tokens?.token) {
-      this.setCookiesRefresh(result.tokens.token);
-    }
-
     return result;
   }
 

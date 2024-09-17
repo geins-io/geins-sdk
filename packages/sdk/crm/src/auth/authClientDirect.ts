@@ -97,8 +97,8 @@ export class AuthClientDirect extends AuthClient {
   async refresh(): Promise<AuthResponse | undefined> {
     const result = await this.authService.refresh();
 
-    if (result && result.tokens?.token) {
-      this.setCookiesRefresh(result.tokens.token);
+    if (result && result.tokens?.refreshToken) {
+      this.setCookiesRefresh(result.tokens.refreshToken);
     }
 
     return result;

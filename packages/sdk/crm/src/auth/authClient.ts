@@ -1,5 +1,5 @@
 import type { AuthResponse, AuthCredentials } from '@geins/types';
-import { CookieService, AUTH_COOKIES } from '@geins/core';
+import { CookieService, AUTH_COOKIES, logWrite } from '@geins/core';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 
 /**
@@ -142,6 +142,10 @@ export abstract class AuthClient {
     const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes
     const { user, tokens } = authResponse;
 
+    if (tokens?.refreshToken) {
+      this.setCookiesRefresh(tokens?.refreshToken);
+    }
+
     if (user?.username) {
       this.cookieService.set({
         name: AUTH_COOKIES.USER,
@@ -181,12 +185,16 @@ export abstract class AuthClient {
   protected setCookiesRefresh(userToken: string): void {
     const maxAgeCookie = this.cookieService.get(AUTH_COOKIES.USER_MAX_AGE);
     const maxAge = maxAgeCookie ? parseInt(maxAgeCookie, 10) : 1800;
-
     this.cookieService.set({
-      name: AUTH_COOKIES.USER_AUTH,
+      name: AUTH_COOKIES.REFRESH_TOKEN,
       payload: userToken,
       maxAge,
+      // httpOnly: true,
     });
+  }
+
+  protected getCookieRefreshToken(): string {
+    return this.cookieService.get(AUTH_COOKIES.REFRESH_TOKEN);
   }
 
   /**
@@ -194,7 +202,6 @@ export abstract class AuthClient {
    */
   public clearCookies(): void {
     Object.values(AUTH_COOKIES).forEach((cookieName) => {
-      console.log('Removing cookie:', cookieName);
       this.cookieService.remove(cookieName);
     });
   }

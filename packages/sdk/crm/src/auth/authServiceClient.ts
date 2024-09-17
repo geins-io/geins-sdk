@@ -59,7 +59,7 @@ export class AuthServiceClient {
     const fetchOptions: RequestInit = {
       method: requiresSign ? 'POST' : 'GET',
       cache: 'no-cache',
-      credentials: 'include',
+      /*credentials: 'include',*/
       headers: {
         'Content-Type': 'application/json',
         ...(this.refreshToken
@@ -75,8 +75,6 @@ export class AuthServiceClient {
 
       body: requiresSign ? JSON.stringify(authRequestBody) : undefined,
     };
-
-    logWrite('fetchOptions', fetchOptions);
 
     let data = await this.fetchData(url, fetchOptions);
     if (data?.sign) {
