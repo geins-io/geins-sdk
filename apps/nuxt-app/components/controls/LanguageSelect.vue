@@ -11,8 +11,6 @@ const emit = defineEmits(['update:modelValue']);
 const onInput = (event) => {
   emit('update:modelValue', event.target.value);
 };
-
-onMounted(async () => { });
 </script>
 
 <template>
