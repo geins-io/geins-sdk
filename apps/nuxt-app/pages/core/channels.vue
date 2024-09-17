@@ -8,9 +8,9 @@ const { $currentChannel } = useNuxtApp();
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const geinsCore = new GeinsCore(geinsCredentials);
+
 const channel = ref<any>();
 const channels = ref<any>();
-
 const items = ref<{ header: string; data: string }[]>([]);
 
 const getChannels = async () => {

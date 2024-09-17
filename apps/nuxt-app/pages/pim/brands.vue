@@ -1,79 +1,50 @@
 <script setup lang="ts">
 import { useNuxtApp } from '#app';
 import { ref, onMounted } from 'vue';
-import type { GeinsCredentials, MarketType } from '@geins/types';
+import type {
+  GeinsCredentials,
+  BrandsQueryVariables,
+  BrandType,
+} from '@geins/types';
 import { logWrite, GeinsCore } from '@geins/core';
 import { GeinsPIM } from '@geins/pim';
 import MarketAndLanguage from '~/components/MarketAndLanguage.vue';
-import Input from '~/components/controls/Input.vue';
 
 const { $currentChannel } = useNuxtApp();
 const config = useRuntimeConfig();
+const items = ref<{ header: string; data: string }[]>([]);
+const marketAndLanguage = ref({
+  marketId: $currentChannel.defaultMarketId,
+  languageId: $currentChannel.defaultLanguageId,
+});
 
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const geinsCore = new GeinsCore(geinsCredentials);
+const geinsPIM = new GeinsPIM(geinsCore);
 
-const items = ref<{ header: string; data: string }[]>([]);
-
-const marketAndLanguage = ref({
-  marketId: '',
-  languageId: '',
-});
-const testar = ref('');
-
-const languageId = ref();
-const marketId = ref();
-const markets = ref<{ name: string; data: any }[]>([]);
-
-const brands = ref<any[]>([]);
+const brands = ref<BrandType[]>([]);
 
 const getBrands = async () => {
-  logWrite('Get Brands', marketAndLanguage.value);
+  const brandsVars: BrandsQueryVariables = {
+    marketId: marketAndLanguage.value.marketId,
+    languageId: marketAndLanguage.value.languageId,
+  };
+  brands.value = await geinsPIM.brands.get(brandsVars);
+  logWrite('brands', brands.value);
 };
 
 const clear = async () => {
+  brands.value = [];
   items.value = [];
+  logWrite('clear');
 };
 
-// computed prop to get market languages
-const marketLanguages = computed(() => {
-  if (markets.value.length > 0) {
-    const market = markets.value.find((x) => x.data.id === marketId.value);
-    const result = market?.data?.allowedLanguages;
-    logWrite('Market Languages:', result);
-    return result || [];
-  }
-  return [];
-});
-
-onMounted(() => {
-  /*   // set markets
-  let marketsData = $currentChannel.markets;
-  const defaultMarket = $currentChannel.defaultMarketId;
-  const defaultLanguage = $currentChannel.defaultLanguageId;
-  const defaultGroupKey = $currentChannel.markets.find(
-    (x) => x.id === defaultMarket,
-  )?.groupKey;
-
-  // sort markets by groupKey and default market first and default groupKey first
-  marketsData = marketsData.sort((a, b) => {
-    if (a.groupKey === defaultGroupKey) return -1;
-    if (b.groupKey === defaultGroupKey) return 1;
-    if (a.id === defaultMarket) return -1;
-    if (b.id === defaultMarket) return 1;
-    return a.groupKey.localeCompare(b.groupKey);
-  });
-  for (let index = 0; index < marketsData.length; index++) {
-    const element = marketsData[index];
-    markets.value.push({ name: element.alias, data: element });
-  }
-  marketId.value = defaultMarket; */
-});
+onMounted(async () => { });
 </script>
 <template>
   <div>
     <h2>Nuxt @geins/pim brand</h2>
-    <p>This is a brand page for products</p>
+    <p>This is a page to test brands from @geins/pim</p>
     <p>
       <b>
         <NuxtLink to="/">GO BACK</NuxtLink>
@@ -101,7 +72,7 @@ onMounted(() => {
             </tr>
             <tr>
               <td colspan="3">
-                <button @click="getBrands">Get All Brands</button>
+                <button @click="getBrands">Get Brands</button>
               </td>
             </tr>
             <tr>
@@ -127,7 +98,6 @@ onMounted(() => {
           </div>
         </td>
         <td></td>
-
         <td style="padding-left: 50px; vertical-align: top">
           <div>
             <h3>Brands</h3>
@@ -135,8 +105,29 @@ onMounted(() => {
             <table>
               <tr style="font-weight: bold">
                 <td>Id:</td>
-                <td>Image:</td>
+                <td>Logo:</td>
                 <td>Name:</td>
+                <td>Alias/Slug:</td>
+                <td>Canonical url</td>
+              </tr>
+              <tr v-for="(brand, index) in brands" :key="index">
+                <td>{{ brand.brandId }}</td>
+                <td>
+                  <img v-if="brand.logo" :src="`${geinsCore.endpoints.image}/product/40x40/${brand.logo}`" />
+                  <i v-else>x</i>
+                </td>
+
+                <td>{{ brand.name }}</td>
+                <td>
+                  <a :href="`/brand/${brand.alias}`">
+                    {{ brand.alias }}
+                  </a>
+                </td>
+                <td>
+                  <a :href="`${brand.canonicalUrl}`">
+                    {{ brand.canonicalUrl }}
+                  </a>
+                </td>
               </tr>
             </table>
           </div>

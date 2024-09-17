@@ -1,0 +1,19 @@
+#import "../fragments/alternativeUrl.gql"
+
+query brands($channelId: String, $languageId: String, $marketId: String) {
+  brands(channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+    brandId
+    name
+    slug: alias
+    alias
+    canonicalUrl
+    alternativeUrls {
+      ...AlternativeUrl
+    }
+    description
+    secondaryDescription
+    primaryImage
+    backgroundImage
+    logo
+  }
+}

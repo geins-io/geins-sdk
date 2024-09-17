@@ -35,3 +35,8 @@ export type CurrencyType = {
   code: string;
   symbol: string;
 };
+
+export type MarketLanguageType = {
+  marketId: string;
+  languageId: string;
+};

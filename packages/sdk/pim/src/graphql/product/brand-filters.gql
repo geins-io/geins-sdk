@@ -1,4 +1,4 @@
-#import "./fragments/filters.graphql"
+#import ".,/fragments/filters.gql"
 
 query products(
   $skip: Int = null

@@ -1,2 +1,2 @@
 export * from './geinsPIM';
-export * from './util';
+export * from './parsers';

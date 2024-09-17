@@ -1,4 +1,4 @@
-#import "./fragments/product.graphql"
+#import "../fragments/product.gql"
 
 query brands(
   $brandAlias: String = null

@@ -5,21 +5,22 @@ import MarketSelect from './controls/MarketSelect.vue';
 import LanguageSelect from './controls/LanguageSelect.vue';
 
 const { $currentChannel } = useNuxtApp();
+
 const emit = defineEmits(['update:modelValue']);
 const marketsData = $currentChannel.markets;
 const defaultMarket = $currentChannel.defaultMarketId;
 const defaultLanguage = $currentChannel.defaultLanguageId;
 
+const marketId = ref('');
+const languageId = ref('');
 const marketOptions = ref([]);
+
 const props = defineProps({
   modelValue: {
     type: Object,
     default: () => ({ marketId: '', languageId: '' }),
   },
 });
-
-const marketId = ref('');
-const languageId = ref('');
 
 // watch marketId
 watch(

@@ -1,0 +1,7 @@
+fragment AlternativeUrl on AlternativeUrlType {
+  channelId
+  country
+  culture
+  language
+  url
+}
