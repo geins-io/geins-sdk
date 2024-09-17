@@ -1,4 +1,4 @@
-#import "./fragments/product.graphql"
+#import ".,/fragments/filters.gql"
 
 query products(
   $skip: Int = null
@@ -25,8 +25,8 @@ query products(
     marketId: $marketId
   ) {
     count
-    products {
-      ...ListProduct
+    filters {
+      ...ListFilters
     }
   }
 }

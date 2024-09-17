@@ -1,13 +1,10 @@
-#import "./fragments/filters.graphql"
+#import "../fragments/product.gql"
 
-query products(
+query brands(
+  $brandAlias: String = null
+  $filter: FilterInputType = null
   $skip: Int = null
   $take: Int = null
-  $categoryAlias: String = null
-  $brandAlias: String = null
-  $discountCampaignAlias: String = null
-  $url: String = null
-  $filter: FilterInputType = null
   $channelId: String
   $languageId: String
   $marketId: String
@@ -15,7 +12,7 @@ query products(
   products(
     skip: $skip
     take: $take
-    categoryAlias: $categoryAlias
+
     brandAlias: $brandAlias
     discountCampaignAlias: $discountCampaignAlias
     url: $url
@@ -25,8 +22,8 @@ query products(
     marketId: $marketId
   ) {
     count
-    filters {
-      ...ListFilters
+    products {
+      ...ListProduct
     }
   }
 }

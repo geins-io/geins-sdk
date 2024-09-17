@@ -18,12 +18,12 @@ export enum ProductListSortType {
   TOTAL_STOCK_DESC = 'TOTAL_STOCK_DESC',
 }
 
-export interface PriceFilterType {
+export type PriceFilterType = {
   lowest: number;
   highest: number;
-}
+};
 
-export interface ProductListFilterType {
+export type ProductListFilterType = {
   searchText: string;
   facets: string[];
   excludeFacets: string[];
@@ -34,4 +34,4 @@ export interface ProductListFilterType {
   filterMode: ProductFilterModeType;
   productIds: number[];
   includeCollapsed: Boolean;
-}
+};

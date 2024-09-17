@@ -1,9 +1,7 @@
-import products from './pim/products.graphql';
-import filters from './pim/filters.graphql';
+import brands from './brand/brands.gql';
 
 const queries = {
-  products,
-  filters,
+  brands,
 };
 
 export { queries };
