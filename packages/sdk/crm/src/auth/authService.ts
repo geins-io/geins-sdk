@@ -1,7 +1,11 @@
+/*
+  SERVER OR/AND CLIENT
+*/
+
 import type { AuthResponse, AuthCredentials, AuthTokens } from '@geins/types';
 import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
-import { AUTH_COOKIES, CookieService } from '@geins/core';
+import { AUTH_COOKIES, CookieService, logWrite } from '@geins/core';
 
 const EXPIRES_SOON_THRESHOLD = 90;
 
@@ -11,13 +15,6 @@ export class AuthService {
   private client: AuthServiceClient | undefined;
   private cookieService: CookieService;
 
-  /**
-   * Creates an instance of AuthService.
-   * @param {string} signEndpoint - The endpoint for signing requests.
-   * @param {string} authEndpoint - The endpoint for authentication requests.
-   * @example
-   * const authService = new AuthService('https://api.example.com/sign', 'https://api.example.com/auth');
-   */
   constructor(signEndpoint: string, authEndpoint: string) {
     this.signEndpoint = signEndpoint;
     this.authEndpoint = authEndpoint;
@@ -25,36 +22,15 @@ export class AuthService {
     this.initClient();
   }
 
-  /**
-   * Sets the refresh token for the current session.
-   * @param {string} refreshToken - The refresh token to be used.
-   * @throws Will throw an error if the client is not initialized.
-   * @example
-   * authService.setRefreshToken('your-refresh-token');
-   */
   public setRefreshToken(refreshToken: string): void {
     this.ensureClientInitialized();
     this.client!.setRefreshToken(refreshToken);
   }
 
-  /**
-   * Initializes the AuthServiceClient.
-   * @private
-   */
   private initClient(): void {
     this.client = new AuthServiceClient(this.authEndpoint, this.signEndpoint);
   }
 
-  /**
-   * Logs in a user with the provided credentials.
-   * @param {AuthCredentials} credentials - The credentials for logging in.
-   * @returns {Promise<AuthResponse>} - The authentication response.
-   * @example
-   * const response = await authService.login({ username: 'user', password: 'pass' });
-   * if (response.succeeded) {
-   *   console.log('Login successful');
-   * }
-   */
   public async login(credentials: AuthCredentials): Promise<AuthResponse> {
     this.ensureClientInitialized();
 
@@ -74,15 +50,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Logs out the current user.
-   * @returns {Promise<AuthResponse>} - The logout response.
-   * @example
-   * const response = await authService.logout();
-   * if (response.succeeded) {
-   *   console.log('Logout successful');
-   * }
-   */
   public async logout(): Promise<AuthResponse> {
     this.ensureClientInitialized();
 
@@ -95,42 +62,30 @@ export class AuthService {
     }
   }
 
-  /**
-   * Refreshes the authentication tokens.
-   * @returns {Promise<AuthResponse>} - The token refresh response.
-   * @example
-   * const response = await authService.refresh();
-   * if (response.succeeded) {
-   *   console.log('Token refreshed', response.tokens);
-   * }
-   */
-  public async refresh(): Promise<AuthResponse> {
+  public async refresh(token?: string): Promise<AuthResponse> {
     this.ensureClientInitialized();
     try {
-      await this.client!.connect();
+      if (!this.client) {
+        throw new Error('AuthServiceClient is not initialized');
+      }
+      if (token) {
+        this.client.setRefreshToken(token);
+      }
+      await this.client.connect();
+      const userToken = this.client.getToken();
       const tokens: AuthTokens = {
-        token: this.client!.getToken(),
-        refreshToken: this.client!.getRefreshToken(),
-        maxAge: this.client!.getMaxAge(),
+        token: userToken,
+        refreshToken: this.client.getRefreshToken(),
+        maxAge: this.client.getMaxAge(),
         expired: false,
       };
 
-      return { succeeded: true, tokens };
+      return { succeeded: !!userToken, tokens };
     } catch (error) {
       return this.handleError('Token refresh failed', error);
     }
   }
 
-  /**
-   * Changes the user's password.
-   * @param {AuthCredentials} credentials - The credentials for changing the password.
-   * @returns {Promise<AuthResponse>} - The password change response.
-   * @example
-   * const response = await authService.changePassword({ username: 'user', oldPassword: 'oldPass', newPassword: 'newPass' });
-   * if (response.succeeded) {
-   *   console.log('Password changed successfully');
-   * }
-   */
   public async changePassword(
     credentials: AuthCredentials,
   ): Promise<AuthResponse> {
@@ -150,16 +105,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Registers a new user with the provided credentials.
-   * @param {AuthCredentials} credentials - The credentials for registration.
-   * @returns {Promise<AuthResponse>} - The registration response.
-   * @example
-   * const response = await authService.register({ username: 'newUser', password: 'password' });
-   * if (response.succeeded) {
-   *   console.log('Registration successful');
-   * }
-   */
   public async register(credentials: AuthCredentials): Promise<AuthResponse> {
     this.ensureClientInitialized();
 
@@ -172,12 +117,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Retrieves the user object from the provided token.
-   * @private
-   * @param {string} claimsToken - The JWT token containing user claims.
-   * @returns {Promise<AuthResponse | undefined>} - The user object if the token is valid, undefined otherwise.
-   */
   static async getUserObjectFromToken(
     claimsToken: string,
     refreshToken?: string,
@@ -215,16 +154,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Retrieves the current user's details using the stored token.
-   * @param {string} [token] - Optional token to retrieve user details. If not provided, uses the stored token.
-   * @returns {Promise<AuthResponse | undefined>} - The user details if available.
-   * @example
-   * const user = await authService.getUser();
-   * if (user?.succeeded) {
-   *   console.log('User details:', user.user);
-   * }
-   */
   public async getUser(token?: string): Promise<AuthResponse | undefined> {
     token = token || this.client?.getToken();
     if (!token) {
@@ -251,15 +180,6 @@ export class AuthService {
     return authResponse;
   }
 
-  /**
-   * Retrieves the current refresh token.
-   * @returns {string | undefined} - The refresh token if available.
-   * @example
-   * const refreshToken = authService.refreshToken;
-   * if (refreshToken) {
-   *   console.log('Current refresh token:', refreshToken);
-   * }
-   */
   public get refreshToken(): string | undefined {
     this.ensureClientInitialized();
     let refreshToken;
@@ -274,11 +194,6 @@ export class AuthService {
     return this.refreshCookieTokenGet();
   }
 
-  /**
-   * Ensures that the AuthServiceClient is initialized before use.
-   * @private
-   * @throws Will throw an error if the client is not initialized.
-   */
   private ensureClientInitialized(): void {
     if (!this.client) {
       this.initClient();
