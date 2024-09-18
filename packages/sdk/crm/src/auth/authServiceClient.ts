@@ -14,116 +14,26 @@ export class AuthServiceClient {
     this.signEndpoint = signEndpoint;
   }
 
-  public getMaxAge(): number {
-    return this.maxAge;
-  }
-
-  public getToken(): string {
-    return this.token;
-  }
-
-  public getRefreshToken(): string {
-    return this.refreshToken;
-  }
-
-  private setTokenData(data: { token: string; maxAge: number }): void {
-    this.token = data.token;
-    this.maxAge = data.maxAge;
-  }
-
-  public setRefreshToken(token: string): void {
-    this.refreshToken = token;
-  }
-
   public async connect(
-    action: string,
     credentials?: {
       username: string;
       password: string;
       newPassword?: string;
       rememberUser?: boolean;
     },
-  ): Promise<{ token: string; maxAge: number; refreshToken: string }> {
-    this.resetTokenData(); // Always clear tokens before any action
-
-    switch (action) {
-      case 'login':
-        return await this.handleLogin(credentials!);
-      case 'register':
-        return await this.handleRegister(credentials!);
-      case 'logout':
-        return await this.handleLogout();
-      case 'password':
-        return await this.handlePasswordChange(credentials!);
-      case 'refresh':
-        return await this.handleTokenRefresh();
-      default:
-        throw new Error(`Unsupported action: ${action}`);
-    }
-  }
-
-  private async handleLogin(credentials: {
-    username: string;
-    password: string;
-    rememberUser?: boolean;
-  }): Promise<{ token: string; maxAge: number; refreshToken: string }> {
-    const authRequestBody = await this.prepareAuthRequest(credentials, 'login');
-    return await this.fetchAndProcessToken(authRequestBody, 'login');
-  }
-
-  private async handleRegister(credentials: {
-    username: string;
-    password: string;
-  }): Promise<{ token: string; maxAge: number; refreshToken: string }> {
-    const authRequestBody = await this.prepareAuthRequest(
-      credentials,
-      'register',
-    );
-    return await this.fetchAndProcessToken(authRequestBody, 'register');
-  }
-
-  private async handleLogout(): Promise<{
-    token: string;
-    maxAge: number;
-    refreshToken: string;
-  }> {
-    const authRequestBody = {};
-    return await this.fetchAndProcessToken(authRequestBody, 'logout');
-  }
-
-  private async handlePasswordChange(credentials: {
-    username: string;
-    password: string;
-    newPassword: string;
-  }): Promise<{ token: string; maxAge: number; refreshToken: string }> {
-    const authRequestBody = await this.addCredentialsToRequest(
-      await this.prepareAuthRequest(credentials, 'password'),
-      credentials.username, // Assume the sign is part of the username or add appropriate logic
-      credentials,
-      'password',
-    );
-    return await this.fetchAndProcessToken(authRequestBody, 'password');
-  }
-
-  private async handleTokenRefresh(): Promise<{
-    token: string;
-    maxAge: number;
-    refreshToken: string;
-  }> {
-    if (!this.refreshToken) {
-      throw new Error('No refresh token available');
-    }
-    const authRequestBody = { refreshToken: this.refreshToken };
-    return await this.fetchAndProcessToken(authRequestBody, 'refresh');
-  }
-
-  private async fetchAndProcessToken(
-    authRequestBody: Record<string, any>,
-    action: string,
-  ): Promise<{ token: string; maxAge: number; refreshToken: string }> {
+    action: string = 'login',
+  ): Promise<void> {
+    this.resetTokenData();
     const url = `${this.authEndpoint}/${action}`;
+    const requiresSign = Boolean(credentials);
+
+    let authRequestBody: Record<string, any> = {};
+
+    if (requiresSign) {
+      authRequestBody = await this.prepareAuthRequest(credentials!, action);
+    }
     const fetchOptions: RequestInit = {
-      method: 'POST',
+      method: requiresSign ? 'POST' : 'GET',
       cache: 'no-cache',
       headers: {
         'Content-Type': 'application/json',
@@ -131,20 +41,27 @@ export class AuthServiceClient {
           ? { [`${AUTH_HEADERS.REFRESH_TOKEN}`]: this.refreshToken }
           : {}),
       },
-      body: JSON.stringify(authRequestBody),
+
+      body: requiresSign ? JSON.stringify(authRequestBody) : undefined,
     };
 
-    const data = await this.fetchData(url, fetchOptions);
-    if (data?.token) {
-      this.setTokenData(data); // Optionally update internal state
-      return {
-        token: data.token,
-        maxAge: data.maxAge,
-        refreshToken: this.refreshToken,
-      };
+    let data = await this.fetchData(url, fetchOptions);
+
+    if (data?.sign) {
+      authRequestBody = await this.addCredentialsToRequest(
+        authRequestBody,
+        data.sign,
+        credentials!,
+        action,
+      );
+
+      fetchOptions.body = JSON.stringify(authRequestBody);
+      data = await this.fetchData(url, fetchOptions);
     }
 
-    throw new Error('Failed to retrieve token');
+    if (data?.token) {
+      this.setTokenData(data);
+    }
   }
 
   private async prepareAuthRequest(
@@ -321,5 +238,26 @@ export class AuthServiceClient {
       console.error('Error in sendRequest:', err);
       return null;
     }
+  }
+
+  public getMaxAge(): number {
+    return this.maxAge;
+  }
+
+  public getToken(): string {
+    return this.token;
+  }
+
+  public getRefreshToken(): string {
+    return this.refreshToken;
+  }
+
+  private setTokenData(data: { token: string; maxAge: number }): void {
+    this.token = data.token;
+    this.maxAge = data.maxAge;
+  }
+
+  public setRefreshToken(token: string): void {
+    this.refreshToken = token;
   }
 }
