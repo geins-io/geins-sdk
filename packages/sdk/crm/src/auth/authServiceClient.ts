@@ -67,6 +67,7 @@ export class AuthServiceClient {
     };
 
     let data = await this.fetchData(url, fetchOptions);
+
     if (data?.sign) {
       authRequestBody = await this.addCredentialsToRequest(
         authRequestBody,
@@ -91,7 +92,7 @@ export class AuthServiceClient {
       newPassword?: string;
       rememberUser?: boolean;
     },
-    action: string,
+    action?: string,
   ): Promise<Record<string, any>> {
     const authRequestBody: Record<string, any> = {
       username: credentials.username,

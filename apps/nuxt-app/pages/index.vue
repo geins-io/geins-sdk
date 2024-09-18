@@ -17,7 +17,8 @@ import { ref } from 'vue';
           <NuxtLink to="/core/routing">Routing</NuxtLink>
         </td>
         <td>
-          <NuxtLink to="/crm/auth">Auth</NuxtLink><br />
+          <NuxtLink to="/crm/auth">Authenticate</NuxtLink><br />
+          <NuxtLink to="/crm/user">Current User</NuxtLink><br />
           <NuxtLink to="/crm/spoof">Spoof User</NuxtLink>
         </td>
         <td>
