@@ -3,7 +3,8 @@ import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 import { AUTH_COOKIES, CookieService } from '@geins/core';
 
-const EXPIRES_SOON_THRESHOLD = 60;
+const EXPIRES_SOON_THRESHOLD = 90;
+
 export class AuthService {
   private signEndpoint: string;
   private authEndpoint: string;
@@ -177,8 +178,9 @@ export class AuthService {
    * @param {string} claimsToken - The JWT token containing user claims.
    * @returns {Promise<AuthResponse | undefined>} - The user object if the token is valid, undefined otherwise.
    */
-  private async getUserObjectFromToken(
+  static async getUserObjectFromToken(
     claimsToken: string,
+    refreshToken?: string,
   ): Promise<AuthResponse | undefined> {
     try {
       const userFromToken = authClaimsTokenSerializeToObject(claimsToken);
@@ -205,7 +207,7 @@ export class AuthService {
           expired: now >= parseInt(userFromToken.exp || '0'),
           expiresSoon,
           expiresIn,
-          refreshToken: this.refreshToken,
+          refreshToken: refreshToken,
         },
       };
     } catch (error) {
@@ -237,7 +239,10 @@ export class AuthService {
       }
     }
 
-    const authResponse = await this.getUserObjectFromToken(token);
+    const authResponse = await AuthService.getUserObjectFromToken(
+      token,
+      this.refreshToken,
+    );
 
     if (authResponse && this.client) {
       authResponse.tokens!.refreshToken = this.client.getRefreshToken();

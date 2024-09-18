@@ -8,7 +8,6 @@ import {
   authClaimsTokenSerialize,
   authClaimsTokenSerializeToObject,
 } from '@geins/crm';
-//import { AuthClientDirect, AuthClientProxy } from '../../utils/auth';
 
 enum Connection {
   Proxy = 'Proxy',
@@ -76,7 +75,7 @@ const setConnectionType = async (type: ConnectionType) => {
   if (type === Connection.None) {
     return;
   }
-  handleLogout();
+  // handleLogout();
   connectionType.value = type;
 };
 
@@ -91,10 +90,11 @@ const clearCookies = () => {
 const updateUser = async () => {
   const result = await authClient.value?.getUser();
   logWrite(`Getting user by: ${connectionType.value}`, result);
-  if (result) {
-    user.value = result;
-  }
   updateCookiesDisplay();
+  if (!result) {
+    handleLogout();
+  }
+  user.value = result;
 };
 
 /**
@@ -134,8 +134,9 @@ const handleLogin = async (validCredentials = true) => {
  */
 const handleLogout = async () => {
   const result = await authClient.value?.logout();
+  logWrite(`result`, result);
   user.value = undefined;
-  updateUser();
+  updateCookiesDisplay();
 };
 
 /**
@@ -143,8 +144,12 @@ const handleLogout = async () => {
  */
 const handleRefresh = async () => {
   const result = await authClient.value?.refresh();
-
-  updateUser();
+  logWrite(`handleRefresh() result`, result);
+  updateCookiesDisplay();
+  if (!result) {
+    handleLogout();
+  }
+  user.value = result;
 };
 
 /**
@@ -152,8 +157,6 @@ const handleRefresh = async () => {
  */
 const handleRegister = async () => {
   logWrite(`Not yet implemented`, credentials.value);
-  //const result = await authClient.value?.register(credentials.value);
-  //updateUser();
 };
 
 /**
@@ -268,8 +271,7 @@ const handleChangePassword = async () => {
             </tr>
             <tr>
               <td>
-                <button :disabled="!userLoggedIn || connectionType === Connection.None
-                  " @click="updateUser">
+                <button :disabled="connectionType === Connection.None" @click="updateUser">
                   Get User
                 </button>
                 <button :disabled="!userLoggedIn || connectionType === Connection.None
@@ -328,7 +330,7 @@ const handleChangePassword = async () => {
             <pre>{{ connectionType }}</pre>
           </div>
           <div v-if="user" style="width: 500px; overflow-x: scroll">
-            <b>User Object:</b>
+            <b>Response Object:</b>
             <pre>{{ JSON.stringify(user, null, 2) }}</pre>
           </div>
         </td>

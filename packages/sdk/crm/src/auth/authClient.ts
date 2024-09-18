@@ -142,22 +142,24 @@ export abstract class AuthClient {
     const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes
     const { user, tokens } = authResponse;
 
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_MAX_AGE,
+      payload: maxAge.toString(),
+      maxAge,
+    });
+
     if (tokens?.refreshToken) {
-      this.setCookiesRefresh(tokens?.refreshToken);
+      this.setCookieRefreshToken(tokens?.refreshToken, maxAge);
+    }
+
+    if (tokens?.token) {
+      this.setCookieUserToken(tokens.token, maxAge);
     }
 
     if (user?.username) {
       this.cookieService.set({
         name: AUTH_COOKIES.USER,
         payload: user.username,
-        maxAge,
-      });
-    }
-
-    if (tokens?.token) {
-      this.cookieService.set({
-        name: AUTH_COOKIES.USER_AUTH,
-        payload: tokens.token,
         maxAge,
       });
     }
@@ -169,12 +171,6 @@ export abstract class AuthClient {
         maxAge,
       });
     }
-
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER_MAX_AGE,
-      payload: maxAge.toString(),
-      maxAge,
-    });
   }
 
   /**
@@ -182,19 +178,42 @@ export abstract class AuthClient {
    *
    * @param userToken - The new authentication token.
    */
-  protected setCookiesRefresh(userToken: string): void {
-    const maxAgeCookie = this.cookieService.get(AUTH_COOKIES.USER_MAX_AGE);
-    const maxAge = maxAgeCookie ? parseInt(maxAgeCookie, 10) : 1800;
+  protected setCookieRefreshToken(token: string, maxAge?: number): void {
+    if (!maxAge) {
+      maxAge = this.getCookieMaxAge();
+    }
     this.cookieService.set({
       name: AUTH_COOKIES.REFRESH_TOKEN,
-      payload: userToken,
+      payload: token,
       maxAge,
       // httpOnly: true,
+    });
+  }
+  protected setCookieUserToken(token: string, maxAge?: number): void {
+    if (!maxAge) {
+      maxAge = this.getCookieMaxAge();
+    }
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_AUTH,
+      payload: token,
+      maxAge,
     });
   }
 
   protected getCookieRefreshToken(): string {
     return this.cookieService.get(AUTH_COOKIES.REFRESH_TOKEN);
+  }
+
+  protected getCookieUserToken(): string {
+    return this.cookieService.get(AUTH_COOKIES.USER_AUTH);
+  }
+
+  protected getCookieMaxAge(): number {
+    const maxAge = this.cookieService.get(AUTH_COOKIES.USER_MAX_AGE);
+    if (!maxAge) {
+      return 1800;
+    }
+    return parseInt(maxAge, 10);
   }
 
   /**

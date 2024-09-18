@@ -1,7 +1,4 @@
-import { logWrite } from '@geins/core';
-
-const REFRESH_TOKEN_HEADER = 'x-auth-refresh-token';
-
+import { logWrite, AUTH_HEADERS } from '@geins/core';
 export class AuthServiceClient {
   private authEndpoint: string;
   private signEndpoint: string;
@@ -59,18 +56,11 @@ export class AuthServiceClient {
     const fetchOptions: RequestInit = {
       method: requiresSign ? 'POST' : 'GET',
       cache: 'no-cache',
-      /*credentials: 'include',*/
       headers: {
         'Content-Type': 'application/json',
         ...(this.refreshToken
-          ? { 'x-auth-refresh-token': this.refreshToken }
+          ? { [`${AUTH_HEADERS.REFRESH_TOKEN}`]: this.refreshToken }
           : {}),
-        // dual header for refresh token
-        /*
-        ...(this.refreshToken
-          ? { Cookie: `refresh=${this.refreshToken}` }
-          : {}),
-        */
       },
 
       body: requiresSign ? JSON.stringify(authRequestBody) : undefined,
@@ -156,7 +146,9 @@ export class AuthServiceClient {
       }
 
       let refreshToken = null;
-      const refreshTokenHeader = response.headers.get('x-auth-refresh-token');
+      const refreshTokenHeader = response.headers.get(
+        AUTH_HEADERS.REFRESH_TOKEN,
+      );
 
       if (refreshTokenHeader) {
         refreshToken = refreshTokenHeader;
