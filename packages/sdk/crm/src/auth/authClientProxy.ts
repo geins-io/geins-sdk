@@ -3,7 +3,6 @@ import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { AuthClient } from './authClient';
 import { AuthService } from './authService';
 
-
 export class AuthClientProxy extends AuthClient {
   private readonly authEndpointApp: string;
 

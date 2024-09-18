@@ -3,7 +3,6 @@ import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { AuthClient } from './authClient';
 import { AuthService } from './authService';
 
-
 export class AuthClientDirect extends AuthClient {
   private authService: AuthService;
 
