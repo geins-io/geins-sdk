@@ -70,8 +70,11 @@ export abstract class AuthClient {
 
   abstract refresh(): Promise<AuthResponse | undefined>;
 
-  async getUser(): Promise<AuthResponse | undefined> {
-    const result = await this.getUserFromCookie();
+  async getUser(
+    token?: string,
+    refreshToken?: string,
+  ): Promise<AuthResponse | undefined> {
+    const result = await this.getUserFromCookie(token, refreshToken);
     if (!result) {
       return undefined;
     }
@@ -89,14 +92,17 @@ export abstract class AuthClient {
     return result;
   }
 
-  protected async getUserFromCookie(): Promise<AuthResponse | undefined> {
-    const userToken = this.getCookieUserToken();
-    const refreshToken = this.getCookieRefreshToken();
-    if (!userToken || !refreshToken) {
+  protected async getUserFromCookie(
+    token?: string,
+    refreshToken?: string,
+  ): Promise<AuthResponse | undefined> {
+    token = token || this.getCookieUserToken();
+    refreshToken = refreshToken || this.getCookieRefreshToken();
+    if (!token || !refreshToken) {
       return undefined;
     }
 
-    return AuthService.getUserObjectFromToken(userToken, refreshToken);
+    return AuthService.getUserObjectFromToken(token, refreshToken);
   }
 
   public async changePassword(
