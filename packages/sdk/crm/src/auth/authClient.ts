@@ -1,5 +1,5 @@
-import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { CookieService, AUTH_COOKIES, logWrite } from '@geins/core';
+import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 import { AuthService } from './authService';
 

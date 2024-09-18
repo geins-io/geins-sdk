@@ -1,11 +1,11 @@
 /*
   SERVER OR/AND CLIENT
 */
-
+import { AUTH_COOKIES, CookieService, logWrite } from '@geins/core';
 import type { AuthResponse, AuthCredentials, AuthTokens } from '@geins/types';
 import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
-import { AUTH_COOKIES, CookieService, logWrite } from '@geins/core';
+
 
 const EXPIRES_SOON_THRESHOLD = 90;
 

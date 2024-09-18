@@ -1,7 +1,8 @@
 import { logWrite, AUTH_HEADERS } from '@geins/core';
+import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { AuthClient } from './authClient';
 import { AuthService } from './authService';
-import type { AuthResponse, AuthCredentials } from '@geins/types';
+
 
 export class AuthClientProxy extends AuthClient {
   private readonly authEndpointApp: string;
