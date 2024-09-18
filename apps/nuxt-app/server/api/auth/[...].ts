@@ -1,12 +1,9 @@
-/*
-Might be an options for the gein-nuxt module?
-https://nuxt.com/docs/getting-started/data-fetching#passing-headers-and-cookies
-https://nuxt.com/docs/getting-started/data-fetching#pass-cookies-from-server-side-api-calls-on-ssr-response
-
-set refreshgetToken in cookie named 'refresh' to pass for the next request
-*/
-
-import { logWrite, buildEndpoints, AUTH_COOKIES } from '@geins/core';
+import {
+  logWrite,
+  buildEndpoints,
+  AUTH_COOKIES,
+  AUTH_HEADERS,
+} from '@geins/core';
 import type { GeinsCredentials } from '@geins/types';
 import { AuthService } from '@geins/crm';
 
@@ -195,7 +192,7 @@ export default defineEventHandler(async (event) => {
     ); */
   };
 
-  const refreshToken = getHeader(event, 'x-auth-refresh-token');
+  const refreshToken = getHeader(event, AUTH_HEADERS.REFRESH_TOKEN);
   if (refreshToken) {
     authService.setRefreshToken(refreshToken);
   }
