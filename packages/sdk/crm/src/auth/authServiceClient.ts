@@ -89,7 +89,7 @@ export class AuthServiceClient {
       username,
       signature: authenticationSignature,
       password: await digest(password),
-      ...(!rememberUser ? { sessionLifetime: 30 } : {}),
+      ...(rememberUser ? {} : { sessionLifetime: 30 }),
     };
 
     const requestOptions: RequestInit = {
