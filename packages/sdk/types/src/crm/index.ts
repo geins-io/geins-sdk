@@ -140,3 +140,14 @@ export interface AuthUser {
    */
   memberId?: string;
 }
+
+export interface AuthUserToken {
+  maxAge: number;
+  token: string;
+  refreshToken: string;
+}
+export interface AuthSignature {
+  identity: string;
+  signature: string;
+  timestamp: string;
+}

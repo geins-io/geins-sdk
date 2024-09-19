@@ -52,7 +52,25 @@ export function authClaimsTokenSerializeToObject(
 
     return obj;
   } catch (error) {
-    //console.error('Failed to serialize token claims to object:', error);
     return null;
   }
+}
+
+export function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const byteArray = new Uint8Array(buffer);
+  const binaryString = byteArray.reduce(
+    (acc, byte) => acc + String.fromCharCode(byte),
+    '',
+  );
+  return btoa(binaryString);
+}
+
+export async function digest(password: string): Promise<string> {
+  const salt =
+    'Dd1dfLonNy6Am2fXQl2AcoI+IbhLhXvaibnDNn8uEa6vbJ05eyJajSuGFm9uQSmD';
+  const buffer = await crypto.subtle.digest(
+    'SHA-384',
+    new TextEncoder().encode(password + salt),
+  );
+  return arrayBufferToBase64(buffer);
 }

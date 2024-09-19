@@ -5,7 +5,7 @@ import {
   AUTH_HEADERS,
 } from '@geins/core';
 import type { GeinsCredentials } from '@geins/types';
-import { AuthService } from '../../../utils/auth';
+import { AuthService } from '@geins/crm';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);

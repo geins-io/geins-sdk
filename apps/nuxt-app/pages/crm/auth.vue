@@ -22,7 +22,7 @@ const items = ref<any[]>([]);
 const user = ref<any>({});
 const connectionType = ref<ConnectionType>(Connection.None);
 const username = ref<string>('arvidsson@geins.io');
-const password = ref<string>('8yifjxvujx95ie2vdkml8d');
+const password = ref<string>('dZgFCZi66mnPr9D');
 const rememberUser = ref<boolean>(true);
 
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
