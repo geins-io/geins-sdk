@@ -2,7 +2,6 @@ import { logWrite } from '@geins/core';
 import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { AuthClient } from './authClient';
 import { AuthService } from './authService';
-import { log } from 'console';
 
 export class AuthClientDirect extends AuthClient {
   private authService: AuthService;
