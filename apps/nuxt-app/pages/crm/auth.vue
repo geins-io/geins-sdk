@@ -22,7 +22,7 @@ const items = ref<any[]>([]);
 const user = ref<any>({});
 const connectionType = ref<ConnectionType>(Connection.None);
 const username = ref<string>('arvidsson@geins.io');
-const password = ref<string>('8yifjxvujx95ie2vdkml8d');
+const password = ref<string>('dZgFCZi66mnPr9D');
 const rememberUser = ref<boolean>(true);
 
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
@@ -143,6 +143,7 @@ const handleLogout = async () => {
  * Handles token refresh based on the current connection type.
  */
 const handleRefresh = async () => {
+  logWrite(`handleRefresh()`, authClient.value);
   const result = await authClient.value?.refresh();
   logWrite(`handleRefresh() result`, result);
   updateCookiesDisplay();
@@ -150,6 +151,8 @@ const handleRefresh = async () => {
     handleLogout();
   }
   user.value = result;
+  const result2 = await authClient.value?.refresh();
+  logWrite(`handleRefresh() result2`, result2);
 };
 
 /**

@@ -1,7 +1,7 @@
 import { logWrite, AUTH_HEADERS } from '@geins/core';
+import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { AuthClient } from './authClient';
 import { AuthService } from './authService';
-import type { AuthResponse, AuthCredentials } from '@geins/types';
 
 export class AuthClientProxy extends AuthClient {
   private readonly authEndpointApp: string;
@@ -41,23 +41,50 @@ export class AuthClientProxy extends AuthClient {
     return result.body?.data as T;
   }
 
-  async login(credentials: AuthCredentials): Promise<AuthResponse> {
+  async login(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
     const result = await this.request<AuthResponse>('/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
 
+    if (!result) {
+      return undefined;
+    }
+
     if (result.succeeded) {
       this.setCookiesLogin(result, credentials.rememberUser || false);
     }
+    logWrite('login', result);
 
     return result;
   }
 
+  async changePassword(
+    credentials: AuthCredentials,
+  ): Promise<AuthResponse | undefined> {
+    const refreshToken = this.getCookieRefreshToken();
+    if (!refreshToken) {
+      return undefined;
+    }
+    const result = await this.request<AuthResponse>('/password', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+
+    if (!result) {
+      return undefined;
+    }
+
+    // set cookies
+    if (result.succeeded) {
+      this.setCookiesLogin(result, credentials.rememberUser || false);
+    }
+    return result;
+  }
+
   async logout(): Promise<boolean> {
-    const result = await this.request<any>('/logout', { method: 'GET' });
     this.clearCookies();
-    return result.status === 200 ? true : false;
+    return true;
   }
 
   async refresh(): Promise<AuthResponse | undefined> {
@@ -80,6 +107,41 @@ export class AuthClientProxy extends AuthClient {
     return result;
   }
 
+  async getUser(): Promise<AuthResponse | undefined> {
+    const refreshToken = this.getCookieRefreshToken();
+    logWrite('getUser', refreshToken);
+    if (!refreshToken) {
+      return undefined;
+    }
+    const userToken = this.getCookieUserToken();
+    const user = await AuthService.getUserObjectFromToken(
+      userToken,
+      refreshToken,
+    );
+    if (!user) {
+      return undefined;
+    }
+    if (user.tokens?.expiresSoon) {
+      const result = await this.request<AuthResponse>('/user', {
+        method: 'GET',
+      });
+
+      if (!result || !result.succeeded) {
+        return undefined;
+      }
+
+      if (result && result.tokens?.refreshToken) {
+        this.setCookieRefreshToken(result.tokens.refreshToken);
+      }
+
+      if (result && result.succeeded && result.tokens?.token) {
+        this.setCookieUserToken(result.tokens.token);
+      }
+      return result;
+    }
+    return user;
+  }
+
   async register(credentials: AuthCredentials): Promise<AuthResponse> {
     const result = await this.request<AuthResponse>('/register', {
       method: 'POST',
@@ -91,16 +153,5 @@ export class AuthClientProxy extends AuthClient {
     }
 
     return result;
-  }
-
-  protected async changePasswordImplementation(
-    credentials: AuthCredentials,
-  ): Promise<AuthResponse> {
-    const result = await this.request<AuthResponse>('/password', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    });
-
-    return result || { succeeded: false };
   }
 }

@@ -1,10 +1,15 @@
-import { logWrite, AUTH_HEADERS } from '@geins/core';
+import {
+  logWrite,
+  AUTH_HEADERS,
+  type AuthCredentials,
+  type AuthUserToken,
+  type AuthSignature,
+} from '@geins/core';
+import { digest } from './authHelpers';
+
 export class AuthServiceClient {
   private authEndpoint: string;
   private signEndpoint: string;
-  private token: string = '';
-  private refreshToken: string = '';
-  private maxAge: number = 0;
 
   constructor(authEndpoint: string, signEndpoint: string) {
     if (!authEndpoint || !signEndpoint) {
@@ -14,250 +19,261 @@ export class AuthServiceClient {
     this.signEndpoint = signEndpoint;
   }
 
-  public getMaxAge(): number {
-    return this.maxAge;
+  private getAuthEndpointUrl(endpoint: string): string {
+    return `${this.authEndpoint}/${endpoint}`;
   }
 
-  public getToken(): string {
-    return this.token;
+  private getSignEndpointUrl(signature: string): string {
+    return `${this.signEndpoint}${encodeURIComponent(signature)}`;
   }
 
-  public getRefreshToken(): string {
-    return this.refreshToken;
-  }
-
-  private setTokenData(data: { token: string; maxAge: number }): void {
-    this.token = data.token;
-    this.maxAge = data.maxAge;
-  }
-
-  public setRefreshToken(token: string): void {
-    this.refreshToken = token;
-  }
-
-  public async connect(
-    credentials?: {
-      username: string;
-      password: string;
-      newPassword?: string;
-      rememberUser?: boolean;
-    },
-    action: string = 'login',
-  ): Promise<void> {
-    this.resetTokenData();
-    const url = `${this.authEndpoint}/${action}`;
-    const requiresSign = Boolean(credentials);
-
-    let authRequestBody: Record<string, any> = {};
-
-    if (requiresSign) {
-      authRequestBody = await this.prepareAuthRequest(credentials!, action);
-    }
-    const fetchOptions: RequestInit = {
-      method: requiresSign ? 'POST' : 'GET',
-      cache: 'no-cache',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(this.refreshToken
-          ? { [`${AUTH_HEADERS.REFRESH_TOKEN}`]: this.refreshToken }
-          : {}),
-      },
-
-      body: requiresSign ? JSON.stringify(authRequestBody) : undefined,
-    };
-
-    let data = await this.fetchData(url, fetchOptions);
-
-    if (data?.sign) {
-      authRequestBody = await this.addCredentialsToRequest(
-        authRequestBody,
-        data.sign,
-        credentials!,
-        action,
-      );
-
-      fetchOptions.body = JSON.stringify(authRequestBody);
-      data = await this.fetchData(url, fetchOptions);
-    }
-
-    if (data?.token) {
-      this.setTokenData(data);
-    }
-  }
-
-  private async prepareAuthRequest(
-    credentials: {
-      username: string;
-      password: string;
-      newPassword?: string;
-      rememberUser?: boolean;
-    },
-    action?: string,
-  ): Promise<Record<string, any>> {
-    const authRequestBody: Record<string, any> = {
-      username: credentials.username,
-    };
-    return authRequestBody;
-  }
-
-  private async addCredentialsToRequest(
-    authRequestBody: Record<string, any>,
-    sign: string,
-    credentials: {
-      username: string;
-      password: string;
-      newPassword?: string;
-      rememberUser?: boolean;
-    },
-    action: string,
-  ): Promise<Record<string, any>> {
-    authRequestBody.signature = await this.fetchSignAccount(sign);
-    authRequestBody.password = await this.digest(credentials.password);
-    if (action === 'password') {
-      authRequestBody.newPassword = await this.digest(credentials.newPassword!);
-    }
-
-    if (!credentials.rememberUser) {
-      authRequestBody.sessionLifetime = 30;
-    }
-    return authRequestBody;
-  }
-
-  private async fetchSignAccount(sign: string): Promise<string> {
-    const url = `${this.signEndpoint}${encodeURIComponent(sign)}`;
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch sign account');
-    }
-    return await response.json();
-  }
-
-  private async fetchData(url: string, options: RequestInit): Promise<any> {
+  private async requestAuthChallenge(username: string): Promise<string> {
     try {
+      const url = this.getAuthEndpointUrl('login');
+      const options: RequestInit = {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+      };
       const response = await fetch(url, options);
+      const text = await response.text();
+      const retval = JSON.parse(text);
+      if (!retval.sign) {
+        throw new Error('Failed to fetch sign');
+      }
+      return retval.sign;
+    } catch (error) {
+      throw new Error('Failed to request challenge');
+    }
+  }
+
+  private async verifyAuthChallenge(
+    signatureToken: string,
+  ): Promise<AuthSignature> {
+    const url = this.getSignEndpointUrl(signatureToken);
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       if (!response.ok) {
-        throw new Error(
-          `Failed to fetch data from endpoint: ${response.status} ${response.statusText}`,
-        );
+        throw new Error();
+      }
+      const text = await response.text();
+      if (!text) {
+        throw new Error();
+      }
+      return JSON.parse(text);
+    } catch (error) {
+      throw new Error('Failed to verify challenge');
+    }
+  }
+
+  private async fetchUserToken(
+    username: string,
+    password: string,
+    rememberUser: boolean,
+  ): Promise<AuthUserToken> {
+    try {
+      const url = this.getAuthEndpointUrl('login');
+
+      // Step 1: Request a challenge token for the given username (initiates the authentication process)
+      const challangeToken = await this.requestAuthChallenge(username);
+
+      // Step 2: Verify the challenge token and retrieve the authentication signature
+      const authenticationSignature =
+        await this.verifyAuthChallenge(challangeToken);
+
+      const requestBody: Record<string, any> = {
+        username,
+        signature: authenticationSignature,
+        password: await digest(password),
+        ...(!rememberUser ? { sessionLifetime: 30 } : {}),
+      };
+
+      const requestOptions: RequestInit = {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      };
+
+      const response = await fetch(url, requestOptions);
+      if (!response.ok) {
+        throw new Error('Failed to renew refresh token');
       }
 
-      let refreshToken = null;
       const refreshTokenHeader = response.headers.get(
         AUTH_HEADERS.REFRESH_TOKEN,
       );
 
-      if (refreshTokenHeader) {
-        refreshToken = refreshTokenHeader;
+      if (!refreshTokenHeader) {
+        throw new Error('Failed to fetch refresh token');
       }
 
-      if (!refreshToken) {
-        const setCookie = response.headers.get('set-cookie');
-        if (setCookie) {
-          const cookies = setCookie.split(';');
-          for (const cookie of cookies) {
-            if (cookie.trim().startsWith('refresh=')) {
-              refreshToken = cookie.split('=')[1];
-              break;
-            }
-          }
-        }
+      const userToken = await response.text();
+      if (!userToken) {
+        throw new Error('Failed to fetch user token');
       }
 
-      if (refreshToken) {
-        this.refreshToken = refreshToken;
-      }
-
-      const text = await response.text();
-      if (!text) {
-        return null;
-      }
-
-      try {
-        const retval = JSON.parse(text);
-        return retval;
-      } catch (jsonError) {
-        throw new Error('Invalid JSON response');
-      }
+      const retval = JSON.parse(userToken);
+      return {
+        maxAge: retval.maxAge,
+        token: retval.token,
+        refreshToken: refreshTokenHeader,
+      };
     } catch (error) {
-      console.error('Error fetching data:', error);
-      return null;
+      throw new Error('Failed authentication');
     }
   }
 
-  private resetTokenData(): void {
-    this.token = '';
-    this.maxAge = 0;
-  }
-
-  private async digest(password: string): Promise<string> {
-    const salt =
-      'Dd1dfLonNy6Am2fXQl2AcoI+IbhLhXvaibnDNn8uEa6vbJ05eyJajSuGFm9uQSmD';
-    const buffer = await crypto.subtle.digest(
-      'SHA-384',
-      new TextEncoder().encode(password + salt),
-    );
-    return this.arrayBufferToBase64(buffer);
-  }
-
-  private arrayBufferToBase64(buffer: ArrayBuffer): string {
-    const byteArray = new Uint8Array(buffer);
-    const binaryString = byteArray.reduce(
-      (acc, byte) => acc + String.fromCharCode(byte),
-      '',
-    );
-    return btoa(binaryString);
-  }
-
-  public get authorized(): boolean {
-    return !!this.token;
-  }
-
-  public get claims(): Record<string, any> | null {
-    if (!this.token) {
-      return null;
+  private async fetchRefreshToken(
+    currentRefreshtoken: string,
+  ): Promise<AuthUserToken> {
+    const url = this.getAuthEndpointUrl('login');
+    const requestOptions: RequestInit = {
+      method: 'GET',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+        [`${AUTH_HEADERS.REFRESH_TOKEN}`]: currentRefreshtoken,
+      },
+    };
+    const response = await fetch(url, requestOptions);
+    if (!response.ok) {
+      throw new Error('Failed to renew refresh token');
     }
+
+    const refreshTokenHeader = response.headers.get(AUTH_HEADERS.REFRESH_TOKEN);
+
+    if (!refreshTokenHeader) {
+      throw new Error('Failed to fetch refresh token');
+    }
+
+    const userToken = await response.text();
+    if (!userToken) {
+      throw new Error('Failed to fetch user token');
+    }
+
+    const retval = JSON.parse(userToken);
+    return {
+      maxAge: retval.maxAge,
+      token: retval.token,
+      refreshToken: refreshTokenHeader,
+    };
+  }
+
+  private async performChangePassword(
+    username: string,
+    currentPassword: string,
+    newPassword: string,
+    currentRefreshtoken: string,
+  ): Promise<any> {
     try {
-      const base64Url = this.token.split('.')[1];
-      if (!base64Url) {
-        throw new Error('Invalid token format: missing payload');
+      const url = this.getAuthEndpointUrl('password');
+
+      // Step 1: Request a challenge token for the given username (initiates the authentication process)
+      const challangeToken = await this.requestAuthChallenge(username);
+
+      // Step 2: Verify the challenge token and retrieve the authentication signature
+      const authenticationSignature =
+        await this.verifyAuthChallenge(challangeToken);
+
+      const requestBody: Record<string, any> = {
+        username,
+        signature: authenticationSignature,
+        password: await digest(currentPassword),
+        newPassword: await digest(newPassword),
+      };
+
+      const requestOptions: RequestInit = {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'application/json',
+          [`${AUTH_HEADERS.REFRESH_TOKEN}`]: currentRefreshtoken,
+        },
+        body: JSON.stringify(requestBody),
+      };
+
+      const response = await fetch(url, requestOptions);
+      if (!response.ok) {
+        throw new Error('Failed to change password');
       }
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const decodedString = atob(base64);
-      return JSON.parse(decodedString);
+
+      const refreshTokenHeader = response.headers.get(
+        AUTH_HEADERS.REFRESH_TOKEN,
+      );
+
+      if (!refreshTokenHeader) {
+        throw new Error('Failed to change password');
+      }
+
+      const userToken = await response.text();
+      if (!userToken) {
+        throw new Error('Failed to change password');
+      }
+
+      const retval = JSON.parse(userToken);
+      return {
+        maxAge: retval.maxAge,
+        token: retval.token,
+        refreshToken: refreshTokenHeader,
+      };
     } catch (error) {
-      console.error('Failed to decode token claims:', error);
-      return null;
+      throw new Error('Failed to change password');
     }
   }
 
-  public get serializedClaims(): string {
-    const claims = this.claims;
-    if (!claims) return '';
-    return Object.entries(claims)
-      .map(([key, value]) =>
-        Array.isArray(value)
-          ? value.map((v) => `${key}=${v}`).join(';')
-          : `${key}=${value}`,
-      )
-      .join(';');
-  }
-
-  public get(endpoint: string): Promise<any> {
-    return this.sendRequest('GET', endpoint);
-  }
-
-  private async sendRequest(method: string, endpoint: string): Promise<any> {
+  public async login(
+    username: string,
+    password: string,
+    rememberUser?: boolean,
+  ): Promise<AuthUserToken> {
     try {
-      const response = await fetch(endpoint, { method, cache: 'no-cache' });
-      return await response.json();
-    } catch (err) {
-      console.error('Error in sendRequest:', err);
-      return null;
+      return this.fetchUserToken(username, password, rememberUser!);
+    } catch (error) {
+      throw new Error('Failed to login');
     }
+  }
+
+  public async renewRefreshtoken(currentRefreshtoken: string): Promise<any> {
+    try {
+      return await this.fetchRefreshToken(currentRefreshtoken);
+    } catch (error) {
+      throw new Error('Failed to renew refresh token');
+    }
+  }
+
+  public async changePassword(
+    credentials: AuthCredentials,
+    currentRefreshtoken: string,
+  ): Promise<AuthUserToken> {
+    try {
+      if (!credentials.newPassword) {
+        throw new Error('New password is required');
+      }
+      //return this.fetchUserToken(username, password, rememberUser!);
+      return this.performChangePassword(
+        credentials.username,
+        credentials.password,
+        credentials.newPassword,
+        currentRefreshtoken,
+      );
+    } catch (error) {
+      throw new Error('Failed to change password');
+    }
+  }
+
+  //obsolete
+  public async logout(currentRefreshtoken: string): Promise<boolean> {
+    return true;
   }
 }

@@ -1,11 +1,10 @@
 /*
   SERVER OR/AND CLIENT
 */
-
+import { AUTH_COOKIES, CookieService, logWrite } from '@geins/core';
 import type { AuthResponse, AuthCredentials, AuthTokens } from '@geins/types';
 import { AuthServiceClient } from './authServiceClient';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
-import { AUTH_COOKIES, CookieService, logWrite } from '@geins/core';
 
 const EXPIRES_SOON_THRESHOLD = 90;
 
@@ -21,109 +20,146 @@ export class AuthService {
     this.cookieService = new CookieService();
     this.initClient();
   }
-
-  public setRefreshToken(refreshToken: string): void {
-    this.ensureClientInitialized();
-    this.client!.setRefreshToken(refreshToken);
-  }
-
+  // initialize client
   private initClient(): void {
     this.client = new AuthServiceClient(this.authEndpoint, this.signEndpoint);
   }
+  // helper to make sure client is initialized
+  private ensureClientInitialized(): void {
+    if (!this.client) {
+      this.initClient();
+    }
+    if (!this.client) {
+      throw new Error('AuthServiceClient is not initialized');
+    }
+  }
 
+  // login in user
   public async login(credentials: AuthCredentials): Promise<AuthResponse> {
-    this.ensureClientInitialized();
-
     try {
-      await this.client!.connect(credentials, 'login');
+      this.ensureClientInitialized();
+      const result = await this.client!.login(
+        credentials.username,
+        credentials.password,
+        credentials.rememberUser,
+      );
 
-      const authResponse = await this.getUser();
-
-      let refreshToken = authResponse?.tokens?.refreshToken ?? '';
-      if (refreshToken) {
-        this.refreshCookieTokenSet(refreshToken);
+      const authResponse = await AuthService.getUserObjectFromToken(
+        result.token,
+        result.refreshToken,
+      );
+      if (!authResponse) {
+        // Removed unreachable code
       }
-
-      return authResponse || { succeeded: false };
+      return authResponse;
     } catch (error) {
       return this.handleError('Login failed', error);
     }
   }
 
-  public async logout(): Promise<AuthResponse> {
-    this.ensureClientInitialized();
-
+  // get user if userToken is provided parse from token if not use refresh token to get user
+  public async getUser(
+    currentRefreshtoken: string,
+    userToken?: string,
+  ): Promise<AuthResponse> {
     try {
-      await this.client!.connect(undefined, 'logout');
-      this.client = undefined;
-      return { succeeded: true };
+      if (userToken) {
+        const authResponse = await AuthService.getUserObjectFromToken(
+          userToken,
+          currentRefreshtoken,
+        );
+        if (!authResponse) {
+          return { succeeded: false };
+        }
+        if (authResponse.tokens?.expiresSoon) {
+          return await this.refresh(currentRefreshtoken);
+        }
+
+        return authResponse;
+      } else {
+        return await this.refresh(currentRefreshtoken);
+      }
     } catch (error) {
-      return this.handleError('Logout failed', error);
+      return this.handleError('Get user failed', error);
     }
   }
 
-  public async refresh(token?: string): Promise<AuthResponse> {
-    this.ensureClientInitialized();
+  // change password
+  public async changePassword(
+    credentials: AuthCredentials,
+    currentRefreshtoken: string,
+  ): Promise<AuthResponse> {
+    if (!credentials.newPassword || !currentRefreshtoken) {
+      return { succeeded: false };
+    }
     try {
-      if (!this.client) {
-        throw new Error('AuthServiceClient is not initialized');
+      this.ensureClientInitialized();
+      const result = await this.client!.changePassword(
+        credentials,
+        currentRefreshtoken,
+      );
+      if (!result.token) {
+        return { succeeded: false };
       }
-      if (token) {
-        this.client.setRefreshToken(token);
+      const authResponse = await AuthService.getUserObjectFromToken(
+        result.token,
+        result.refreshToken,
+      );
+      if (!authResponse) {
+        return { succeeded: false };
       }
-      await this.client.connect();
-      const userToken = this.client.getToken();
-      const tokens: AuthTokens = {
-        token: userToken,
-        refreshToken: this.client.getRefreshToken(),
-        maxAge: this.client.getMaxAge(),
-        expired: false,
-      };
-
-      return { succeeded: !!userToken, tokens };
+      return authResponse;
     } catch (error) {
       return this.handleError('Token refresh failed', error);
     }
   }
 
-  public async changePassword(
-    credentials: AuthCredentials,
-  ): Promise<AuthResponse> {
-    this.ensureClientInitialized();
+  // get new refresh token and token
+  public async refresh(currentRefreshtoken: string): Promise<AuthResponse> {
+    if (!currentRefreshtoken) {
+      return { succeeded: false };
+    }
 
     try {
-      await this.client!.connect(credentials, 'password');
-
-      const tokens: AuthTokens = {
-        token: this.client!.getToken(),
-        refreshToken: this.client!.getRefreshToken(),
-      };
-
-      return { succeeded: true, tokens };
+      this.ensureClientInitialized();
+      const result = await this.client!.renewRefreshtoken(currentRefreshtoken);
+      if (!result.token) {
+        return { succeeded: false };
+      }
+      const authResponse = await AuthService.getUserObjectFromToken(
+        result.token,
+        result.refreshToken,
+      );
+      if (!authResponse) {
+        return { succeeded: false };
+      }
+      return authResponse;
     } catch (error) {
-      return this.handleError('Password change failed', error);
+      return this.handleError('Token refresh failed', error);
     }
   }
 
-  public async register(credentials: AuthCredentials): Promise<AuthResponse> {
+  // logout user
+  public async logout(currentRefreshtoken: string): Promise<AuthResponse> {
     this.ensureClientInitialized();
-
     try {
-      await this.client!.connect(credentials, 'register');
-      const authResponse = await this.getUser();
-      return { succeeded: !!authResponse };
+      const result = await this.client!.logout(currentRefreshtoken);
+      return { succeeded: result };
     } catch (error) {
-      return this.handleError('Registration failed', error);
+      return this.handleError('Logout failed', error);
     }
   }
 
+  // serialize user from jwt token
   static async getUserObjectFromToken(
-    claimsToken: string,
+    userToken: string,
     refreshToken?: string,
-  ): Promise<AuthResponse | undefined> {
+  ): Promise<AuthResponse> {
     try {
-      const userFromToken = authClaimsTokenSerializeToObject(claimsToken);
-      if (!userFromToken) return undefined;
+      const userFromToken = authClaimsTokenSerializeToObject(userToken);
+      if (!userFromToken) {
+        throw new Error('Failed to parse user token');
+      }
 
       const now = Math.floor(Date.now() / 1000);
       const expiresIn = parseInt(userFromToken.exp || '0') - now;
@@ -141,7 +177,7 @@ export class AuthService {
           memberId: userFromToken.memberId || '0',
         },
         tokens: {
-          token: claimsToken,
+          token: userToken,
           expires: parseInt(userFromToken.exp || '0'),
           expired: now >= parseInt(userFromToken.exp || '0'),
           expiresSoon,
@@ -150,71 +186,11 @@ export class AuthService {
         },
       };
     } catch (error) {
-      return undefined;
+      throw new Error('Failed to parse user token');
     }
   }
 
-  public async getUser(token?: string): Promise<AuthResponse | undefined> {
-    token = token || this.client?.getToken();
-    if (!token) {
-      if (this.client) {
-        if (this.refreshToken) {
-          this.client.setRefreshToken(this.refreshToken);
-        }
-        await this.client?.connect();
-        token = await this.client?.getToken();
-      } else {
-        return undefined;
-      }
-    }
-
-    const authResponse = await AuthService.getUserObjectFromToken(
-      token,
-      this.refreshToken,
-    );
-
-    if (authResponse && this.client) {
-      authResponse.tokens!.refreshToken = this.client.getRefreshToken();
-    }
-
-    return authResponse;
-  }
-
-  public get refreshToken(): string | undefined {
-    this.ensureClientInitialized();
-    let refreshToken;
-
-    if (this.client) {
-      refreshToken = this.client.getRefreshToken();
-      if (refreshToken) {
-        this.refreshCookieTokenSet(refreshToken);
-        return refreshToken;
-      }
-    }
-    return this.refreshCookieTokenGet();
-  }
-
-  private ensureClientInitialized(): void {
-    if (!this.client) {
-      this.initClient();
-    }
-    if (!this.client) {
-      throw new Error('AuthServiceClient is not initialized');
-    }
-  }
-
-  public refreshCookieTokenSet(refreshToken: string): void {
-    this.cookieService.set({
-      name: AUTH_COOKIES.REFRESH_TOKEN,
-      payload: refreshToken,
-      httpOnly: true,
-    });
-  }
-
-  public refreshCookieTokenGet(): string {
-    return this.cookieService.get(AUTH_COOKIES.REFRESH_TOKEN);
-  }
-
+  // error handler
   private handleError(message: string, error: unknown): any {
     console.error(message, error);
     return { succeeded: false, error: { message, details: error } };
