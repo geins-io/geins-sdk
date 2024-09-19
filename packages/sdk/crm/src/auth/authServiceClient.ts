@@ -28,50 +28,50 @@ export class AuthServiceClient {
   }
 
   private async requestAuthChallenge(username: string): Promise<string> {
-    try {
-      const url = this.getAuthEndpointUrl('login');
-      const options: RequestInit = {
-        method: 'POST',
-        cache: 'no-cache',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username }),
-      };
-      const response = await fetch(url, options);
-      const text = await response.text();
-      const retval = JSON.parse(text);
-      if (!retval.sign) {
-        throw new Error('Failed to fetch sign');
-      }
-      return retval.sign;
-    } catch (error) {
-      throw new Error('Failed to request challenge');
+    const url = this.getAuthEndpointUrl('login');
+    const options: RequestInit = {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username }),
+    };
+    const response = await fetch(url, options);
+    const text = await response.text();
+    const retval = JSON.parse(text);
+    if (!retval?.sign) {
+      throw new Error('Failed to fetch sign');
     }
+    return retval.sign;
   }
 
   private async verifyAuthChallenge(
     signatureToken: string,
   ): Promise<AuthSignature> {
     const url = this.getSignEndpointUrl(signatureToken);
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (!response.ok) {
-        throw new Error();
-      }
-      const text = await response.text();
-      if (!text) {
-        throw new Error();
-      }
-      return JSON.parse(text);
-    } catch (error) {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
       throw new Error('Failed to verify challenge');
     }
+    const text = await response.text();
+    if (!text) {
+      throw new Error('Failed to verify challenge: Empty response');
+    }
+    return JSON.parse(text);
+  }
+
+  private extractRefreshTokenFromResponse(response: Response): string {
+    const refreshTokenHeader = response.headers.get(AUTH_HEADERS.REFRESH_TOKEN);
+    if (!refreshTokenHeader) {
+      throw new Error('Failed to fetch refresh token');
+    }
+    return refreshTokenHeader;
   }
 
   private async fetchUserToken(
@@ -79,59 +79,46 @@ export class AuthServiceClient {
     password: string,
     rememberUser: boolean,
   ): Promise<AuthUserToken> {
-    try {
-      const url = this.getAuthEndpointUrl('login');
+    const url = this.getAuthEndpointUrl('login');
 
-      // Step 1: Request a challenge token for the given username (initiates the authentication process)
-      const challangeToken = await this.requestAuthChallenge(username);
+    const challangeToken = await this.requestAuthChallenge(username);
+    const authenticationSignature =
+      await this.verifyAuthChallenge(challangeToken);
 
-      // Step 2: Verify the challenge token and retrieve the authentication signature
-      const authenticationSignature =
-        await this.verifyAuthChallenge(challangeToken);
+    const requestBody: Record<string, any> = {
+      username,
+      signature: authenticationSignature,
+      password: await digest(password),
+      ...(!rememberUser ? { sessionLifetime: 30 } : {}),
+    };
 
-      const requestBody: Record<string, any> = {
-        username,
-        signature: authenticationSignature,
-        password: await digest(password),
-        ...(!rememberUser ? { sessionLifetime: 30 } : {}),
-      };
+    const requestOptions: RequestInit = {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    };
 
-      const requestOptions: RequestInit = {
-        method: 'POST',
-        cache: 'no-cache',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      };
-
-      const response = await fetch(url, requestOptions);
-      if (!response.ok) {
-        throw new Error('Failed to renew refresh token');
-      }
-
-      const refreshTokenHeader = response.headers.get(
-        AUTH_HEADERS.REFRESH_TOKEN,
-      );
-
-      if (!refreshTokenHeader) {
-        throw new Error('Failed to fetch refresh token');
-      }
-
-      const userToken = await response.text();
-      if (!userToken) {
-        throw new Error('Failed to fetch user token');
-      }
-
-      const retval = JSON.parse(userToken);
-      return {
-        maxAge: retval.maxAge,
-        token: retval.token,
-        refreshToken: refreshTokenHeader,
-      };
-    } catch (error) {
-      throw new Error('Failed authentication');
+    const response = await fetch(url, requestOptions);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user token: ${response.statusText}`);
     }
+
+    const refreshToken = this.extractRefreshTokenFromResponse(response);
+
+    const userToken = await response.text();
+    if (!userToken) {
+      throw new Error('Failed to fetch user token: Empty response');
+    }
+
+    const retval = JSON.parse(userToken);
+    return {
+      maxAge: retval.maxAge,
+      token: retval.token,
+      refreshToken,
+    };
   }
 
   private async fetchRefreshToken(
@@ -148,25 +135,21 @@ export class AuthServiceClient {
     };
     const response = await fetch(url, requestOptions);
     if (!response.ok) {
-      throw new Error('Failed to renew refresh token');
+      throw new Error(`Failed to renew refresh token: ${response.statusText}`);
     }
 
-    const refreshTokenHeader = response.headers.get(AUTH_HEADERS.REFRESH_TOKEN);
-
-    if (!refreshTokenHeader) {
-      throw new Error('Failed to fetch refresh token');
-    }
+    const refreshToken = this.extractRefreshTokenFromResponse(response);
 
     const userToken = await response.text();
     if (!userToken) {
-      throw new Error('Failed to fetch user token');
+      throw new Error('Failed to fetch user token: Empty response');
     }
 
     const retval = JSON.parse(userToken);
     return {
       maxAge: retval.maxAge,
       token: retval.token,
-      refreshToken: refreshTokenHeader,
+      refreshToken,
     };
   }
 
@@ -175,61 +158,48 @@ export class AuthServiceClient {
     currentPassword: string,
     newPassword: string,
     currentRefreshtoken: string,
-  ): Promise<any> {
-    try {
-      const url = this.getAuthEndpointUrl('password');
+  ): Promise<AuthUserToken> {
+    const url = this.getAuthEndpointUrl('password');
 
-      // Step 1: Request a challenge token for the given username (initiates the authentication process)
-      const challangeToken = await this.requestAuthChallenge(username);
+    const challangeToken = await this.requestAuthChallenge(username);
+    const authenticationSignature =
+      await this.verifyAuthChallenge(challangeToken);
 
-      // Step 2: Verify the challenge token and retrieve the authentication signature
-      const authenticationSignature =
-        await this.verifyAuthChallenge(challangeToken);
+    const requestBody: Record<string, any> = {
+      username,
+      signature: authenticationSignature,
+      password: await digest(currentPassword),
+      newPassword: await digest(newPassword),
+    };
 
-      const requestBody: Record<string, any> = {
-        username,
-        signature: authenticationSignature,
-        password: await digest(currentPassword),
-        newPassword: await digest(newPassword),
-      };
+    const requestOptions: RequestInit = {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+        [`${AUTH_HEADERS.REFRESH_TOKEN}`]: currentRefreshtoken,
+      },
+      body: JSON.stringify(requestBody),
+    };
 
-      const requestOptions: RequestInit = {
-        method: 'POST',
-        cache: 'no-cache',
-        headers: {
-          'Content-Type': 'application/json',
-          [`${AUTH_HEADERS.REFRESH_TOKEN}`]: currentRefreshtoken,
-        },
-        body: JSON.stringify(requestBody),
-      };
-
-      const response = await fetch(url, requestOptions);
-      if (!response.ok) {
-        throw new Error('Failed to change password');
-      }
-
-      const refreshTokenHeader = response.headers.get(
-        AUTH_HEADERS.REFRESH_TOKEN,
-      );
-
-      if (!refreshTokenHeader) {
-        throw new Error('Failed to change password');
-      }
-
-      const userToken = await response.text();
-      if (!userToken) {
-        throw new Error('Failed to change password');
-      }
-
-      const retval = JSON.parse(userToken);
-      return {
-        maxAge: retval.maxAge,
-        token: retval.token,
-        refreshToken: refreshTokenHeader,
-      };
-    } catch (error) {
-      throw new Error('Failed to change password');
+    const response = await fetch(url, requestOptions);
+    if (!response.ok) {
+      throw new Error(`Failed to change password: ${response.statusText}`);
     }
+
+    const refreshToken = this.extractRefreshTokenFromResponse(response);
+
+    const userToken = await response.text();
+    if (!userToken) {
+      throw new Error('Failed to change password: Empty response');
+    }
+
+    const retval = JSON.parse(userToken);
+    return {
+      maxAge: retval.maxAge,
+      token: retval.token,
+      refreshToken,
+    };
   }
 
   public async login(
@@ -237,43 +207,32 @@ export class AuthServiceClient {
     password: string,
     rememberUser?: boolean,
   ): Promise<AuthUserToken> {
-    try {
-      return this.fetchUserToken(username, password, rememberUser!);
-    } catch (error) {
-      throw new Error('Failed to login');
-    }
+    return this.fetchUserToken(username, password, rememberUser!);
   }
 
-  public async renewRefreshtoken(currentRefreshtoken: string): Promise<any> {
-    try {
-      return await this.fetchRefreshToken(currentRefreshtoken);
-    } catch (error) {
-      throw new Error('Failed to renew refresh token');
-    }
+  public async renewRefreshtoken(
+    currentRefreshtoken: string,
+  ): Promise<AuthUserToken> {
+    return this.fetchRefreshToken(currentRefreshtoken);
   }
 
   public async changePassword(
     credentials: AuthCredentials,
     currentRefreshtoken: string,
   ): Promise<AuthUserToken> {
-    try {
-      if (!credentials.newPassword) {
-        throw new Error('New password is required');
-      }
-      //return this.fetchUserToken(username, password, rememberUser!);
-      return this.performChangePassword(
-        credentials.username,
-        credentials.password,
-        credentials.newPassword,
-        currentRefreshtoken,
-      );
-    } catch (error) {
-      throw new Error('Failed to change password');
+    if (!credentials.newPassword) {
+      throw new Error('New password is required');
     }
+    return this.performChangePassword(
+      credentials.username,
+      credentials.password,
+      credentials.newPassword,
+      currentRefreshtoken,
+    );
   }
 
-  //obsolete
   public async logout(currentRefreshtoken: string): Promise<boolean> {
+    // Implementation if needed, currently just returning true
     return true;
   }
 }
