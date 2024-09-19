@@ -143,6 +143,7 @@ const handleLogout = async () => {
  * Handles token refresh based on the current connection type.
  */
 const handleRefresh = async () => {
+  logWrite(`handleRefresh()`, authClient.value);
   const result = await authClient.value?.refresh();
   logWrite(`handleRefresh() result`, result);
   updateCookiesDisplay();
@@ -150,6 +151,8 @@ const handleRefresh = async () => {
     handleLogout();
   }
   user.value = result;
+  const result2 = await authClient.value?.refresh();
+  logWrite(`handleRefresh() result2`, result2);
 };
 
 /**

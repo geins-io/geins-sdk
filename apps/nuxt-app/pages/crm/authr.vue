@@ -21,11 +21,11 @@ type ConnectionType = Connection.Proxy | Connection.Direct | Connection.None;
 const config = useRuntimeConfig();
 const items = ref<any[]>([]);
 const user = ref<any>({});
-const connectionType = ref<ConnectionType>(Connection.Direct);
+const connectionType = ref<ConnectionType>(Connection.Proxy);
 const username = ref<string>('arvidsson@geins.io');
 
-// 6wv26rgt0cv44bxxvf8i82
-const password = ref<string>('6wv26rgt0cv44bxxvf8i82');
+// l8a7ryv7d8f2t5xlqwvsu
+const password = ref<string>('38ba7yyp502zc3xiq8v8sm');
 const rememberUser = ref<boolean>(true);
 
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
@@ -71,6 +71,10 @@ onMounted(() => {
   updateCookiesDisplay();
 });
 
+onMounted(() => {
+  updateCookiesDisplay();
+});
+
 /**
  * Fetches and updates the user information.
  */
@@ -92,15 +96,6 @@ const clearCookies = () => {
  */
 const updateUser = async () => {
   const result = await authClient.value?.getUser();
-  logWrite(`Getting user by: ${connectionType.value}`, result);
-  updateCookiesDisplay();
-  if (!result) {
-    handleLogout();
-  }
-  user.value = result;
-};
-const updateUser2 = async () => {
-  const result = await authClientDirect.getUser2();
   logWrite(`Getting user by: ${connectionType.value}`, result);
   updateCookiesDisplay();
   if (!result) {
@@ -140,18 +135,6 @@ const handleLogin = async (validCredentials = true) => {
   user.value = result;
   updateUser();
 };
-const handleLogin2 = async (validCredentials = true) => {
-  const loginCredentials = validCredentials
-    ? credentials.value
-    : {
-      username: 'error',
-      password: 'error',
-      rememberUser: true,
-    };
-  const result = await authClientDirect.login2(loginCredentials);
-  user.value = result;
-  // updateUser();
-};
 
 /**
  * Handles logout based on the current connection type.
@@ -162,17 +145,12 @@ const handleLogout = async () => {
   user.value = undefined;
   updateCookiesDisplay();
 };
-const handleLogout2 = async () => {
-  const result = await authClientDirect.logout2();
-  logWrite(`result`, result);
-  user.value = undefined;
-  updateCookiesDisplay();
-};
 
 /**
  * Handles token refresh based on the current connection type.
  */
 const handleRefresh = async () => {
+  logWrite(`handleRefresh()`, authClient.value);
   const result = await authClient.value?.refresh();
   logWrite(`handleRefresh() result`, result);
   updateCookiesDisplay();
@@ -180,16 +158,8 @@ const handleRefresh = async () => {
     handleLogout();
   }
   user.value = result;
-};
-
-const handleRefresh2 = async () => {
-  const result = await authClientDirect.refresh2();
-  logWrite(`handleRefresh() result`, result);
-  updateCookiesDisplay();
-  if (!result) {
-    handleLogout();
-  }
-  user.value = result;
+  const result2 = await authClient.value?.refresh();
+  logWrite(`handleRefresh() result2`, result2);
 };
 
 /**
@@ -212,27 +182,11 @@ const handleChangePassword = async () => {
   password.value = newPassword.value;
   updateUser();
 };
-
-const handleChangePassword2 = async () => {
-  // xypkcj435ofh5h66lbwhc
-  const np = newPassword.value;
-  logWrite(`NEW PASSWORD`, np);
-
-  const newPasswordCredentials = {
-    ...credentials.value,
-    newPassword: np,
-  };
-  const result = await authClientDirect.newPassword(newPasswordCredentials);
-  logWrite(`[auth.vue] - handleChangePassword()2 result`, result);
-  console.log('newPasswordCredentials', np);
-  password.value = np;
-  updateUser();
-};
 </script>
 
 <template>
   <div>
-    <h2>Nuxt @geins/crm auth dev dev</h2>
+    <h2>Nuxt @geins/crm auth</h2>
 
     <p>
       This page demonstrates the usage of the AuthClientProxy and
@@ -312,15 +266,8 @@ const handleChangePassword2 = async () => {
                 <button :disabled="userLoggedIn || connectionType === Connection.None" @click="handleLogin(true)">
                   Login Good
                 </button>
-
                 <button :disabled="userLoggedIn || connectionType === Connection.None" @click="handleLogin(false)">
                   Login Bad
-                </button>
-                <button :disabled="userLoggedIn || connectionType === Connection.None" @click="handleLogin2(true)">
-                  Login Good 2
-                </button>
-                <button :disabled="userLoggedIn || connectionType === Connection.None" @click="handleLogin2(false)">
-                  Login Bad 2
                 </button>
               </td>
             </tr>
@@ -337,28 +284,18 @@ const handleChangePassword2 = async () => {
                 <button :disabled="connectionType === Connection.None" @click="updateUser">
                   Get User
                 </button>
-                <button @click="updateUser2">Get User 2</button>
                 <button :disabled="!userLoggedIn || connectionType === Connection.None
                   " @click="handleRefresh">
                   Refresh
-                </button>
-                <button :disabled="!userLoggedIn || connectionType === Connection.None
-                  " @click="handleRefresh2">
-                  Refresh 2
                 </button>
                 <button :disabled="!userLoggedIn || connectionType === Connection.None
                   " @click="handleChangePassword">
                   Change Password
                 </button>
                 <button :disabled="!userLoggedIn || connectionType === Connection.None
-                  " @click="handleChangePassword2">
-                  Change Password 2
-                </button>
-                <button :disabled="!userLoggedIn || connectionType === Connection.None
                   " @click="handleLogout">
                   Logout
                 </button>
-                <button @click="handleLogout2">Logout 2</button>
               </td>
             </tr>
             <tr>
