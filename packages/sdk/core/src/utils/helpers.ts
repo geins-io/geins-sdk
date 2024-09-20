@@ -1,5 +1,5 @@
 import { ENDPOINTS } from '../constants';
-import type { Environment } from '@geins/types';
+import type { Environment, GeinsEndpoints } from '@geins/types';
 
 /**
  * Get context of the runtime.
@@ -27,7 +27,7 @@ export function buildEndpoints(
   apiKey: string,
   accountName: string,
   environment: Environment = 'prod',
-) {
+): GeinsEndpoints {
   return {
     main: ENDPOINTS.main,
     auth: ENDPOINTS.auth

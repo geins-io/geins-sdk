@@ -8,6 +8,7 @@ export class AuthClientDirect extends AuthClient {
 
   constructor(signEndpoint: string, authEndpoint: string) {
     super();
+    logWrite('AuthClientDirect Constructor');
     this.authService = new AuthService(signEndpoint, authEndpoint);
   }
 
@@ -85,17 +86,19 @@ export class AuthClientDirect extends AuthClient {
     return result;
   }
 
-  async logout(): Promise<boolean> {
-    const refreshToken = this.getCookieRefreshToken();
-    if (!refreshToken) {
-      return true;
-    }
-    const result = await this.authService.logout(refreshToken);
-    this.clearCookies();
-    return result.succeeded;
-  }
+  async register(
+    credentials: AuthCredentials,
+  ): Promise<AuthResponse | undefined> {
+    const result = await this.authService.register(credentials);
 
-  async register(credentials: AuthCredentials): Promise<AuthResponse> {
-    throw new Error('Method not implemented.');
+    if (!result) {
+      return undefined;
+    }
+
+    if (result.succeeded) {
+      this.setCookiesLogin(result, credentials.rememberUser || false);
+    }
+
+    return result;
   }
 }

@@ -139,14 +139,27 @@ export class AuthService {
     }
   }
 
-  // logout user
-  public async logout(currentRefreshtoken: string): Promise<AuthResponse> {
-    this.ensureClientInitialized();
+  // register new user
+  public async register(credentials: AuthCredentials): Promise<AuthResponse> {
     try {
-      const result = await this.client!.logout(currentRefreshtoken);
-      return { succeeded: result };
+      this.ensureClientInitialized();
+      const result = await this.client!.register(
+        credentials.username,
+        credentials.password,
+      );
+
+      if (!result) {
+        return { succeeded: false };
+      }
+
+      const authResponse = await AuthService.getUserObjectFromToken(
+        result.token,
+        result.refreshToken,
+      );
+
+      return authResponse;
     } catch (error) {
-      return this.handleError('Logout failed', error);
+      return this.handleError('Register new user failed', error);
     }
   }
 

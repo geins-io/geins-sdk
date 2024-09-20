@@ -19,9 +19,16 @@ export abstract class AuthClient {
     credentials: AuthCredentials,
   ): Promise<AuthResponse | undefined>;
 
-  abstract logout(): Promise<boolean>;
-
   abstract getUser(): Promise<AuthResponse | undefined>;
+
+  abstract register(
+    credentials: AuthCredentials,
+  ): Promise<AuthResponse | undefined>;
+
+  public async logout(): Promise<AuthResponse | undefined> {
+    this.clearCookies();
+    return { succeeded: true };
+  }
 
   protected async getUserFromCookie(
     token?: string,
@@ -55,60 +62,6 @@ export abstract class AuthClient {
       return 1800;
     }
     return parseInt(maxAge, 10);
-  }
-
-  public spoofPreviewUser(token: string): void {
-    this.clearCookies();
-    const maxAge = 1800;
-    const spoofedUser = authClaimsTokenSerializeToObject(token);
-
-    const username = spoofedUser?.spoofedBy || 'preview@geins.io';
-    const spoofDate = spoofedUser?.spoofDate;
-
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER,
-      payload: username,
-      maxAge,
-    });
-
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER_AUTH,
-      payload: token,
-      maxAge,
-    });
-
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER_MAX_AGE,
-      payload: maxAge.toString(),
-      maxAge,
-    });
-  }
-
-  public spoofPreveiwUser(token: string): void {
-    this.clearCookies();
-    const maxAge = 1800;
-    const spoofedUser = authClaimsTokenSerializeToObject(token);
-
-    const username = spoofedUser?.spoofedBy || 'preview@geins.io';
-    const spoofDate = spoofedUser?.spoofDate;
-
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER,
-      payload: username,
-      maxAge,
-    });
-
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER_AUTH,
-      payload: token,
-      maxAge,
-    });
-
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER_MAX_AGE,
-      payload: maxAge.toString(),
-      maxAge,
-    });
   }
 
   // set cookie values
@@ -176,6 +129,61 @@ export abstract class AuthClient {
   public clearCookies(): void {
     Object.values(AUTH_COOKIES).forEach((cookieName) => {
       this.cookieService.remove(cookieName);
+    });
+  }
+
+  // spoof user for preview
+  public spoofPreviewUser(token: string): void {
+    this.clearCookies();
+    const maxAge = 1800;
+    const spoofedUser = authClaimsTokenSerializeToObject(token);
+
+    const username = spoofedUser?.spoofedBy || 'preview@geins.io';
+    const spoofDate = spoofedUser?.spoofDate;
+
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER,
+      payload: username,
+      maxAge,
+    });
+
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_AUTH,
+      payload: token,
+      maxAge,
+    });
+
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_MAX_AGE,
+      payload: maxAge.toString(),
+      maxAge,
+    });
+  }
+
+  public spoofPreveiwUser(token: string): void {
+    this.clearCookies();
+    const maxAge = 1800;
+    const spoofedUser = authClaimsTokenSerializeToObject(token);
+
+    const username = spoofedUser?.spoofedBy || 'preview@geins.io';
+    const spoofDate = spoofedUser?.spoofDate;
+
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER,
+      payload: username,
+      maxAge,
+    });
+
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_AUTH,
+      payload: token,
+      maxAge,
+    });
+
+    this.cookieService.set({
+      name: AUTH_COOKIES.USER_MAX_AGE,
+      payload: maxAge.toString(),
+      maxAge,
     });
   }
 }

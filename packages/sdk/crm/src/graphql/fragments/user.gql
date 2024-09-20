@@ -1,8 +1,7 @@
-#import "./address.graphql"
-
+#import "./address.gql"
 fragment User on UserType {
   email
-  personalId
+  entityId: personalId
   customerType
   balanceFormatted
   gender
