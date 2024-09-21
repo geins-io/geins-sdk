@@ -1,12 +1,12 @@
 export enum UserGenderType {
-  UNSPECIFIED = 'UNSPECIFIED',
-  WOMAN = 'WOMAN',
-  MAN = 'MAN',
+  Female = 'WOMAN',
+  Male = 'MAN',
+  Other = 'UNSPECIFIED',
 }
 
 export enum UserCustomerType {
-  PERSON = 'PERSON',
-  ORGANIZATION = 'ORGANIZATION',
+  Private = 'PERSON',
+  Organization = 'ORGANIZATION',
 }
 
 type UserAddressInputType = {
@@ -27,15 +27,18 @@ type UserAddressInputType = {
 };
 
 export type UserInputType = {
-  address?: UserAddressInputType;
-  gender?: UserGenderType;
-  newsletter?: Boolean;
   /**
    * The unique identifier of the entity.
    * If the entity is a person, this field should be the person's ID.
    * If the entity is an organization, this field should be the organization's ID.
    */
   entityId?: String;
+  address?: UserAddressInputType;
+  gender?: UserGenderType;
+  newsletter?: Boolean;
   customerType?: UserCustomerType;
+  /**
+   * The metadata associated with the entity.
+   */
   metaData?: String;
 };

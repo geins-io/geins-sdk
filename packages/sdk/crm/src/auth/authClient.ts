@@ -30,7 +30,7 @@ export abstract class AuthClient {
     return { succeeded: true };
   }
 
-  protected async getUserFromCookie(
+  public async getUserFromCookie(
     token?: string,
     refreshToken?: string,
   ): Promise<AuthResponse | undefined> {
@@ -44,6 +44,13 @@ export abstract class AuthClient {
   }
 
   // get cookie values
+  public getCookieTokens(): any {
+    return {
+      token: this.getCookieUserToken(),
+      refreshToken: this.getCookieRefreshToken(),
+    };
+  }
+
   protected getCookieUser(): string {
     return this.cookieService.get(AUTH_COOKIES.USER);
   }

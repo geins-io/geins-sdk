@@ -215,7 +215,7 @@ const handleChangePassword = async () => {
                           </td>
                           <td>
                             remember: <br />
-                            <input v-model="rememberUser" type="checkbox" title="uawe" />
+                            <input v-model="rememberUser" type="checkbox" />
                           </td>
                         </tr>
                       </table>

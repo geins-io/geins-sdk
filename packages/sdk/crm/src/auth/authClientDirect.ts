@@ -8,7 +8,6 @@ export class AuthClientDirect extends AuthClient {
 
   constructor(signEndpoint: string, authEndpoint: string) {
     super();
-    logWrite('AuthClientDirect Constructor');
     this.authService = new AuthService(signEndpoint, authEndpoint);
   }
 

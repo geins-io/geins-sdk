@@ -14,12 +14,8 @@ import {
   authClaimsTokenSerialize,
   authClaimsTokenSerializeToObject,
 } from '@geins/crm';
-
-//import { AuthClientDirect, AuthClientProxy } from '../../utils/auth';
 const config = useRuntimeConfig();
-
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
-
 const endpoints = buildEndpoints(
   geinsCredentials.apiKey,
   geinsCredentials.accountName,

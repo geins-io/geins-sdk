@@ -57,6 +57,13 @@ export abstract class BaseApiService {
     return parsedResult as T;
   }
 
+  protected async runMutation(query: any, variables: any) {
+    if (!this.client) {
+      throw new Error('Merchant API Client is not set');
+    }
+    return this.client.runMutation(query, variables);
+  }
+
   protected parseResult(result: any): any {
     return result;
   }

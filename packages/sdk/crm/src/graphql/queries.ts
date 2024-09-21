@@ -1,6 +1,6 @@
-import userGet from './user/get.graphql';
-import userRegister from './user/register.graphql';
-import userUpdate from './user/update.graphql';
+import userGet from './user/get.gql';
+import userRegister from './user/register.gql';
+import userUpdate from './user/update.gql';
 
 const queries = {
   userGet,

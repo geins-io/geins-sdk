@@ -5,6 +5,7 @@ import {
   AuthCredentials,
   AuthResponse,
   UserInputType,
+  UserCustomerType,
 } from '@geins/types';
 import { AuthClientDirect, AuthClientProxy } from './auth';
 import { UserService } from './services/userService';
@@ -14,10 +15,14 @@ export interface AuthInterface {
   logout(): Promise<AuthResponse | undefined>;
   refresh(): Promise<AuthResponse | undefined>;
   getUser(): Promise<AuthResponse | undefined>;
+  isLoggedIn(): Promise<Boolean>;
   newUser(
     credentials: AuthCredentials,
     user?: UserInputType,
   ): Promise<AuthResponse | undefined>;
+}
+export interface UserInterface {
+  get(): Promise<AuthResponse | undefined>;
 }
 
 class GeinsCRM extends BasePackage {
@@ -49,7 +54,7 @@ class GeinsCRM extends BasePackage {
     }
   }
 
-  get Auth(): AuthInterface {
+  get auth(): AuthInterface {
     if (!this.authClient) {
       throw new Error('AuthClient is not initialized');
     }
@@ -59,7 +64,32 @@ class GeinsCRM extends BasePackage {
       refresh: this.authClient.refresh.bind(this.authClient),
       getUser: this.authClient.getUser.bind(this.authClient),
       newUser: this.authRegisterNewUser.bind(this),
+      isLoggedIn: this.authUserLoggedIn.bind(this),
     };
+  }
+
+  private async authUserLoggedIn(): Promise<Boolean> {
+    if (!this.authClient) {
+      throw new Error('AuthClient is not initialized');
+    }
+    // see if cookies are present
+    const tokens = this.authClient.getCookieTokens();
+    if (!tokens.token || !tokens.refreshToken) {
+      return false;
+    }
+
+    // see if token time is expired
+    const user = await this.authClient.getUserFromCookie(
+      tokens.token,
+      tokens.refreshToken,
+    );
+    if (!user) {
+      return false;
+    }
+    if (user.tokens?.expired) {
+      return false;
+    }
+    return true;
   }
 
   private async authRegisterNewUser(
@@ -75,20 +105,58 @@ class GeinsCRM extends BasePackage {
     // user will be registered and logged in
     const registerResult = await this.authClient.register(credentials);
 
+    // if not successful registerd in auth throw error
     if (!registerResult?.succeeded) {
       throw new Error('Failed to register user');
     }
-
-    // update user to MC
-    if (!user) {
+    logWrite('user', user);
+    // update user to MC with information
+    if (user) {
       const userResult = await this.userService.update(user);
+      logWrite('userResult', userResult);
       if (!userResult) {
-        throw new Error('Failed to update user');
+        throw new Error('Failed to update user with information');
       }
     }
+    // no info just crate a new user in MC
+    else {
+      const registerUserAs = {
+        newsletter: false,
+        customerType: UserCustomerType.Private,
+      } as UserInputType;
 
-    logWrite('Register result', registerResult);
-    return registerResult;
+      const userResult = await this.userService.create(registerUserAs);
+
+      if (!userResult) {
+        throw new Error('Failed to create user in MC');
+      }
+    }
+    // get user
+
+    return this.authClient.getUser();
+  }
+
+  get user(): UserInterface {
+    if (!this.authClient) {
+      throw new Error('AuthClient is not initialized');
+    }
+    return {
+      get: this.userGet.bind(this),
+    };
+  }
+
+  private async userGet(): Promise<AuthResponse | undefined> {
+    if (!this.authClient) {
+      throw new Error('AuthClient is not initialized');
+    }
+
+    // see if cookies are present
+
+    // see if token time is expired
+
+    // get user from graphql
+
+    return this.authClient.getUser();
   }
 }
 

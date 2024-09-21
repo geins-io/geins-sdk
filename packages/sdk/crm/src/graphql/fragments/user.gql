@@ -3,9 +3,14 @@ fragment User on UserType {
   email
   entityId: personalId
   customerType
-  balanceFormatted
   gender
   address {
     ...Address
   }
+  balances {
+    currency
+    amount
+    amountFormatted
+  }
+  metaData
 }
