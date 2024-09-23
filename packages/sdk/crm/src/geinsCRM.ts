@@ -6,27 +6,14 @@ import {
   AuthResponse,
   UserInputType,
   UserCustomerType,
+  UserType,
 } from '@geins/types';
 import { AuthClientDirect, AuthClientProxy } from './auth';
+import type { AuthInterface, UserInterface } from './types';
 import { UserService } from './services/userService';
 
-export interface AuthInterface {
-  login(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
-  logout(): Promise<AuthResponse | undefined>;
-  refresh(): Promise<AuthResponse | undefined>;
-  getUser(): Promise<AuthResponse | undefined>;
-  isLoggedIn(): Promise<Boolean>;
-  newUser(
-    credentials: AuthCredentials,
-    user?: UserInputType,
-  ): Promise<AuthResponse | undefined>;
-}
-export interface UserInterface {
-  get(): Promise<AuthResponse | undefined>;
-}
-
 class GeinsCRM extends BasePackage {
-  public userService: UserService;
+  private userService: UserService;
   private authClient: AuthClientDirect | AuthClientProxy;
 
   constructor(core: GeinsCore, authSettings: AuthSettings) {
@@ -64,32 +51,20 @@ class GeinsCRM extends BasePackage {
       refresh: this.authClient.refresh.bind(this.authClient),
       getUser: this.authClient.getUser.bind(this.authClient),
       newUser: this.authRegisterNewUser.bind(this),
-      isLoggedIn: this.authUserLoggedIn.bind(this),
     };
   }
 
-  private async authUserLoggedIn(): Promise<Boolean> {
+  private authUserGetFromCookieTokens(): AuthResponse | undefined {
     if (!this.authClient) {
       throw new Error('AuthClient is not initialized');
     }
     // see if cookies are present
     const tokens = this.authClient.getCookieTokens();
     if (!tokens.token || !tokens.refreshToken) {
-      return false;
+      this.authClient.clearCookies();
+      return undefined;
     }
-
-    // see if token time is expired
-    const user = await this.authClient.getUserFromCookie(
-      tokens.token,
-      tokens.refreshToken,
-    );
-    if (!user) {
-      return false;
-    }
-    if (user.tokens?.expired) {
-      return false;
-    }
-    return true;
+    return this.authClient.getUserFromCookie(tokens.token, tokens.refreshToken);
   }
 
   private async authRegisterNewUser(
@@ -141,22 +116,52 @@ class GeinsCRM extends BasePackage {
       throw new Error('AuthClient is not initialized');
     }
     return {
+      isLoggedIn: this.userLoggedIn.bind(this),
       get: this.userGet.bind(this),
+      orders: this.userOrders.bind(this),
     };
   }
 
-  private async userGet(): Promise<AuthResponse | undefined> {
+  private async userGet(): Promise<UserType | undefined> {
+    /*if (!this.authClient) {
+      throw new Error('AuthClient is not initialized');
+    }*/
+
+    // see if cookies are present
+    const userFromCookies = this.authUserGetFromCookieTokens();
+    if (!userFromCookies || userFromCookies.tokens?.expired) {
+      return undefined;
+    }
+
+    return this.userService.get();
+  }
+
+  private userLoggedIn(): Boolean {
     if (!this.authClient) {
       throw new Error('AuthClient is not initialized');
     }
-
     // see if cookies are present
+    const tokens = this.authClient.getCookieTokens();
+    if (!tokens.token || !tokens.refreshToken) {
+      this.authClient.clearCookies();
+      return false;
+    }
 
     // see if token time is expired
+    const user = this.authUserGetFromCookieTokens();
+    if (!user) {
+      return false;
+    }
 
-    // get user from graphql
+    if (!user || user.tokens?.expired) {
+      this.authClient.clearCookies();
+      return false;
+    }
+    return true;
+  }
 
-    return this.authClient.getUser();
+  private async userOrders(): Promise<any> {
+    throw new Error('Method not implemented.');
   }
 }
 

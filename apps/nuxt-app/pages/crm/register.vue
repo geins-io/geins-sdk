@@ -15,6 +15,7 @@ import type {
   UserInputType,
 } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
+
 import Select from '~/components/controls/Select.vue';
 import { fake } from '~/utils/faker';
 
@@ -86,7 +87,7 @@ const username = ref<string>('');
 const password = ref<string>('dZgFCZi66mnPr9D');
 
 const register = async () => {
-  const result = await geinsCRM.Auth.newUser({
+  const result = await geinsCRM.auth.newUser({
     username: username.value,
     password: password.value,
   });
@@ -113,7 +114,7 @@ const registerWithInfo = async () => {
   // copy the userRegister object to avoid changing the original object
   const userObject = JSON.parse(JSON.stringify(userRegister.value));
 
-  const result = await geinsCRM.Auth.newUser(
+  const result = await geinsCRM.auth.newUser(
     {
       username: username.value,
       password: password.value,

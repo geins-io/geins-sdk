@@ -164,10 +164,10 @@ export class AuthService {
   }
 
   // serialize user from jwt token
-  static async getUserObjectFromToken(
+  static getUserObjectFromToken(
     userToken: string,
     refreshToken?: string,
-  ): Promise<AuthResponse> {
+  ): AuthResponse {
     try {
       const userFromToken = authClaimsTokenSerializeToObject(userToken);
       if (!userFromToken) {

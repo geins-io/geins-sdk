@@ -1,18 +1,19 @@
 {
-    "compilerOptions": {
-        "target": "ES5",
-        "module": "ESNext",
-        "moduleResolution": "node",
-        "declaration": true,
-        "outDir": "./dist",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true
-    },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.graphql"
-    ]
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "declaration": true,
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.gql"
+  ]
 }

@@ -30,10 +30,10 @@ export abstract class AuthClient {
     return { succeeded: true };
   }
 
-  public async getUserFromCookie(
+  public getUserFromCookie(
     token?: string,
     refreshToken?: string,
-  ): Promise<AuthResponse | undefined> {
+  ): AuthResponse | undefined {
     token = token || this.getCookieUserToken();
     refreshToken = refreshToken || this.getCookieRefreshToken();
     if (!token || !refreshToken) {

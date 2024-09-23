@@ -9,7 +9,7 @@ export enum UserCustomerType {
   Organization = 'ORGANIZATION',
 }
 
-type UserAddressInputType = {
+export type UserAddressType = {
   firstName?: string;
   lastName?: string;
   addressLine1?: string;
@@ -33,7 +33,7 @@ export type UserInputType = {
    * If the entity is an organization, this field should be the organization's ID.
    */
   entityId?: String;
-  address?: UserAddressInputType;
+  address?: UserAddressType;
   gender?: UserGenderType;
   newsletter?: Boolean;
   customerType?: UserCustomerType;
@@ -41,4 +41,24 @@ export type UserInputType = {
    * The metadata associated with the entity.
    */
   metaData?: String;
+};
+
+export type UserType = {
+  id?: number;
+  email?: string;
+  address?: UserAddressType;
+  gender?: UserGenderType;
+  customerType?: UserCustomerType;
+  newsletter: boolean;
+  entityId?: string;
+  memberType?: string;
+  memberId?: number;
+  balances?: UserBalanceType[];
+  metaData?: string;
+};
+
+export type UserBalanceType = {
+  currency: string;
+  amount: number;
+  amountFormatted?: string;
 };

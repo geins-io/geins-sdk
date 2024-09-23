@@ -1,0 +1,38 @@
+#import "../fragments/cart.gql"
+#import "../fragments/address.gql"
+
+query getOrders($channelId: String, $languageId: String, $marketId: String) {
+  getOrders(
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $marketId
+  ) {
+    cart {
+      ...Cart
+    }
+    billingAddress {
+      ...Address
+    }
+    shippingAddress {
+      ...Address
+    }
+    createdAt
+    id
+    status
+    shippingDetails {
+      name
+      trackingLink
+    }
+    paymentDetails {
+      displayName
+    }
+    refunds {
+      id
+      itemId
+      createdAt
+      reason
+      total
+      vat
+    }
+  }
+}
