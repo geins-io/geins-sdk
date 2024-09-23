@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     geinsCredentials.accountName,
     geinsCredentials.environment,
   );
-  logWrite('Endpoints', endpoints);
+// Remove the logWrite statement
   const authService = new AuthService(endpoints.authSign, endpoints.auth);
 
   const login = async (
