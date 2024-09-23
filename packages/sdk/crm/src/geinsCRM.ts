@@ -101,7 +101,7 @@ class GeinsCRM extends BasePackage {
     if (!registerResult?.succeeded) {
       throw new Error('Failed to register user');
     }
-    logWrite('user', user);
+    // Remove logWrite statement
     // update user to MC with information
     if (user) {
       const userResult = await this.userUpdate(user);
