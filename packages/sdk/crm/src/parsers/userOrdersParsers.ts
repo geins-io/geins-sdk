@@ -10,7 +10,6 @@ import { parseAddress } from './shared';
 import { logWrite } from '@geins/core';
 
 export function parseUserOrders(data: any): UserOrdersOrderType[] {
-  logWrite('parseUserOrders', data.data);
   if (!data || !data.data || !data.data.getOrders) {
     return [];
   }

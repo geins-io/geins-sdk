@@ -1,12 +1,10 @@
-import { AlternativeUrlType } from './shared';
-
 export type BrandsQueryVariables = {
   marketId?: string;
   languageId?: string;
   channelId?: string;
 };
 
-export type BrandType = {
+/* export type BrandType = {
   brandId: number;
   alias?: string;
   slug?: string;
@@ -19,3 +17,4 @@ export type BrandType = {
   canonicalUrl: string;
   alternativeUrls?: AlternativeUrlType[];
 };
+ */

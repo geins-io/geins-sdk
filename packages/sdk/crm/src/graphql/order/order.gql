@@ -1,11 +1,11 @@
 query getOrder(
-  $orderlId: Int
+  $orderId: Int!
   $channelId: String
   $languageId: String
   $marketId: String
 ) {
   getOrder(
-    orderId: $orderlId
+    orderId: $orderId
     channelId: $channelId
     languageId: $languageId
     marketId: $marketId

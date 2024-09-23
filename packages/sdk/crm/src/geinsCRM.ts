@@ -210,7 +210,11 @@ class GeinsCRM extends BasePackage {
   }
 
   private async userOrder(id: number): Promise<any> {
-    throw new Error('Method not implemented.');
+    if (!this.userOrderService) {
+      await this.initUserOrderService();
+    }
+    const order = await this.userOrderService?.get(id);
+    return order;
   }
 
   private async userBalance(): Promise<any> {

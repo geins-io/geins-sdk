@@ -1,7 +1,8 @@
-import type { UserOrdersOrderType } from '@geins/types';
+import type { UserOrdersOrderType, OrderType } from '@geins/types';
 import { BaseApiService, logWrite } from '@geins/core';
 import { queries } from '../graphql';
-import * as userOrdersParsers from '../parsers/userOrderParsers';
+import * as userOrdersParsers from '../parsers/userOrdersParsers';
+import * as orderParsers from '../parsers/orderParsers';
 export class UserOrderService extends BaseApiService {
   private async generateVars(variables: any) {
     return this.createVariables(variables);
@@ -14,7 +15,12 @@ export class UserOrderService extends BaseApiService {
 
   async all(): Promise<UserOrdersOrderType[]> {
     const vars = await this.generateVars({});
-    return this.runQueryParsed(queries.orders, vars);
+    const result = await this.runQuery(queries.orders, vars);
+    return this.parseResultAllOrders(result);
+  }
+
+  protected parseResultAllOrders(result: any): UserOrdersOrderType[] {
+    return userOrdersParsers.parseUserOrders(result);
   }
 
   async getRaw(variables: any): Promise<any> {
@@ -22,13 +28,11 @@ export class UserOrderService extends BaseApiService {
     return this.runQuery(queries.orders, vars);
   }
 
-  async get(): Promise<UserOrdersOrderType[]> {
-    const vars = await this.generateVars({});
-    return this.runQueryParsed(queries.order, vars);
-  }
-
-  protected parseResult(result: any): any {
-    logWrite('UserOrderService.parseResult', result);
-    return userOrdersParsers.parseUserOrders(result);
+  async get(orderId: number): Promise<OrderType> {
+    const vars = await this.generateVars({ orderId: orderId });
+    logWrite('get order', vars);
+    const result = await this.runQuery(queries.order, vars);
+    logWrite('get order', result);
+    return orderParsers.parseOrder(result);
   }
 }

@@ -1,4 +1,5 @@
 export * from './channel';
+export * from './graphQL';
 
 export type CustomerType = 'PERSON' | 'ORGANIZATION';
 
