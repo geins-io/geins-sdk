@@ -152,12 +152,11 @@ export class AuthService {
         return { succeeded: false };
       }
 
-      const authResponse = await AuthService.getUserObjectFromToken(
-        result.token,
-        result.refreshToken,
-      );
+      return await AuthService.getUserObjectFromToken(
+              result.token,
+              result.refreshToken,
+            );
 
-      return authResponse;
     } catch (error) {
       return this.handleError('Register new user failed', error);
     }
