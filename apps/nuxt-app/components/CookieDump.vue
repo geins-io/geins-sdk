@@ -4,6 +4,9 @@ import { cookies } from '~/utils/cookies';
 const items = ref<CookieArrayItem[]>([]);
 
 cookies.getAllCookies().forEach((cookie) => {
+  if (!cookie) return;
+  if (!cookie.name) return;
+  if (!cookie.name.startsWith('geins')) return;
   items.value.push({
     name: cookie.name,
     data: cookie.data,

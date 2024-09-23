@@ -13,13 +13,15 @@ import type { AuthInterface, UserInterface } from './types';
 import { UserService } from './services/userService';
 
 class GeinsCRM extends BasePackage {
-  private userService: UserService;
+  private client: any;
+  private credentials: any;
+
+  private userService: UserService | undefined;
   private authClient: AuthClientDirect | AuthClientProxy;
 
   constructor(core: GeinsCore, authSettings: AuthSettings) {
     super(core);
     const { client, credentials } = core;
-    this.userService = new UserService(client, credentials);
 
     if (authSettings.clientConnectionMode === AuthClientConnectionMode.Proxy) {
       const proxyUrl = authSettings.proxyUrl || '/api/auth';
@@ -38,6 +40,13 @@ class GeinsCRM extends BasePackage {
       );
     } else {
       throw new Error('Invalid client connection mode');
+    }
+  }
+
+  private async initUserService(): Promise<void> {
+    this.userService = new UserService(this.client, this.credentials);
+    if (!this.userService) {
+      throw new Error('Failed to initialize user service');
     }
   }
 
@@ -112,28 +121,15 @@ class GeinsCRM extends BasePackage {
   }
 
   get user(): UserInterface {
-    if (!this.authClient) {
-      throw new Error('AuthClient is not initialized');
-    }
     return {
       isLoggedIn: this.userLoggedIn.bind(this),
       get: this.userGet.bind(this),
+      update: this.userUpdate.bind(this.userService),
       orders: this.userOrders.bind(this),
+      balance: this.userBalance.bind(this),
+      adress: this.userAddress.bind(this),
+      remove: this.userRemove.bind(this),
     };
-  }
-
-  private async userGet(): Promise<UserType | undefined> {
-    /*if (!this.authClient) {
-      throw new Error('AuthClient is not initialized');
-    }*/
-
-    // see if cookies are present
-    const userFromCookies = this.authUserGetFromCookieTokens();
-    if (!userFromCookies || userFromCookies.tokens?.expired) {
-      return undefined;
-    }
-
-    return this.userService.get();
   }
 
   private userLoggedIn(): Boolean {
@@ -160,7 +156,41 @@ class GeinsCRM extends BasePackage {
     return true;
   }
 
+  private async userGet(): Promise<UserType | undefined> {
+    if (!this.userService) {
+      this.initUserService();
+    }
+
+    // see if cookies are present
+    const userFromCookies = this.authUserGetFromCookieTokens();
+    if (!userFromCookies || userFromCookies.tokens?.expired) {
+      return undefined;
+    }
+
+    return this.userService?.get();
+  }
+
+  private async userUpdate(user: UserInputType): Promise<any> {
+    if (!this.userService) {
+      this.initUserService();
+    }
+
+    return this.userService?.update(user);
+  }
+
   private async userOrders(): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
+
+  private async userBalance(): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
+
+  private async userAddress(): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
+
+  private async userRemove(): Promise<any> {
     throw new Error('Method not implemented.');
   }
 }
