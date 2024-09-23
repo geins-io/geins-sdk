@@ -65,6 +65,7 @@ class GeinsCRM extends BasePackage {
     this.authClient.logout();
     return this.authClient.spoofPreviewUser(token);
   }
+
   get auth(): AuthInterface {
     if (!this.authClient) {
       throw new Error('AuthClient is not initialized');

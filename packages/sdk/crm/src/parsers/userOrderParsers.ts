@@ -17,11 +17,11 @@ export function parseUserOrders(data: any): UserOrdersOrderType[] {
 
   const orders = data.data.getOrders;
   return orders.map((order: any) => {
-    return parseUserOrder(order);
+    return parseUserOrdersOrder(order);
   });
 }
 
-export function parseUserOrder(data: any): UserOrdersOrderType {
+export function parseUserOrdersOrder(data: any): UserOrdersOrderType {
   return {
     id: data.id,
     publicId: data.publicId,
