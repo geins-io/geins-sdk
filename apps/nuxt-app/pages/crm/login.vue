@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { GeinsCore, AuthClientConnectionMode, logWrite } from '@geins/core';
 import { GeinsCRM } from '@geins/crm';
 import type {
@@ -17,9 +18,10 @@ const authSettings = {
 
 // State variables
 const email = ref<string>('viola92@gmail.com');
-const password = ref<string>('dZgFCZi66mnPr9D');
+const password = ref<string>('na0o38y987fnbbxm4a7oi');
 const errorMessage = ref<string | null>(null);
-
+// Initialize Geins Core and GeinsCRM
+const router = useRouter();
 // Initialize Geins Core and GeinsCRM
 const core = new GeinsCore(geinsCredentials);
 
@@ -41,7 +43,7 @@ const loginUser = async () => {
     logWrite('Login response', response);
 
     if (response?.succeeded) {
-      // Do something on successful login, e.g., redirect or fetch user profile
+      router.push('/crm/user');
     } else {
       errorMessage.value = 'Login failed. Please check your credentials.';
     }

@@ -139,14 +139,14 @@ export abstract class AuthClient {
     });
   }
 
-  // spoof user for preview
-  public spoofPreviewUser(token: string): void {
+  public spoofPreviewUser(token: string): string {
     this.clearCookies();
     const maxAge = 1800;
     const spoofedUser = authClaimsTokenSerializeToObject(token);
 
     const username = spoofedUser?.spoofedBy || 'preview@geins.io';
     const spoofDate = spoofedUser?.spoofDate;
+    const customerType = spoofedUser?.customerType || 'preview';
 
     this.cookieService.set({
       name: AUTH_COOKIES.USER,
@@ -161,29 +161,8 @@ export abstract class AuthClient {
     });
 
     this.cookieService.set({
-      name: AUTH_COOKIES.USER_MAX_AGE,
-      payload: maxAge.toString(),
-      maxAge,
-    });
-  }
-
-  public spoofPreveiwUser(token: string): void {
-    this.clearCookies();
-    const maxAge = 1800;
-    const spoofedUser = authClaimsTokenSerializeToObject(token);
-
-    const username = spoofedUser?.spoofedBy || 'preview@geins.io';
-    const spoofDate = spoofedUser?.spoofDate;
-
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER,
-      payload: username,
-      maxAge,
-    });
-
-    this.cookieService.set({
-      name: AUTH_COOKIES.USER_AUTH,
-      payload: token,
+      name: AUTH_COOKIES.USER_TYPE,
+      payload: customerType,
       maxAge,
     });
 
@@ -192,5 +171,7 @@ export abstract class AuthClient {
       payload: maxAge.toString(),
       maxAge,
     });
+
+    return JSON.stringify(spoofedUser);
   }
 }

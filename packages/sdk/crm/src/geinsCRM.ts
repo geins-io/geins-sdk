@@ -45,6 +45,11 @@ class GeinsCRM extends BasePackage {
     }
   }
 
+  public spoofUser(token: string): string {
+    this.authClient.logout();
+    return this.authClient.spoofPreviewUser(token);
+  }
+
   private async initUserService(): Promise<void> {
     this.userService = new UserService(this.client, this.credentials);
     if (!this.userService) {
