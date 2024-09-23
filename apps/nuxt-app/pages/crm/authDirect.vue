@@ -8,6 +8,7 @@ import type {
   AuthCredentials,
   AuthResponse,
 } from '@geins/types';
+import CookieDump from '~/components/CookieDump.vue';
 
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;

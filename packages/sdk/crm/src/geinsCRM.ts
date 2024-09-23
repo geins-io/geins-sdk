@@ -7,16 +7,18 @@ import {
   UserInputType,
   UserCustomerType,
   UserType,
+  UserOrdersOrderType,
 } from '@geins/types';
 import { AuthClientDirect, AuthClientProxy } from './auth';
 import type { AuthInterface, UserInterface } from './types';
-import { UserService } from './services/userService';
+import { UserService, UserOrderService } from './services';
 
 class GeinsCRM extends BasePackage {
   private client: any;
   private credentials: any;
 
   private userService: UserService | undefined;
+  private userOrderService: UserOrderService | undefined;
   private authClient: AuthClientDirect | AuthClientProxy;
 
   constructor(core: GeinsCore, authSettings: AuthSettings) {
@@ -45,11 +47,6 @@ class GeinsCRM extends BasePackage {
     }
   }
 
-  public spoofUser(token: string): string {
-    this.authClient.logout();
-    return this.authClient.spoofPreviewUser(token);
-  }
-
   private async initUserService(): Promise<void> {
     this.userService = new UserService(this.client, this.credentials);
     if (!this.userService) {
@@ -57,6 +54,17 @@ class GeinsCRM extends BasePackage {
     }
   }
 
+  private async initUserOrderService(): Promise<void> {
+    this.userOrderService = new UserOrderService(this.client, this.credentials);
+    if (!this.userOrderService) {
+      throw new Error('Failed to initialize user order service');
+    }
+  }
+
+  public spoofUser(token: string): string {
+    this.authClient.logout();
+    return this.authClient.spoofPreviewUser(token);
+  }
   get auth(): AuthInterface {
     if (!this.authClient) {
       throw new Error('AuthClient is not initialized');
@@ -130,17 +138,18 @@ class GeinsCRM extends BasePackage {
 
   get user(): UserInterface {
     return {
-      isLoggedIn: this.userLoggedIn.bind(this),
+      authorized: this.userAuthorized.bind(this),
       get: this.userGet.bind(this),
       update: this.userUpdate.bind(this.userService),
       orders: this.userOrders.bind(this),
+      order: this.userOrder.bind(this),
       balance: this.userBalance.bind(this),
       adress: this.userAddress.bind(this),
       remove: this.userRemove.bind(this),
     };
   }
 
-  private userLoggedIn(): Boolean {
+  private userAuthorized(): Boolean {
     if (!this.authClient) {
       throw new Error('AuthClient is not initialized');
     }
@@ -166,7 +175,7 @@ class GeinsCRM extends BasePackage {
 
   private async userGet(): Promise<UserType | undefined> {
     if (!this.userService) {
-      this.initUserService();
+      await this.initUserService();
     }
 
     // see if cookies are present
@@ -180,19 +189,26 @@ class GeinsCRM extends BasePackage {
 
   private async userCreate(user: UserInputType): Promise<any> {
     if (!this.userService) {
-      this.initUserService();
+      await this.initUserService();
     }
     return this.userService?.create(user);
   }
 
   private async userUpdate(user: UserInputType): Promise<any> {
     if (!this.userService) {
-      this.initUserService();
+      await this.initUserService();
     }
     return this.userService?.update(user);
   }
 
-  private async userOrders(): Promise<any> {
+  private async userOrders(): Promise<UserOrdersOrderType[] | undefined> {
+    if (!this.userOrderService) {
+      await this.initUserOrderService();
+    }
+    return this.userOrderService?.all();
+  }
+
+  private async userOrder(id: number): Promise<any> {
     throw new Error('Method not implemented.');
   }
 

@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { logWrite, GeinsCore, AuthClientConnectionMode } from '@geins/core';
 import type { GeinsCredentials, AuthSettings } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
+import CookieDump from '~/components/CookieDump.vue';
 
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
