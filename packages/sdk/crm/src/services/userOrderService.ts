@@ -9,22 +9,22 @@ export class UserOrderService extends BaseApiService {
 
   async allRaw(variables: any): Promise<any> {
     const vars = await this.generateVars(variables);
-    return this.runQuery(queries.userOrders, vars);
-  }
-
-  async getRaw(variables: any): Promise<any> {
-    const vars = await this.generateVars(variables);
-    return this.runQuery(queries.userOrders, vars);
+    return this.runQuery(queries.orders, vars);
   }
 
   async all(): Promise<UserOrdersOrderType[]> {
     const vars = await this.generateVars({});
-    return this.runQueryParsed(queries.userOrders, vars);
+    return this.runQueryParsed(queries.orders, vars);
+  }
+
+  async getRaw(variables: any): Promise<any> {
+    const vars = await this.generateVars(variables);
+    return this.runQuery(queries.orders, vars);
   }
 
   async get(): Promise<UserOrdersOrderType[]> {
     const vars = await this.generateVars({});
-    return this.runQueryParsed(queries.userOrders, vars);
+    return this.runQueryParsed(queries.order, vars);
   }
 
   protected parseResult(result: any): any {

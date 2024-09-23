@@ -57,7 +57,15 @@ const setUserObject = async () => {
 const getUserOrdersObject = async () => {
   await geinsCRM.user.orders().then((response) => {
     userOrderObject.value = response;
+    if (userOrderObject.value.length > 0) {
+      getUserOrderObject(userOrderObject.value[0].id);
+    }
   });
+};
+
+const getUserOrderObject = async (id: number) => {
+  const order = await geinsCRM.user.order(id);
+  logWrite('order with id:' + id, order);
 };
 
 onMounted(async () => {
