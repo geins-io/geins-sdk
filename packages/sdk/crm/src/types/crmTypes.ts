@@ -14,6 +14,9 @@ export interface AuthInterface {
     credentials: AuthCredentials,
     user?: UserInputType,
   ): Promise<AuthResponse | undefined>;
+  changePassword(
+    credentials: AuthCredentials,
+  ): Promise<AuthResponse | undefined>;
 }
 
 /**

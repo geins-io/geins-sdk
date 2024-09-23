@@ -2,18 +2,25 @@
 import { cookies } from '~/utils/cookies';
 
 const items = ref<CookieArrayItem[]>([]);
-
-cookies.getAllCookies().forEach((cookie) => {
-  if (!cookie) return;
-  if (!cookie.name) return;
-  if (!cookie.name.startsWith('geins')) return;
-  items.value.push({
-    name: cookie.name,
-    data: cookie.data,
+const fillItems = () => {
+  items.value = [];
+  cookies.getAllCookies().forEach((cookie) => {
+    if (!cookie) return;
+    if (!cookie.name) return;
+    if (!cookie.name.startsWith('geins')) return;
+    items.value.push({
+      name: cookie.name,
+      data: cookie.data,
+    });
   });
-});
+};
 
-onMounted(() => { });
+onMounted(() => {
+  fillItems();
+  setInterval(() => {
+    fillItems();
+  }, 1000);
+});
 </script>
 <template>
   <div>

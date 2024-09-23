@@ -22,6 +22,8 @@ class GeinsCRM extends BasePackage {
   constructor(core: GeinsCore, authSettings: AuthSettings) {
     super(core);
     const { client, credentials } = core;
+    this.client = client;
+    this.credentials = credentials;
 
     if (authSettings.clientConnectionMode === AuthClientConnectionMode.Proxy) {
       const proxyUrl = authSettings.proxyUrl || '/api/auth';
@@ -59,6 +61,7 @@ class GeinsCRM extends BasePackage {
       logout: this.authClient.logout.bind(this.authClient),
       refresh: this.authClient.refresh.bind(this.authClient),
       getUser: this.authClient.getUser.bind(this.authClient),
+      changePassword: this.authClient.changePassword.bind(this.authClient),
       newUser: this.authRegisterNewUser.bind(this),
     };
   }
@@ -96,7 +99,7 @@ class GeinsCRM extends BasePackage {
     logWrite('user', user);
     // update user to MC with information
     if (user) {
-      const userResult = await this.userService.update(user);
+      const userResult = await this.userUpdate(user);
       logWrite('userResult', userResult);
       if (!userResult) {
         throw new Error('Failed to update user with information');
@@ -109,7 +112,7 @@ class GeinsCRM extends BasePackage {
         customerType: UserCustomerType.Private,
       } as UserInputType;
 
-      const userResult = await this.userService.create(registerUserAs);
+      const userResult = await this.userCreate(registerUserAs);
 
       if (!userResult) {
         throw new Error('Failed to create user in MC');
@@ -170,11 +173,17 @@ class GeinsCRM extends BasePackage {
     return this.userService?.get();
   }
 
+  private async userCreate(user: UserInputType): Promise<any> {
+    if (!this.userService) {
+      this.initUserService();
+    }
+    return this.userService?.create(user);
+  }
+
   private async userUpdate(user: UserInputType): Promise<any> {
     if (!this.userService) {
       this.initUserService();
     }
-
     return this.userService?.update(user);
   }
 

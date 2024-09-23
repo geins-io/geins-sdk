@@ -30,7 +30,7 @@ export class AuthServiceClient {
   private extractRefreshTokenFromResponse(response: Response): string {
     const refreshTokenHeader = response.headers.get(AUTH_HEADERS.REFRESH_TOKEN);
     if (!refreshTokenHeader) {
-      throw new Error('Failed to fetch refresh token');
+      throw new Error('Error');
     }
     return refreshTokenHeader;
   }

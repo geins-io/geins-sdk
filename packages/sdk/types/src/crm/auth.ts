@@ -157,7 +157,19 @@ export enum AuthClientConnectionMode {
   Proxy = 'Proxy',
   Direct = 'Direct',
 }
+
+/**
+ * Authentication settings used by the client.
+ */
 export interface AuthSettings {
+  /**
+   * The client connection mode used for authentication.
+   */
   clientConnectionMode: AuthClientConnectionMode;
+  /**
+   * The URL of the proxy server used for authentication.
+   * This field is optional.
+   * Defaults to `/api/auth` if not provided.
+   */
   proxyUrl?: string;
 }
