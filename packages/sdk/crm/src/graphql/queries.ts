@@ -1,7 +1,13 @@
-import user from './user/user.graphql';
+import userGet from './user/get.gql';
+import userRegister from './user/register.gql';
+import userUpdate from './user/update.gql';
+import userOrders from './user/orders.gql';
 
 const queries = {
-  user,
+  userGet,
+  userRegister,
+  userUpdate,
+  userOrders,
 };
 
 export { queries };

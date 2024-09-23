@@ -8,3 +8,13 @@ export interface KeyValue {
   key: string;
   value: string;
 }
+
+export type GeinsCredentials = {
+  apiKey: string;
+  accountName: string;
+  channel: string;
+  tld: string;
+  locale: string;
+  market: string;
+  environment?: Environment;
+};

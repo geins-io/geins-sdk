@@ -139,22 +139,34 @@ export class AuthService {
     }
   }
 
-  // logout user
-  public async logout(currentRefreshtoken: string): Promise<AuthResponse> {
-    this.ensureClientInitialized();
+  // register new user
+  public async register(credentials: AuthCredentials): Promise<AuthResponse> {
     try {
-      const result = await this.client!.logout(currentRefreshtoken);
-      return { succeeded: result };
+      this.ensureClientInitialized();
+      const result = await this.client!.register(
+        credentials.username,
+        credentials.password,
+      );
+
+      if (!result) {
+        return { succeeded: false };
+      }
+
+      return await AuthService.getUserObjectFromToken(
+              result.token,
+              result.refreshToken,
+            );
+
     } catch (error) {
-      return this.handleError('Logout failed', error);
+      return this.handleError('Register new user failed', error);
     }
   }
 
   // serialize user from jwt token
-  static async getUserObjectFromToken(
+  static getUserObjectFromToken(
     userToken: string,
     refreshToken?: string,
-  ): Promise<AuthResponse> {
+  ): AuthResponse {
     try {
       const userFromToken = authClaimsTokenSerializeToObject(userToken);
       if (!userFromToken) {

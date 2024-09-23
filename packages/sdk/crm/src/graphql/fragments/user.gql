@@ -1,0 +1,16 @@
+#import "./address.gql"
+#import "./balances.gql"
+fragment User on UserType {
+  id
+  email
+  entityId: personalId
+  customerType
+  gender
+  address {
+    ...Address
+  }
+  balances {
+    ...UserBalance
+  }
+  metaData
+}

@@ -27,6 +27,14 @@ export class AuthServiceClient {
     return `${this.signEndpoint}${encodeURIComponent(signature)}`;
   }
 
+  private extractRefreshTokenFromResponse(response: Response): string {
+    const refreshTokenHeader = response.headers.get(AUTH_HEADERS.REFRESH_TOKEN);
+    if (!refreshTokenHeader) {
+      throw new Error('Error');
+    }
+    return refreshTokenHeader;
+  }
+
   private async requestAuthChallenge(username: string): Promise<string> {
     const url = this.getAuthEndpointUrl('login');
     const options: RequestInit = {
@@ -64,14 +72,6 @@ export class AuthServiceClient {
       throw new Error('Failed to verify challenge: Empty response');
     }
     return JSON.parse(text);
-  }
-
-  private extractRefreshTokenFromResponse(response: Response): string {
-    const refreshTokenHeader = response.headers.get(AUTH_HEADERS.REFRESH_TOKEN);
-    if (!refreshTokenHeader) {
-      throw new Error('Failed to fetch refresh token');
-    }
-    return refreshTokenHeader;
   }
 
   private async fetchUserToken(
@@ -200,6 +200,58 @@ export class AuthServiceClient {
       token: retval.token,
       refreshToken,
     };
+  }
+
+  private async performUserRegister(
+    username: string,
+    password: string,
+  ): Promise<AuthUserToken> {
+    const url = this.getAuthEndpointUrl('register');
+
+    const challangeToken = await this.requestAuthChallenge(username);
+    const authenticationSignature =
+      await this.verifyAuthChallenge(challangeToken);
+
+    const requestBody: Record<string, any> = {
+      username,
+      signature: authenticationSignature,
+      password: await digest(password),
+    };
+
+    const requestOptions: RequestInit = {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    };
+
+    const response = await fetch(url, requestOptions);
+    if (!response.ok) {
+      throw new Error(`Failed to register user: ${response.statusText}`);
+    }
+
+    const refreshToken = this.extractRefreshTokenFromResponse(response);
+
+    const userToken = await response.text();
+    if (!userToken) {
+      throw new Error('Failed to register user: Empty response');
+    }
+
+    const retval = JSON.parse(userToken);
+    return {
+      maxAge: retval.maxAge,
+      token: retval.token,
+      refreshToken,
+    };
+  }
+
+  public async register(
+    username: string,
+    password: string,
+  ): Promise<AuthUserToken> {
+    return this.performUserRegister(username, password);
   }
 
   public async login(

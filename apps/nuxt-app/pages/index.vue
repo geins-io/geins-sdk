@@ -17,9 +17,12 @@ import { ref } from 'vue';
           <NuxtLink to="/core/routing">Routing</NuxtLink>
         </td>
         <td>
-          <NuxtLink to="/crm/auth">Authenticate</NuxtLink><br />
+          <NuxtLink to="/crm/register">Register User / New User</NuxtLink><br />
+          <NuxtLink to="/crm/authdirect">Authenticate - Direct Mode</NuxtLink><br />
+          <NuxtLink to="/crm/authproxy">Authenticate - Proxy Mode</NuxtLink><br />
+          <NuxtLink to="/crm/login">Simple Login</NuxtLink><br />
           <NuxtLink to="/crm/user">Current User</NuxtLink><br />
-          <NuxtLink to="/crm/spoof">Spoof User</NuxtLink>
+          <NuxtLink to="/crm/spoof">Spoof User</NuxtLink><br />
         </td>
         <td>
           <NuxtLink to="/cms/area">Area</NuxtLink><br />

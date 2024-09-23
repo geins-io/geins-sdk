@@ -1,0 +1,5 @@
+fragment UserBalance on UserBalanceType {
+  currency
+  amount
+  #amountFormatted
+}

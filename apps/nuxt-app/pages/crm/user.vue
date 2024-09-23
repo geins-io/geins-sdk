@@ -1,113 +1,93 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { logWrite, GeinsCore, buildEndpoints } from '@geins/core';
-import type { GeinsCredentials } from '@geins/core';
-import {
-  AuthClientDirect,
-  AuthClientProxy,
-  authClaimsTokenSerialize,
-  authClaimsTokenSerializeToObject,
-} from '@geins/crm';
-
-enum Connection {
-  Proxy = 'Proxy',
-  Direct = 'Direct',
-  None = 'None',
-}
-
-type ConnectionType = Connection.Proxy | Connection.Direct | Connection.None;
+import { logWrite, GeinsCore, AuthClientConnectionMode } from '@geins/core';
+import type { GeinsCredentials, AuthSettings } from '@geins/types';
+import { GeinsCRM } from '@geins/crm';
 
 const config = useRuntimeConfig();
-const items = ref<any[]>([]);
-const user = ref<any>({});
-const connectionType = ref<ConnectionType>(Connection.Direct);
-
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
-
-const endpoints = buildEndpoints(
-  geinsCredentials.apiKey,
-  geinsCredentials.accountName,
-  geinsCredentials.environment,
-);
+const authSettings = {
+  clientConnectionMode: AuthClientConnectionMode.Direct,
+} as AuthSettings;
 
 const geinsCore = new GeinsCore(geinsCredentials);
-const authClientProxy = new AuthClientProxy('/api/auth');
-const authClientDirect = new AuthClientDirect(
-  endpoints.authSign,
-  endpoints.auth,
-);
+const geinsCRM = new GeinsCRM(geinsCore, authSettings);
+const timeToLoggout = ref<number>(900);
+const isLoggedIn = ref<boolean>(false);
+const userObject = ref<any>(null);
+const authObject = ref<any>(null);
+
+const checkUserLoggedIn = () => {
+  const result = geinsCRM.user.isLoggedIn();
+  if (result === true) {
+    isLoggedIn.value = true;
+    return true;
+  } else {
+    isLoggedIn.value = false;
+    return false;
+  }
+};
 
 const userLoggedIn = computed(() => {
-  return false;
-  //return user.value && user.value?.tokens?.expired === false;
+  checkUserLoggedIn();
+  return isLoggedIn.value;
 });
 
-const authClient = computed(() => {
-  if (connectionType.value === Connection.Proxy) {
-    return authClientProxy;
-  } else {
-    return authClientDirect;
-  }
-});
+const setAuthObject = async (response: any) => {
+  authObject.value = response;
+  response?.tokens?.expiresIn
+    ? (timeToLoggout.value = response.tokens.expiresIn)
+    : null;
+};
+
+const getAuthObject = async () => {
+  await geinsCRM.auth.getUser().then((response) => {
+    setAuthObject(response);
+  });
+};
+
+const setUserObject = async () => {
+  await geinsCRM.user.get().then((response) => {
+    userObject.value = response;
+  });
+};
 
 onMounted(async () => {
-  connectionType.value = Connection.Direct;
-  updateCookiesDisplay();
-  await getUser();
+  await setUserObject();
+  await getAuthObject();
+  setInterval(() => {
+    timeToLoggout.value -= 1;
+    if (timeToLoggout.value <= 0) {
+      geinsCRM.auth.logout();
+    }
+  }, 1000);
 });
-/**
- * Fetches and updates the user information.
- */
-const setConnectionType = async (type: ConnectionType) => {
-  if (type === Connection.None) {
-    return;
-  }
-  // handleLogout();
-  connectionType.value = type;
-};
 
 /**
  * Fetches and updates the user information.
  */
 const getUser = async () => {
-  const result = await authClient.value?.getUser();
-  logWrite(`Getting user by: ${connectionType.value}`, result);
-  updateCookiesDisplay();
-  user.value = result;
+  setUserObject();
 };
 
 /**
  * Handles token refresh based on the current connection type.
  */
 const handleRefresh = async () => {
-  const result = await authClient.value?.refresh();
-  logWrite(`handleRefresh() result`, result);
-  updateCookiesDisplay();
-  user.value = result;
-};
-
-/**
- * Updates the displayed cookies.
- */
-const updateCookiesDisplay = () => {
-  items.value = [];
-  const allCookies = geinsCore.cookies.getAll() as any;
-  for (const key in allCookies) {
-    items.value.push({
-      header: key,
-      data: JSON.stringify(allCookies[key], null, 2),
-    });
-  }
+  geinsCRM.auth.refresh().then((response) => {
+    authObject.value = response;
+    setAuthObject(response);
+  });
 };
 </script>
 
 <template>
   <div>
-    <h2>Nuxt @geins/crm auth</h2>
+    <h2>Nuxt @geins/crm current user</h2>
 
     <p>
-      This page demonstrates the usage of the AuthClientProxy and
-      AuthClientDirect classes.
+      This page demonstrates how to use the <b>@geins/crm</b> package to get the
+      current user.
     </p>
     <p>
       <b>
@@ -120,59 +100,37 @@ const updateCookiesDisplay = () => {
         <td style="vertical-align: top">
           <table>
             <tr>
-              <td>
-                1. Connection Type <b>{{ connectionType }}</b>:
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <button :disabled="userLoggedIn || connectionType === Connection.Direct
-                  " @click="setConnectionType(Connection.Direct)">
-                  Set to Direct
-                </button>
-                <button :disabled="userLoggedIn || connectionType === Connection.Proxy
-                  " @click="setConnectionType(Connection.Proxy)">
-                  Set to Proxy
-                </button>
-              </td>
-            </tr>
-            <tr>
               <td>2. Actions:</td>
             </tr>
             <tr>
               <td>
-                <button @click="getUser">Get User</button>
-                <button @click="handleRefresh">Refresh</button>
+                <button :disabled="userLoggedIn === false" @click="getUser">
+                  Get User
+                </button>
+                <button :disabled="userLoggedIn === false" @click="handleRefresh">
+                  Refresh
+                </button>
               </td>
             </tr>
           </table>
           <hr />
           <div>
-            Current CRM cookies:
-            <div v-for="(item, index) in items" v-if="items.length > 0" :key="index">
-              <p>
-                <b>{{ item.header }}</b><br />
-                <textarea :style="{
-                  border: 0,
-                  width: '400px',
-                  height:
-                    item.data.length > 100
-                      ? Math.min(200, item.data.length * 10) + 'px'
-                      : '20px',
-                }">{{ item.data }}</textarea>
-              </p>
-            </div>
-            <i v-else> ... no cookies set </i>
+            <CookieDump />
           </div>
         </td>
         <td style="vertical-align: top; padding-left: 50px">
-          <div v-if="connectionType">
-            <b>Connection Type:</b>
-            <pre>{{ connectionType }}</pre>
+          <b>User is logged in: {{ userLoggedIn }}</b><br /><br />
+          <div v-if="userLoggedIn">
+            <b>Time to logout: {{ timeToLoggout }}</b><br /><br />
           </div>
-          <div v-if="user" style="width: 500px; overflow-x: scroll">
-            <b>Response Object:</b>
-            <pre>{{ JSON.stringify(user, null, 2) }}</pre>
+          <div v-if="authObject" style="width: 500px; overflow-x: scroll">
+            <b>Auth Object:</b>
+            <pre>{{ JSON.stringify(authObject, null, 2) }}</pre>
+          </div>
+
+          <div v-if="userObject" style="width: 500px; overflow-x: scroll">
+            <b>User Object:</b>
+            <pre>{{ JSON.stringify(userObject, null, 2) }}</pre>
           </div>
         </td>
       </tr>

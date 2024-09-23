@@ -54,7 +54,6 @@ export class AuthClientProxy extends AuthClient {
     if (result.succeeded) {
       this.setCookiesLogin(result, credentials.rememberUser || false);
     }
-    logWrite('login', result);
 
     return result;
   }
@@ -82,11 +81,6 @@ export class AuthClientProxy extends AuthClient {
     return result;
   }
 
-  async logout(): Promise<boolean> {
-    this.clearCookies();
-    return true;
-  }
-
   async refresh(): Promise<AuthResponse | undefined> {
     const result = await this.request<AuthResponse>('/refresh', {
       method: 'GET',
@@ -109,7 +103,6 @@ export class AuthClientProxy extends AuthClient {
 
   async getUser(): Promise<AuthResponse | undefined> {
     const refreshToken = this.getCookieRefreshToken();
-    logWrite('getUser', refreshToken);
     if (!refreshToken) {
       return undefined;
     }
@@ -142,11 +135,17 @@ export class AuthClientProxy extends AuthClient {
     return user;
   }
 
-  async register(credentials: AuthCredentials): Promise<AuthResponse> {
+  async register(
+    credentials: AuthCredentials,
+  ): Promise<AuthResponse | undefined> {
     const result = await this.request<AuthResponse>('/register', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
+
+    if (!result) {
+      return undefined;
+    }
 
     if (result.succeeded) {
       this.setCookiesLogin(result, credentials.rememberUser || false);

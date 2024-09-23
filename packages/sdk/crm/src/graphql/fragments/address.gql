@@ -1,13 +1,16 @@
 fragment Address on AddressType {
   firstName
   lastName
+  company
+  mobile
+  phone
   careOf
+  entryCode
   addressLine1
   addressLine2
+  addressLine3
   zip
   city
+  state
   country
-  entryCode
-  mobile
-  company
 }
