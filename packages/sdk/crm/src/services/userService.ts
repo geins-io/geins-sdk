@@ -13,7 +13,7 @@ export class UserService extends BaseApiService {
       delete variables.user.entityId;
     }
     if (variables.user) {
-      const newsletter = variables.user.newsletter === 'true' ? true : false;
+      const newsletter = !!(variables.user.newsletter === 'true');
       variables.user.newsletter = newsletter;
     }
     return this.createVariables(variables);
