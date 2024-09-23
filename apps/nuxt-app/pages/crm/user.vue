@@ -17,9 +17,10 @@ const timeToLoggout = ref<number>(900);
 const isLoggedIn = ref<boolean>(false);
 const userObject = ref<any>(null);
 const authObject = ref<any>(null);
+const userOrderObject = ref<any>(null);
 
 const checkUserLoggedIn = () => {
-  const result = geinsCRM.user.isLoggedIn();
+  const result = geinsCRM.user.authorized();
   if (result === true) {
     isLoggedIn.value = true;
     return true;
@@ -53,11 +54,23 @@ const setUserObject = async () => {
   });
 };
 
+const getUserOrdersObject = async () => {
+  await geinsCRM.user.orders().then((response) => {
+    userOrderObject.value = response;
+  });
+};
+
 onMounted(async () => {
   await setUserObject();
   await getAuthObject();
+  await getUserOrdersObject();
   setInterval(() => {
     timeToLoggout.value -= 1;
+    if (timeToLoggout.value <= 100) {
+      geinsCRM.auth.refresh().then((response) => {
+        setAuthObject(response);
+      });
+    }
     if (timeToLoggout.value <= 0) {
       geinsCRM.auth.logout();
     }
@@ -123,6 +136,10 @@ const handleRefresh = async () => {
           <b>User is logged in: {{ userLoggedIn }}</b><br /><br />
           <div v-if="userLoggedIn">
             <b>Time to logout: {{ timeToLoggout }}</b><br /><br />
+          </div>
+          <div v-if="userOrderObject" style="width: 500px; overflow-x: scroll">
+            <b>User Order Object:</b>
+            <pre>{{ JSON.stringify(userOrderObject, null, 2) }}</pre>
           </div>
           <div v-if="authObject" style="width: 500px; overflow-x: scroll">
             <b>Auth Object:</b>

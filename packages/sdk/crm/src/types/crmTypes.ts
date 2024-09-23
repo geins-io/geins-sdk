@@ -3,6 +3,8 @@ import {
   AuthResponse,
   UserInputType,
   UserType,
+  UserAddressType,
+  UserOrdersOrderType,
 } from '@geins/types';
 
 export interface AuthInterface {
@@ -24,10 +26,11 @@ export interface AuthInterface {
  * This interface is used to define the user service
  */
 export interface UserInterface {
-  isLoggedIn(): Boolean;
+  authorized(): Boolean;
   get(): Promise<UserType | undefined>;
   update(user: UserInputType): Promise<any>;
-  orders(): Promise<any>;
+  orders(): Promise<UserOrdersOrderType[] | undefined>;
+  order(id: number): Promise<any>;
   balance(): Promise<any>;
   adress(): Promise<any>;
   remove(): Promise<any>;

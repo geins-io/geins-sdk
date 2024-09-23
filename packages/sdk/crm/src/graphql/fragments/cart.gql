@@ -1,6 +1,5 @@
 #import "./price.gql"
 #import "./stock.gql"
-#import "./campaign.gql"
 
 fragment Cart on CartType {
   id
