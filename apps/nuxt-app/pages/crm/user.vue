@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { logWrite, GeinsCore, AuthClientConnectionMode } from '@geins/core';
+import { logWrite, GeinsCore, AuthClientConnectionModes } from '@geins/core';
 import type { GeinsCredentials, AuthSettings } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 import CookieDump from '~/components/CookieDump.vue';
@@ -8,7 +8,7 @@ import CookieDump from '~/components/CookieDump.vue';
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const authSettings = {
-  clientConnectionMode: AuthClientConnectionMode.Direct,
+  clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
 
 const geinsCore = new GeinsCore(geinsCredentials);
@@ -121,7 +121,10 @@ const handleRefresh = async () => {
                 <button :disabled="userLoggedIn === false" @click="getUser">
                   Get User
                 </button>
-                <button :disabled="userLoggedIn === false" @click="handleRefresh">
+                <button
+                  :disabled="userLoggedIn === false"
+                  @click="handleRefresh"
+                >
                   Refresh
                 </button>
               </td>
@@ -133,9 +136,11 @@ const handleRefresh = async () => {
           </div>
         </td>
         <td style="vertical-align: top; padding-left: 50px">
-          <b>User is logged in: {{ userLoggedIn }}</b><br /><br />
+          <b>User is logged in: {{ userLoggedIn }}</b
+          ><br /><br />
           <div v-if="userLoggedIn">
-            <b>Time to logout: {{ timeToLoggout }}</b><br /><br />
+            <b>Time to logout: {{ timeToLoggout }}</b
+            ><br /><br />
           </div>
           <div v-if="userOrderObject" style="width: 500px; overflow-x: scroll">
             <b>User Order Object:</b>

@@ -5,6 +5,7 @@ import { AuthService } from './authService';
 
 export class AuthClientProxy extends AuthClient {
   private readonly authEndpointApp: string;
+  private refreshToken: string | undefined;
 
   constructor(authEndpointApp: string) {
     super();
@@ -12,7 +13,7 @@ export class AuthClientProxy extends AuthClient {
   }
 
   private async request<T>(path: string, options: RequestInit): Promise<T> {
-    const refreshToken = this.getCookieRefreshToken();
+    const refreshToken = this.refreshToken || this.getCookieRefreshToken();
 
     if (!options.headers) {
       options.headers = { 'Content-Type': 'application/json' };
@@ -81,7 +82,8 @@ export class AuthClientProxy extends AuthClient {
     return result;
   }
 
-  async refresh(): Promise<AuthResponse | undefined> {
+  async refresh(refreshToken?: string): Promise<AuthResponse | undefined> {
+    this.refreshToken = refreshToken;
     const result = await this.request<AuthResponse>('/refresh', {
       method: 'GET',
     });
@@ -95,29 +97,44 @@ export class AuthClientProxy extends AuthClient {
     }
 
     if (result && result.succeeded && result.tokens?.token) {
-      this.setCookieUserToken(result.tokens.token);
+      const maxAge = result.tokens.maxAge || 900;
+      this.setCookieUserToken(result.tokens.token, maxAge);
     }
 
     return result;
   }
 
-  async getUser(): Promise<AuthResponse | undefined> {
-    const refreshToken = this.getCookieRefreshToken();
-    if (!refreshToken) {
+  async getUser(
+    refreshToken?: string,
+    userToken?: string,
+  ): Promise<AuthResponse | undefined> {
+    this.refreshToken = refreshToken;
+    let user = undefined;
+    const cookieRefreshToken = this.getCookieRefreshToken();
+    const refreshTokenValue = this.refreshToken || cookieRefreshToken;
+    if (!refreshTokenValue) {
       return undefined;
     }
-    const userToken = this.getCookieUserToken();
-    const user = await AuthService.getUserObjectFromToken(
-      userToken,
-      refreshToken,
-    );
-    if (!user) {
-      return undefined;
+
+    const cookieUserToken = this.getCookieUserToken();
+    const userTokenValue = userToken || cookieUserToken;
+
+    if (userTokenValue && refreshTokenValue) {
+      user = await AuthService.getUserObjectFromToken(
+        userTokenValue,
+        refreshTokenValue,
+      );
+      logWrite('🚀 ~ AuthClientProxy ~ user:', user);
+      if (!user) {
+        return undefined;
+      }
     }
-    if (user.tokens?.expiresSoon) {
+
+    if ((this.refreshToken && !userToken) || user?.tokens?.expiresSoon) {
       const result = await this.request<AuthResponse>('/user', {
         method: 'GET',
       });
+      logWrite('🚀 ~ AuthClientProxy ~ getUser ~ result:', result);
 
       if (!result || !result.succeeded) {
         return undefined;
@@ -128,7 +145,8 @@ export class AuthClientProxy extends AuthClient {
       }
 
       if (result && result.succeeded && result.tokens?.token) {
-        this.setCookieUserToken(result.tokens.token);
+        const maxAge = result.tokens.maxAge || 900;
+        this.setCookieUserToken(result.tokens.token, maxAge);
       }
       return result;
     }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { GeinsCore, AuthClientConnectionMode, logWrite } from '@geins/core';
+import { GeinsCore, AuthClientConnectionModes, logWrite } from '@geins/core';
 import { GeinsCRM } from '@geins/crm';
 import type {
   GeinsCredentials,
@@ -13,7 +13,7 @@ import CookieDump from '~/components/CookieDump.vue';
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const authSettings = {
-  clientConnectionMode: AuthClientConnectionMode.Direct,
+  clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
 
 // Initialize Geins Core and GeinsCRM
@@ -61,10 +61,10 @@ const handleLogin = async (validCredentials = true) => {
   const loginCredentials = validCredentials
     ? credentials.value
     : {
-      username: 'error',
-      password: 'error',
-      rememberUser: true,
-    };
+        username: 'error',
+        password: 'error',
+        rememberUser: true,
+      };
   try {
     // Create credentials object
     const credentials: AuthCredentials = {
@@ -190,10 +190,16 @@ const handleChangePassword = async () => {
             </tr>
             <tr>
               <td>
-                <button :disabled="userLoggedIn === true" @click="handleLogin(true)">
+                <button
+                  :disabled="userLoggedIn === true"
+                  @click="handleLogin(true)"
+                >
                   Login Good
                 </button>
-                <button :disabled="userLoggedIn === true" @click="handleLogin(false)">
+                <button
+                  :disabled="userLoggedIn === true"
+                  @click="handleLogin(false)"
+                >
                   Login Bad
                 </button>
               </td>
@@ -208,16 +214,28 @@ const handleChangePassword = async () => {
             </tr>
             <tr>
               <td>
-                <button :disabled="userLoggedIn === false" @click="handleUpdate">
+                <button
+                  :disabled="userLoggedIn === false"
+                  @click="handleUpdate"
+                >
                   Get User
                 </button>
-                <button :disabled="userLoggedIn === false" @click="handleRefresh">
+                <button
+                  :disabled="userLoggedIn === false"
+                  @click="handleRefresh"
+                >
                   Refresh
                 </button>
-                <button :disabled="userLoggedIn === false" @click="handleChangePassword">
+                <button
+                  :disabled="userLoggedIn === false"
+                  @click="handleChangePassword"
+                >
                   Change Password
                 </button>
-                <button :disabled="userLoggedIn === false" @click="handleLogout">
+                <button
+                  :disabled="userLoggedIn === false"
+                  @click="handleLogout"
+                >
                   Logout
                 </button>
               </td>

@@ -59,18 +59,23 @@ export class AuthClientDirect extends AuthClient {
     }
 
     if (result && result.succeeded && result.tokens?.token) {
-      this.setCookieUserToken(result.tokens.token);
+      const maxAge = result.tokens.maxAge || 900;
+      this.setCookieUserToken(result.tokens.token, maxAge);
     }
     return result;
   }
 
-  async getUser(): Promise<AuthResponse | undefined> {
-    const refreshToken = this.getCookieRefreshToken();
+  async getUser(
+    refreshToken?: string,
+    userToken?: string,
+  ): Promise<AuthResponse | undefined> {
+    refreshToken = refreshToken || this.getCookieRefreshToken();
     if (!refreshToken) {
       return undefined;
     }
-    const userToken = this.getCookieUserToken();
+    userToken = userToken || this.getCookieUserToken();
     const result = await this.authService.getUser(refreshToken, userToken);
+    logWrite('🚀 ~ AuthClientDirect ~ getUser ~ result:', result);
     if (!result || !result.succeeded) {
       return undefined;
     }
@@ -80,7 +85,8 @@ export class AuthClientDirect extends AuthClient {
     }
 
     if (result && result.succeeded && result.tokens?.token) {
-      this.setCookieUserToken(result.tokens.token);
+      const maxAge = result.tokens.maxAge || 900;
+      this.setCookieUserToken(result.tokens.token, maxAge);
     }
     return result;
   }

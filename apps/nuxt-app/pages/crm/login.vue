@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { GeinsCore, AuthClientConnectionMode, logWrite } from '@geins/core';
+import { GeinsCore, AuthClientConnectionModes, logWrite } from '@geins/core';
 import { GeinsCRM } from '@geins/crm';
 import type {
   GeinsCredentials,
@@ -13,7 +13,7 @@ import type {
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const authSettings = {
-  clientConnectionMode: AuthClientConnectionMode.Direct,
+  clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
 
 // State variables

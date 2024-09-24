@@ -19,7 +19,10 @@ export abstract class AuthClient {
     credentials: AuthCredentials,
   ): Promise<AuthResponse | undefined>;
 
-  abstract getUser(): Promise<AuthResponse | undefined>;
+  abstract getUser(
+    refreshToken?: string,
+    userToken?: string,
+  ): Promise<AuthResponse | undefined>;
 
   abstract register(
     credentials: AuthCredentials,
@@ -77,6 +80,7 @@ export abstract class AuthClient {
     rememberUser: boolean,
   ): void {
     const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes
+    const tokenMaxAge = authResponse?.tokens?.maxAge || 900;
     const { user, tokens } = authResponse;
 
     this.cookieService.set({
@@ -90,7 +94,7 @@ export abstract class AuthClient {
     }
 
     if (tokens?.token) {
-      this.setCookieUserToken(tokens.token, maxAge);
+      this.setCookieUserToken(tokens.token, tokenMaxAge);
     }
 
     if (user?.username) {
@@ -122,10 +126,7 @@ export abstract class AuthClient {
     });
   }
 
-  protected setCookieUserToken(token: string, maxAge?: number): void {
-    if (!maxAge) {
-      maxAge = this.getCookieMaxAge();
-    }
+  protected setCookieUserToken(token: string, maxAge: number): void {
     this.cookieService.set({
       name: AUTH_COOKIES.USER_AUTH,
       payload: token,
