@@ -1,4 +1,4 @@
-query getOrder(
+query getUserOrder(
   $orderId: Int!
   $channelId: String
   $languageId: String

@@ -1,7 +1,11 @@
 #import "../fragments/price.gql"
 #import "../fragments/address.gql"
 
-query getOrders($channelId: String, $languageId: String, $marketId: String) {
+query getUserOrders(
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
   getOrders(
     channelId: $channelId
     languageId: $languageId
