@@ -4,3 +4,4 @@ export * from './common';
 export * from './crm';
 export * from './pim';
 export * from './search';
+export * from './generated';

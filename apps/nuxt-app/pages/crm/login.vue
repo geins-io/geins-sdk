@@ -20,11 +20,12 @@ const authSettings = {
 const email = ref<string>('viola92@gmail.com');
 const password = ref<string>('na0o38y987fnbbxm4a7oi');
 const errorMessage = ref<string | null>(null);
+
 // Initialize Geins Core and GeinsCRM
 const router = useRouter();
+
 // Initialize Geins Core and GeinsCRM
 const core = new GeinsCore(geinsCredentials);
-
 const geinsCRM = new GeinsCRM(core, authSettings);
 
 // Define login method
