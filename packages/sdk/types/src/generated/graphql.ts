@@ -1535,7 +1535,7 @@ export type StockFragment = { __typename?: 'StockType', inStock: number, oversel
 
 export type UserFragment = { __typename?: 'UserType', id: number, email: string, customerType?: CustomerType | null, gender?: Gender | null, metaData?: string | null, entityId?: string | null, address?: { __typename?: 'AddressType', firstName: string, lastName: string, company: string, mobile: string, phone: string, careOf: string, entryCode: string, addressLine1: string, addressLine2: string, addressLine3: string, zip: string, city: string, state: string, country: string } | null, balances?: Array<{ __typename?: 'UserBalanceType', currency: string, amount: any } | null> | null };
 
-export type GetUserOrderQueryVariables = Exact<{
+export type UserOrderQueryVariables = Exact<{
   orderId: Scalars['Int']['input'];
   channelId?: InputMaybe<Scalars['String']['input']>;
   languageId?: InputMaybe<Scalars['String']['input']>;
@@ -1543,7 +1543,7 @@ export type GetUserOrderQueryVariables = Exact<{
 }>;
 
 
-export type GetUserOrderQuery = { __typename?: 'GeinsMerchantApiQuery', getOrder?: { __typename?: 'OrderType', id?: number | null, publicId: string } | null };
+export type UserOrderQuery = { __typename?: 'GeinsMerchantApiQuery', getOrder?: { __typename?: 'OrderType', id?: number | null, publicId: string } | null };
 
 export type GetUserOrdersQueryVariables = Exact<{
   channelId?: InputMaybe<Scalars['String']['input']>;

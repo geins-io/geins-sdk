@@ -1,7 +1,6 @@
 export * from './channel';
-export * from './graphQL';
 
-export type CustomerType = 'PERSON' | 'ORGANIZATION';
+/* export type CustomerType = 'PERSON' | 'ORGANIZATION'; */
 
 export type Environment = 'prod' | 'qa' | 'dev';
 
