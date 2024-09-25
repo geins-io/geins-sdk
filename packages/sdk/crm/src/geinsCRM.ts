@@ -1,7 +1,7 @@
 import { GeinsCore, BasePackage, buildEndpoints, logWrite } from '@geins/core';
 import {
   AuthSettings,
-  AuthClientConnectionModes,
+  AuthClientConnectionMode,
   AuthCredentials,
   AuthResponse,
   GeinsUserGetType,
@@ -31,11 +31,11 @@ class GeinsCRM extends BasePackage {
     this.client = client;
     this.credentials = credentials;
 
-    if (authSettings.clientConnectionMode === AuthClientConnectionModes.Proxy) {
+    if (authSettings.clientConnectionMode === AuthClientConnectionMode.Proxy) {
       const proxyUrl = authSettings.proxyUrl || '/api/auth';
       this.authClient = new AuthClientProxy(proxyUrl);
     } else if (
-      authSettings.clientConnectionMode === AuthClientConnectionModes.Direct
+      authSettings.clientConnectionMode === AuthClientConnectionMode.Direct
     ) {
       const endpoints = buildEndpoints(
         credentials.apiKey,
