@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits, watch } from 'vue';
+import { watch } from 'vue';
 
 import MarketSelect from './controls/MarketSelect.vue';
 import LanguageSelect from './controls/LanguageSelect.vue';

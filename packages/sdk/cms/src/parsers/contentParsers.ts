@@ -1,7 +1,7 @@
 import { ContentAreaType, ContentContainerType } from '@geins/core';
-import type { MenuItemType } from '@geins/types';
+import type { GeinsMenuItemTypeType } from '@geins/types';
 
-export function parseMenuItem(item: any): MenuItemType {
+export function parseMenuItem(item: any): GeinsMenuItemTypeType {
   return {
     id: item.id,
     label: item.label,

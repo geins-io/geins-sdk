@@ -1,5 +1,5 @@
-import type { UserRequestPasswordResetMutation } from '@geins/types';
-import { BaseApiService, logWrite, UserInputType } from '@geins/core';
+//import type { GeinsUserRequestPasswordResetType } from '@geins/types';
+import { BaseApiService, logWrite, GeinsUserInputTypeType } from '@geins/core';
 import { mutaions } from '../graphql';
 import { digest } from '../auth/authHelpers';
 export class PasswordResetService extends BaseApiService {
@@ -18,7 +18,6 @@ export class PasswordResetService extends BaseApiService {
     const pwd = await digest(password);
     const variables = { resetKey, password: pwd };
     const vars = await this.generateVars(variables);
-    logWrite('commit', vars);
     return this.runMutation(mutaions.pwResetCommit, vars);
   }
 }

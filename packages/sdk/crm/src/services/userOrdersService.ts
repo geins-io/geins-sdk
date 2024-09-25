@@ -1,4 +1,4 @@
-import type { UserOrdersQuery } from '@geins/types';
+import type { GeinsUserOrdersType } from '@geins/types';
 import { BaseApiService, logWrite } from '@geins/core';
 import { queries } from '../graphql';
 export class UserOrdersService extends BaseApiService {
@@ -11,18 +11,18 @@ export class UserOrdersService extends BaseApiService {
     return this.runQuery(queries.userOrders, vars);
   }
 
-  async get(): Promise<UserOrdersQuery['getOrders'] | null> {
+  async get(): Promise<GeinsUserOrdersType | null> {
     const vars = await this.generateVars({});
-    return await this.runQueryParsed<UserOrdersQuery['getOrders']>(
+    return await this.runQueryParsed<GeinsUserOrdersType>(
       queries.userOrders,
       vars,
     );
   }
 
-  protected parseResult(result: any): UserOrdersQuery['getOrders'] | null {
+  protected parseResult(result: any): GeinsUserOrdersType | null {
     if (!result || !result.data || !result.data.getOrders) {
       return null;
     }
-    return result.data.getOrders as UserOrdersQuery['getOrders'];
+    return result.data.getOrders as GeinsUserOrdersType;
   }
 }

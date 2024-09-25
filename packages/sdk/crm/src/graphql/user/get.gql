@@ -1,5 +1,5 @@
 #import "../fragments/user.gql"
-query User {
+query UserGet {
   getUser {
     ...User
   }

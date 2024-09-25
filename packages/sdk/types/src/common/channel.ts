@@ -1,9 +1,9 @@
-/* export type MarketType = {
+/* export type GeinsMarketTypeType = {
   id: string;
   alias: string;
-  allowedLanguages: LanguageType[];
-  country: CountryType;
-  currency: CurrencyType;
+  allowedLanguages: GeinsLanguageTypeType[];
+  country: GeinsCountryTypeType;
+  currency: GeinsCurrencyTypeType;
   onlyDisplayInCheckout: boolean;
   virtual: boolean;
   groupKey: string;
@@ -16,30 +16,31 @@
   url: string;
   defaultMarketId: string;
   defaultLanguageId: string;
-  markets: MarketType[];
-  languages: LanguageType[];
+  markets: GeinsMarketTypeType[];
+  languages: GeinsLanguageTypeType[];
 };
 
 
 
-export type CountryType = {
+export type GeinsCountryTypeType = {
   name: string;
   code: string;
 };
 
-export type LanguageType = {
+export type GeinsLanguageTypeType = {
   id: string;
   name: string;
   code: string;
 };
 
-export type CurrencyType = {
+export type GeinsCurrencyTypeType = {
   code: string;
   symbol: string;
 };
 
-export type MarketLanguageType = {
+
+ */
+export type GeinsMarketLanguageType = {
   marketId: string;
   languageId: string;
 };
- */

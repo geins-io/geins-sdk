@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MenuType, ContentAreaType, GeinsCredentials } from '@geins/types';
+import type { GeinsMenuType, GeinsCredentials } from '@geins/types';
 import { logWrite, GeinsCore, AUTH_COOKIES } from '@geins/core';
 import { GeinsCMS } from '@geins/cms';
 import { authClaimsTokenSerializeToObject } from '@geins/crm';
@@ -10,7 +10,7 @@ const geinsCMS = new GeinsCMS(geinsCore);
 
 const user = ref<any>();
 const items = ref<{ header: string; data: string }[]>([]);
-const menuData = ref<MenuType>();
+const menuData = ref<GeinsMenuType>();
 
 const resetComponentData = () => {
   menuData.value = undefined;
@@ -44,9 +44,9 @@ const fetchMenu = async () => {
   geinsCMS.menu
     .get({ menuLocationId: menuLocation.value })
     .then((result) => {
-      return result as MenuType;
+      return result as GeinsMenuType;
     })
-    .then((menu: MenuType) => {
+    .then((menu: GeinsMenuType) => {
       menuData.value = menu;
       items.value.unshift({
         header: `:: geinsCMS.menu.get  :: [${new Date().toISOString()}]`,

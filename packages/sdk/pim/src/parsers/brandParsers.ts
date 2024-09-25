@@ -1,12 +1,12 @@
-import type { BrandType } from '@geins/types';
+import type { GeinsBrandType } from '@geins/types';
 import { parseAlternativeUrls } from './shared';
 
-export function parseBrands(data: any): BrandType[] {
+export function parseBrands(data: any): GeinsBrandType[] {
   return data.map(parseBrand);
 }
 
-export function parseBrand(data: any): BrandType {
-  const brand: BrandType = {
+export function parseBrand(data: any): GeinsBrandType {
+  const brand: GeinsBrandType = {
     brandId: data.brandId,
     alias: data.alias,
     slug: data.slug,

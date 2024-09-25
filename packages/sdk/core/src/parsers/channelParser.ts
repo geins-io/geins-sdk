@@ -1,12 +1,14 @@
 import type {
-  ChannelType,
-  MarketType,
-  CountryType,
-  LanguageType,
-  CurrencyType,
+  GeinsChannelTypeType,
+  GeinsMarketTypeType,
+  GeinsCountryTypeType,
+  GeinsLanguageTypeType,
+  GeinsCurrencyTypeType,
 } from '@geins/types';
 
-export function parseChannelsResult(result: any): ChannelType[] | null {
+export function parseChannelsResult(
+  result: any,
+): GeinsChannelTypeType[] | null {
   console.log('result', result);
   console.log('result', result?.data);
   if (!result || !result.data) {
@@ -20,7 +22,7 @@ export function parseChannelsResult(result: any): ChannelType[] | null {
   return channels.map((channel: any) => parseChannel(channel));
 }
 
-export function parseChannelResult(result: any): ChannelType | null {
+export function parseChannelResult(result: any): GeinsChannelTypeType | null {
   if (!result || !result.data) {
     throw new Error('Invalid result structure for channel');
   }
@@ -31,7 +33,7 @@ export function parseChannelResult(result: any): ChannelType | null {
   }
   return parseChannel(channel);
 }
-export function parseChannel(channel: any): ChannelType | null {
+export function parseChannel(channel: any): GeinsChannelTypeType | null {
   if (!channel || !channel.id) {
     throw new Error('Invalid result structure for channel');
   }
@@ -48,7 +50,7 @@ export function parseChannel(channel: any): ChannelType | null {
   };
 }
 
-export function parseMarket(market: any): MarketType {
+export function parseMarket(market: any): GeinsMarketTypeType {
   return {
     id: market.id,
     alias: market.alias,
@@ -64,14 +66,14 @@ export function parseMarket(market: any): MarketType {
   };
 }
 
-export function parseCountry(country: any): CountryType {
+export function parseCountry(country: any): GeinsCountryTypeType {
   return {
     name: country.name,
     code: country.code,
   };
 }
 
-export function parseLanguage(language: any): LanguageType {
+export function parseLanguage(language: any): GeinsLanguageTypeType {
   return {
     id: language.id,
     name: language.name,
@@ -79,7 +81,7 @@ export function parseLanguage(language: any): LanguageType {
   };
 }
 
-export function parseCurrency(currency: any): CurrencyType {
+export function parseCurrency(currency: any): GeinsCurrencyTypeType {
   return {
     code: currency.code,
     symbol: currency.symbol,

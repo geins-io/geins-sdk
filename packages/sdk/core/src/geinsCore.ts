@@ -1,4 +1,4 @@
-import type { GeinsCredentials, ChannelType } from '@geins/types';
+import type { GeinsCredentials, GeinsChannelTypeType } from '@geins/types';
 import { MerchantApiClient, ENDPOINTS } from './api-client';
 import {
   CookieService,
@@ -69,7 +69,7 @@ export class GeinsCore {
     }
   }
 
-  public async getChannel(): Promise<ChannelType | null | undefined> {
+  public async getChannel(): Promise<GeinsChannelTypeType | null | undefined> {
     if (!this.channel) {
       throw new Error('Channel are not set');
     }

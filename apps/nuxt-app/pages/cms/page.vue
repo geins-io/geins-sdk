@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MenuType, ContentAreaType, GeinsCredentials } from '@geins/types';
+import type { ContentAreaType, GeinsCredentials } from '@geins/types';
 import { logWrite, GeinsCore, AUTH_COOKIES } from '@geins/core';
 import { GeinsCMS } from '@geins/cms';
 import { authClaimsTokenSerializeToObject } from '@geins/crm';

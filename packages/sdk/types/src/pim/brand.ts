@@ -1,10 +1,12 @@
+import { GeinsAlternativeUrlTypeType } from '../generated';
+
 export type BrandsQueryVariables = {
   marketId?: string;
   languageId?: string;
   channelId?: string;
 };
 
-/* export type BrandType = {
+export interface GeinsBrandType {
   brandId: number;
   alias?: string;
   slug?: string;
@@ -15,6 +17,5 @@ export type BrandsQueryVariables = {
   backgroundImage?: string;
   logo?: string;
   canonicalUrl: string;
-  alternativeUrls?: AlternativeUrlType[];
-};
- */
+  alternativeUrls?: GeinsAlternativeUrlTypeType[];
+}

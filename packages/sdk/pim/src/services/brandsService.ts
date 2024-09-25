@@ -1,4 +1,4 @@
-import type { BrandsQueryVariables, BrandType } from '@geins/types';
+import type { BrandsQueryVariables, GeinsBrandTypeType } from '@geins/types';
 import { BasePIMApiServicesService } from '../base/basePIMApiService';
 import { queries } from '../graphql';
 import { parseBrands } from '../parsers/brandParsers';
@@ -27,12 +27,12 @@ export class BrandsService extends BasePIMApiServicesService {
     return await this.runQuery(queries.brands, vars);
   }
 
-  async get(variables: BrandsQueryVariables): Promise<BrandType[]> {
+  async get(variables: BrandsQueryVariables): Promise<GeinsBrandTypeType[]> {
     const vars = await this.generateVars(variables);
     return await this.runQueryParsed(queries.brands, vars);
   }
 
-  protected parseResult(result: any): BrandType[] {
+  protected parseResult(result: any): GeinsBrandTypeType[] {
     if (
       !result ||
       !result.data ||

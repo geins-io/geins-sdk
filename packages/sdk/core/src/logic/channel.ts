@@ -1,4 +1,4 @@
-import type { GeinsCredentials, ChannelType } from '@geins/types';
+import type { GeinsCredentials, GeinsChannelTypeType } from '@geins/types';
 import { MerchantApiClient, FetchPolicy } from '../api-client';
 import { isServerContext, buildEndpoints } from '../utils';
 import { ChannelStore } from '../stores';
@@ -9,7 +9,7 @@ const oneHourMs = 60 * 60 * 1000; // 1 hour in milliseconds
 
 export class Channel {
   private channelId: string;
-  private channel: ChannelType | undefined;
+  private channel: GeinsChannelTypeType | undefined;
   private channelService: ChannelService | undefined;
   private store: ChannelStore | undefined;
   private apiClient: MerchantApiClient | undefined;
@@ -84,7 +84,7 @@ export class Channel {
     return channel;
   }
 
-  public async getChannel(): Promise<ChannelType | null | undefined> {
+  public async getChannel(): Promise<GeinsChannelTypeType | null | undefined> {
     const cachedChannel = await this.getKey(this.channelId);
     if (cachedChannel) {
       return JSON.parse(cachedChannel);

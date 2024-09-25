@@ -101,10 +101,10 @@ export abstract class AuthClient {
       });
     }
 
-    if (user?.customerType) {
+    if (user?.GeinsCustomerTypeType) {
       this.cookieService.set({
         name: AUTH_COOKIES.USER_TYPE,
-        payload: user.customerType,
+        payload: user.GeinsCustomerTypeType,
         maxAge,
       });
     }
@@ -146,7 +146,8 @@ export abstract class AuthClient {
 
     const username = spoofedUser?.spoofedBy || 'preview@geins.io';
     const spoofDate = spoofedUser?.spoofDate;
-    const customerType = spoofedUser?.customerType || 'preview';
+    const GeinsCustomerTypeType =
+      spoofedUser?.GeinsCustomerTypeType || 'preview';
 
     this.cookieService.set({
       name: AUTH_COOKIES.USER,
@@ -162,7 +163,7 @@ export abstract class AuthClient {
 
     this.cookieService.set({
       name: AUTH_COOKIES.USER_TYPE,
-      payload: customerType,
+      payload: GeinsCustomerTypeType,
       maxAge,
     });
 

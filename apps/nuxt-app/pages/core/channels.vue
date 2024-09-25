@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useNuxtApp } from '#app';
 import { ref, onMounted } from 'vue';
-import type { GeinsCredentials, ChannelType } from '@geins/types';
+import type { GeinsCredentials } from '@geins/types';
 import { logWrite, GeinsCore } from '@geins/core';
 const { $currentChannel } = useNuxtApp();
 

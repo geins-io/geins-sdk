@@ -4,10 +4,10 @@ import {
   AuthClientConnectionMode,
   AuthCredentials,
   AuthResponse,
-  UserInputType,
-  CustomerType,
-  UserQuery,
-  UserOrdersQuery,
+  GeinsUserGetType,
+  GeinsUserInputTypeType,
+  GeinsUserOrdersType,
+  GeinsCustomerType,
 } from '@geins/types';
 import { AuthClientDirect, AuthClientProxy } from './auth';
 import type { AuthInterface, UserInterface } from './types';
@@ -129,7 +129,7 @@ class GeinsCRM extends BasePackage {
 
   private async authRegisterNewUser(
     credentials: AuthCredentials,
-    user?: UserInputType,
+    user?: GeinsUserInputTypeType,
   ): Promise<AuthResponse | undefined> {
     if (!this.authClient) {
       throw new Error('AuthClient is not initialized');
@@ -155,9 +155,9 @@ class GeinsCRM extends BasePackage {
     }
     // no info just crate a new user in MC
     else {
-      const registerUserAs: UserInputType = {
+      const registerUserAs: GeinsUserInputTypeType = {
         newsletter: false,
-        customerType: CustomerType.Person,
+        customerType: GeinsCustomerType.PersonType,
       };
 
       const userResult = await this.userCreate(registerUserAs);
@@ -205,7 +205,7 @@ class GeinsCRM extends BasePackage {
     return true;
   }
 
-  private async userGet(): Promise<UserQuery['getUser'] | null> {
+  private async userGet(): Promise<GeinsUserGetType | null | undefined> {
     if (!this.userService) {
       await this.initUserService();
     }
@@ -218,21 +218,21 @@ class GeinsCRM extends BasePackage {
     return this.userService?.get();
   }
 
-  private async userCreate(user: UserInputType): Promise<any> {
+  private async userCreate(user: GeinsUserInputTypeType): Promise<any> {
     if (!this.userService) {
       await this.initUserService();
     }
     return this.userService?.create(user);
   }
 
-  private async userUpdate(user: UserInputType): Promise<any> {
+  private async userUpdate(user: GeinsUserInputTypeType): Promise<any> {
     if (!this.userService) {
       await this.initUserService();
     }
     return this.userService?.update(user);
   }
 
-  private async userOrders(): Promise<UserOrdersQuery['getOrders'] | null> {
+  private async userOrders(): Promise<GeinsUserOrdersType | null | undefined> {
     if (!this.userOrdersService) {
       await this.initUserOrderService();
     }

@@ -1,4 +1,4 @@
-#import "./menu-item.graphql"
+#import "./menu-item.gql"
 
 fragment MenuItemBase on MenuItemType {
   children {

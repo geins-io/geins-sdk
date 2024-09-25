@@ -1,9 +1,9 @@
 schema {
-  query: GeinsMerchantApiQuery
-  mutation: GeinsMerchantApiMutation
+  query: Query
+  mutation: Mutation
 }
 "Gets all available channels"
-type GeinsMerchantApiQuery {
+type Query {
   channels: [ChannelType]
 
   # Gets a channel with the specified ID.
@@ -2440,7 +2440,7 @@ input AddressInputType {
   phone: String
 }
 
-type GeinsMerchantApiMutation {
+type Mutation {
   addToCart(
     # The cart ID
     id: String!

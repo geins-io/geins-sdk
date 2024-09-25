@@ -1,12 +1,9 @@
 import {
   AuthCredentials,
   AuthResponse,
-  UserInputType,
-  UserType,
-  UserAddressType,
-  UserOrdersOrderType,
-  UserQuery,
-  UserOrdersQuery,
+  GeinsUserInputTypeType,
+  GeinsUserGetType,
+  GeinsUserOrdersType,
 } from '@geins/types';
 
 export interface AuthInterface {
@@ -16,7 +13,7 @@ export interface AuthInterface {
   getUser(): Promise<AuthResponse | undefined>;
   newUser(
     credentials: AuthCredentials,
-    user?: UserInputType,
+    user?: GeinsUserInputTypeType,
   ): Promise<AuthResponse | undefined>;
   changePassword(
     credentials: AuthCredentials,
@@ -29,8 +26,8 @@ export interface AuthInterface {
  */
 export interface UserInterface {
   authorized(): Boolean;
-  get(): Promise<UserQuery['getUser'] | null>;
-  update(user: UserInputType): Promise<any>;
-  orders(): Promise<UserOrdersQuery['getOrders'] | null>;
+  get(): Promise<GeinsUserGetType | null | undefined>;
+  update(user: GeinsUserInputTypeType): Promise<any>;
+  orders(): Promise<GeinsUserOrdersType | null | undefined>;
   remove(): Promise<any>;
 }

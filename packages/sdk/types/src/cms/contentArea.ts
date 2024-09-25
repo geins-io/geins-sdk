@@ -1,5 +1,5 @@
 import { KeyValue } from '../common';
-import { CustomerType } from '../generated';
+import { GeinsCustomerType } from '../generated';
 
 import type { GeinsBaseApiVars } from '../api-client';
 
@@ -12,7 +12,7 @@ export interface ContentAreaVariables extends BaseCmsVariables {
 }
 
 export interface BaseCmsVariables extends GeinsBaseApiVars {
-  customerType?: CustomerType | null;
+  GeinsCustomerTypeType?: GeinsCustomerType | null;
   preview?: boolean | null;
   filters?: Array<KeyValue> | null;
   displaySetting?: string | null;

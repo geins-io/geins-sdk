@@ -1,6 +1,6 @@
-import { UserAddressType } from '@geins/types';
+import { GeinsAddressTypeType } from '@geins/types';
 
-export function parseAddress(data: any): UserAddressType | undefined {
+export function parseAddress(data: any): GeinsAddressTypeType | undefined {
   if (!data) {
     return undefined;
   }
