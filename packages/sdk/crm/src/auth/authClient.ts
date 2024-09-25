@@ -122,7 +122,6 @@ export abstract class AuthClient {
       name: AUTH_COOKIES.REFRESH_TOKEN,
       payload: token,
       maxAge,
-      // httpOnly: true,
     });
   }
 

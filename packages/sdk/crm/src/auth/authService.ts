@@ -28,10 +28,6 @@ export class AuthService {
   private ensureClientInitialized(): void {
     if (!this.client) {
       this.initClient();
-      logWrite(
-        '🚀 ~ AuthService ~ ensureClientInitialized ~ this.client:',
-        this.client,
-      );
     }
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
@@ -126,9 +122,7 @@ export class AuthService {
 
     try {
       this.ensureClientInitialized();
-      logWrite('🚀 ~ AuthService ~ refresh ~ this.client:', this.client);
       const result = await this.client!.renewRefreshtoken(refreshToken);
-      logWrite('🚀 ~ AuthService ~ refresh ~ result:', result);
       if (!result.token) {
         return { succeeded: false };
       }
@@ -172,14 +166,6 @@ export class AuthService {
     userToken: string,
     refreshToken?: string,
   ): AuthResponse {
-    logWrite(
-      '🚀 ~ AuthService ~ getUserObjectFromToken ~ userToken:',
-      userToken,
-    );
-    logWrite(
-      '🚀 ~ AuthService ~ getUserObjectFromToken ~ refreshToken:',
-      refreshToken,
-    );
     try {
       const userFromToken = authClaimsTokenSerializeToObject(userToken);
       if (!userFromToken) {

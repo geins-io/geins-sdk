@@ -75,7 +75,6 @@ export class AuthClientDirect extends AuthClient {
     }
     userToken = userToken || this.getCookieUserToken();
     const result = await this.authService.getUser(refreshToken, userToken);
-    logWrite('🚀 ~ AuthClientDirect ~ getUser ~ result:', result);
     if (!result || !result.succeeded) {
       return undefined;
     }

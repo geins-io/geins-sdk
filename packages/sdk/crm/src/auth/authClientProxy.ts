@@ -124,7 +124,6 @@ export class AuthClientProxy extends AuthClient {
         userTokenValue,
         refreshTokenValue,
       );
-      logWrite('🚀 ~ AuthClientProxy ~ user:', user);
       if (!user) {
         return undefined;
       }
@@ -134,7 +133,6 @@ export class AuthClientProxy extends AuthClient {
       const result = await this.request<AuthResponse>('/user', {
         method: 'GET',
       });
-      logWrite('🚀 ~ AuthClientProxy ~ getUser ~ result:', result);
 
       if (!result || !result.succeeded) {
         return undefined;

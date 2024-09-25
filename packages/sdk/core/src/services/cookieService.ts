@@ -19,9 +19,12 @@ export class CookieService {
   private secure = true;
   private httpOnly = false;
   private maxAge: number | undefined = undefined; // Ensure maxAge is a number or undefined
-  private cookie = Cookie();
+  private cookie: ReturnType<typeof Cookie>;
 
-  constructor(config?: CookieServiceConfig) {
+  constructor(config?: CookieServiceConfig, req?: any, res?: any) {
+    // Initialize the cookie instance for both client and server
+    this.cookie = Cookie(req, res);
+
     if (config) {
       if (config.path) {
         this.path = config.path;
@@ -96,7 +99,6 @@ export class CookieService {
     if (cookie.httpOnly) {
       options.httpOnly = true;
     }
-
     this.cookie.set(cookie.name, cookie.payload, options);
   }
 

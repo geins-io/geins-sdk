@@ -28,10 +28,6 @@ export class AuthServiceClient {
   }
 
   private extractRefreshTokenFromResponse(response: Response): string {
-    console.log(
-      '🚀 ~ AuthServiceClient ~ extractRefreshTokenFromResponse ~ response:',
-      response.headers.get(AUTH_HEADERS.REFRESH_TOKEN),
-    );
     const refreshTokenHeader = response.headers.get(AUTH_HEADERS.REFRESH_TOKEN);
     if (!refreshTokenHeader) {
       // throw new Error('Error');
@@ -138,13 +134,11 @@ export class AuthServiceClient {
       },
     };
     const response = await fetch(url, requestOptions);
-    console.log('🚀 ~ AuthServiceClient ~ response:', response.headers);
     if (!response.ok) {
       throw new Error(`Failed to renew refresh token: ${response.statusText}`);
     }
 
     const newRefreshToken = this.extractRefreshTokenFromResponse(response);
-    console.log('🚀 ~ AuthServiceClient ~ newRefreshToken:', newRefreshToken);
 
     const userToken = await response.text();
     if (!userToken) {
@@ -269,10 +263,6 @@ export class AuthServiceClient {
   }
 
   public async renewRefreshtoken(refreshToken: string): Promise<AuthUserToken> {
-    logWrite(
-      '🚀 ~ AuthServiceClient ~ renewRefreshtoken ~ refreshToken:',
-      refreshToken,
-    );
     return this.fetchRefreshToken(refreshToken);
   }
 
