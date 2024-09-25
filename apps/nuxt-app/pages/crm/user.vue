@@ -49,12 +49,15 @@ const getAuthObject = async () => {
 };
 
 const setUserObject = async () => {
-  await geinsCRM.user.get().then((response) => {
-    userObject.value = response;
-  });
+  const user = await geinsCRM.user.get();
+  if (user) {
+    userObject.value = user;
+  }
 };
 
 const getUserOrdersObject = async () => {
+  const orders = await geinsCRM.user.orders();
+
   await geinsCRM.user.orders().then((response) => {
     userOrderObject.value = response;
     if (userOrderObject.value.length > 0) {
@@ -64,14 +67,14 @@ const getUserOrdersObject = async () => {
 };
 
 const getUserOrderObject = async (id: number) => {
-  const order = await geinsCRM.user.order(id);
-  logWrite('order with id:' + id, order);
+  //const order = await geinsCRM.user.order(id);
+  //logWrite('order with id:' + id, order);
 };
 
 onMounted(async () => {
   await setUserObject();
-  await getAuthObject();
-  await getUserOrdersObject();
+  //await getAuthObject();
+  //await getUserOrdersObject();
   setInterval(() => {
     timeToLoggout.value -= 1;
     if (timeToLoggout.value <= 100) {

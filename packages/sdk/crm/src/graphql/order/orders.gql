@@ -1,49 +1,35 @@
 #import "../fragments/price.gql"
 #import "../fragments/address.gql"
+#import "../fragments/cart.gql"
 
-query getUserOrders(
-  $channelId: String
-  $languageId: String
-  $marketId: String
-) {
+query UserOrders($channelId: String, $languageId: String, $marketId: String) {
   getOrders(
     channelId: $channelId
     languageId: $languageId
     marketId: $marketId
   ) {
-    id
-    publicId
-    createdAt
-    updatedAt
-
-    updatedAt
-    status
-    message
-
+    cart {
+      ...Cart
+    }
     billingAddress {
       ...Address
     }
     shippingAddress {
       ...Address
     }
-
+    createdAt
+    id
+    status
     shippingDetails {
       name
       trackingLink
     }
-
     paymentDetails {
       displayName
     }
-
-    orderTotal {
-      ...Price
-    }
-
     refunds {
       id
       itemId
-      articleNumber
       createdAt
       reason
       total

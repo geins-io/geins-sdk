@@ -2,9 +2,8 @@ schema {
   query: GeinsMerchantApiQuery
   mutation: GeinsMerchantApiMutation
 }
-
+"Gets all available channels"
 type GeinsMerchantApiQuery {
-  # Gets all available channels.
   channels: [ChannelType]
 
   # Gets a channel with the specified ID.

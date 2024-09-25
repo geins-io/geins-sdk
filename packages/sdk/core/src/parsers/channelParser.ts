@@ -60,6 +60,7 @@ export function parseMarket(market: any): MarketType {
     onlyDisplayInCheckout: market.onlyDisplayInCheckout,
     virtual: market.virtual,
     groupKey: market.groupKey,
+    defaultLanguageId: market.defaultLanguageId,
   };
 }
 
@@ -82,5 +83,7 @@ export function parseCurrency(currency: any): CurrencyType {
   return {
     code: currency.code,
     symbol: currency.symbol,
+    name: currency.name,
+    rate: currency.rate,
   };
 }

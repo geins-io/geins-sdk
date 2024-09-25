@@ -1,4 +1,4 @@
-mutation createUser(
+mutation UserCreate(
   $user: UserInputType!
   $channelId: String
   $languageId: String

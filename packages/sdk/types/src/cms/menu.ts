@@ -1,4 +1,5 @@
 import type { GeinsBaseApiVars } from '../api-client';
+import { MenuType } from '../generated';
 
 export interface MenuVariables extends GeinsBaseApiVars {
   menuLocationId: string;

@@ -20,7 +20,8 @@
     "format": "prettier --write \"**/*.{ts,md,vue,js}\"",
     "prepare": "husky",
     "clean": "node scripts/clean.js",
-    "codegen": "yarn workspace @geins/types codegen"
+    "codegen": "yarn workspace @geins/types codegen",
+    "prepare-schema": "node scripts/prepare-schema.js"
   },
   "lint-staged": {
     "*.{ts,md,vue,js}": [

@@ -1,15 +1,21 @@
 import userGet from './user/get.gql';
+import userOrders from './order/orders.gql';
 import userRegister from './user/register.gql';
 import userUpdate from './user/update.gql';
-import orders from './order/orders.gql';
-import order from './order/order.gql';
+import userDelete from './user/delete.gql';
+import pwResetRequest from './auth/pw-reset-request.gql';
+import pwResetCommit from './auth/pw-reset-commit.gql';
 
 const queries = {
   userGet,
+  userOrders,
+};
+const mutaions = {
   userRegister,
   userUpdate,
-  orders,
-  order,
+  userDelete,
+  pwResetRequest,
+  pwResetCommit,
 };
 
-export { queries };
+export { queries, mutaions };

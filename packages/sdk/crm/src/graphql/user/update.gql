@@ -1,5 +1,5 @@
 #import "../fragments/user.gql"
-mutation updateUser(
+mutation UserUpdate(
   $user: UserInputType!
   $channelId: String
   $languageId: String

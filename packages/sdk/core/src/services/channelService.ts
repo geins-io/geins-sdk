@@ -1,7 +1,7 @@
 import type { ChannelType } from '@geins/types';
 import { BaseApiService } from '../base/baseApiService';
 import { queries } from '../graphql';
-import { parseChannelResult } from '../utils/channelParser';
+import { parseChannelResult } from '../parsers/channelParser';
 
 export class ChannelService extends BaseApiService {
   async get(channelId: string): Promise<ChannelType | null> {

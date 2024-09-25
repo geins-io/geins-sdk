@@ -5,21 +5,25 @@ import {
   AuthCredentials,
   AuthResponse,
   UserInputType,
-  UserCustomerType,
-  UserType,
-  UserOrdersOrderType,
+  CustomerType,
+  UserQuery,
+  UserOrdersQuery,
 } from '@geins/types';
 import { AuthClientDirect, AuthClientProxy } from './auth';
 import type { AuthInterface, UserInterface } from './types';
-import { UserService, UserOrderService } from './services';
+import {
+  UserService,
+  UserOrdersService,
+  PasswordResetService,
+} from './services';
 
 class GeinsCRM extends BasePackage {
   private client: any;
   private credentials: any;
-
-  private userService: UserService | undefined;
-  private userOrderService: UserOrderService | undefined;
   private authClient: AuthClientDirect | AuthClientProxy;
+  private userService: UserService | undefined;
+  private passwordResetService: PasswordResetService | undefined;
+  private userOrdersService: UserOrdersService | undefined;
 
   constructor(core: GeinsCore, authSettings: AuthSettings) {
     super(core);
@@ -54,9 +58,22 @@ class GeinsCRM extends BasePackage {
     }
   }
 
+  private async initPasswordService(): Promise<void> {
+    this.passwordResetService = new PasswordResetService(
+      this.client,
+      this.credentials,
+    );
+    if (!this.passwordResetService) {
+      throw new Error('Failed to initialize password reset service');
+    }
+  }
+
   private async initUserOrderService(): Promise<void> {
-    this.userOrderService = new UserOrderService(this.client, this.credentials);
-    if (!this.userOrderService) {
+    this.userOrdersService = new UserOrdersService(
+      this.client,
+      this.credentials,
+    );
+    if (!this.userOrdersService) {
       throw new Error('Failed to initialize user order service');
     }
   }
@@ -64,6 +81,23 @@ class GeinsCRM extends BasePackage {
   public spoofUser(token: string): string {
     this.authClient.logout();
     return this.authClient.spoofPreviewUser(token);
+  }
+
+  public async passwordResetRequest(email: string): Promise<any> {
+    if (!this.passwordResetService) {
+      await this.initPasswordService();
+    }
+    return this.passwordResetService?.request(email);
+  }
+
+  public async passwordResetCommit(
+    resetKey: string,
+    password: string,
+  ): Promise<any> {
+    if (!this.passwordResetService) {
+      await this.initPasswordService();
+    }
+    return this.passwordResetService?.commit(resetKey, password);
   }
 
   get auth(): AuthInterface {
@@ -121,10 +155,10 @@ class GeinsCRM extends BasePackage {
     }
     // no info just crate a new user in MC
     else {
-      const registerUserAs = {
+      const registerUserAs: UserInputType = {
         newsletter: false,
-        customerType: UserCustomerType.Private,
-      } as UserInputType;
+        customerType: CustomerType.Person,
+      };
 
       const userResult = await this.userCreate(registerUserAs);
 
@@ -143,9 +177,6 @@ class GeinsCRM extends BasePackage {
       get: this.userGet.bind(this),
       update: this.userUpdate.bind(this.userService),
       orders: this.userOrders.bind(this),
-      order: this.userOrder.bind(this),
-      balance: this.userBalance.bind(this),
-      adress: this.userAddress.bind(this),
       remove: this.userRemove.bind(this),
     };
   }
@@ -174,7 +205,7 @@ class GeinsCRM extends BasePackage {
     return true;
   }
 
-  private async userGet(): Promise<UserType | undefined> {
+  private async userGet(): Promise<UserQuery['getUser'] | null> {
     if (!this.userService) {
       await this.initUserService();
     }
@@ -184,7 +215,6 @@ class GeinsCRM extends BasePackage {
     if (!userFromCookies || userFromCookies.tokens?.expired) {
       return undefined;
     }
-
     return this.userService?.get();
   }
 
@@ -202,27 +232,11 @@ class GeinsCRM extends BasePackage {
     return this.userService?.update(user);
   }
 
-  private async userOrders(): Promise<UserOrdersOrderType[] | undefined> {
-    if (!this.userOrderService) {
+  private async userOrders(): Promise<UserOrdersQuery['getOrders'] | null> {
+    if (!this.userOrdersService) {
       await this.initUserOrderService();
     }
-    return this.userOrderService?.all();
-  }
-
-  private async userOrder(id: number): Promise<any> {
-    if (!this.userOrderService) {
-      await this.initUserOrderService();
-    }
-    const order = await this.userOrderService?.get(id);
-    return order;
-  }
-
-  private async userBalance(): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
-
-  private async userAddress(): Promise<any> {
-    throw new Error('Method not implemented.');
+    return this.userOrdersService?.get();
   }
 
   private async userRemove(): Promise<any> {
