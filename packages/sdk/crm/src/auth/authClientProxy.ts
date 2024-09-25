@@ -5,6 +5,11 @@ import { AuthService } from './authService';
 
 export class AuthClientProxy extends AuthClient {
   private readonly authEndpointApp: string;
+  /**
+   * Global refresh token for sending as header to proxy and renewing the authentication session.
+   * Used to obtain a new access token without requiring user re-authentication.
+   */
+  private refreshToken: string | undefined;
 
   constructor(authEndpointApp: string) {
     super();
@@ -12,7 +17,7 @@ export class AuthClientProxy extends AuthClient {
   }
 
   private async request<T>(path: string, options: RequestInit): Promise<T> {
-    const refreshToken = this.getCookieRefreshToken();
+    const refreshToken = this.refreshToken || this.getCookieRefreshToken();
 
     if (!options.headers) {
       options.headers = { 'Content-Type': 'application/json' };
@@ -82,6 +87,7 @@ export class AuthClientProxy extends AuthClient {
   }
 
   async refresh(): Promise<AuthResponse | undefined> {
+    this.refreshToken = this.getCookieRefreshToken();
     const result = await this.request<AuthResponse>('/refresh', {
       method: 'GET',
     });
@@ -95,41 +101,50 @@ export class AuthClientProxy extends AuthClient {
     }
 
     if (result && result.succeeded && result.tokens?.token) {
-      this.setCookieUserToken(result.tokens.token);
+      const maxAge = result.tokens.maxAge || 900;
+      this.setCookieUserToken(result.tokens.token, maxAge);
     }
 
     return result;
   }
 
-  async getUser(): Promise<AuthResponse | undefined> {
-    const refreshToken = this.getCookieRefreshToken();
-    if (!refreshToken) {
+  async getUser(
+    refreshToken?: string,
+    userToken?: string,
+  ): Promise<AuthResponse | undefined> {
+    const tokens = this.getCurrentTokens(refreshToken, userToken);
+
+    // Handle refresh token
+    this.refreshToken = tokens.refreshToken;
+    if (!tokens.refreshToken) {
+      this.clearCookies();
       return undefined;
     }
-    const userToken = this.getCookieUserToken();
-    const user = await AuthService.getUserObjectFromToken(
-      userToken,
-      refreshToken,
-    );
-    if (!user) {
-      return undefined;
+
+    let user = undefined;
+    if (tokens.userToken && tokens.refreshToken) {
+      user = await AuthService.getUserObjectFromToken(
+        tokens.userToken,
+        tokens.refreshToken,
+      );
+      if (!user) {
+        this.clearCookies();
+        return undefined;
+      }
     }
-    if (user.tokens?.expiresSoon) {
+
+    if ((this.refreshToken && !userToken) || user?.tokens?.expiresSoon) {
       const result = await this.request<AuthResponse>('/user', {
         method: 'GET',
       });
 
       if (!result || !result.succeeded) {
+        this.clearCookies();
         return undefined;
       }
 
-      if (result && result.tokens?.refreshToken) {
-        this.setCookieRefreshToken(result.tokens.refreshToken);
-      }
+      this.setCookieTokens(result.tokens);
 
-      if (result && result.succeeded && result.tokens?.token) {
-        this.setCookieUserToken(result.tokens.token);
-      }
       return result;
     }
     return user;

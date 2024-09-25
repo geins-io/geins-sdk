@@ -153,10 +153,12 @@ export interface AuthSignature {
   timestamp: string;
 }
 
-export enum AuthClientConnectionMode {
+export enum AuthClientConnectionModes {
   Proxy = 'Proxy',
   Direct = 'Direct',
 }
+
+export type AuthClientConnectionMode = keyof typeof AuthClientConnectionModes;
 
 /**
  * Authentication settings used by the client.
