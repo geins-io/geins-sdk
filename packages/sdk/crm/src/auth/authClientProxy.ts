@@ -82,8 +82,8 @@ export class AuthClientProxy extends AuthClient {
     return result;
   }
 
-  async refresh(refreshToken?: string): Promise<AuthResponse | undefined> {
-    this.refreshToken = refreshToken;
+  async refresh(): Promise<AuthResponse | undefined> {
+    this.refreshToken = this.getCookieRefreshToken();
     const result = await this.request<AuthResponse>('/refresh', {
       method: 'GET',
     });
@@ -108,23 +108,27 @@ export class AuthClientProxy extends AuthClient {
     refreshToken?: string,
     userToken?: string,
   ): Promise<AuthResponse | undefined> {
+    // Handle refresh token
     this.refreshToken = refreshToken;
-    let user = undefined;
     const cookieRefreshToken = this.getCookieRefreshToken();
     const refreshTokenValue = this.refreshToken || cookieRefreshToken;
     if (!refreshTokenValue) {
+      this.clearCookies();
       return undefined;
     }
 
+    // Handle user token
     const cookieUserToken = this.getCookieUserToken();
     const userTokenValue = userToken || cookieUserToken;
 
+    let user = undefined;
     if (userTokenValue && refreshTokenValue) {
       user = await AuthService.getUserObjectFromToken(
         userTokenValue,
         refreshTokenValue,
       );
       if (!user) {
+        this.clearCookies();
         return undefined;
       }
     }
@@ -135,6 +139,7 @@ export class AuthClientProxy extends AuthClient {
       });
 
       if (!result || !result.succeeded) {
+        this.clearCookies();
         return undefined;
       }
 

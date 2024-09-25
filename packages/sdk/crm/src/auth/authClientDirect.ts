@@ -69,13 +69,25 @@ export class AuthClientDirect extends AuthClient {
     refreshToken?: string,
     userToken?: string,
   ): Promise<AuthResponse | undefined> {
-    refreshToken = refreshToken || this.getCookieRefreshToken();
-    if (!refreshToken) {
+    // Handle refresh token
+    const cookieRefreshToken = this.getCookieRefreshToken();
+    const refreshTokenValue = refreshToken || cookieRefreshToken;
+    if (!refreshTokenValue) {
+      this.clearCookies();
       return undefined;
     }
-    userToken = userToken || this.getCookieUserToken();
-    const result = await this.authService.getUser(refreshToken, userToken);
+
+    // Handle user token
+    const cookieUserToken = this.getCookieUserToken();
+    const userTokenValue = userToken || cookieUserToken;
+
+    const result = await this.authService.getUser(
+      refreshTokenValue,
+      userTokenValue,
+    );
+
     if (!result || !result.succeeded) {
+      this.clearCookies();
       return undefined;
     }
 
