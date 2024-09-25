@@ -1,7 +1,6 @@
 import type { MenuVariables } from '@geins/types';
 import { BaseApiService, logWrite } from '@geins/core';
 import { queries } from '../graphql';
-//import { parseMenuItem } from '../parsers/contentParsers';
 export class MenuService extends BaseApiService {
   private async generateVars(variables: MenuVariables) {
     if (!variables.menuLocationId) {
@@ -23,9 +22,7 @@ export class MenuService extends BaseApiService {
     if (!result || !result.data || !result.data.getMenuAtLocation) {
       throw new Error('Invalid result structure');
     }
-    logWrite('parseResult menu', result);
     const menu = result.data.getMenuAtLocation;
-
     const parsedResult = {
       id: menu.id,
       title: menu.title,
