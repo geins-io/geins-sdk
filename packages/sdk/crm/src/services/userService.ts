@@ -1,7 +1,6 @@
-import type { UserType } from '@geins/types';
+import type { UserQuery } from '@geins/types';
 import { BaseApiService, logWrite, UserInputType } from '@geins/core';
-import { queries } from '../graphql';
-import * as userParsers from '../parsers/userParsers';
+import { queries, mutaions } from '../graphql';
 export class UserService extends BaseApiService {
   private async generateVars(variables: any) {
     return this.createVariables(variables);
@@ -24,7 +23,7 @@ export class UserService extends BaseApiService {
     return this.runQuery(queries.userGet, vars);
   }
 
-  async get(): Promise<UserType> {
+  async get(): Promise<UserQuery['getUser'] | null> {
     const vars = await this.generateVars({});
     return this.runQueryParsed(queries.userGet, vars);
   }
@@ -32,16 +31,26 @@ export class UserService extends BaseApiService {
   async create(user: UserInputType): Promise<any> {
     const variables = { user };
     const vars = await this.generateMutationVars(variables);
-    return this.runMutation(queries.userRegister, vars);
+    return this.runMutation(mutaions.userRegister, vars);
   }
 
   async update(user: UserInputType): Promise<any> {
     const variables = { user };
     const vars = await this.generateMutationVars(variables);
-    return this.runMutation(queries.userUpdate, vars);
+    return this.runMutation(mutaions.userUpdate, vars);
   }
 
-  protected parseResult(result: any): UserType {
-    return userParsers.parseUser(result);
+  async delete(): Promise<any> {
+    var vars = await this.generateVars({});
+    return this.runMutation(mutaions.userDelete, vars);
+  }
+
+  protected parseResult(data: any): UserQuery['getUser'] | null {
+    // Validate that the data exists and contains the 'getUser' field
+    if (!data || !data.data || !data.data.getUser) {
+      throw new Error('Invalid user data');
+    }
+
+    return data.data.getUser as UserQuery['getUser'];
   }
 }

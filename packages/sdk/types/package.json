@@ -8,14 +8,21 @@
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "npm run build",
-    "link": "yarn link"
+    "link": "yarn link",
+    "codegen": "graphql-codegen"
   },
   "dependencies": {},
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/client-preset": "^4.3.3",
+    "@graphql-codegen/jsdoc": "^3.0.0",
+    "@graphql-codegen/schema-ast": "^4.1.0",
+    "@graphql-codegen/typescript": "^4.0.9",
+    "@graphql-codegen/typescript-operations": "^4.2.3",
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
-    "typescript": "^5.4.5",
-    "eslint": "^9"
+    "eslint": "^9",
+    "typescript": "^5.4.5"
   }
 }

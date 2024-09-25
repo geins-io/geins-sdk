@@ -1,4 +1,6 @@
-import { CustomerType, KeyValue } from '../common';
+import { KeyValue } from '../common';
+import { CustomerType } from '../generated';
+
 import type { GeinsBaseApiVars } from '../api-client';
 
 export interface ContentPageVariables extends BaseCmsVariables {

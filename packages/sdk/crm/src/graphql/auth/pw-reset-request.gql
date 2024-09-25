@@ -1,4 +1,4 @@
-mutation requestPasswordReset(
+mutation UserRequestPasswordReset(
   $email: String!
   $channelId: String
   $languageId: String

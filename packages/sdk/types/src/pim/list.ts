@@ -1,4 +1,5 @@
 import { ProductFilterModeType } from './filter';
+import type { PriceFilterType } from '../generated';
 
 export enum ProductListSortType {
   NONE = 'NONE',
@@ -18,11 +19,11 @@ export enum ProductListSortType {
   TOTAL_STOCK_DESC = 'TOTAL_STOCK_DESC',
 }
 
-export type PriceFilterType = {
+/* export type PriceFilterType = {
   lowest: number;
   highest: number;
 };
-
+ */
 export type ProductListFilterType = {
   searchText: string;
   facets: string[];

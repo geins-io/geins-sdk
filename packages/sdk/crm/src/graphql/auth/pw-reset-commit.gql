@@ -1,4 +1,4 @@
-mutation commitReset(
+mutation UserPasswordResetCommit(
   $resetKey: String!
   $password: String!
   $channelId: String
