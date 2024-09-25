@@ -122,7 +122,7 @@ export class AuthServiceClient {
   }
 
   private async fetchRefreshToken(
-    currentRefreshtoken: string,
+    refreshToken: string,
   ): Promise<AuthUserToken> {
     const url = this.getAuthEndpointUrl('login');
     const requestOptions: RequestInit = {
@@ -130,7 +130,7 @@ export class AuthServiceClient {
       cache: 'no-cache',
       headers: {
         'Content-Type': 'application/json',
-        [`${AUTH_HEADERS.REFRESH_TOKEN}`]: currentRefreshtoken,
+        [`${AUTH_HEADERS.REFRESH_TOKEN}`]: refreshToken,
       },
     };
     const response = await fetch(url, requestOptions);
@@ -138,7 +138,7 @@ export class AuthServiceClient {
       throw new Error(`Failed to renew refresh token: ${response.statusText}`);
     }
 
-    const refreshToken = this.extractRefreshTokenFromResponse(response);
+    const newRefreshToken = this.extractRefreshTokenFromResponse(response);
 
     const userToken = await response.text();
     if (!userToken) {
@@ -149,7 +149,7 @@ export class AuthServiceClient {
     return {
       maxAge: retval.maxAge,
       token: retval.token,
-      refreshToken,
+      refreshToken: newRefreshToken,
     };
   }
 
@@ -157,7 +157,7 @@ export class AuthServiceClient {
     username: string,
     currentPassword: string,
     newPassword: string,
-    currentRefreshtoken: string,
+    refreshToken: string,
   ): Promise<AuthUserToken> {
     const url = this.getAuthEndpointUrl('password');
 
@@ -177,7 +177,7 @@ export class AuthServiceClient {
       cache: 'no-cache',
       headers: {
         'Content-Type': 'application/json',
-        [`${AUTH_HEADERS.REFRESH_TOKEN}`]: currentRefreshtoken,
+        [`${AUTH_HEADERS.REFRESH_TOKEN}`]: refreshToken,
       },
       body: JSON.stringify(requestBody),
     };
@@ -187,7 +187,7 @@ export class AuthServiceClient {
       throw new Error(`Failed to change password: ${response.statusText}`);
     }
 
-    const refreshToken = this.extractRefreshTokenFromResponse(response);
+    refreshToken = this.extractRefreshTokenFromResponse(response);
 
     const userToken = await response.text();
     if (!userToken) {
@@ -262,15 +262,13 @@ export class AuthServiceClient {
     return this.fetchUserToken(username, password, rememberUser!);
   }
 
-  public async renewRefreshtoken(
-    currentRefreshtoken: string,
-  ): Promise<AuthUserToken> {
-    return this.fetchRefreshToken(currentRefreshtoken);
+  public async renewRefreshtoken(refreshToken: string): Promise<AuthUserToken> {
+    return this.fetchRefreshToken(refreshToken);
   }
 
   public async changePassword(
     credentials: AuthCredentials,
-    currentRefreshtoken: string,
+    refreshToken: string,
   ): Promise<AuthUserToken> {
     if (!credentials.newPassword) {
       throw new Error('New password is required');
@@ -279,11 +277,11 @@ export class AuthServiceClient {
       credentials.username,
       credentials.password,
       credentials.newPassword,
-      currentRefreshtoken,
+      refreshToken,
     );
   }
 
-  public async logout(currentRefreshtoken: string): Promise<boolean> {
+  public async logout(refreshToken: string): Promise<boolean> {
     // Implementation if needed, currently just returning true
     return true;
   }

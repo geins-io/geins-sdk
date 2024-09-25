@@ -24,7 +24,7 @@ const cookieService = new CookieService();
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const authSettings = {
-  clientConnectionMode: AuthClientConnectionMode.Direct,
+  clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
 const geinsCore = new GeinsCore(geinsCredentials);
 const geinsCRM = new GeinsCRM(geinsCore, authSettings);
@@ -190,7 +190,9 @@ onMounted(() => {
                   </tr>
                   <tr>
                     <td>
-                      <label>Email:</label><br /><input v-model="username" /><br />
+                      <label>Email:</label><br /><input
+                        v-model="username"
+                      /><br />
                       <label>Password:</label><br /><input v-model="password" />
                     </td>
                   </tr>
@@ -217,25 +219,59 @@ onMounted(() => {
             <tr v-if="userRegister.address">
               <td>
                 <label>customerType:</label><br />
-                <Select v-model="userRegister.customerType" :options="customerTypeOptions" />
+                <Select
+                  v-model="userRegister.customerType"
+                  :options="customerTypeOptions"
+                />
                 <br />
-                <label>entityId:</label><br /><input v-model="userRegister.entityId" /><br />
-                <label>gender:</label><br /><Select v-model="userRegister.gender" :options="genderTypeOptions" /><br />
-                <label>newsletter:</label><br /><Select :options="newsletterOptions" /><br />
-                <label>firstname:</label><br /><input v-model="userRegister.address.firstName" /><br />
-                <label>lastName:</label><br /><input v-model="userRegister.address.lastName" /><br />
-                <label>company:</label><br /><input v-model="userRegister.address.company" /><br />
+                <label>entityId:</label><br /><input
+                  v-model="userRegister.entityId"
+                /><br />
+                <label>gender:</label><br /><Select
+                  v-model="userRegister.gender"
+                  :options="genderTypeOptions"
+                /><br />
+                <label>newsletter:</label><br /><Select
+                  :options="newsletterOptions"
+                /><br />
+                <label>firstname:</label><br /><input
+                  v-model="userRegister.address.firstName"
+                /><br />
+                <label>lastName:</label><br /><input
+                  v-model="userRegister.address.lastName"
+                /><br />
+                <label>company:</label><br /><input
+                  v-model="userRegister.address.company"
+                /><br />
                 <label>mobile:</label><br />
                 <input v-model="userRegister.address.mobile" /><br />
-                <label>phone:</label><br /><input v-model="userRegister.address.phone" /><br />
-                <label>entryCode:</label><br /><input v-model="userRegister.address.entryCode" /><br />
-                <label>careOf:</label><br /><input v-model="userRegister.address.careOf" /><br />
-                <label>addressLine1:</label><br /><input v-model="userRegister.address.addressLine1" /><br />
-                <label>addressLine2:</label><br /><input v-model="userRegister.address.addressLine2" /><br />
-                <label>addressLine3:</label><br /><input v-model="userRegister.address.addressLine3" /><br />
-                <label>city:</label><br /><input v-model="userRegister.address.city" /><br />
-                <label>state:</label><br /><input v-model="userRegister.address.state" /><br />
-                <label>zip:</label><br /><input v-model="userRegister.address.zip" /><br />
+                <label>phone:</label><br /><input
+                  v-model="userRegister.address.phone"
+                /><br />
+                <label>entryCode:</label><br /><input
+                  v-model="userRegister.address.entryCode"
+                /><br />
+                <label>careOf:</label><br /><input
+                  v-model="userRegister.address.careOf"
+                /><br />
+                <label>addressLine1:</label><br /><input
+                  v-model="userRegister.address.addressLine1"
+                /><br />
+                <label>addressLine2:</label><br /><input
+                  v-model="userRegister.address.addressLine2"
+                /><br />
+                <label>addressLine3:</label><br /><input
+                  v-model="userRegister.address.addressLine3"
+                /><br />
+                <label>city:</label><br /><input
+                  v-model="userRegister.address.city"
+                /><br />
+                <label>state:</label><br /><input
+                  v-model="userRegister.address.state"
+                /><br />
+                <label>zip:</label><br /><input
+                  v-model="userRegister.address.zip"
+                /><br />
               </td>
             </tr>
             <tr>
@@ -254,17 +290,25 @@ onMounted(() => {
           <hr />
           <div>
             Added Users:
-            <div v-for="(item, index) in items" v-if="items.length > 0" :key="index">
+            <div
+              v-for="(item, index) in items"
+              v-if="items.length > 0"
+              :key="index"
+            >
               <p>
-                <b>{{ item.header }}</b><br />
-                <textarea :style="{
-                  border: 0,
-                  width: '400px',
-                  height:
-                    item.data.length > 100
-                      ? Math.min(500, item.data.length * 10) + 'px'
-                      : '70px',
-                }">{{ item.data }}</textarea>
+                <b>{{ item.header }}</b
+                ><br />
+                <textarea
+                  :style="{
+                    border: 0,
+                    width: '400px',
+                    height:
+                      item.data.length > 100
+                        ? Math.min(500, item.data.length * 10) + 'px'
+                        : '70px',
+                  }"
+                  >{{ item.data }}</textarea
+                >
               </p>
             </div>
             <i v-else> ... no users added </i>

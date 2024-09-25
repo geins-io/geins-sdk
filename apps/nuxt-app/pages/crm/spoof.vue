@@ -1,6 +1,8 @@
 <script setup lang="ts">
+
 import { ref, onMounted } from 'vue';
 import { logWrite, GeinsCore, AuthClientConnectionMode } from '@geins/core';
+
 import type { GeinsCredentials, AuthSettings } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 import CookieDump from '~/components/CookieDump.vue';
@@ -8,7 +10,7 @@ import CookieDump from '~/components/CookieDump.vue';
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const authSettings = {
-  clientConnectionMode: AuthClientConnectionMode.Direct,
+  clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
 
 const geinsCore = new GeinsCore(geinsCredentials);
@@ -28,7 +30,7 @@ const goToCmsArea = () => {
   window.open('/cms');
 };
 
-onMounted(() => { });
+onMounted(() => {});
 </script>
 
 <template>
@@ -58,7 +60,10 @@ onMounted(() => { });
                   <tr>
                     <td>
                       <label>Set spoof token from merchant center</label><br />
-                      <textarea v-model="spoofToken" style="width: 500px; height: 200px"></textarea>
+                      <textarea
+                        v-model="spoofToken"
+                        style="width: 500px; height: 200px"
+                      ></textarea>
                     </td>
                   </tr>
                 </table>

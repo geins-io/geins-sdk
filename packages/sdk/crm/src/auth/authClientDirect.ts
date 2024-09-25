@@ -59,29 +59,35 @@ export class AuthClientDirect extends AuthClient {
     }
 
     if (result && result.succeeded && result.tokens?.token) {
-      this.setCookieUserToken(result.tokens.token);
+      const maxAge = result.tokens.maxAge || 900;
+      this.setCookieUserToken(result.tokens.token, maxAge);
     }
     return result;
   }
 
-  async getUser(): Promise<AuthResponse | undefined> {
-    const refreshToken = this.getCookieRefreshToken();
-    if (!refreshToken) {
+  async getUser(
+    refreshToken?: string,
+    userToken?: string,
+  ): Promise<AuthResponse | undefined> {
+    const tokens = this.getCurrentTokens(refreshToken, userToken);
+
+    if (!tokens.refreshToken) {
+      this.clearCookies();
       return undefined;
     }
-    const userToken = this.getCookieUserToken();
-    const result = await this.authService.getUser(refreshToken, userToken);
+
+    const result = await this.authService.getUser(
+      tokens.refreshToken,
+      tokens.userToken,
+    );
+
     if (!result || !result.succeeded) {
+      this.clearCookies();
       return undefined;
     }
 
-    if (result && result.tokens?.refreshToken) {
-      this.setCookieRefreshToken(result.tokens.refreshToken);
-    }
+    this.setCookieTokens(result.tokens);
 
-    if (result && result.succeeded && result.tokens?.token) {
-      this.setCookieUserToken(result.tokens.token);
-    }
     return result;
   }
 

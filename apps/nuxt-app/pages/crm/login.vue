@@ -13,7 +13,7 @@ import type {
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const authSettings = {
-  clientConnectionMode: AuthClientConnectionMode.Direct,
+  clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
 
 // State variables
