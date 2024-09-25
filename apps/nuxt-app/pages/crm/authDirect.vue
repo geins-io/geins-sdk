@@ -41,7 +41,7 @@ const newPassword = computed(
 );
 
 const checkUserLoggedIn = () => {
-  const isLoggedIn = geinsCRM.user.isLoggedIn();
+  const isLoggedIn = geinsCRM.user.authorized();
   if (isLoggedIn === true) {
     userLoggedIn.value = true;
   } else {

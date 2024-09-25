@@ -22,6 +22,7 @@ import { ref } from 'vue';
           <NuxtLink to="/crm/authproxy">Authenticate - Proxy Mode</NuxtLink><br />
           <NuxtLink to="/crm/login">Simple Login</NuxtLink><br />
           <NuxtLink to="/crm/user">Current User</NuxtLink><br />
+          <NuxtLink to="/crm/pwReset">Password Reset</NuxtLink><br />
           <NuxtLink to="/crm/spoof">Spoof User</NuxtLink><br />
         </td>
         <td>

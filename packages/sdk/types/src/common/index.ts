@@ -1,6 +1,6 @@
-export * from './channel';
+// export * from './channel';
 
-export type CustomerType = 'PERSON' | 'ORGANIZATION';
+/* export type CustomerType = 'PERSON' | 'ORGANIZATION'; */
 
 export type Environment = 'prod' | 'qa' | 'dev';
 

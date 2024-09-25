@@ -1,4 +1,4 @@
-export type MetadataType = {
+/* export type MetadataType = {
   title: string;
   description?: string;
   keywords?: string;
@@ -11,3 +11,4 @@ export type AlternativeUrlType = {
   country?: string;
   channelId: string;
 };
+ */

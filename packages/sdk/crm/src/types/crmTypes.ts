@@ -5,6 +5,8 @@ import {
   UserType,
   UserAddressType,
   UserOrdersOrderType,
+  UserQuery,
+  UserOrdersQuery,
 } from '@geins/types';
 
 export interface AuthInterface {
@@ -30,11 +32,8 @@ export interface AuthInterface {
  */
 export interface UserInterface {
   authorized(): Boolean;
-  get(): Promise<UserType | undefined>;
+  get(): Promise<UserQuery['getUser'] | null>;
   update(user: UserInputType): Promise<any>;
-  orders(): Promise<UserOrdersOrderType[] | undefined>;
-  order(id: number): Promise<any>;
-  balance(): Promise<any>;
-  adress(): Promise<any>;
+  orders(): Promise<UserOrdersQuery['getOrders'] | null>;
   remove(): Promise<any>;
 }

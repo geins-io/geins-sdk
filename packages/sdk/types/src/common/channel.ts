@@ -1,4 +1,15 @@
-export type ChannelType = {
+/* export type MarketType = {
+  id: string;
+  alias: string;
+  allowedLanguages: LanguageType[];
+  country: CountryType;
+  currency: CurrencyType;
+  onlyDisplayInCheckout: boolean;
+  virtual: boolean;
+  groupKey: string;
+}; */
+
+/* export type ChannelType = {
   id: string;
   name: string;
   type: string;
@@ -9,16 +20,7 @@ export type ChannelType = {
   languages: LanguageType[];
 };
 
-export type MarketType = {
-  id: string;
-  alias: string;
-  allowedLanguages: LanguageType[];
-  country: CountryType;
-  currency: CurrencyType;
-  onlyDisplayInCheckout: boolean;
-  virtual: boolean;
-  groupKey: string;
-};
+
 
 export type CountryType = {
   name: string;
@@ -40,3 +42,4 @@ export type MarketLanguageType = {
   marketId: string;
   languageId: string;
 };
+ */

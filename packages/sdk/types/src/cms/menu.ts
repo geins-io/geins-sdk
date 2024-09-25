@@ -1,9 +1,10 @@
 import type { GeinsBaseApiVars } from '../api-client';
+import { MenuType } from '../generated';
 
 export interface MenuVariables extends GeinsBaseApiVars {
   menuLocationId: string;
 }
-
+/*
 export interface MenuItemType {
   id: string;
   label: string;
@@ -18,7 +19,7 @@ export interface MenuItemType {
 export interface MenuType {
   title: string;
   menuItems: MenuItemType[];
-}
+} */
 
 export interface MenuServiceResult {
   data: {

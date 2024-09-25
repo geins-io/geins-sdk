@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { GeinsCore, AuthClientConnectionModes, logWrite } from '@geins/core';
+import { useRouter, useRoute } from 'vue-router';
+import { GeinsCore, AuthClientConnectionMode, logWrite } from '@geins/core';
 import { GeinsCRM } from '@geins/crm';
 import type {
   GeinsCredentials,
@@ -20,12 +20,31 @@ const authSettings = {
 const email = ref<string>('viola92@gmail.com');
 const password = ref<string>('na0o38y987fnbbxm4a7oi');
 const errorMessage = ref<string | null>(null);
+
 // Initialize Geins Core and GeinsCRM
 const router = useRouter();
+const route = useRoute();
+
 // Initialize Geins Core and GeinsCRM
 const core = new GeinsCore(geinsCredentials);
-
 const geinsCRM = new GeinsCRM(core, authSettings);
+
+const populateFromQuery = () => {
+  const queryEmail = route.query.email as string | undefined;
+  const queryPassword = route.query.password as string | undefined;
+
+  logWrite('Query email', queryEmail);
+
+  if (queryEmail) {
+    email.value = queryEmail;
+  }
+  if (queryPassword) {
+    password.value = queryPassword;
+  }
+};
+onMounted(() => {
+  populateFromQuery();
+});
 
 // Define login method
 const loginUser = async () => {
@@ -69,12 +88,12 @@ const loginUser = async () => {
     <h3>Login</h3>
     <form @submit.prevent="loginUser">
       <div>
-        <label for="email">Email:</label>
+        <label for="email">Email:</label><br />
         <input id="email" v-model="email" type="email" required />
       </div>
       <div>
-        <label for="password">Password:</label>
-        <input id="password" v-model="password" type="password" required />
+        <label for="password">Password:</label><br />
+        <input id="password" v-model="password" required />
       </div>
       <button type="submit">Login</button>
     </form>
@@ -83,6 +102,10 @@ const loginUser = async () => {
   </div>
 </template>
 <style scoped>
+input {
+  width: 250px;
+}
+
 .error {
   color: red;
 }
