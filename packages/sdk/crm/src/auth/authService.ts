@@ -59,25 +59,25 @@ export class AuthService {
 
   // get user if userToken is provided parse from token if not use refresh token to get user
   public async getUser(
-    currentRefreshtoken: string,
+    refreshToken: string,
     userToken?: string,
   ): Promise<AuthResponse> {
     try {
       if (userToken) {
         const authResponse = await AuthService.getUserObjectFromToken(
           userToken,
-          currentRefreshtoken,
+          refreshToken,
         );
         if (!authResponse) {
           return { succeeded: false };
         }
         if (authResponse.tokens?.expiresSoon) {
-          return await this.refresh(currentRefreshtoken);
+          return await this.refresh(refreshToken);
         }
 
         return authResponse;
       } else {
-        return await this.refresh(currentRefreshtoken);
+        return await this.refresh(refreshToken);
       }
     } catch (error) {
       return this.handleError('Get user failed', error);
@@ -87,16 +87,16 @@ export class AuthService {
   // change password
   public async changePassword(
     credentials: AuthCredentials,
-    currentRefreshtoken: string,
+    refreshToken: string,
   ): Promise<AuthResponse> {
-    if (!credentials.newPassword || !currentRefreshtoken) {
+    if (!credentials.newPassword || !refreshToken) {
       return { succeeded: false };
     }
     try {
       this.ensureClientInitialized();
       const result = await this.client!.changePassword(
         credentials,
-        currentRefreshtoken,
+        refreshToken,
       );
       if (!result.token) {
         return { succeeded: false };
@@ -115,14 +115,14 @@ export class AuthService {
   }
 
   // get new refresh token and token
-  public async refresh(currentRefreshtoken: string): Promise<AuthResponse> {
-    if (!currentRefreshtoken) {
+  public async refresh(refreshToken: string): Promise<AuthResponse> {
+    if (!refreshToken) {
       return { succeeded: false };
     }
 
     try {
       this.ensureClientInitialized();
-      const result = await this.client!.renewRefreshtoken(currentRefreshtoken);
+      const result = await this.client!.renewRefreshtoken(refreshToken);
       if (!result.token) {
         return { succeeded: false };
       }
@@ -153,10 +153,9 @@ export class AuthService {
       }
 
       return await AuthService.getUserObjectFromToken(
-              result.token,
-              result.refreshToken,
-            );
-
+        result.token,
+        result.refreshToken,
+      );
     } catch (error) {
       return this.handleError('Register new user failed', error);
     }

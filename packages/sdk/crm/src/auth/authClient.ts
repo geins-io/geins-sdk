@@ -19,7 +19,16 @@ export abstract class AuthClient {
     credentials: AuthCredentials,
   ): Promise<AuthResponse | undefined>;
 
-  abstract getUser(): Promise<AuthResponse | undefined>;
+  /**
+   * Retrieves user authentication information. Can be used SSR if refreshToken is provided.
+   * When no params are provided, it will retrieve the tokens from browser cookies.
+   * @param refreshToken Optional token used for refreshing the authentication.
+   * @param userToken Optional token representing the current user session
+   */
+  abstract getUser(
+    refreshToken?: string,
+    userToken?: string,
+  ): Promise<AuthResponse | undefined>;
 
   abstract register(
     credentials: AuthCredentials,
@@ -71,12 +80,39 @@ export abstract class AuthClient {
     return parseInt(maxAge, 10);
   }
 
+  protected getCurrentTokens(
+    refreshToken?: string,
+    userToken?: string,
+  ): { refreshToken: string | undefined; userToken: string | undefined } {
+    const cookieRefreshToken = this.getCookieRefreshToken();
+    const cookieUserToken = this.getCookieUserToken();
+    return {
+      refreshToken: refreshToken || cookieRefreshToken,
+      userToken: userToken || cookieUserToken,
+    };
+  }
+
+  protected setCookieTokens(tokens?: {
+    refreshToken?: string;
+    token?: string;
+    maxAge?: number;
+  }): void {
+    if (tokens?.refreshToken) {
+      this.setCookieRefreshToken(tokens.refreshToken);
+    }
+    if (tokens?.token) {
+      const maxAge = tokens.maxAge || 900;
+      this.setCookieUserToken(tokens.token, maxAge);
+    }
+  }
+
   // set cookie values
   protected setCookiesLogin(
     authResponse: AuthResponse,
     rememberUser: boolean,
   ): void {
     const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes
+    const tokenMaxAge = authResponse?.tokens?.maxAge || 900;
     const { user, tokens } = authResponse;
 
     this.cookieService.set({
@@ -90,7 +126,7 @@ export abstract class AuthClient {
     }
 
     if (tokens?.token) {
-      this.setCookieUserToken(tokens.token, maxAge);
+      this.setCookieUserToken(tokens.token, tokenMaxAge);
     }
 
     if (user?.username) {
@@ -118,14 +154,10 @@ export abstract class AuthClient {
       name: AUTH_COOKIES.REFRESH_TOKEN,
       payload: token,
       maxAge,
-      // httpOnly: true,
     });
   }
 
-  protected setCookieUserToken(token: string, maxAge?: number): void {
-    if (!maxAge) {
-      maxAge = this.getCookieMaxAge();
-    }
+  protected setCookieUserToken(token: string, maxAge: number): void {
     this.cookieService.set({
       name: AUTH_COOKIES.USER_AUTH,
       payload: token,
