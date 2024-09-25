@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 import type {
   GeinsCredentials,
   BrandsQueryVariables,
-  BrandType,
+  GeinsBrandListTypeType,
 } from '@geins/types';
 import { logWrite, GeinsCore } from '@geins/core';
 import { GeinsPIM } from '@geins/pim';
@@ -22,7 +22,7 @@ const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const geinsCore = new GeinsCore(geinsCredentials);
 const geinsPIM = new GeinsPIM(geinsCore);
 
-const brands = ref<BrandType[]>([]);
+const brands = ref<GeinsBrandListTypeType[]>([]);
 
 const getBrands = async () => {
   const brandsVars: BrandsQueryVariables = {

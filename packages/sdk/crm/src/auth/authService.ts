@@ -182,7 +182,9 @@ export class AuthService {
           authenticated: !userFromToken.expired,
           userId: userFromToken.sid || '',
           username: userFromToken.name || 'unknown',
-          customerType: (userFromToken.customerType || 'unknown').toUpperCase(),
+          GeinsCustomerTypeType: (
+            userFromToken.GeinsCustomerTypeType || 'unknown'
+          ).toUpperCase(),
           memberDiscount: userFromToken.memberDiscount || '0',
           memberType: userFromToken.memberType || 'unknown',
           memberId: userFromToken.memberId || '0',

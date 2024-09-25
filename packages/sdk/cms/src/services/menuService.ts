@@ -1,7 +1,6 @@
-import type { MenuVariables, MenuType } from '@geins/types';
-import { BaseApiService } from '@geins/core';
+import type { MenuVariables } from '@geins/types';
+import { BaseApiService, logWrite } from '@geins/core';
 import { queries } from '../graphql';
-import { parseMenuItem } from '../util/contentParsers';
 export class MenuService extends BaseApiService {
   private async generateVars(variables: MenuVariables) {
     if (!variables.menuLocationId) {
@@ -19,20 +18,34 @@ export class MenuService extends BaseApiService {
     return await this.runQueryParsed(queries.menu, vars);
   }
 
-  protected parseResult(result: any): MenuType {
+  protected parseResult(result: any): any {
     if (!result || !result.data || !result.data.getMenuAtLocation) {
       throw new Error('Invalid result structure');
     }
-
     const menu = result.data.getMenuAtLocation;
-
     const parsedResult = {
+      id: menu.id,
       title: menu.title,
-      menuItems: menu.menuItems.map((item: any) => parseMenuItem(item)),
+      menuItems: menu.menuItems.map((item: any) => this.parseMenuItem(item)),
     };
 
     return parsedResult;
   }
 
-
+  protected parseMenuItem(item: any): any {
+    return {
+      id: item.id,
+      label: item.label,
+      title: item.title,
+      canonicalUrl: item.canonicalUrl,
+      type: item.type,
+      order: item.order,
+      open: item.open,
+      hidden: item.hidden,
+      targetBlank: item.targetBlank,
+      children: item.children
+        ? item.children.map((child: any) => this.parseMenuItem(child))
+        : [],
+    };
+  }
 }

@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { logWrite, GeinsCore, AuthClientConnectionModes } from '@geins/core';
+
+import { ref, onMounted } from 'vue';
+import { logWrite, GeinsCore, AuthClientConnectionMode } from '@geins/core';
+
 import type { GeinsCredentials, AuthSettings } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 import CookieDump from '~/components/CookieDump.vue';
@@ -24,10 +26,6 @@ const spoofUser = () => {
 };
 
 const goToCmsArea = () => {
-  // open new tab with cms area
-  window.open('/cms');
-};
-const goToCmsPage = () => {
   // open new tab with cms area
   window.open('/cms');
 };

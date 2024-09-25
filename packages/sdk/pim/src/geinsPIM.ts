@@ -1,12 +1,12 @@
 import { GeinsCore, BasePackage } from '@geins/core';
-import type { MarketLanguageType } from '@geins/types';
+import type { GeinsMarketLanguageType } from '@geins/types';
 import { BrandsService } from './services/brandsService';
 class GeinsPIM extends BasePackage {
   public brands: BrandsService;
 
   constructor(
     core: GeinsCore,
-    private marketLanguage?: MarketLanguageType,
+    private marketLanguage?: GeinsMarketLanguageType,
   ) {
     super(core);
     const { client, credentials } = core;

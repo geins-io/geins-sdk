@@ -1,5 +1,13 @@
-#import "./menu-item-base.graphql"
-query getMenuAtLocation(
+#import "./fragments/menu-item-base.gql"
+fragment Menu on MenuType {
+  id
+  title
+  menuItems {
+    ...MenuItemBase
+  }
+}
+
+query MenuAtLocation(
   $menuLocationId: String
   $channelId: String
   $languageId: String
@@ -11,9 +19,6 @@ query getMenuAtLocation(
     languageId: $languageId
     marketId: $marketId
   ) {
-    title
-    menuItems {
-      ...MenuItemBase
-    }
+    ...Menu
   }
 }

@@ -1,5 +1,5 @@
 import { ProductFilterModeType } from './filter';
-import type { PriceFilterType } from '../generated';
+import type { GeinsPriceFilterTypeType } from '../generated';
 
 export enum ProductListSortType {
   NONE = 'NONE',
@@ -31,7 +31,7 @@ export type ProductListFilterType = {
   include: string[];
   exclude: string[];
   sort: ProductListSortType;
-  price: PriceFilterType;
+  price: GeinsPriceFilterTypeType;
   filterMode: ProductFilterModeType;
   productIds: number[];
   includeCollapsed: Boolean;

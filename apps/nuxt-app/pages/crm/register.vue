@@ -5,14 +5,14 @@ import {
   GeinsCore,
   buildEndpoints,
   CookieService,
-  AuthClientConnectionModes,
-  UserCustomerType,
-  UserGenderType,
+  AuthClientConnectionMode,
+  GeinsCustomerType,
+  GeinsGender
 } from '@geins/core';
 import type {
   AuthSettings,
   GeinsCredentials,
-  UserInputType,
+  GeinsUserInputTypeType,
 } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 
@@ -33,7 +33,7 @@ const items = ref<any[]>([]);
 const user = ref<any>({});
 
 const fakeUser = fake.user();
-const userRegister = ref<UserInputType>({
+const userRegister = ref<GeinsUserInputTypeType>({
   address: {
     firstName: fakeUser.user.address?.firstName || '',
     lastName: fakeUser.user.address?.lastName || '',
@@ -61,17 +61,17 @@ interface Option {
   value: string | number;
 }
 const customerTypeOptions: Option[] = [];
-for (const key in UserCustomerType) {
+for (const key in GeinsCustomerType) {
   customerTypeOptions.push({
     key,
-    value: UserCustomerType[key as keyof typeof UserCustomerType],
+    value: GeinsCustomerType[key as keyof typeof GeinsCustomerType],
   });
 }
 const genderTypeOptions: Option[] = [];
-for (const key in UserGenderType) {
+for (const key in GeinsGender) {
   genderTypeOptions.push({
     key,
-    value: UserGenderType[key as keyof typeof UserGenderType],
+    value: GeinsGender[key as keyof typeof GeinsGender],
   });
 }
 

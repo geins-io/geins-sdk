@@ -1,22 +1,21 @@
 import { faker } from '@faker-js/faker';
-import type { UserInputType } from '@geins/types';
-import { UserCustomerType, UserGenderType } from '@geins/types';
+import { GeinsCustomerType, GeinsGender } from '@geins/types';
 export const fake = {
   user: () => {
     const csex = faker.person.sex() as 'female' | 'male';
     let entityId = faker.string.numeric({ length: 12, exclude: ['0'] });
-    let cgender = UserGenderType.Other;
-    let ctype = UserCustomerType.Private;
+    let cgender = GeinsGender.UnspecifiedType;
+    let ctype = GeinsCustomerType.PersonType;
     let companyName = '';
     if (faker.datatype.boolean()) {
-      ctype = UserCustomerType.Organization;
+      ctype = GeinsCustomerType.OrganizationType;
       companyName = faker.company.name();
       entityId = faker.string.numeric({ length: 7, exclude: ['0'] });
     } else {
       if (csex === 'male') {
-        cgender = UserGenderType.Male;
+        cgender = GeinsGender.ManType;
       } else if (csex === 'female') {
-        cgender = UserGenderType.Female;
+        cgender = GeinsGender.WomanType;
       }
     }
 
@@ -25,7 +24,7 @@ export const fake = {
       user: {
         newsletter: faker.datatype.boolean(),
         customerType: ctype,
-        gender: UserGenderType.Other,
+        gender: cgender,
         entityId: entityId,
         metaData: JSON.stringify({ bio: faker.person.bio() }),
         address: {

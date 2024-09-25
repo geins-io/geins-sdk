@@ -19,7 +19,7 @@ export interface Scalars {
   Long: { input: number; output: number; }
 }
 
-export interface AddressInputType {
+export interface GeinsAddressInputTypeType {
   addressLine1?: InputMaybe<Scalars['String']['input']>;
   addressLine2?: InputMaybe<Scalars['String']['input']>;
   addressLine3?: InputMaybe<Scalars['String']['input']>;
@@ -36,7 +36,7 @@ export interface AddressInputType {
   zip?: InputMaybe<Scalars['String']['input']>;
 }
 
-export interface AddressType {
+export interface GeinsAddressTypeType {
   addressLine1: Scalars['String']['output'];
   addressLine2: Scalars['String']['output'];
   addressLine3: Scalars['String']['output'];
@@ -54,7 +54,7 @@ export interface AddressType {
 }
 
 /** Type containing information about alternative urls to an entity */
-export interface AlternativeUrlType {
+export interface GeinsAlternativeUrlTypeType {
   /** The id of the channel that the alternative url exists on */
   channelId: Scalars['String']['output'];
   /** The country code of the alternative url */
@@ -68,7 +68,7 @@ export interface AlternativeUrlType {
 }
 
 /** Type containing account balance information */
-export interface BalanceType {
+export interface GeinsBalanceTypeType {
   /** The amount that will be used for this order */
   pending: Scalars['Decimal']['output'];
   /** Pending balance, formatted as a currency string */
@@ -88,7 +88,7 @@ export interface BalanceType {
 }
 
 /** Type containing brand listing information */
-export interface BrandListType {
+export interface GeinsBrandListTypeType {
   /** Brand alias */
   alias?: Maybe<Scalars['String']['output']>;
   /**
@@ -97,7 +97,7 @@ export interface BrandListType {
    */
   alternativeCanonicalUrls?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Alternative urls to the brand */
-  alternativeUrls?: Maybe<Array<Maybe<AlternativeUrlType>>>;
+  alternativeUrls?: Maybe<Array<Maybe<GeinsAlternativeUrlTypeType>>>;
   /** Background image */
   backgroundImage?: Maybe<Scalars['String']['output']>;
   /** Brand ID */
@@ -117,7 +117,7 @@ export interface BrandListType {
 }
 
 /** Type containing brand information */
-export interface BrandType {
+export interface GeinsBrandTypeType {
   /** Brand alias */
   alias?: Maybe<Scalars['String']['output']>;
   /**
@@ -126,7 +126,7 @@ export interface BrandType {
    */
   alternativeCanonicalUrls?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Alternative urls to the brand */
-  alternativeUrls?: Maybe<Array<Maybe<AlternativeUrlType>>>;
+  alternativeUrls?: Maybe<Array<Maybe<GeinsAlternativeUrlTypeType>>>;
   /** Brand ID */
   brandId: Scalars['Int']['output'];
   /** The full path for this brand. e.g. '/l/brand-1' */
@@ -138,7 +138,7 @@ export interface BrandType {
 }
 
 /** Type containing breadcrumb information */
-export interface BreadcrumbType {
+export interface GeinsBreadcrumbTypeType {
   /** Category ID */
   categoryId: Scalars['Int']['output'];
   /** Breadcrumb display name */
@@ -150,19 +150,19 @@ export interface BreadcrumbType {
 }
 
 /** Type containing campaign price information */
-export interface CampaignPriceType {
+export interface GeinsCampaignPriceTypeType {
   /** Campaign price discount */
   discount: Scalars['Decimal']['output'];
   /** Campaign price discount percentage */
   discountPercentage: Scalars['Decimal']['output'];
   /** Campaign price */
-  price?: Maybe<PriceType>;
+  price?: Maybe<GeinsPriceTypeType>;
   /** Campaign price quantity */
   quantity: Scalars['Int']['output'];
 }
 
 /** Type containing campaign rule information */
-export interface CampaignRuleType {
+export interface GeinsCampaignRuleTypeType {
   /** Campaign action */
   action?: Maybe<Scalars['String']['output']>;
   /** Campaign action value */
@@ -182,15 +182,15 @@ export interface CampaignRuleType {
 }
 
 /** Type containing campaign information */
-export interface CampaignType {
+export interface GeinsCampaignTypeType {
   /** Applied campaigns */
-  appliedCampaigns?: Maybe<Array<Maybe<CampaignRuleType>>>;
+  appliedCampaigns?: Maybe<Array<Maybe<GeinsCampaignRuleTypeType>>>;
   /** Campaign prices */
-  prices?: Maybe<Array<Maybe<CampaignPriceType>>>;
+  prices?: Maybe<Array<Maybe<GeinsCampaignPriceTypeType>>>;
 }
 
 /** Type containing information about cart fees */
-export interface CartFeesType {
+export interface GeinsCartFeesTypeType {
   /** Payment fee excl. VAT */
   paymentFeeExVat: Scalars['Decimal']['output'];
   /** Payment fee incl. VAT */
@@ -201,12 +201,12 @@ export interface CartFeesType {
   shippingFeeIncVat: Scalars['Decimal']['output'];
 }
 
-export interface CartGroupInputType {
+export interface GeinsCartGroupInputTypeType {
   groupKey?: InputMaybe<Scalars['ID']['input']>;
   quantity: Scalars['Int']['input'];
 }
 
-export interface CartItemInputType {
+export interface GeinsCartItemInputTypeType {
   groupKey?: InputMaybe<Scalars['ID']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   message?: InputMaybe<Scalars['String']['input']>;
@@ -215,9 +215,9 @@ export interface CartItemInputType {
 }
 
 /** Type containing cart item information */
-export interface CartItemType {
+export interface GeinsCartItemTypeType {
   /** Campaign */
-  campaign?: Maybe<CampaignType>;
+  campaign?: Maybe<GeinsCampaignTypeType>;
   /** The key of the group that this cart item belong to */
   groupKey?: Maybe<Scalars['ID']['output']>;
   /** Cart item Id */
@@ -225,45 +225,45 @@ export interface CartItemType {
   /** Custom message */
   message?: Maybe<Scalars['String']['output']>;
   /** Product */
-  product?: Maybe<ProductType>;
+  product?: Maybe<GeinsProductTypeType>;
   /** Contains package meta data if the cart item was part of package */
-  productPackage?: Maybe<ProductPackageCartItemType>;
+  productPackage?: Maybe<GeinsProductPackageCartItemTypeType>;
   /** Quantity */
   quantity: Scalars['Int']['output'];
   /** SKU Id */
   skuId: Scalars['Int']['output'];
   /** Total price */
-  totalPrice?: Maybe<PriceType>;
+  totalPrice?: Maybe<GeinsPriceTypeType>;
   /** Price per unit */
-  unitPrice?: Maybe<PriceType>;
+  unitPrice?: Maybe<GeinsPriceTypeType>;
 }
 
 /** Type containing cart summary information */
-export interface CartSummaryType {
+export interface GeinsCartSummaryTypeType {
   /** Account balance information */
-  balance?: Maybe<BalanceType>;
+  balance?: Maybe<GeinsBalanceTypeType>;
   /** Cart fee information */
-  fees?: Maybe<CartFeesType>;
+  fees?: Maybe<GeinsCartFeesTypeType>;
   /** Cart fixed discount amount excl. VAT */
   fixedAmountDiscountExVat: Scalars['Decimal']['output'];
   /** Cart fixed discount amount incl. VAT */
   fixedAmountDiscountIncVat: Scalars['Decimal']['output'];
   /** Cart payment option information */
-  payment?: Maybe<PaymentOptionType>;
+  payment?: Maybe<GeinsPaymentOptionTypeType>;
   /** Cart shipping option information */
-  shipping?: Maybe<ShippingOptionType>;
+  shipping?: Maybe<GeinsShippingOptionTypeType>;
   /** Cart sub-total */
-  subTotal?: Maybe<PriceType>;
+  subTotal?: Maybe<GeinsPriceTypeType>;
   /** Cart total */
-  total?: Maybe<PriceType>;
+  total?: Maybe<GeinsPriceTypeType>;
   /** Cart VAT information */
-  vats?: Maybe<Array<Maybe<VatGroupType>>>;
+  vats?: Maybe<Array<Maybe<GeinsVatGroupTypeType>>>;
 }
 
 /** Type containing cart information */
-export interface CartType {
+export interface GeinsCartTypeType {
   /** Campaigns applied to this cart */
-  appliedCampaigns?: Maybe<Array<Maybe<CampaignRuleType>>>;
+  appliedCampaigns?: Maybe<Array<Maybe<GeinsCampaignRuleTypeType>>>;
   /** Cart fixed discount */
   fixedDiscount: Scalars['Decimal']['output'];
   /** Whether the cart has free shipping */
@@ -273,15 +273,15 @@ export interface CartType {
   /** If true, the cart can not be modified further */
   isCompleted: Scalars['Boolean']['output'];
   /** The cart items */
-  items?: Maybe<Array<Maybe<CartItemType>>>;
+  items?: Maybe<Array<Maybe<GeinsCartItemTypeType>>>;
   /** Cart promo code */
   promoCode?: Maybe<Scalars['String']['output']>;
   /** The cart summary */
-  summary?: Maybe<CartSummaryType>;
+  summary?: Maybe<GeinsCartSummaryTypeType>;
 }
 
 /** Type containing category information */
-export interface CategoryType {
+export interface GeinsCategoryTypeType {
   /** Category alias */
   alias?: Maybe<Scalars['String']['output']>;
   /**
@@ -290,7 +290,7 @@ export interface CategoryType {
    */
   alternativeCanonicalUrls?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Alternative urls to the category */
-  alternativeUrls?: Maybe<Array<Maybe<AlternativeUrlType>>>;
+  alternativeUrls?: Maybe<Array<Maybe<GeinsAlternativeUrlTypeType>>>;
   /** Background image */
   backgroundImage?: Maybe<Scalars['String']['output']>;
   /** The full path to the category. e.g. '/l/category-1' */
@@ -300,7 +300,7 @@ export interface CategoryType {
   /** Category description */
   description?: Maybe<Scalars['String']['output']>;
   /** Google taxonomy data for this category */
-  googleTaxonomy?: Maybe<GoogleTaxonomyType>;
+  googleTaxonomy?: Maybe<GeinsGoogleTaxonomyTypeType>;
   /** Category is hidden */
   isHidden?: Maybe<Scalars['Boolean']['output']>;
   /** Category name */
@@ -316,15 +316,15 @@ export interface CategoryType {
 }
 
 /** Type containing all information about the channel-type */
-export interface ChannelType {
+export interface GeinsChannelTypeType {
   /** Default language ID used if no other is specified, or an invalid is supplied. */
   defaultLanguageId: Scalars['String']['output'];
   /** Default market ID used if no other is specified, or an invalid is supplied. */
   defaultMarketId: Scalars['String']['output'];
   /** ID */
   id: Scalars['String']['output'];
-  languages?: Maybe<Array<Maybe<LanguageType>>>;
-  markets?: Maybe<Array<Maybe<MarketType>>>;
+  languages?: Maybe<Array<Maybe<GeinsLanguageTypeType>>>;
+  markets?: Maybe<Array<Maybe<GeinsMarketTypeType>>>;
   /** Name */
   name: Scalars['String']['output'];
   /** Type */
@@ -333,16 +333,16 @@ export interface ChannelType {
   url: Scalars['String']['output'];
 }
 
-export interface CheckoutAndOrderType {
+export interface GeinsCheckoutAndOrderTypeType {
   /** HTML-snippet */
   htmlSnippet: Scalars['String']['output'];
   /** Order details */
-  order?: Maybe<CheckoutOrderType>;
+  order?: Maybe<GeinsCheckoutOrderTypeType>;
 }
 
-export interface CheckoutDataType {
+export interface GeinsCheckoutDataTypeType {
   /** The order details represented as a cart object. */
-  cart?: Maybe<CartType>;
+  cart?: Maybe<GeinsCartTypeType>;
   /** Indicates if the purchase has been completed. This may not be available for all payment types */
   completed?: Maybe<Scalars['Boolean']['output']>;
   /** HTML-snippet */
@@ -352,13 +352,13 @@ export interface CheckoutDataType {
   /** The total number of purchases that the customer has done including this one */
   nthPurchase: Scalars['Int']['output'];
   /** Order details */
-  order?: Maybe<CheckoutOrderType>;
+  order?: Maybe<GeinsCheckoutOrderTypeType>;
 }
 
-export interface CheckoutInputType {
+export interface GeinsCheckoutInputTypeType {
   acceptedConsents?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  billingAddress?: InputMaybe<AddressInputType>;
-  customerType?: InputMaybe<CustomerType>;
+  billingAddress?: InputMaybe<GeinsAddressInputTypeType>;
+  customerType?: InputMaybe<GeinsCustomerType>;
   desiredDeliveryDate?: InputMaybe<Scalars['DateTime']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   externalShippingFee?: InputMaybe<Scalars['Decimal']['input']>;
@@ -368,11 +368,11 @@ export interface CheckoutInputType {
   message?: InputMaybe<Scalars['String']['input']>;
   paymentId?: InputMaybe<Scalars['Int']['input']>;
   pickupPoint?: InputMaybe<Scalars['String']['input']>;
-  shippingAddress?: InputMaybe<AddressInputType>;
+  shippingAddress?: InputMaybe<GeinsAddressInputTypeType>;
   shippingId?: InputMaybe<Scalars['Int']['input']>;
 }
 
-export interface CheckoutOrderRowType {
+export interface GeinsCheckoutOrderRowTypeType {
   /** Article number */
   articleNumber?: Maybe<Scalars['String']['output']>;
   /** Brand name */
@@ -427,7 +427,7 @@ export interface CheckoutOrderRowType {
   width: Scalars['Int']['output'];
 }
 
-export interface CheckoutOrderType {
+export interface GeinsCheckoutOrderTypeType {
   /** Campaign IDs */
   campaignIds?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Campaign names */
@@ -463,7 +463,7 @@ export interface CheckoutOrderType {
   /** Payment incl. VAT */
   paymentFeeIncVat: Scalars['Decimal']['output'];
   /** Order rows */
-  rows?: Maybe<Array<Maybe<CheckoutOrderRowType>>>;
+  rows?: Maybe<Array<Maybe<GeinsCheckoutOrderRowTypeType>>>;
   /** Secondary transaction ID */
   secondaryTransactionId?: Maybe<Scalars['String']['output']>;
   /** Shipping excl. VAT */
@@ -478,25 +478,25 @@ export interface CheckoutOrderType {
   zip?: Maybe<Scalars['String']['output']>;
 }
 
-export enum CheckoutStatus {
-  CustomerBlacklisted = 'CUSTOMER_BLACKLISTED',
-  Ok = 'OK'
+export enum GeinsCheckoutStatus {
+  CustomerBlacklistedType = 'CUSTOMER_BLACKLISTED',
+  OkType = 'OK'
 }
 
-export interface CheckoutType {
-  billingAddress?: Maybe<AddressType>;
-  cart?: Maybe<CartType>;
-  checkoutStatus?: Maybe<CheckoutStatus>;
-  consents?: Maybe<Array<Maybe<ConsentType>>>;
+export interface GeinsCheckoutTypeType {
+  billingAddress?: Maybe<GeinsAddressTypeType>;
+  cart?: Maybe<GeinsCartTypeType>;
+  checkoutStatus?: Maybe<GeinsCheckoutStatus>;
+  consents?: Maybe<Array<Maybe<GeinsConsentTypeType>>>;
   email?: Maybe<Scalars['String']['output']>;
   identityNumber?: Maybe<Scalars['String']['output']>;
-  paymentOptions?: Maybe<Array<Maybe<PaymentOptionType>>>;
-  shippingAddress?: Maybe<AddressType>;
+  paymentOptions?: Maybe<Array<Maybe<GeinsPaymentOptionTypeType>>>;
+  shippingAddress?: Maybe<GeinsAddressTypeType>;
   shippingData?: Maybe<Scalars['String']['output']>;
-  shippingOptions?: Maybe<Array<Maybe<ShippingOptionType>>>;
+  shippingOptions?: Maybe<Array<Maybe<GeinsShippingOptionTypeType>>>;
 }
 
-export interface ConsentType {
+export interface GeinsConsentTypeType {
   autoAccept: Scalars['Boolean']['output'];
   checked: Scalars['Boolean']['output'];
   description: Scalars['String']['output'];
@@ -505,7 +505,7 @@ export interface ConsentType {
 }
 
 /** Type containing all information about the country-type */
-export interface CountryType {
+export interface GeinsCountryTypeType {
   /** Two-letter ISO code */
   code: Scalars['String']['output'];
   /** Name */
@@ -513,7 +513,7 @@ export interface CountryType {
 }
 
 /** Type containing all information about the currency-type */
-export interface CurrencyType {
+export interface GeinsCurrencyTypeType {
   /** Currency code */
   code: Scalars['String']['output'];
   /** Name */
@@ -525,15 +525,15 @@ export interface CurrencyType {
 }
 
 /** Customer type */
-export enum CustomerType {
+export enum GeinsCustomerType {
   /** Organization */
-  Organization = 'ORGANIZATION',
+  OrganizationType = 'ORGANIZATION',
   /** Private person */
-  Person = 'PERSON'
+  PersonType = 'PERSON'
 }
 
 /** SKU dimensions */
-export interface DimensionsType {
+export interface GeinsDimensionsTypeType {
   /** Height */
   height: Scalars['Int']['output'];
   /** Length */
@@ -542,22 +542,22 @@ export interface DimensionsType {
   width: Scalars['Int']['output'];
 }
 
-export enum DiscountType {
-  None = 'NONE',
-  PriceCampaign = 'PRICE_CAMPAIGN',
-  SalePrice = 'SALE_PRICE'
+export enum GeinsDiscountType {
+  NoneType = 'NONE',
+  PriceCampaignType = 'PRICE_CAMPAIGN',
+  SalePriceType = 'SALE_PRICE'
 }
 
 /** Type containing collection of filters */
-export interface FilterCollectionType {
+export interface GeinsFilterCollectionTypeType {
   /** The collection of facet values returned from the query */
-  facets?: Maybe<Array<Maybe<FilterType>>>;
+  facets?: Maybe<Array<Maybe<GeinsFilterTypeType>>>;
   /** The lowest / highest price found in the results */
-  price?: Maybe<PriceFilterType>;
+  price?: Maybe<GeinsPriceFilterTypeType>;
 }
 
 /** Filter options */
-export interface FilterInputType {
+export interface GeinsFilterInputTypeType {
   /** A list of string values, that when specified will exclude products that are associated with one of the facets */
   exclude?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   /** A list of string values, that when specified will exclude products that are associated with one of the facets */
@@ -565,31 +565,31 @@ export interface FilterInputType {
   /** A list of string values, that when specified will only include products associated with those values */
   facets?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   /** Filter mode */
-  filterMode?: InputMaybe<FilterMode>;
+  filterMode?: InputMaybe<GeinsFilterMode>;
   /** A list of string values, that when specified will only include products associated with those values */
   include?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   /** Include collapsed products */
   includeCollapsed?: InputMaybe<Scalars['Boolean']['input']>;
   /** Price filter */
-  price?: InputMaybe<PriceFilterInputType>;
+  price?: InputMaybe<GeinsPriceFilterInputTypeType>;
   /** A list of product ids to filter on */
   productIds?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
   /** Search text to filter by */
   searchText?: InputMaybe<Scalars['String']['input']>;
   /** Use this to sort the results in a particular way */
-  sort?: InputMaybe<SortType>;
+  sort?: InputMaybe<GeinsSortType>;
 }
 
 /** Filter mode */
-export enum FilterMode {
+export enum GeinsFilterMode {
   /** Get the counts for the results, including the ones excluded by the groups */
-  ByGroup = 'BY_GROUP',
+  ByGroupType = 'BY_GROUP',
   /** Get the counts for the current filter results */
-  Current = 'CURRENT'
+  CurrentType = 'CURRENT'
 }
 
 /** Filter group */
-export interface FilterType {
+export interface GeinsFilterTypeType {
   /** ID for this filter type */
   filterId: Scalars['String']['output'];
   /** Parameter group name */
@@ -599,11 +599,11 @@ export interface FilterType {
   /** Filter type. e.g. 'Parameter', 'Category', 'Sku' */
   type?: Maybe<Scalars['String']['output']>;
   /** Collection of facet values in this group */
-  values?: Maybe<Array<Maybe<FilterValueType>>>;
+  values?: Maybe<Array<Maybe<GeinsFilterValueTypeType>>>;
 }
 
 /** Filter value */
-export interface FilterValueType {
+export interface GeinsFilterValueTypeType {
   /** FacetId_Count */
   _id: Scalars['String']['output'];
   /** The amount of products in the results associated with this facet */
@@ -622,455 +622,14 @@ export interface FilterValueType {
   url?: Maybe<Scalars['String']['output']>;
 }
 
-export interface GeinsMerchantApiMutation {
-  addPackageToCart?: Maybe<CartType>;
-  addToCart?: Maybe<CartType>;
-  commitReset?: Maybe<Scalars['Boolean']['output']>;
-  /** Marks the cart as completed, and makes it read-only */
-  completeCart?: Maybe<CartType>;
-  createOrUpdateCheckout?: Maybe<CheckoutType>;
-  deleteUser?: Maybe<Scalars['Boolean']['output']>;
-  monitorProductAvailability?: Maybe<Scalars['Boolean']['output']>;
-  placeOrder?: Maybe<PlaceOrderResponseType>;
-  postProductReview?: Maybe<Scalars['Boolean']['output']>;
-  requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
-  /** Set a promo code on the cart */
-  setCartPromoCode?: Maybe<CartType>;
-  setCartShippingFee?: Maybe<CheckoutType>;
-  subscribeToNewsletter?: Maybe<Scalars['Boolean']['output']>;
-  /** Update the quantity of an entire cart group */
-  updateCartGroup?: Maybe<CartType>;
-  /** Update the cart item */
-  updateCartItem?: Maybe<CartType>;
-  updateUser?: Maybe<UserType>;
-}
-
-
-export interface GeinsMerchantApiMutationAddPackageToCartArgs {
-  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  packageId: Scalars['Int']['input'];
-  selections?: InputMaybe<Array<InputMaybe<ProductPackageSelectionType>>>;
-}
-
-
-export interface GeinsMerchantApiMutationAddToCartArgs {
-  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  item: CartItemInputType;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-export interface GeinsMerchantApiMutationCommitResetArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  password: Scalars['String']['input'];
-  resetKey: Scalars['String']['input'];
-}
-
-
-export interface GeinsMerchantApiMutationCompleteCartArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-export interface GeinsMerchantApiMutationCreateOrUpdateCheckoutArgs {
-  cartId: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  checkout?: InputMaybe<CheckoutInputType>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-export interface GeinsMerchantApiMutationDeleteUserArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-export interface GeinsMerchantApiMutationMonitorProductAvailabilityArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  skuId: Scalars['Int']['input'];
-}
-
-
-export interface GeinsMerchantApiMutationPlaceOrderArgs {
-  cartId: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  checkout: CheckoutInputType;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-export interface GeinsMerchantApiMutationPostProductReviewArgs {
-  alias: Scalars['String']['input'];
-  author: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  comment?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  rating?: InputMaybe<Scalars['Int']['input']>;
-}
-
-
-export interface GeinsMerchantApiMutationRequestPasswordResetArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-export interface GeinsMerchantApiMutationSetCartPromoCodeArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  promoCode: Scalars['String']['input'];
-}
-
-
-export interface GeinsMerchantApiMutationSetCartShippingFeeArgs {
-  cartId: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  shippingFee: Scalars['Decimal']['input'];
-}
-
-
-export interface GeinsMerchantApiMutationSubscribeToNewsletterArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-}
-
-
-export interface GeinsMerchantApiMutationUpdateCartGroupArgs {
-  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  item: CartGroupInputType;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-export interface GeinsMerchantApiMutationUpdateCartItemArgs {
-  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  item: CartItemInputType;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-export interface GeinsMerchantApiMutationUpdateUserArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  user: UserInputType;
-}
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQuery {
-  /** Get all brands. */
-  brands?: Maybe<Array<Maybe<BrandListType>>>;
-  /** Get all categories. */
-  categories?: Maybe<Array<Maybe<CategoryType>>>;
-  /** Gets a category with the specified ID. */
-  category?: Maybe<CategoryType>;
-  /** Gets a channel with the specified ID. */
-  channel?: Maybe<ChannelType>;
-  channels?: Maybe<Array<Maybe<ChannelType>>>;
-  /** Gets checkout data with a html snippet, checkout order data for the specified order and the User. If the order was recently completed, the html snippet will contain the "Thank you"-content. */
-  checkout?: Maybe<CheckoutDataType>;
-  /** Gets all CMS pages. */
-  cmsPages?: Maybe<Array<Maybe<PageWidgetPageType>>>;
-  /** Get the cart */
-  getCart?: Maybe<CartType>;
-  /**
-   * Gets html snippet for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content.
-   * @deprecated Use Checkout instead
-   */
-  getCheckout?: Maybe<Scalars['String']['output']>;
-  /**
-   * Gets html snippet and checkout order data for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content.
-   * @deprecated Use Checkout instead
-   */
-  getCheckoutAndOrder?: Maybe<CheckoutAndOrderType>;
-  /** Get a menu */
-  getMenuAtLocation?: Maybe<MenuType>;
-  /** Get a specific order with details */
-  getOrder?: Maybe<OrderType>;
-  /** Get a specific order with details via public id */
-  getOrderPublic?: Maybe<OrderType>;
-  /** Get orders for the current user */
-  getOrders?: Maybe<Array<Maybe<OrderType>>>;
-  /** Get the current user */
-  getUser?: Maybe<UserType>;
-  /** Gets information about the specified list page. */
-  listPageInfo?: Maybe<PageInfoType>;
-  /** Gets a product with the specified ID. */
-  product?: Maybe<ProductType>;
-  /** Gets all products according to the values provided. */
-  products?: Maybe<ProductsResultType>;
-  /** Gets related products for the specified alias. */
-  relatedProducts?: Maybe<Array<Maybe<RelatedProductType>>>;
-  /** Gets all products reviews to the values provided. */
-  reviews?: Maybe<ProductReviewResultType>;
-  /** Gets an alternate url for a given url. */
-  urlHistory?: Maybe<UrlHistoryType>;
-  validateOrderCreation?: Maybe<ValidateOrderCreationResponseType>;
-  /** Gets the page area and widgets from the specifed family. */
-  widgetArea?: Maybe<PageWidgetCollectionType>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryBrandsArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryCategoriesArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  includeHidden?: InputMaybe<Scalars['Boolean']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  parentCategoryId?: InputMaybe<Scalars['Int']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryCategoryArgs {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryChannelArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryCheckoutArgs {
-  cartId?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  paymentType: PaymentType;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryCmsPagesArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  excludeTags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  includeTags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryGetCartArgs {
-  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  forceRefresh?: InputMaybe<Scalars['Boolean']['input']>;
-  id?: InputMaybe<Scalars['String']['input']>;
-  includeCompleted?: InputMaybe<Scalars['Boolean']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryGetCheckoutArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  paymentType: PaymentType;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryGetCheckoutAndOrderArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  paymentType: PaymentType;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryGetMenuAtLocationArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  menuLocationId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryGetOrderArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  orderId: Scalars['Int']['input'];
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryGetOrderPublicArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  publicOrderId: Scalars['Guid']['input'];
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryGetOrdersArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryGetUserArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryListPageInfoArgs {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  url?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryProductArgs {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryProductsArgs {
-  brandAlias?: InputMaybe<Scalars['String']['input']>;
-  categoryAlias?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  discountCampaignAlias?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<FilterInputType>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  take?: InputMaybe<Scalars['Int']['input']>;
-  url?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryRelatedProductsArgs {
-  alias: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryReviewsArgs {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  take?: InputMaybe<Scalars['Int']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryUrlHistoryArgs {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  url?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryValidateOrderCreationArgs {
-  cartId: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  checkout: CheckoutInputType;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-
-/** Gets all available channels */
-export interface GeinsMerchantApiQueryWidgetAreaArgs {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  areaName?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  customerType?: InputMaybe<CustomerType>;
-  displaySetting?: InputMaybe<Scalars['String']['input']>;
-  family?: InputMaybe<Scalars['String']['input']>;
-  filters?: InputMaybe<Array<InputMaybe<PageWidgetCollectionFilterInputType>>>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  preview?: InputMaybe<Scalars['Boolean']['input']>;
-  url?: InputMaybe<Scalars['String']['input']>;
-}
-
-export enum Gender {
-  Man = 'MAN',
-  Unspecified = 'UNSPECIFIED',
-  Woman = 'WOMAN'
+export enum GeinsGender {
+  ManType = 'MAN',
+  UnspecifiedType = 'UNSPECIFIED',
+  WomanType = 'WOMAN'
 }
 
 /** Type containing Google taxonomy data */
-export interface GoogleTaxonomyType {
+export interface GeinsGoogleTaxonomyTypeType {
   /** Google taxonomy ID */
   id?: Maybe<Scalars['Int']['output']>;
   /** Google taxonomy name */
@@ -1082,7 +641,7 @@ export interface GoogleTaxonomyType {
 }
 
 /** Type containing information for a group in a product package */
-export interface GroupType {
+export interface GeinsGroupTypeType {
   /** The package group description */
   description?: Maybe<Scalars['String']['output']>;
   /** The package group id */
@@ -1092,7 +651,7 @@ export interface GroupType {
   /** The package group name */
   name?: Maybe<Scalars['String']['output']>;
   /** Options in this package group */
-  options?: Maybe<Array<Maybe<OptionType>>>;
+  options?: Maybe<Array<Maybe<GeinsOptionTypeType>>>;
   /** 'true' if this package group is required in order to place the package in cart */
   required: Scalars['Boolean']['output'];
   /** The sort order of this package group relative to other groups */
@@ -1100,7 +659,7 @@ export interface GroupType {
 }
 
 /** Type containing all information about the language-type */
-export interface LanguageType {
+export interface GeinsLanguageTypeType {
   /** Two-letter ISO code */
   code: Scalars['String']['output'];
   /** Language ID */
@@ -1110,7 +669,7 @@ export interface LanguageType {
 }
 
 /** Type containing information about the lowest price during last 30 days and the legal comparison price (EU). Observe that discount is calculated against comparison price and not the regular price. */
-export interface LowestPriceType {
+export interface GeinsLowestPriceTypeType {
   /** The comparison price excluding VAT */
   comparisonPriceExVat: Scalars['Decimal']['output'];
   /** Comparison price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34' */
@@ -1154,14 +713,14 @@ export interface LowestPriceType {
 }
 
 /** Type containing all information about the market-type */
-export interface MarketType {
+export interface GeinsMarketTypeType {
   /** The part of the market id that is used in the url. */
   alias?: Maybe<Scalars['String']['output']>;
-  allowedLanguages?: Maybe<Array<Maybe<LanguageType>>>;
+  allowedLanguages?: Maybe<Array<Maybe<GeinsLanguageTypeType>>>;
   /** Country */
-  country?: Maybe<CountryType>;
+  country?: Maybe<GeinsCountryTypeType>;
   /** Currency */
-  currency?: Maybe<CurrencyType>;
+  currency?: Maybe<GeinsCurrencyTypeType>;
   /** Default language ID used if no other is specified, or an invalid is supplied. */
   defaultLanguageId: Scalars['String']['output'];
   /** Group key used to group related markets together, i.e. if they belong to the same region or continent. */
@@ -1174,9 +733,9 @@ export interface MarketType {
   virtual?: Maybe<Scalars['Boolean']['output']>;
 }
 
-export interface MenuItemType {
+export interface GeinsMenuItemTypeType {
   canonicalUrl?: Maybe<Scalars['String']['output']>;
-  children?: Maybe<Array<Maybe<MenuItemType>>>;
+  children?: Maybe<Array<Maybe<GeinsMenuItemTypeType>>>;
   hidden: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   label?: Maybe<Scalars['String']['output']>;
@@ -1188,18 +747,18 @@ export interface MenuItemType {
   value?: Maybe<Scalars['String']['output']>;
 }
 
-export interface MenuType {
+export interface GeinsMenuTypeType {
   channels?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   id: Scalars['String']['output'];
   languages?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   locations?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  menuItems?: Maybe<Array<Maybe<MenuItemType>>>;
+  menuItems?: Maybe<Array<Maybe<GeinsMenuItemTypeType>>>;
   name?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
 }
 
 /** Type containing metadata */
-export interface MetadataType {
+export interface GeinsMetadataTypeType {
   /** Description */
   description?: Maybe<Scalars['String']['output']>;
   /** Keywords */
@@ -1208,50 +767,219 @@ export interface MetadataType {
   title?: Maybe<Scalars['String']['output']>;
 }
 
+export interface GeinsMutationType {
+  addPackageToCart?: Maybe<GeinsCartTypeType>;
+  addToCart?: Maybe<GeinsCartTypeType>;
+  commitReset?: Maybe<Scalars['Boolean']['output']>;
+  /** Marks the cart as completed, and makes it read-only */
+  completeCart?: Maybe<GeinsCartTypeType>;
+  createOrUpdateCheckout?: Maybe<GeinsCheckoutTypeType>;
+  deleteUser?: Maybe<Scalars['Boolean']['output']>;
+  monitorProductAvailability?: Maybe<Scalars['Boolean']['output']>;
+  placeOrder?: Maybe<GeinsPlaceOrderResponseTypeType>;
+  postProductReview?: Maybe<Scalars['Boolean']['output']>;
+  requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
+  /** Set a promo code on the cart */
+  setCartPromoCode?: Maybe<GeinsCartTypeType>;
+  setCartShippingFee?: Maybe<GeinsCheckoutTypeType>;
+  subscribeToNewsletter?: Maybe<Scalars['Boolean']['output']>;
+  /** Update the quantity of an entire cart group */
+  updateCartGroup?: Maybe<GeinsCartTypeType>;
+  /** Update the cart item */
+  updateCartItem?: Maybe<GeinsCartTypeType>;
+  updateUser?: Maybe<GeinsUserTypeType>;
+}
+
+
+export interface GeinsMutationAddPackageToCartArgsType {
+  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  packageId: Scalars['Int']['input'];
+  selections?: InputMaybe<Array<InputMaybe<GeinsProductPackageSelectionTypeType>>>;
+}
+
+
+export interface GeinsMutationAddToCartArgsType {
+  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  item: GeinsCartItemInputTypeType;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsMutationCommitResetArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  password: Scalars['String']['input'];
+  resetKey: Scalars['String']['input'];
+}
+
+
+export interface GeinsMutationCompleteCartArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsMutationCreateOrUpdateCheckoutArgsType {
+  cartId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  checkout?: InputMaybe<GeinsCheckoutInputTypeType>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsMutationDeleteUserArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsMutationMonitorProductAvailabilityArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  skuId: Scalars['Int']['input'];
+}
+
+
+export interface GeinsMutationPlaceOrderArgsType {
+  cartId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  checkout: GeinsCheckoutInputTypeType;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsMutationPostProductReviewArgsType {
+  alias: Scalars['String']['input'];
+  author: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  comment?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  rating?: InputMaybe<Scalars['Int']['input']>;
+}
+
+
+export interface GeinsMutationRequestPasswordResetArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsMutationSetCartPromoCodeArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  promoCode: Scalars['String']['input'];
+}
+
+
+export interface GeinsMutationSetCartShippingFeeArgsType {
+  cartId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  shippingFee: Scalars['Decimal']['input'];
+}
+
+
+export interface GeinsMutationSubscribeToNewsletterArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+}
+
+
+export interface GeinsMutationUpdateCartGroupArgsType {
+  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  item: GeinsCartGroupInputTypeType;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsMutationUpdateCartItemArgsType {
+  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  item: GeinsCartItemInputTypeType;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsMutationUpdateUserArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  user: GeinsUserInputTypeType;
+}
+
 /** Type containing information for an option in a product package group */
-export interface OptionType {
+export interface GeinsOptionTypeType {
   /** 'true' if this option should be selected by default */
   isSelected: Scalars['Boolean']['output'];
   /** The option id */
   optionId: Scalars['Int']['output'];
   /** The product that this options refers to */
-  product?: Maybe<ProductType>;
+  product?: Maybe<GeinsProductTypeType>;
   /** The quantity of items that is chosen if this option is selected */
   quantity: Scalars['Int']['output'];
   /** The sort order of this option relative to other options */
   sortOrder: Scalars['Int']['output'];
 }
 
-export interface OrderType {
-  billingAddress?: Maybe<AddressType>;
-  cart?: Maybe<CartType>;
+export interface GeinsOrderTypeType {
+  billingAddress?: Maybe<GeinsAddressTypeType>;
+  cart?: Maybe<GeinsCartTypeType>;
   completedAt?: Maybe<Scalars['DateTime']['output']>;
   createdAt?: Maybe<Scalars['DateTime']['output']>;
   currency?: Maybe<Scalars['String']['output']>;
   customerId?: Maybe<Scalars['Int']['output']>;
   desiredDeliveryDate?: Maybe<Scalars['DateTime']['output']>;
-  discount?: Maybe<PriceType>;
+  discount?: Maybe<GeinsPriceTypeType>;
   /** The amount taken from account balance */
   fromBalance: Scalars['Decimal']['output'];
   /** The amount taken from account balance. Formatted as a currency string. */
   fromBalanceFormatted?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
   message?: Maybe<Scalars['String']['output']>;
-  orderTotal?: Maybe<PriceType>;
-  paymentDetails?: Maybe<Array<Maybe<PaymentDetailsType>>>;
-  paymentFee?: Maybe<PriceType>;
+  orderTotal?: Maybe<GeinsPriceTypeType>;
+  paymentDetails?: Maybe<Array<Maybe<GeinsPaymentDetailsTypeType>>>;
+  paymentFee?: Maybe<GeinsPriceTypeType>;
   publicId: Scalars['ID']['output'];
-  refunds?: Maybe<Array<Maybe<RefundType>>>;
-  shippingAddress?: Maybe<AddressType>;
-  shippingDetails?: Maybe<Array<Maybe<ShippingDetailType>>>;
-  shippingFee?: Maybe<PriceType>;
+  refunds?: Maybe<Array<Maybe<GeinsRefundTypeType>>>;
+  shippingAddress?: Maybe<GeinsAddressTypeType>;
+  shippingDetails?: Maybe<Array<Maybe<GeinsShippingDetailTypeType>>>;
+  shippingFee?: Maybe<GeinsPriceTypeType>;
   status: Scalars['String']['output'];
   updatedAt?: Maybe<Scalars['DateTime']['output']>;
-  vat?: Maybe<PriceType>;
+  vat?: Maybe<GeinsPriceTypeType>;
 }
 
 /** Type containing widget page area information */
-export interface PageAreaType {
+export interface GeinsPageAreaTypeType {
   /** ID */
   id: Scalars['Int']['output'];
   /** Index */
@@ -1261,7 +989,7 @@ export interface PageAreaType {
 }
 
 /** Type containing page information */
-export interface PageInfoType {
+export interface GeinsPageInfoTypeType {
   /** Alias */
   alias: Scalars['String']['output'];
   /**
@@ -1270,7 +998,7 @@ export interface PageInfoType {
    */
   alternativeCanonicalUrls?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Alternative urls to the page */
-  alternativeUrls?: Maybe<Array<Maybe<AlternativeUrlType>>>;
+  alternativeUrls?: Maybe<Array<Maybe<GeinsAlternativeUrlTypeType>>>;
   /** Background image */
   backgroundImage?: Maybe<Scalars['String']['output']>;
   /** Full path to the page */
@@ -1284,7 +1012,7 @@ export interface PageInfoType {
   /** Logo */
   logo?: Maybe<Scalars['String']['output']>;
   /** Page metadata */
-  meta?: Maybe<MetadataType>;
+  meta?: Maybe<GeinsMetadataTypeType>;
   /** Name */
   name: Scalars['String']['output'];
   /** Primary description */
@@ -1294,11 +1022,11 @@ export interface PageInfoType {
   /** Secondary description */
   secondaryDescription?: Maybe<Scalars['String']['output']>;
   /** Page sub-categories */
-  subCategories?: Maybe<Array<Maybe<CategoryType>>>;
+  subCategories?: Maybe<Array<Maybe<GeinsCategoryTypeType>>>;
 }
 
 /** Type for filtering widgets */
-export interface PageWidgetCollectionFilterInputType {
+export interface GeinsPageWidgetCollectionFilterInputTypeType {
   /** Filter key */
   key?: InputMaybe<Scalars['String']['input']>;
   /** Filter value */
@@ -1306,19 +1034,19 @@ export interface PageWidgetCollectionFilterInputType {
 }
 
 /** Type containing widget collection information */
-export interface PageWidgetCollectionType {
+export interface GeinsPageWidgetCollectionTypeType {
   /** Collection containers */
-  containers?: Maybe<Array<Maybe<PageWidgetContainerType>>>;
+  containers?: Maybe<Array<Maybe<GeinsPageWidgetContainerTypeType>>>;
   /** Collection family name */
   familyName?: Maybe<Scalars['String']['output']>;
   /** Collection ID */
   id: Scalars['Int']['output'];
   /** Collection metadata */
-  meta?: Maybe<MetadataType>;
+  meta?: Maybe<GeinsMetadataTypeType>;
   /** Name */
   name: Scalars['String']['output'];
   /** Collection page area */
-  pageArea?: Maybe<PageAreaType>;
+  pageArea?: Maybe<GeinsPageAreaTypeType>;
   /** List of tags */
   tags?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Title */
@@ -1326,7 +1054,7 @@ export interface PageWidgetCollectionType {
 }
 
 /** Type containing widget container information */
-export interface PageWidgetContainerType {
+export interface GeinsPageWidgetContainerTypeType {
   /** Container class names */
   classNames?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Container design */
@@ -1342,11 +1070,11 @@ export interface PageWidgetContainerType {
   /** Sort order */
   sortOrder: Scalars['Int']['output'];
   /** Widgets in this container */
-  widgets?: Maybe<Array<Maybe<PageWidgetType>>>;
+  widgets?: Maybe<Array<Maybe<GeinsPageWidgetTypeType>>>;
 }
 
 /** Type containing widget image size information */
-export interface PageWidgetImageSizeType {
+export interface GeinsPageWidgetImageSizeTypeType {
   /** Image height */
   imageHeight: Scalars['Int']['output'];
   /** Image ratio */
@@ -1356,17 +1084,17 @@ export interface PageWidgetImageSizeType {
 }
 
 /** Type containing widget image information */
-export interface PageWidgetImageType {
+export interface GeinsPageWidgetImageTypeType {
   /** Filename */
   fileName: Scalars['String']['output'];
   /** Largest image size */
-  largestSize?: Maybe<PageWidgetImageSizeType>;
+  largestSize?: Maybe<GeinsPageWidgetImageSizeTypeType>;
   /** Image sizes */
-  sizes?: Maybe<Array<Maybe<PageWidgetImageSizeType>>>;
+  sizes?: Maybe<Array<Maybe<GeinsPageWidgetImageSizeTypeType>>>;
 }
 
 /** Type containing CMS page information */
-export interface PageWidgetPageType {
+export interface GeinsPageWidgetPageTypeType {
   /** Active From */
   activeFrom?: Maybe<Scalars['DateTime']['output']>;
   /** Active To */
@@ -1378,7 +1106,7 @@ export interface PageWidgetPageType {
   /** Collection ID */
   id: Scalars['Int']['output'];
   /** Collection metadata */
-  meta?: Maybe<MetadataType>;
+  meta?: Maybe<GeinsMetadataTypeType>;
   /** Name */
   name: Scalars['String']['output'];
   /** List of tags */
@@ -1388,7 +1116,7 @@ export interface PageWidgetPageType {
 }
 
 /** Type containing widget information */
-export interface PageWidgetType {
+export interface GeinsPageWidgetTypeType {
   /** Class names */
   classNames?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Configuration */
@@ -1396,7 +1124,7 @@ export interface PageWidgetType {
   /** ID */
   id: Scalars['String']['output'];
   /** Images */
-  images?: Maybe<Array<Maybe<PageWidgetImageType>>>;
+  images?: Maybe<Array<Maybe<GeinsPageWidgetImageTypeType>>>;
   /** Name */
   name: Scalars['String']['output'];
   /** Size */
@@ -1408,19 +1136,19 @@ export interface PageWidgetType {
 }
 
 /** Type containing product parameter group information */
-export interface ParameterGroupType {
+export interface GeinsParameterGroupTypeType {
   /** The parameter group name */
   name: Scalars['String']['output'];
   /** Parameter group ID */
   parameterGroupId?: Maybe<Scalars['Int']['output']>;
   /** List of parameters */
-  parameters?: Maybe<Array<Maybe<ParameterType>>>;
+  parameters?: Maybe<Array<Maybe<GeinsParameterTypeType>>>;
   /** Product ID associated with this parameter group */
   productId: Scalars['Int']['output'];
 }
 
 /** Type containing parameter information */
-export interface ParameterType {
+export interface GeinsParameterTypeType {
   /** Parameter description */
   description?: Maybe<Scalars['String']['output']>;
   /** The ID of the associated facet */
@@ -1445,7 +1173,7 @@ export interface ParameterType {
   value?: Maybe<Scalars['String']['output']>;
 }
 
-export interface PaymentDetailsType {
+export interface GeinsPaymentDetailsTypeType {
   displayName: Scalars['String']['output'];
   id: Scalars['Int']['output'];
   isPaid: Scalars['Boolean']['output'];
@@ -1462,7 +1190,7 @@ export interface PaymentDetailsType {
 }
 
 /** Type containing payment option information */
-export interface PaymentOptionType {
+export interface GeinsPaymentOptionTypeType {
   /** Display name */
   displayName?: Maybe<Scalars['String']['output']>;
   /** Fee excl. VAT */
@@ -1488,31 +1216,31 @@ export interface PaymentOptionType {
   /** Payment option data */
   paymentData?: Maybe<Scalars['String']['output']>;
   /** Payment type */
-  paymentType?: Maybe<PaymentType>;
+  paymentType?: Maybe<GeinsPaymentType>;
 }
 
 /** Payment types */
-export enum PaymentType {
+export enum GeinsPaymentType {
   /** Avarda */
-  Avarda = 'AVARDA',
+  AvardaType = 'AVARDA',
   /** Klarna */
-  Klarna = 'KLARNA',
+  KlarnaType = 'KLARNA',
   /** Standard */
-  Standard = 'STANDARD',
+  StandardType = 'STANDARD',
   /** Svea */
-  Svea = 'SVEA',
+  SveaType = 'SVEA',
   /** Walley */
-  Walley = 'WALLEY'
+  WalleyType = 'WALLEY'
 }
 
-export interface PlaceOrderResponseType {
+export interface GeinsPlaceOrderResponseTypeType {
   orderId?: Maybe<Scalars['String']['output']>;
   redirectUrl?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
 }
 
 /** Price range filter */
-export interface PriceFilterInputType {
+export interface GeinsPriceFilterInputTypeType {
   /** The highest price you want to include */
   highest?: InputMaybe<Scalars['Float']['input']>;
   /** The lowest price you want to include */
@@ -1520,7 +1248,7 @@ export interface PriceFilterInputType {
 }
 
 /** Price range filter */
-export interface PriceFilterType {
+export interface GeinsPriceFilterTypeType {
   /** The highest price found in the results */
   highest: Scalars['Float']['output'];
   /** The lowest price found in the results */
@@ -1528,7 +1256,7 @@ export interface PriceFilterType {
 }
 
 /** Type containing all information about a product price log item */
-export interface PriceLogItemType {
+export interface GeinsPriceLogItemTypeType {
   /** Date of the price change */
   date: Scalars['String']['output'];
   /** Discount amount excluding VAT */
@@ -1568,7 +1296,7 @@ export interface PriceLogItemType {
 }
 
 /** Type containing price information */
-export interface PriceType {
+export interface GeinsPriceTypeType {
   /** Discount amount excluding VAT */
   discountExVat: Scalars['Decimal']['output'];
   /** Discount (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34' */
@@ -1604,7 +1332,7 @@ export interface PriceType {
 }
 
 /** Type containing all information about a product image */
-export interface ProductImageType {
+export interface GeinsProductImageTypeType {
   /** The file name of the product image. */
   fileName: Scalars['String']['output'];
   /** Custom tags associated with the product image. */
@@ -1612,7 +1340,7 @@ export interface ProductImageType {
 }
 
 /** Type containing meta data for the package selection that a cart item was added from */
-export interface ProductPackageCartItemType {
+export interface GeinsProductPackageCartItemTypeType {
   /** The group id */
   groupId: Scalars['Int']['output'];
   /** The option id */
@@ -1624,7 +1352,7 @@ export interface ProductPackageCartItemType {
 }
 
 /** Type containing an option selection for a product package group */
-export interface ProductPackageSelectionType {
+export interface GeinsProductPackageSelectionTypeType {
   /** The group id that the selection is made in */
   groupId: Scalars['Int']['input'];
   /** The selected option id */
@@ -1634,33 +1362,33 @@ export interface ProductPackageSelectionType {
 }
 
 /** Type containing type specific information for a product of the type 'package' */
-export interface ProductPackageType {
+export interface GeinsProductPackageTypeType {
   /** Groups in this package */
-  groups?: Maybe<Array<Maybe<GroupType>>>;
+  groups?: Maybe<Array<Maybe<GeinsGroupTypeType>>>;
 }
 
 /** Product relation type */
-export enum ProductRelation {
+export enum GeinsProductRelation {
   /** Product is an accessory to this product */
-  Accessories = 'ACCESSORIES',
+  AccessoriesType = 'ACCESSORIES',
   /** Product is related to this product */
-  Related = 'RELATED',
+  RelatedType = 'RELATED',
   /** Product is similar to this product */
-  Similar = 'SIMILAR'
+  SimilarType = 'SIMILAR'
 }
 
 /** The results of the reviews query. */
-export interface ProductReviewResultType {
+export interface GeinsProductReviewResultTypeType {
   /** The average rating for this product */
   averageRating: Scalars['Float']['output'];
   /** The total count of results for the query */
   count: Scalars['Long']['output'];
   /** Results returned by the query */
-  reviews?: Maybe<Array<Maybe<ProductReviewType>>>;
+  reviews?: Maybe<Array<Maybe<GeinsProductReviewTypeType>>>;
 }
 
 /** Type containing all information about a product review */
-export interface ProductReviewType {
+export interface GeinsProductReviewTypeType {
   /** Author of the review */
   author: Scalars['String']['output'];
   /** The product review comment */
@@ -1672,7 +1400,7 @@ export interface ProductReviewType {
 }
 
 /** Product info */
-export interface ProductTextsType {
+export interface GeinsProductTextsTypeType {
   /** Main product info */
   text1?: Maybe<Scalars['String']['output']>;
   /** Secondary product info */
@@ -1682,7 +1410,7 @@ export interface ProductTextsType {
 }
 
 /** Type containing all information about a product */
-export interface ProductType {
+export interface GeinsProductTypeType {
   /** Alias for the product */
   alias: Scalars['String']['output'];
   /**
@@ -1691,27 +1419,27 @@ export interface ProductType {
    */
   alternativeCanonicalUrls?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Alternative urls to the product */
-  alternativeUrls?: Maybe<Array<Maybe<AlternativeUrlType>>>;
+  alternativeUrls?: Maybe<Array<Maybe<GeinsAlternativeUrlTypeType>>>;
   /** The product article number */
   articleNumber?: Maybe<Scalars['String']['output']>;
   /** Product brand information */
-  brand?: Maybe<BrandType>;
+  brand?: Maybe<GeinsBrandTypeType>;
   /** Breadcrumbs */
-  breadcrumbs?: Maybe<Array<Maybe<BreadcrumbType>>>;
+  breadcrumbs?: Maybe<Array<Maybe<GeinsBreadcrumbTypeType>>>;
   /** The full path to the product */
   canonicalUrl?: Maybe<Scalars['String']['output']>;
   /** Product category information */
-  categories?: Maybe<Array<Maybe<CategoryType>>>;
+  categories?: Maybe<Array<Maybe<GeinsCategoryTypeType>>>;
   /** The primary category ID */
   categoryId: Scalars['Int']['output'];
   /** The current variant selection */
-  currentProductVariant?: Maybe<VariantType>;
+  currentProductVariant?: Maybe<GeinsVariantTypeType>;
   /** The dimensions of the Product. Note that this can also be set on SKU level */
-  dimensions?: Maybe<DimensionsType>;
+  dimensions?: Maybe<GeinsDimensionsTypeType>;
   /** Product discount campaigns */
-  discountCampaigns?: Maybe<Array<Maybe<CampaignRuleType>>>;
+  discountCampaigns?: Maybe<Array<Maybe<GeinsCampaignRuleTypeType>>>;
   /** Type of discount price: None, Sale or Campaign */
-  discountType?: Maybe<DiscountType>;
+  discountType?: Maybe<GeinsDiscountType>;
   /** The date on which the product was first available (yyyy-mm-dd) */
   firstAvailableOn?: Maybe<Scalars['String']['output']>;
   /** The Freightclass set for this product */
@@ -1722,64 +1450,336 @@ export interface ProductType {
    */
   images?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Lowest price and comparison price according to EU price laws */
-  lowestPrice?: Maybe<LowestPriceType>;
+  lowestPrice?: Maybe<GeinsLowestPriceTypeType>;
   /** Product metadata */
-  meta?: Maybe<MetadataType>;
+  meta?: Maybe<GeinsMetadataTypeType>;
   /** The product name */
   name?: Maybe<Scalars['String']['output']>;
   /** Product parameter groups */
-  parameterGroups?: Maybe<Array<Maybe<ParameterGroupType>>>;
+  parameterGroups?: Maybe<Array<Maybe<GeinsParameterGroupTypeType>>>;
   /** Price log with the prices from the last 30 days */
-  priceLog?: Maybe<Array<Maybe<PriceLogItemType>>>;
+  priceLog?: Maybe<Array<Maybe<GeinsPriceLogItemTypeType>>>;
   /** Primary category for this product */
-  primaryCategory?: Maybe<CategoryType>;
+  primaryCategory?: Maybe<GeinsCategoryTypeType>;
   /** Product ID */
   productId: Scalars['Int']['output'];
   /** List of product images and their related properties */
-  productImages?: Maybe<Array<Maybe<ProductImageType>>>;
+  productImages?: Maybe<Array<Maybe<GeinsProductImageTypeType>>>;
   /** Package specific information for this product */
-  productPackage?: Maybe<ProductPackageType>;
+  productPackage?: Maybe<GeinsProductPackageTypeType>;
   /** Product rating */
-  rating?: Maybe<RatingType>;
+  rating?: Maybe<GeinsRatingTypeType>;
   /** Product SKUs */
-  skus?: Maybe<Array<Maybe<SkuType>>>;
+  skus?: Maybe<Array<Maybe<GeinsSkuTypeType>>>;
   /** The Supplier Id */
   supplierId: Scalars['Int']['output'];
   /** Product text info */
-  texts?: Maybe<ProductTextsType>;
+  texts?: Maybe<GeinsProductTextsTypeType>;
   /** Product stock information */
-  totalStock?: Maybe<StockType>;
+  totalStock?: Maybe<GeinsStockTypeType>;
   /** The product type. Either 'product' or 'package' */
   type?: Maybe<Scalars['String']['output']>;
   /** Product price information */
-  unitPrice?: Maybe<PriceType>;
+  unitPrice?: Maybe<GeinsPriceTypeType>;
   /** Variant dimensions */
-  variantDimensions?: Maybe<Array<Maybe<VariantDimensionType>>>;
+  variantDimensions?: Maybe<Array<Maybe<GeinsVariantDimensionTypeType>>>;
   /** Product variant group */
-  variantGroup?: Maybe<VariantGroupType>;
+  variantGroup?: Maybe<GeinsVariantGroupTypeType>;
   /** Weight in grams (g). Note that this can also be set on SKU level */
   weight: Scalars['Int']['output'];
 }
 
 /** The results of the products-query. */
-export interface ProductsResultType {
+export interface GeinsProductsResultTypeType {
   /** The total count of results for the query */
   count: Scalars['Long']['output'];
   /** The filters available for this query */
-  filters?: Maybe<FilterCollectionType>;
+  filters?: Maybe<GeinsFilterCollectionTypeType>;
   /** Results returned by the query */
-  products?: Maybe<Array<Maybe<ProductType>>>;
+  products?: Maybe<Array<Maybe<GeinsProductTypeType>>>;
+}
+
+/** Gets all available channels */
+export interface GeinsQueryType {
+  /** Get all brands. */
+  brands?: Maybe<Array<Maybe<GeinsBrandListTypeType>>>;
+  /** Get all categories. */
+  categories?: Maybe<Array<Maybe<GeinsCategoryTypeType>>>;
+  /** Gets a category with the specified ID. */
+  category?: Maybe<GeinsCategoryTypeType>;
+  /** Gets a channel with the specified ID. */
+  channel?: Maybe<GeinsChannelTypeType>;
+  channels?: Maybe<Array<Maybe<GeinsChannelTypeType>>>;
+  /** Gets checkout data with a html snippet, checkout order data for the specified order and the User. If the order was recently completed, the html snippet will contain the "Thank you"-content. */
+  checkout?: Maybe<GeinsCheckoutDataTypeType>;
+  /** Gets all CMS pages. */
+  cmsPages?: Maybe<Array<Maybe<GeinsPageWidgetPageTypeType>>>;
+  /** Get the cart */
+  getCart?: Maybe<GeinsCartTypeType>;
+  /**
+   * Gets html snippet for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content.
+   * @deprecated Use Checkout instead
+   */
+  getCheckout?: Maybe<Scalars['String']['output']>;
+  /**
+   * Gets html snippet and checkout order data for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content.
+   * @deprecated Use Checkout instead
+   */
+  getCheckoutAndOrder?: Maybe<GeinsCheckoutAndOrderTypeType>;
+  /** Get a menu */
+  getMenuAtLocation?: Maybe<GeinsMenuTypeType>;
+  /** Get a specific order with details */
+  getOrder?: Maybe<GeinsOrderTypeType>;
+  /** Get a specific order with details via public id */
+  getOrderPublic?: Maybe<GeinsOrderTypeType>;
+  /** Get orders for the current user */
+  getOrders?: Maybe<Array<Maybe<GeinsOrderTypeType>>>;
+  /** Get the current user */
+  getUser?: Maybe<GeinsUserTypeType>;
+  /** Gets information about the specified list page. */
+  listPageInfo?: Maybe<GeinsPageInfoTypeType>;
+  /** Gets a product with the specified ID. */
+  product?: Maybe<GeinsProductTypeType>;
+  /** Gets all products according to the values provided. */
+  products?: Maybe<GeinsProductsResultTypeType>;
+  /** Gets related products for the specified alias. */
+  relatedProducts?: Maybe<Array<Maybe<GeinsRelatedProductTypeType>>>;
+  /** Gets all products reviews to the values provided. */
+  reviews?: Maybe<GeinsProductReviewResultTypeType>;
+  /** Gets an alternate url for a given url. */
+  urlHistory?: Maybe<GeinsUrlHistoryTypeType>;
+  validateOrderCreation?: Maybe<GeinsValidateOrderCreationResponseTypeType>;
+  /** Gets the page area and widgets from the specifed family. */
+  widgetArea?: Maybe<GeinsPageWidgetCollectionTypeType>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryBrandsArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryCategoriesArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  includeHidden?: InputMaybe<Scalars['Boolean']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  parentCategoryId?: InputMaybe<Scalars['Int']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryCategoryArgsType {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryChannelArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryCheckoutArgsType {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  paymentType: GeinsPaymentType;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryCmsPagesArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  excludeTags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  includeTags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryGetCartArgsType {
+  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  forceRefresh?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  includeCompleted?: InputMaybe<Scalars['Boolean']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryGetCheckoutArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  paymentType: GeinsPaymentType;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryGetCheckoutAndOrderArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  paymentType: GeinsPaymentType;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryGetMenuAtLocationArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  menuLocationId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryGetOrderArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  orderId: Scalars['Int']['input'];
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryGetOrderPublicArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  publicOrderId: Scalars['Guid']['input'];
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryGetOrdersArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryGetUserArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryListPageInfoArgsType {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryProductArgsType {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryProductsArgsType {
+  brandAlias?: InputMaybe<Scalars['String']['input']>;
+  categoryAlias?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  discountCampaignAlias?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<GeinsFilterInputTypeType>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryRelatedProductsArgsType {
+  alias: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryReviewsArgsType {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryUrlHistoryArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryValidateOrderCreationArgsType {
+  cartId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  checkout: GeinsCheckoutInputTypeType;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+/** Gets all available channels */
+export interface GeinsQueryWidgetAreaArgsType {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  areaName?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  customerType?: InputMaybe<GeinsCustomerType>;
+  displaySetting?: InputMaybe<Scalars['String']['input']>;
+  family?: InputMaybe<Scalars['String']['input']>;
+  filters?: InputMaybe<Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  preview?: InputMaybe<Scalars['Boolean']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
 }
 
 /** Type containing product rating information */
-export interface RatingType {
+export interface GeinsRatingTypeType {
   /** Rating score */
   score: Scalars['Decimal']['output'];
   /** Vote count */
   voteCount: Scalars['Int']['output'];
 }
 
-export interface RefundType {
+export interface GeinsRefundTypeType {
   articleNumber?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
@@ -1793,15 +1793,15 @@ export interface RefundType {
 }
 
 /** Type containing a subset of product information for related products */
-export interface RelatedProductType {
+export interface GeinsRelatedProductTypeType {
   /** Product alias */
   alias: Scalars['String']['output'];
   /** Product brand information */
-  brand?: Maybe<BrandType>;
+  brand?: Maybe<GeinsBrandTypeType>;
   /** Full path to the product */
   canonicalUrl?: Maybe<Scalars['String']['output']>;
   /** Product campaigns */
-  discountCampaigns?: Maybe<Array<Maybe<CampaignRuleType>>>;
+  discountCampaigns?: Maybe<Array<Maybe<GeinsCampaignRuleTypeType>>>;
   /**
    * List of product images
    * @deprecated Use RelatedProductType.ProductImages instead.
@@ -1810,29 +1810,29 @@ export interface RelatedProductType {
   /** Product name */
   name?: Maybe<Scalars['String']['output']>;
   /** Product parameter groups. The availability of data in this field needs to be configured. */
-  parameterGroups?: Maybe<Array<Maybe<ParameterGroupType>>>;
+  parameterGroups?: Maybe<Array<Maybe<GeinsParameterGroupTypeType>>>;
   /** Primary category for this product */
-  primaryCategory?: Maybe<CategoryType>;
+  primaryCategory?: Maybe<GeinsCategoryTypeType>;
   /** Product primary image */
   primaryImage?: Maybe<Scalars['String']['output']>;
   /** List of product images and their related properties */
-  productImages?: Maybe<Array<Maybe<ProductImageType>>>;
+  productImages?: Maybe<Array<Maybe<GeinsProductImageTypeType>>>;
   /**
    * Relation type
    * @deprecated Use RelatedProductType.RelationType instead.
    */
-  relation?: Maybe<ProductRelation>;
+  relation?: Maybe<GeinsProductRelation>;
   /** Relation type */
   relationType: Scalars['String']['output'];
   /** Product secondary image */
   secondaryImage?: Maybe<Scalars['String']['output']>;
   /** Product SKUs */
-  skus?: Maybe<Array<Maybe<SkuType>>>;
+  skus?: Maybe<Array<Maybe<GeinsSkuTypeType>>>;
   /** Product price */
-  unitPrice?: Maybe<PriceType>;
+  unitPrice?: Maybe<GeinsPriceTypeType>;
 }
 
-export interface ShippingDetailType {
+export interface GeinsShippingDetailTypeType {
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   parcelNumber?: Maybe<Scalars['String']['output']>;
@@ -1842,7 +1842,7 @@ export interface ShippingDetailType {
 }
 
 /** Type containing shipping option information */
-export interface ShippingOptionType {
+export interface GeinsShippingOptionTypeType {
   /** Amount left to recieve free shipping */
   amountLeftToFreeShipping: Scalars['Decimal']['output'];
   /** Amount left to recieve free shipping formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34' */
@@ -1872,15 +1872,15 @@ export interface ShippingOptionType {
   /** Shipping data */
   shippingData?: Maybe<Scalars['String']['output']>;
   /** Sub-options */
-  subOptions?: Maybe<Array<Maybe<ShippingOptionType>>>;
+  subOptions?: Maybe<Array<Maybe<GeinsShippingOptionTypeType>>>;
 }
 
 /** Type containing all information about a product SKU */
-export interface SkuType {
+export interface GeinsSkuTypeType {
   /** The article number of the SKU */
   articleNumber: Scalars['String']['output'];
   /** The dimensions of the SKU */
-  dimensions?: Maybe<DimensionsType>;
+  dimensions?: Maybe<GeinsDimensionsTypeType>;
   /** External ID of the SKU */
   externalId?: Maybe<Scalars['String']['output']>;
   /** SKU GTIN */
@@ -1896,57 +1896,57 @@ export interface SkuType {
   /** ID of the SKU */
   skuId: Scalars['Int']['output'];
   /** Stock information */
-  stock?: Maybe<StockType>;
+  stock?: Maybe<GeinsStockTypeType>;
   /** Weight in grams (g) */
   weight: Scalars['Int']['output'];
 }
 
 /** Sort types */
-export enum SortType {
+export enum GeinsSortType {
   /** Sort by alphabetical */
-  Alphabetical = 'ALPHABETICAL',
+  AlphabeticalType = 'ALPHABETICAL',
   /** Sort by alphabetical, in descending order */
-  AlphabeticalDesc = 'ALPHABETICAL_DESC',
+  AlphabeticalDescType = 'ALPHABETICAL_DESC',
   /** Sort by available stock balance */
-  AvailableStock = 'AVAILABLE_STOCK',
+  AvailableStockType = 'AVAILABLE_STOCK',
   /** Sort by available stock balance, in descending order */
-  AvailableStockDesc = 'AVAILABLE_STOCK_DESC',
+  AvailableStockDescType = 'AVAILABLE_STOCK_DESC',
   /** Sort by brand */
-  Brand = 'BRAND',
+  BrandType = 'BRAND',
   /** Sort by custom value 1 */
-  Custom_1 = 'CUSTOM_1',
+  Custom_1Type = 'CUSTOM_1',
   /** Sort by custom value 2 */
-  Custom_2 = 'CUSTOM_2',
+  Custom_2Type = 'CUSTOM_2',
   /** Sort by custom value 3 */
-  Custom_3 = 'CUSTOM_3',
+  Custom_3Type = 'CUSTOM_3',
   /** Sort by custom value 4 */
-  Custom_4 = 'CUSTOM_4',
+  Custom_4Type = 'CUSTOM_4',
   /** Sort by custom value 5 */
-  Custom_5 = 'CUSTOM_5',
+  Custom_5Type = 'CUSTOM_5',
   /** Sort by facets */
-  FacetOrder = 'FACET_ORDER',
+  FacetOrderType = 'FACET_ORDER',
   /** Sort by latest products */
-  Latest = 'LATEST',
+  LatestType = 'LATEST',
   /** Sort by most sold */
-  MostSold = 'MOST_SOLD',
+  MostSoldType = 'MOST_SOLD',
   /** No sorting */
-  None = 'NONE',
+  NoneType = 'NONE',
   /** Sort by price */
-  Price = 'PRICE',
+  PriceType = 'PRICE',
   /** Sort by price, in descending order */
-  PriceDesc = 'PRICE_DESC',
+  PriceDescType = 'PRICE_DESC',
   /** Sort by relevance */
-  Relevance = 'RELEVANCE',
+  RelevanceType = 'RELEVANCE',
   /** Sort by total stock balance, including oversellable */
-  TotalStock = 'TOTAL_STOCK',
+  TotalStockType = 'TOTAL_STOCK',
   /** Sort by total stock balance, including oversellable, in descending order */
-  TotalStockDesc = 'TOTAL_STOCK_DESC',
+  TotalStockDescType = 'TOTAL_STOCK_DESC',
   /** Sort by votes */
-  Votes = 'VOTES'
+  VotesType = 'VOTES'
 }
 
 /** Type containing information about SKU stock */
-export interface StockType {
+export interface GeinsStockTypeType {
   /** The units available at this moment */
   inStock: Scalars['Int']['output'];
   /**
@@ -1967,30 +1967,30 @@ export interface StockType {
   totalStock: Scalars['Int']['output'];
 }
 
-export interface UrlHistoryType {
+export interface GeinsUrlHistoryTypeType {
   newUrl: Scalars['String']['output'];
   oldUrl: Scalars['String']['output'];
 }
 
-export interface UserBalanceType {
+export interface GeinsUserBalanceTypeType {
   amount: Scalars['Decimal']['output'];
   /** User balance amount. Formatted as a currency string. */
   amountFormatted?: Maybe<Scalars['String']['output']>;
   currency: Scalars['String']['output'];
 }
 
-export interface UserInputType {
-  address?: InputMaybe<AddressInputType>;
-  customerType?: InputMaybe<CustomerType>;
-  gender?: InputMaybe<Gender>;
+export interface GeinsUserInputTypeType {
+  address?: InputMaybe<GeinsAddressInputTypeType>;
+  customerType?: InputMaybe<GeinsCustomerType>;
+  gender?: InputMaybe<GeinsGender>;
   /** Free-text field to store any data related to the customer. */
   metaData?: InputMaybe<Scalars['String']['input']>;
   newsletter?: InputMaybe<Scalars['Boolean']['input']>;
   personalId?: InputMaybe<Scalars['String']['input']>;
 }
 
-export interface UserType {
-  address?: Maybe<AddressType>;
+export interface GeinsUserTypeType {
+  address?: Maybe<GeinsAddressTypeType>;
   /**
    * Account balance
    * @deprecated Use Balances instead
@@ -2002,10 +2002,10 @@ export interface UserType {
    */
   balanceFormatted?: Maybe<Scalars['String']['output']>;
   /** User balance per currency */
-  balances?: Maybe<Array<Maybe<UserBalanceType>>>;
-  customerType?: Maybe<CustomerType>;
+  balances?: Maybe<Array<Maybe<GeinsUserBalanceTypeType>>>;
+  customerType?: Maybe<GeinsCustomerType>;
   email: Scalars['String']['output'];
-  gender?: Maybe<Gender>;
+  gender?: Maybe<GeinsGender>;
   id: Scalars['Int']['output'];
   memberId: Scalars['Int']['output'];
   memberType: Scalars['String']['output'];
@@ -2015,14 +2015,14 @@ export interface UserType {
   personalId?: Maybe<Scalars['String']['output']>;
 }
 
-export interface ValidateOrderCreationResponseType {
+export interface GeinsValidateOrderCreationResponseTypeType {
   isValid: Scalars['Boolean']['output'];
   memberType?: Maybe<Scalars['String']['output']>;
   message?: Maybe<Scalars['String']['output']>;
 }
 
 /** Type containing variant attribute information */
-export interface VariantAttributeType {
+export interface GeinsVariantAttributeTypeType {
   /** Attribute key */
   key: Scalars['String']['output'];
   /** Attribute value */
@@ -2030,13 +2030,13 @@ export interface VariantAttributeType {
 }
 
 /** Type containing variant dimension information */
-export interface VariantDimensionType {
+export interface GeinsVariantDimensionTypeType {
   /** Dimension attributes */
-  attributes?: Maybe<Array<Maybe<VariantAttributeType>>>;
+  attributes?: Maybe<Array<Maybe<GeinsVariantAttributeTypeType>>>;
   /** The dimension name */
   dimension: Scalars['String']['output'];
   /** Group values */
-  group?: Maybe<Array<Maybe<VariantValueType>>>;
+  group?: Maybe<Array<Maybe<GeinsVariantValueTypeType>>>;
   /** Dimension label */
   label?: Maybe<Scalars['String']['output']>;
   /** The level of this variant dimension */
@@ -2048,7 +2048,7 @@ export interface VariantDimensionType {
 }
 
 /** Type containing variant group information */
-export interface VariantGroupType {
+export interface GeinsVariantGroupTypeType {
   /** The amount of active products in this variant group */
   activeProducts: Scalars['Int']['output'];
   /** If true, only the main product will show up in product lists */
@@ -2060,15 +2060,15 @@ export interface VariantGroupType {
   /** Variant group ID */
   variantGroupId: Scalars['Int']['output'];
   /** Group variants */
-  variants?: Maybe<Array<Maybe<VariantType>>>;
+  variants?: Maybe<Array<Maybe<GeinsVariantTypeType>>>;
 }
 
 /** Type containing variant information */
-export interface VariantType {
+export interface GeinsVariantTypeType {
   /** Alias for variant selection. e.g. 'product-4' */
   alias?: Maybe<Scalars['String']['output']>;
   /** Variant attributes */
-  attributes?: Maybe<Array<Maybe<VariantAttributeType>>>;
+  attributes?: Maybe<Array<Maybe<GeinsVariantAttributeTypeType>>>;
   /** Canonical URL. Only available for the 'product'-level */
   canonicalUrl?: Maybe<Scalars['String']['output']>;
   /** Variant dimension */
@@ -2090,17 +2090,17 @@ export interface VariantType {
   /** SKU ID associated with this variant */
   skuId?: Maybe<Scalars['Int']['output']>;
   /** Stock information for variant */
-  stock?: Maybe<StockType>;
+  stock?: Maybe<GeinsStockTypeType>;
   /** Variant type. In order of accuracy 'sku', 'product', 'selection' */
   type: Scalars['String']['output'];
   /** Variant value */
   value?: Maybe<Scalars['String']['output']>;
   /** List of variants for this variant */
-  variants?: Maybe<Array<Maybe<VariantType>>>;
+  variants?: Maybe<Array<Maybe<GeinsVariantTypeType>>>;
 }
 
 /** Type containing variant value information */
-export interface VariantValueType {
+export interface GeinsVariantValueTypeType {
   /** Label */
   label: Scalars['String']['output'];
   /** Value */
@@ -2108,36 +2108,488 @@ export interface VariantValueType {
 }
 
 /** Type containing VAT group information */
-export interface VatGroupType {
+export interface GeinsVatGroupTypeType {
   /** VAT amount */
   amount: Scalars['Decimal']['output'];
   /** VAT rate */
   rate: Scalars['Int']['output'];
 }
 
-export type GetChannelQueryVariables = Exact<{
+export type GeinsMenuType = {
+  id: string,
+  title?: string | null,
+  menuItems?: Array<{
+    id: string,
+    label?: string | null,
+    open: boolean,
+    hidden: boolean,
+    targetBlank: boolean,
+    type: string,
+    order: number,
+    title?: string | null,
+    canonicalUrl?: string | null,
+    children?: Array<{
+      id: string,
+      label?: string | null,
+      open: boolean,
+      hidden: boolean,
+      targetBlank: boolean,
+      type: string,
+      order: number,
+      title?: string | null,
+      canonicalUrl?: string | null,
+      children?: Array<{
+        id: string,
+        label?: string | null,
+        open: boolean,
+        hidden: boolean,
+        targetBlank: boolean,
+        type: string,
+        order: number,
+        title?: string | null,
+        canonicalUrl?: string | null
+      } | null> | null
+    } | null> | null
+  } | null> | null
+};
+
+export type GeinsMenuItemBaseType = {
+  id: string,
+  label?: string | null,
+  open: boolean,
+  hidden: boolean,
+  targetBlank: boolean,
+  type: string,
+  order: number,
+  title?: string | null,
+  canonicalUrl?: string | null,
+  children?: Array<{
+    id: string,
+    label?: string | null,
+    open: boolean,
+    hidden: boolean,
+    targetBlank: boolean,
+    type: string,
+    order: number,
+    title?: string | null,
+    canonicalUrl?: string | null,
+    children?: Array<{
+      id: string,
+      label?: string | null,
+      open: boolean,
+      hidden: boolean,
+      targetBlank: boolean,
+      type: string,
+      order: number,
+      title?: string | null,
+      canonicalUrl?: string | null
+    } | null> | null
+  } | null> | null
+};
+
+export type GeinsMenuItemType = {
+  id: string,
+  label?: string | null,
+  open: boolean,
+  hidden: boolean,
+  targetBlank: boolean,
+  type: string,
+  order: number,
+  title?: string | null,
+  canonicalUrl?: string | null
+};
+
+export type GeinsChannelFieldsType = {
+  id: string,
+  name: string,
+  type: string,
+  url: string,
+  defaultLanguageId: string,
+  defaultMarketId: string
+};
+
+export type GeinsMarketFieldsType = {
+  id: string,
+  alias?: string | null,
+  onlyDisplayInCheckout?: boolean | null,
+  virtual?: boolean | null,
+  groupKey: string,
+  allowedLanguages?: Array<{
+    id: string,
+    name: string,
+    code: string
+  } | null> | null,
+  country?: {
+    name: string,
+    code: string
+  } | null,
+  currency?: {
+    code: string,
+    symbol: string
+  } | null
+};
+
+export type GeinsLanguageFieldsType = {
+  id: string,
+  name: string,
+  code: string
+};
+
+export type GeinsCountryFieldsType = {
+  name: string,
+  code: string
+};
+
+export type GeinsCurrencyFieldsType = {
+  code: string,
+  symbol: string
+};
+
+export type GeinsCartType = {
+  id?: string | null,
+  promoCode?: string | null,
+  appliedCampaigns?: Array<{
+    name?: string | null,
+    hideTitle?: boolean | null
+  } | null> | null,
+  items?: Array<{
+    quantity: number,
+    skuId: number,
+    campaign?: {
+      appliedCampaigns?: Array<{
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
+      prices?: Array<{
+        quantity: number,
+        price?: {
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null
+      } | null> | null
+    } | null,
+    unitPrice?: {
+      isDiscounted: boolean,
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      vat: number,
+      discountPercentage: number,
+      regularPriceIncVatFormatted?: string | null,
+      sellingPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null
+    } | null,
+    product?: {
+      productId: number,
+      articleNumber?: string | null,
+      name?: string | null,
+      alias: string,
+      canonicalUrl?: string | null,
+      brand?: {
+        name?: string | null
+      } | null,
+      productImages?: Array<{
+        fileName: string
+      } | null> | null,
+      primaryCategory?: {
+        name: string
+      } | null,
+      skus?: Array<{
+        skuId: number,
+        name?: string | null,
+        stock?: {
+          inStock: number,
+          oversellable: number,
+          totalStock: number,
+          static?: number | null,
+          incoming?: string | null
+        } | null
+      } | null> | null,
+      unitPrice?: {
+        isDiscounted: boolean,
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        vat: number,
+        discountPercentage: number,
+        regularPriceIncVatFormatted?: string | null,
+        sellingPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null
+      } | null
+    } | null,
+    totalPrice?: {
+      isDiscounted: boolean,
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      vat: number,
+      discountPercentage: number,
+      regularPriceIncVatFormatted?: string | null,
+      sellingPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null
+    } | null
+  } | null> | null,
+  summary?: {
+    fixedAmountDiscountIncVat: number,
+    fixedAmountDiscountExVat: number,
+    balance?: {
+      pending: number,
+      pendingFormatted?: string | null,
+      totalSellingPriceExBalanceExVat: number,
+      totalSellingPriceExBalanceIncVat: number,
+      totalSellingPriceExBalanceIncVatFormatted?: string | null
+    } | null,
+    subTotal?: {
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      sellingPriceExVat: number,
+      sellingPriceIncVat: number,
+      vat: number
+    } | null,
+    shipping?: {
+      amountLeftToFreeShipping: number,
+      amountLeftToFreeShippingFormatted?: string | null,
+      feeExVatFormatted?: string | null,
+      feeIncVatFormatted?: string | null,
+      feeIncVat: number,
+      feeExVat: number,
+      isDefault: boolean
+    } | null,
+    total?: {
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      discountExVat: number,
+      discountIncVat: number,
+      vatFormatted?: string | null,
+      vat: number
+    } | null
+  } | null
+};
+
+export type GeinsPriceType = {
+  isDiscounted: boolean,
+  sellingPriceIncVat: number,
+  sellingPriceExVat: number,
+  regularPriceIncVat: number,
+  regularPriceExVat: number,
+  vat: number,
+  discountPercentage: number,
+  regularPriceIncVatFormatted?: string | null,
+  sellingPriceIncVatFormatted?: string | null,
+  regularPriceExVatFormatted?: string | null,
+  sellingPriceExVatFormatted?: string | null
+};
+
+export type GeinsStockType = {
+  inStock: number,
+  oversellable: number,
+  totalStock: number,
+  static?: number | null,
+  incoming?: string | null
+};
+
+export type GeinsAddressType = {
+  firstName: string,
+  lastName: string,
+  company: string,
+  mobile: string,
+  phone: string,
+  careOf: string,
+  entryCode: string,
+  addressLine1: string,
+  addressLine2: string,
+  addressLine3: string,
+  zip: string,
+  city: string,
+  state: string,
+  country: string
+};
+
+export type GeinsUserType = {
+  id: number,
+  email: string,
+  customerType?: GeinsCustomerType | null,
+  gender?: GeinsGender | null,
+  metaData?: string | null,
+  entityId?: string | null,
+  address?: {
+    firstName: string,
+    lastName: string,
+    company: string,
+    mobile: string,
+    phone: string,
+    careOf: string,
+    entryCode: string,
+    addressLine1: string,
+    addressLine2: string,
+    addressLine3: string,
+    zip: string,
+    city: string,
+    state: string,
+    country: string
+  } | null,
+  balances?: Array<{
+    currency: string,
+    amount: number
+  } | null> | null
+};
+
+export type GeinsUserBalanceType = {
+  currency: string,
+  amount: number
+};
+
+export type GeinsMenuAtLocationVariablesType = Exact<{
+  menuLocationId?: InputMaybe<Scalars['String']['input']>;
   channelId?: InputMaybe<Scalars['String']['input']>;
-}>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
 
 
-export type GetChannelQuery = { channel?: { id: string, name: string, type: string, url: string, defaultLanguageId: string, defaultMarketId: string, markets?: Array<{ id: string, alias?: string | null, onlyDisplayInCheckout?: boolean | null, virtual?: boolean | null, groupKey: string, allowedLanguages?: Array<{ id: string, name: string, code: string } | null> | null, country?: { name: string, code: string } | null, currency?: { code: string, symbol: string } | null } | null> | null, languages?: Array<{ id: string, name: string, code: string } | null> | null } | null };
+export type GeinsMenuAtLocationType = {
+  getMenuAtLocation?: {
+    id: string,
+    title?: string | null,
+    menuItems?: Array<{
+      id: string,
+      label?: string | null,
+      open: boolean,
+      hidden: boolean,
+      targetBlank: boolean,
+      type: string,
+      order: number,
+      title?: string | null,
+      canonicalUrl?: string | null,
+      children?: Array<{
+        id: string,
+        label?: string | null,
+        open: boolean,
+        hidden: boolean,
+        targetBlank: boolean,
+        type: string,
+        order: number,
+        title?: string | null,
+        canonicalUrl?: string | null,
+        children?: Array<{
+          id: string,
+          label?: string | null,
+          open: boolean,
+          hidden: boolean,
+          targetBlank: boolean,
+          type: string,
+          order: number,
+          title?: string | null,
+          canonicalUrl?: string | null
+        } | null> | null
+      } | null> | null
+    } | null> | null
+  } | null
+};
 
-export type GetChannelsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GeinsGetChannelVariablesType = Exact<{
+  channelId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
 
 
-export type GetChannelsQuery = { channels?: Array<{ id: string, name: string, type: string, url: string, defaultLanguageId: string, defaultMarketId: string, markets?: Array<{ id: string, alias?: string | null, onlyDisplayInCheckout?: boolean | null, virtual?: boolean | null, groupKey: string, allowedLanguages?: Array<{ id: string, name: string, code: string } | null> | null, country?: { name: string, code: string } | null, currency?: { code: string, symbol: string } | null } | null> | null, languages?: Array<{ id: string, name: string, code: string } | null> | null } | null> | null };
+export type GeinsGetChannelType = {
+  channel?: {
+    id: string,
+    name: string,
+    type: string,
+    url: string,
+    defaultLanguageId: string,
+    defaultMarketId: string,
+    markets?: Array<{
+      id: string,
+      alias?: string | null,
+      onlyDisplayInCheckout?: boolean | null,
+      virtual?: boolean | null,
+      groupKey: string,
+      allowedLanguages?: Array<{
+        id: string,
+        name: string,
+        code: string
+      } | null> | null,
+      country?: {
+        name: string,
+        code: string
+      } | null,
+      currency?: {
+        code: string,
+        symbol: string
+      } | null
+    } | null> | null,
+    languages?: Array<{
+      id: string,
+      name: string,
+      code: string
+    } | null> | null
+  } | null
+};
 
-export type ChannelFieldsFragment = { id: string, name: string, type: string, url: string, defaultLanguageId: string, defaultMarketId: string };
+export type GeinsGetChannelsVariablesType = Exact<{ [key: string]: never; }> | undefined;
 
-export type CountryFieldsFragment = { name: string, code: string };
 
-export type CurrencyFieldsFragment = { code: string, symbol: string };
+export type GeinsGetChannelsType = {
+  channels?: Array<{
+    id: string,
+    name: string,
+    type: string,
+    url: string,
+    defaultLanguageId: string,
+    defaultMarketId: string,
+    markets?: Array<{
+      id: string,
+      alias?: string | null,
+      onlyDisplayInCheckout?: boolean | null,
+      virtual?: boolean | null,
+      groupKey: string,
+      allowedLanguages?: Array<{
+        id: string,
+        name: string,
+        code: string
+      } | null> | null,
+      country?: {
+        name: string,
+        code: string
+      } | null,
+      currency?: {
+        code: string,
+        symbol: string
+      } | null
+    } | null> | null,
+    languages?: Array<{
+      id: string,
+      name: string,
+      code: string
+    } | null> | null
+  } | null> | null
+};
 
-export type LanguageFieldsFragment = { id: string, name: string, code: string };
-
-export type MarketFieldsFragment = { id: string, alias?: string | null, onlyDisplayInCheckout?: boolean | null, virtual?: boolean | null, groupKey: string, allowedLanguages?: Array<{ id: string, name: string, code: string } | null> | null, country?: { name: string, code: string } | null, currency?: { code: string, symbol: string } | null };
-
-export type UserPasswordResetCommitMutationVariables = Exact<{
+export type GeinsUserPasswordResetCommitVariablesType = Exact<{
   resetKey: Scalars['String']['input'];
   password: Scalars['String']['input'];
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -2146,9 +2598,11 @@ export type UserPasswordResetCommitMutationVariables = Exact<{
 }>;
 
 
-export type UserPasswordResetCommitMutation = { commitReset?: boolean | null };
+export type GeinsUserPasswordResetCommitType = {
+  commitReset?: boolean | null
+};
 
-export type UserRequestPasswordResetMutationVariables = Exact<{
+export type GeinsUserRequestPasswordResetVariablesType = Exact<{
   email: Scalars['String']['input'];
   channelId?: InputMaybe<Scalars['String']['input']>;
   languageId?: InputMaybe<Scalars['String']['input']>;
@@ -2156,60 +2610,307 @@ export type UserRequestPasswordResetMutationVariables = Exact<{
 }>;
 
 
-export type UserRequestPasswordResetMutation = { requestPasswordReset?: boolean | null };
+export type GeinsUserRequestPasswordResetType = {
+  requestPasswordReset?: boolean | null
+};
 
-export type AddressFragment = { firstName: string, lastName: string, company: string, mobile: string, phone: string, careOf: string, entryCode: string, addressLine1: string, addressLine2: string, addressLine3: string, zip: string, city: string, state: string, country: string };
+export type GeinsUserOrdersVariablesType = Exact<{
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
 
-export type UserBalanceFragment = { currency: string, amount: number };
 
-export type CampaignFragment = { name?: string | null, hideTitle?: boolean | null };
+export type GeinsUserOrdersType = {
+  getOrders?: Array<{
+    createdAt?: string | null,
+    id?: number | null,
+    status: string,
+    cart?: {
+      id?: string | null,
+      promoCode?: string | null,
+      appliedCampaigns?: Array<{
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
+      items?: Array<{
+        quantity: number,
+        skuId: number,
+        campaign?: {
+          appliedCampaigns?: Array<{
+            name?: string | null,
+            hideTitle?: boolean | null
+          } | null> | null,
+          prices?: Array<{
+            quantity: number,
+            price?: {
+              isDiscounted: boolean,
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              vat: number,
+              discountPercentage: number,
+              regularPriceIncVatFormatted?: string | null,
+              sellingPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null
+            } | null
+          } | null> | null
+        } | null,
+        unitPrice?: {
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null,
+        product?: {
+          productId: number,
+          articleNumber?: string | null,
+          name?: string | null,
+          alias: string,
+          canonicalUrl?: string | null,
+          brand?: {
+            name?: string | null
+          } | null,
+          productImages?: Array<{
+            fileName: string
+          } | null> | null,
+          primaryCategory?: {
+            name: string
+          } | null,
+          skus?: Array<{
+            skuId: number,
+            name?: string | null,
+            stock?: {
+              inStock: number,
+              oversellable: number,
+              totalStock: number,
+              static?: number | null,
+              incoming?: string | null
+            } | null
+          } | null> | null,
+          unitPrice?: {
+            isDiscounted: boolean,
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            vat: number,
+            discountPercentage: number,
+            regularPriceIncVatFormatted?: string | null,
+            sellingPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null
+          } | null
+        } | null,
+        totalPrice?: {
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null
+      } | null> | null,
+      summary?: {
+        fixedAmountDiscountIncVat: number,
+        fixedAmountDiscountExVat: number,
+        balance?: {
+          pending: number,
+          pendingFormatted?: string | null,
+          totalSellingPriceExBalanceExVat: number,
+          totalSellingPriceExBalanceIncVat: number,
+          totalSellingPriceExBalanceIncVatFormatted?: string | null
+        } | null,
+        subTotal?: {
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          sellingPriceExVat: number,
+          sellingPriceIncVat: number,
+          vat: number
+        } | null,
+        shipping?: {
+          amountLeftToFreeShipping: number,
+          amountLeftToFreeShippingFormatted?: string | null,
+          feeExVatFormatted?: string | null,
+          feeIncVatFormatted?: string | null,
+          feeIncVat: number,
+          feeExVat: number,
+          isDefault: boolean
+        } | null,
+        total?: {
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          discountExVat: number,
+          discountIncVat: number,
+          vatFormatted?: string | null,
+          vat: number
+        } | null
+      } | null
+    } | null,
+    billingAddress?: {
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
+    shippingAddress?: {
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
+    shippingDetails?: Array<{
+      name: string,
+      trackingLink?: string | null
+    } | null> | null,
+    paymentDetails?: Array<{
+      displayName: string
+    } | null> | null,
+    refunds?: Array<{
+      id: number,
+      itemId: number,
+      createdAt: string,
+      reason?: string | null,
+      total: number,
+      vat: number
+    } | null> | null
+  } | null> | null
+};
 
-export type CartFragment = { id?: string | null, promoCode?: string | null, appliedCampaigns?: Array<{ name?: string | null, hideTitle?: boolean | null } | null> | null, items?: Array<{ quantity: number, skuId: number, campaign?: { appliedCampaigns?: Array<{ name?: string | null, hideTitle?: boolean | null } | null> | null, prices?: Array<{ quantity: number, price?: { isDiscounted: boolean, sellingPriceIncVat: number, sellingPriceExVat: number, regularPriceIncVat: number, regularPriceExVat: number, vat: number, discountPercentage: number, regularPriceIncVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null } | null } | null> | null } | null, unitPrice?: { isDiscounted: boolean, sellingPriceIncVat: number, sellingPriceExVat: number, regularPriceIncVat: number, regularPriceExVat: number, vat: number, discountPercentage: number, regularPriceIncVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null } | null, product?: { productId: number, articleNumber?: string | null, name?: string | null, alias: string, canonicalUrl?: string | null, brand?: { name?: string | null } | null, productImages?: Array<{ fileName: string } | null> | null, primaryCategory?: { name: string } | null, skus?: Array<{ skuId: number, name?: string | null, stock?: { inStock: number, oversellable: number, totalStock: number, static?: number | null, incoming?: string | null } | null } | null> | null, unitPrice?: { isDiscounted: boolean, sellingPriceIncVat: number, sellingPriceExVat: number, regularPriceIncVat: number, regularPriceExVat: number, vat: number, discountPercentage: number, regularPriceIncVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null } | null } | null, totalPrice?: { isDiscounted: boolean, sellingPriceIncVat: number, sellingPriceExVat: number, regularPriceIncVat: number, regularPriceExVat: number, vat: number, discountPercentage: number, regularPriceIncVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null } | null } | null> | null, summary?: { fixedAmountDiscountIncVat: number, fixedAmountDiscountExVat: number, balance?: { pending: number, pendingFormatted?: string | null, totalSellingPriceExBalanceExVat: number, totalSellingPriceExBalanceIncVat: number, totalSellingPriceExBalanceIncVatFormatted?: string | null } | null, subTotal?: { regularPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null, sellingPriceExVat: number, sellingPriceIncVat: number, vat: number } | null, shipping?: { amountLeftToFreeShipping: number, amountLeftToFreeShippingFormatted?: string | null, feeExVatFormatted?: string | null, feeIncVatFormatted?: string | null, feeIncVat: number, feeExVat: number, isDefault: boolean } | null, total?: { isDiscounted: boolean, sellingPriceIncVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null, sellingPriceIncVat: number, sellingPriceExVat: number, discountIncVatFormatted?: string | null, discountExVatFormatted?: string | null, discountExVat: number, discountIncVat: number, vatFormatted?: string | null, vat: number } | null } | null };
+export type GeinsUserDeleteVariablesType = Exact<{ [key: string]: never; }>;
 
-export type PriceFragment = { isDiscounted: boolean, sellingPriceIncVat: number, sellingPriceExVat: number, regularPriceIncVat: number, regularPriceExVat: number, vat: number, discountPercentage: number, regularPriceIncVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null };
 
-export type StockFragment = { inStock: number, oversellable: number, totalStock: number, static?: number | null, incoming?: string | null };
+export type GeinsUserDeleteType = {
+  deleteUser?: boolean | null
+};
 
-export type UserFragment = { id: number, email: string, customerType?: CustomerType | null, gender?: Gender | null, metaData?: string | null, entityId?: string | null, address?: { firstName: string, lastName: string, company: string, mobile: string, phone: string, careOf: string, entryCode: string, addressLine1: string, addressLine2: string, addressLine3: string, zip: string, city: string, state: string, country: string } | null, balances?: Array<{ currency: string, amount: number } | null> | null };
+export type GeinsUserGetVariablesType = Exact<{ [key: string]: never; }> | undefined;
 
-export type UserOrdersQueryVariables = Exact<{
+
+export type GeinsUserGetType = {
+  getUser?: {
+    id: number,
+    email: string,
+    customerType?: GeinsCustomerType | null,
+    gender?: GeinsGender | null,
+    metaData?: string | null,
+    entityId?: string | null,
+    address?: {
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
+    balances?: Array<{
+      currency: string,
+      amount: number
+    } | null> | null
+  } | null
+};
+
+export type GeinsUserCreateVariablesType = Exact<{
+  user: GeinsUserInputTypeType;
   channelId?: InputMaybe<Scalars['String']['input']>;
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type UserOrdersQuery = { getOrders?: Array<{ createdAt?: string | null, id?: number | null, status: string, cart?: { id?: string | null, promoCode?: string | null, appliedCampaigns?: Array<{ name?: string | null, hideTitle?: boolean | null } | null> | null, items?: Array<{ quantity: number, skuId: number, campaign?: { appliedCampaigns?: Array<{ name?: string | null, hideTitle?: boolean | null } | null> | null, prices?: Array<{ quantity: number, price?: { isDiscounted: boolean, sellingPriceIncVat: number, sellingPriceExVat: number, regularPriceIncVat: number, regularPriceExVat: number, vat: number, discountPercentage: number, regularPriceIncVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null } | null } | null> | null } | null, unitPrice?: { isDiscounted: boolean, sellingPriceIncVat: number, sellingPriceExVat: number, regularPriceIncVat: number, regularPriceExVat: number, vat: number, discountPercentage: number, regularPriceIncVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null } | null, product?: { productId: number, articleNumber?: string | null, name?: string | null, alias: string, canonicalUrl?: string | null, brand?: { name?: string | null } | null, productImages?: Array<{ fileName: string } | null> | null, primaryCategory?: { name: string } | null, skus?: Array<{ skuId: number, name?: string | null, stock?: { inStock: number, oversellable: number, totalStock: number, static?: number | null, incoming?: string | null } | null } | null> | null, unitPrice?: { isDiscounted: boolean, sellingPriceIncVat: number, sellingPriceExVat: number, regularPriceIncVat: number, regularPriceExVat: number, vat: number, discountPercentage: number, regularPriceIncVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null } | null } | null, totalPrice?: { isDiscounted: boolean, sellingPriceIncVat: number, sellingPriceExVat: number, regularPriceIncVat: number, regularPriceExVat: number, vat: number, discountPercentage: number, regularPriceIncVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null } | null } | null> | null, summary?: { fixedAmountDiscountIncVat: number, fixedAmountDiscountExVat: number, balance?: { pending: number, pendingFormatted?: string | null, totalSellingPriceExBalanceExVat: number, totalSellingPriceExBalanceIncVat: number, totalSellingPriceExBalanceIncVatFormatted?: string | null } | null, subTotal?: { regularPriceIncVatFormatted?: string | null, regularPriceExVatFormatted?: string | null, sellingPriceIncVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null, sellingPriceExVat: number, sellingPriceIncVat: number, vat: number } | null, shipping?: { amountLeftToFreeShipping: number, amountLeftToFreeShippingFormatted?: string | null, feeExVatFormatted?: string | null, feeIncVatFormatted?: string | null, feeIncVat: number, feeExVat: number, isDefault: boolean } | null, total?: { isDiscounted: boolean, sellingPriceIncVatFormatted?: string | null, sellingPriceExVatFormatted?: string | null, sellingPriceIncVat: number, sellingPriceExVat: number, discountIncVatFormatted?: string | null, discountExVatFormatted?: string | null, discountExVat: number, discountIncVat: number, vatFormatted?: string | null, vat: number } | null } | null } | null, billingAddress?: { firstName: string, lastName: string, company: string, mobile: string, phone: string, careOf: string, entryCode: string, addressLine1: string, addressLine2: string, addressLine3: string, zip: string, city: string, state: string, country: string } | null, shippingAddress?: { firstName: string, lastName: string, company: string, mobile: string, phone: string, careOf: string, entryCode: string, addressLine1: string, addressLine2: string, addressLine3: string, zip: string, city: string, state: string, country: string } | null, shippingDetails?: Array<{ name: string, trackingLink?: string | null } | null> | null, paymentDetails?: Array<{ displayName: string } | null> | null, refunds?: Array<{ id: number, itemId: number, createdAt: string, reason?: string | null, total: number, vat: number } | null> | null } | null> | null };
+export type GeinsUserCreateType = {
+  updateUser?: {
+    email: string
+  } | null
+};
 
-export type UserDeleteMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type UserDeleteMutation = { deleteUser?: boolean | null };
-
-export type UserQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type UserQuery = { getUser?: { id: number, email: string, customerType?: CustomerType | null, gender?: Gender | null, metaData?: string | null, entityId?: string | null, address?: { firstName: string, lastName: string, company: string, mobile: string, phone: string, careOf: string, entryCode: string, addressLine1: string, addressLine2: string, addressLine3: string, zip: string, city: string, state: string, country: string } | null, balances?: Array<{ currency: string, amount: number } | null> | null } | null };
-
-export type UserCreateMutationVariables = Exact<{
-  user: UserInputType;
+export type GeinsUserUpdateVariablesType = Exact<{
+  user: GeinsUserInputTypeType;
   channelId?: InputMaybe<Scalars['String']['input']>;
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type UserCreateMutation = { updateUser?: { email: string } | null };
-
-export type UserUpdateMutationVariables = Exact<{
-  user: UserInputType;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}>;
-
-
-export type UserUpdateMutation = { updateUser?: { id: number, email: string, customerType?: CustomerType | null, gender?: Gender | null, metaData?: string | null, entityId?: string | null, address?: { firstName: string, lastName: string, company: string, mobile: string, phone: string, careOf: string, entryCode: string, addressLine1: string, addressLine2: string, addressLine3: string, zip: string, city: string, state: string, country: string } | null, balances?: Array<{ currency: string, amount: number } | null> | null } | null };
+export type GeinsUserUpdateType = {
+  updateUser?: {
+    id: number,
+    email: string,
+    customerType?: GeinsCustomerType | null,
+    gender?: GeinsGender | null,
+    metaData?: string | null,
+    entityId?: string | null,
+    address?: {
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
+    balances?: Array<{
+      currency: string,
+      amount: number
+    } | null> | null
+  } | null
+};
 
 /**
  * @typedef {Object} AddressInputType
@@ -2646,54 +3347,6 @@ export type UserUpdateMutation = { updateUser?: { id: number, email: string, cus
  */
 
 /**
- * @typedef {Object} GeinsMerchantApiMutation
- * @property {CartType} [addPackageToCart]
- * @property {CartType} [addToCart]
- * @property {boolean} [commitReset]
- * @property {CartType} [completeCart] - Marks the cart as completed, and makes it read-only
- * @property {CheckoutType} [createOrUpdateCheckout]
- * @property {boolean} [deleteUser]
- * @property {boolean} [monitorProductAvailability]
- * @property {PlaceOrderResponseType} [placeOrder]
- * @property {boolean} [postProductReview]
- * @property {boolean} [requestPasswordReset]
- * @property {CartType} [setCartPromoCode] - Set a promo code on the cart
- * @property {CheckoutType} [setCartShippingFee]
- * @property {boolean} [subscribeToNewsletter]
- * @property {CartType} [updateCartGroup] - Update the quantity of an entire cart group
- * @property {CartType} [updateCartItem] - Update the cart item
- * @property {UserType} [updateUser]
- */
-
-/**
- * Gets all available channels
- * @typedef {Object} GeinsMerchantApiQuery
- * @property {Array<(BrandListType|null|undefined)>} [brands] - Get all brands.
- * @property {Array<(CategoryType|null|undefined)>} [categories] - Get all categories.
- * @property {CategoryType} [category] - Gets a category with the specified ID.
- * @property {ChannelType} [channel] - Gets a channel with the specified ID.
- * @property {Array<(ChannelType|null|undefined)>} [channels]
- * @property {CheckoutDataType} [checkout] - Gets checkout data with a html snippet, checkout order data for the specified order and the User. If the order was recently completed, the html snippet will contain the "Thank you"-content.
- * @property {Array<(PageWidgetPageType|null|undefined)>} [cmsPages] - Gets all CMS pages.
- * @property {CartType} [getCart] - Get the cart
- * @property {string} [getCheckout] - Gets html snippet for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content. - DEPRECATED: Use Checkout instead
- * @property {CheckoutAndOrderType} [getCheckoutAndOrder] - Gets html snippet and checkout order data for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content. - DEPRECATED: Use Checkout instead
- * @property {MenuType} [getMenuAtLocation] - Get a menu
- * @property {OrderType} [getOrder] - Get a specific order with details
- * @property {OrderType} [getOrderPublic] - Get a specific order with details via public id
- * @property {Array<(OrderType|null|undefined)>} [getOrders] - Get orders for the current user
- * @property {UserType} [getUser] - Get the current user
- * @property {PageInfoType} [listPageInfo] - Gets information about the specified list page.
- * @property {ProductType} [product] - Gets a product with the specified ID.
- * @property {ProductsResultType} [products] - Gets all products according to the values provided.
- * @property {Array<(RelatedProductType|null|undefined)>} [relatedProducts] - Gets related products for the specified alias.
- * @property {ProductReviewResultType} [reviews] - Gets all products reviews to the values provided.
- * @property {UrlHistoryType} [urlHistory] - Gets an alternate url for a given url.
- * @property {ValidateOrderCreationResponseType} [validateOrderCreation]
- * @property {PageWidgetCollectionType} [widgetArea] - Gets the page area and widgets from the specifed family.
- */
-
-/**
  * @typedef {("MAN"|"UNSPECIFIED"|"WOMAN")} Gender
  */
 
@@ -2805,6 +3458,26 @@ export type UserUpdateMutation = { updateUser?: { id: number, email: string, cus
  * @property {string} [description] - Description
  * @property {string} [keywords] - Keywords
  * @property {string} [title] - Title
+ */
+
+/**
+ * @typedef {Object} Mutation
+ * @property {CartType} [addPackageToCart]
+ * @property {CartType} [addToCart]
+ * @property {boolean} [commitReset]
+ * @property {CartType} [completeCart] - Marks the cart as completed, and makes it read-only
+ * @property {CheckoutType} [createOrUpdateCheckout]
+ * @property {boolean} [deleteUser]
+ * @property {boolean} [monitorProductAvailability]
+ * @property {PlaceOrderResponseType} [placeOrder]
+ * @property {boolean} [postProductReview]
+ * @property {boolean} [requestPasswordReset]
+ * @property {CartType} [setCartPromoCode] - Set a promo code on the cart
+ * @property {CheckoutType} [setCartShippingFee]
+ * @property {boolean} [subscribeToNewsletter]
+ * @property {CartType} [updateCartGroup] - Update the quantity of an entire cart group
+ * @property {CartType} [updateCartItem] - Update the cart item
+ * @property {UserType} [updateUser]
  */
 
 /**
@@ -3184,6 +3857,34 @@ export type UserUpdateMutation = { updateUser?: { id: number, email: string, cus
  * @property {Long} count - The total count of results for the query
  * @property {FilterCollectionType} [filters] - The filters available for this query
  * @property {Array<(ProductType|null|undefined)>} [products] - Results returned by the query
+ */
+
+/**
+ * Gets all available channels
+ * @typedef {Object} Query
+ * @property {Array<(BrandListType|null|undefined)>} [brands] - Get all brands.
+ * @property {Array<(CategoryType|null|undefined)>} [categories] - Get all categories.
+ * @property {CategoryType} [category] - Gets a category with the specified ID.
+ * @property {ChannelType} [channel] - Gets a channel with the specified ID.
+ * @property {Array<(ChannelType|null|undefined)>} [channels]
+ * @property {CheckoutDataType} [checkout] - Gets checkout data with a html snippet, checkout order data for the specified order and the User. If the order was recently completed, the html snippet will contain the "Thank you"-content.
+ * @property {Array<(PageWidgetPageType|null|undefined)>} [cmsPages] - Gets all CMS pages.
+ * @property {CartType} [getCart] - Get the cart
+ * @property {string} [getCheckout] - Gets html snippet for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content. - DEPRECATED: Use Checkout instead
+ * @property {CheckoutAndOrderType} [getCheckoutAndOrder] - Gets html snippet and checkout order data for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content. - DEPRECATED: Use Checkout instead
+ * @property {MenuType} [getMenuAtLocation] - Get a menu
+ * @property {OrderType} [getOrder] - Get a specific order with details
+ * @property {OrderType} [getOrderPublic] - Get a specific order with details via public id
+ * @property {Array<(OrderType|null|undefined)>} [getOrders] - Get orders for the current user
+ * @property {UserType} [getUser] - Get the current user
+ * @property {PageInfoType} [listPageInfo] - Gets information about the specified list page.
+ * @property {ProductType} [product] - Gets a product with the specified ID.
+ * @property {ProductsResultType} [products] - Gets all products according to the values provided.
+ * @property {Array<(RelatedProductType|null|undefined)>} [relatedProducts] - Gets related products for the specified alias.
+ * @property {ProductReviewResultType} [reviews] - Gets all products reviews to the values provided.
+ * @property {UrlHistoryType} [urlHistory] - Gets an alternate url for a given url.
+ * @property {ValidateOrderCreationResponseType} [validateOrderCreation]
+ * @property {PageWidgetCollectionType} [widgetArea] - Gets the page area and widgets from the specifed family.
  */
 
 /**
