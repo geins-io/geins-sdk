@@ -1,1 +1,1 @@
-export * from './contentParsers';
+export * from '../parsers/contentParsers';

@@ -9,6 +9,8 @@ export function parseMenuItem(item: any): MenuItemType {
     canonicalUrl: item.canonicalUrl,
     type: item.type,
     order: item.order,
+    open: item.open,
+    hidden: item.hidden,
     targetBlank: item.targetBlank,
     children: item.children
       ? item.children.map((child: any) => parseMenuItem(child))

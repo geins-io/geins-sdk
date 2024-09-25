@@ -1,7 +1,7 @@
 import { ContentPageVariables, ContentAreaType } from '@geins/core';
 import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
-import * as contentParsers from '../util/contentParsers';
+import * as contentParsers from '../parsers/contentParsers';
 
 export class ContentPageService extends BaseApiService {
   private async generateVars(variables: ContentPageVariables) {

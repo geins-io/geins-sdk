@@ -1,7 +1,7 @@
 import type { MenuVariables, MenuType } from '@geins/types';
 import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
-import { parseMenuItem } from '../util/contentParsers';
+import { parseMenuItem } from '../parsers/contentParsers';
 export class MenuService extends BaseApiService {
   private async generateVars(variables: MenuVariables) {
     if (!variables.menuLocationId) {
@@ -33,6 +33,4 @@ export class MenuService extends BaseApiService {
 
     return parsedResult;
   }
-
-
 }

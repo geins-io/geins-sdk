@@ -1,6 +1,8 @@
 fragment MenuItem on MenuItemType {
   id
   label
+  open
+  hidden
   targetBlank
   type
   order
