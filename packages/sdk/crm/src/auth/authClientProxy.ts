@@ -5,6 +5,10 @@ import { AuthService } from './authService';
 
 export class AuthClientProxy extends AuthClient {
   private readonly authEndpointApp: string;
+  /**
+   * Global refresh token for sending as header to proxy and renewing the authentication session.
+   * Used to obtain a new access token without requiring user re-authentication.
+   */
   private refreshToken: string | undefined;
 
   constructor(authEndpointApp: string) {
@@ -108,24 +112,20 @@ export class AuthClientProxy extends AuthClient {
     refreshToken?: string,
     userToken?: string,
   ): Promise<AuthResponse | undefined> {
+    const tokens = this.getCurrentTokens(refreshToken, userToken);
+
     // Handle refresh token
-    this.refreshToken = refreshToken;
-    const cookieRefreshToken = this.getCookieRefreshToken();
-    const refreshTokenValue = this.refreshToken || cookieRefreshToken;
-    if (!refreshTokenValue) {
+    this.refreshToken = tokens.refreshToken;
+    if (!tokens.refreshToken) {
       this.clearCookies();
       return undefined;
     }
 
-    // Handle user token
-    const cookieUserToken = this.getCookieUserToken();
-    const userTokenValue = userToken || cookieUserToken;
-
     let user = undefined;
-    if (userTokenValue && refreshTokenValue) {
+    if (tokens.userToken && tokens.refreshToken) {
       user = await AuthService.getUserObjectFromToken(
-        userTokenValue,
-        refreshTokenValue,
+        tokens.userToken,
+        tokens.refreshToken,
       );
       if (!user) {
         this.clearCookies();
@@ -143,14 +143,8 @@ export class AuthClientProxy extends AuthClient {
         return undefined;
       }
 
-      if (result && result.tokens?.refreshToken) {
-        this.setCookieRefreshToken(result.tokens.refreshToken);
-      }
+      this.setCookieTokens(result.tokens);
 
-      if (result && result.succeeded && result.tokens?.token) {
-        const maxAge = result.tokens.maxAge || 900;
-        this.setCookieUserToken(result.tokens.token, maxAge);
-      }
       return result;
     }
     return user;

@@ -19,6 +19,12 @@ export abstract class AuthClient {
     credentials: AuthCredentials,
   ): Promise<AuthResponse | undefined>;
 
+  /**
+   * Retrieves user authentication information. Can be used SSR if refreshToken is provided.
+   * When no params are provided, it will retrieve the tokens from browser cookies.
+   * @param refreshToken Optional token used for refreshing the authentication.
+   * @param userToken Optional token representing the current user session
+   */
   abstract getUser(
     refreshToken?: string,
     userToken?: string,
@@ -72,6 +78,32 @@ export abstract class AuthClient {
       return 1800;
     }
     return parseInt(maxAge, 10);
+  }
+
+  protected getCurrentTokens(
+    refreshToken?: string,
+    userToken?: string,
+  ): { refreshToken: string | undefined; userToken: string | undefined } {
+    const cookieRefreshToken = this.getCookieRefreshToken();
+    const cookieUserToken = this.getCookieUserToken();
+    return {
+      refreshToken: refreshToken || cookieRefreshToken,
+      userToken: userToken || cookieUserToken,
+    };
+  }
+
+  protected setCookieTokens(tokens?: {
+    refreshToken?: string;
+    token?: string;
+    maxAge?: number;
+  }): void {
+    if (tokens?.refreshToken) {
+      this.setCookieRefreshToken(tokens.refreshToken);
+    }
+    if (tokens?.token) {
+      const maxAge = tokens.maxAge || 900;
+      this.setCookieUserToken(tokens.token, maxAge);
+    }
   }
 
   // set cookie values

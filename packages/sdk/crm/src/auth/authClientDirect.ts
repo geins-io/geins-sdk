@@ -69,21 +69,16 @@ export class AuthClientDirect extends AuthClient {
     refreshToken?: string,
     userToken?: string,
   ): Promise<AuthResponse | undefined> {
-    // Handle refresh token
-    const cookieRefreshToken = this.getCookieRefreshToken();
-    const refreshTokenValue = refreshToken || cookieRefreshToken;
-    if (!refreshTokenValue) {
+    const tokens = this.getCurrentTokens(refreshToken, userToken);
+
+    if (!tokens.refreshToken) {
       this.clearCookies();
       return undefined;
     }
 
-    // Handle user token
-    const cookieUserToken = this.getCookieUserToken();
-    const userTokenValue = userToken || cookieUserToken;
-
     const result = await this.authService.getUser(
-      refreshTokenValue,
-      userTokenValue,
+      tokens.refreshToken,
+      tokens.userToken,
     );
 
     if (!result || !result.succeeded) {
@@ -91,14 +86,8 @@ export class AuthClientDirect extends AuthClient {
       return undefined;
     }
 
-    if (result && result.tokens?.refreshToken) {
-      this.setCookieRefreshToken(result.tokens.refreshToken);
-    }
+    this.setCookieTokens(result.tokens);
 
-    if (result && result.succeeded && result.tokens?.token) {
-      const maxAge = result.tokens.maxAge || 900;
-      this.setCookieUserToken(result.tokens.token, maxAge);
-    }
     return result;
   }
 
