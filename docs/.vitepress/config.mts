@@ -38,12 +38,11 @@ export default withMermaid({
             text: '@geins/core',
             link: '/packages/core',
             items: [
-              { text: 'API Client', link: '/packages/core/api-client' },
               { text: 'Channels', link: '/packages/core/channel' },
               { text: 'Events', link: '/packages/core/events' },
               { text: 'Cookies', link: '/packages/core/cookies' },
-
               { text: 'Routing', link: '/packages/core/routing' },
+              { text: 'GraphQL Client', link: '/packages/core/graphql-client' },
             ],
           },
           {

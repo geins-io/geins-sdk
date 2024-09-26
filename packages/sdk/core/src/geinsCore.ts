@@ -1,11 +1,10 @@
 import type { GeinsSettings, GeinsChannelTypeType } from '@geins/types';
-import { MerchantApiClient, ENDPOINTS } from './api-client';
+import { MerchantApiClient, GraphQLClient, ENDPOINTS } from './api-client';
 import {
   CookieService,
   EventService,
   ChannelsService,
   ChannelService,
-  OpenAPIClientService,
   logWrite,
 } from './services/';
 import { Channel } from './logic';
@@ -15,7 +14,7 @@ export class GeinsCore {
   // api client
   private endpointsUrls: any;
   private apiClient: any;
-  private openApiClient: any;
+  private graphQLClient: GraphQLClient | undefined;
   private settings: GeinsSettings;
 
   // cookie service
@@ -60,18 +59,6 @@ export class GeinsCore {
   }
 
   // Initialize API Client
-  private initOpenQueryClient() {
-    if (this.settings.apiKey && this.settings.accountName) {
-      this.openApiClient = new OpenAPIClientService(
-        this.endpointsUrls.main,
-        this.settings.apiKey,
-      );
-    } else {
-      throw new Error('API Key and Account Name are required');
-    }
-  }
-
-  // Initialize API Client
   private initApiClient() {
     if (this.settings.apiKey && this.settings.accountName) {
       this.apiClient = new MerchantApiClient(
@@ -100,14 +87,18 @@ export class GeinsCore {
     return this.apiClient;
   }
 
-  get openQueryClient(): any {
-    if (!this.endpointsUrls) {
-      throw new Error('Endpoints are not set');
+  get graphql(): GraphQLClient {
+    if (!this.graphQLClient) {
+      if (this.geinsCredentials.apiKey && this.geinsCredentials.accountName) {
+        this.graphQLClient = new GraphQLClient(
+          this.endpointsUrls.main,
+          this.geinsCredentials.apiKey,
+        );
+      } else {
+        throw new Error('API Key and Account Name are required');
+      }
     }
-    if (!this.apiClient) {
-      this.initOpenQueryClient();
-    }
-    return this.apiClient;
+    return this.graphQLClient;
   }
 
   get endpoints(): any {

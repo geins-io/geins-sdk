@@ -1,31 +1,52 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { GeinsSettings } from '@geins/types';
+import type { GeinsCredentials, } from '@geins/types';
 import { logWrite, GeinsCore, gql } from '@geins/core';
+import type { GeinsBrandListTypeType } from '@geins/types';
+
 
 const config = useRuntimeConfig();
-const geinsSettings = config.public.geins.settings as GeinsSettings;
-const geinsCore = new GeinsCore(geinsSettings);
+const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
+const geinsCore = new GeinsCore(geinsCredentials);
 
 const items = ref<any[]>([]);
 const query = async () => {
-  /*   const qu: GeinsQueryType = {
-      query: gql`
-        query test($test: String!) {
-          test(test: $test) {
-            header
-            data
-          }
-        }
-      `,
-      variables: {
-        test: 'test',
-      },
-    }; */
-  geinsCore.openQueryClient.query('test', { test: 'test' });
+  const BRANDS_QUERY = gql`
+    query Brands {
+      brands {
+        brandId
+        name
+        description
+        logo
+        canonicalUrl
+      }
+    }
+  `;
+  try {
+    const data = await geinsCore.graphql.runQuery<
+      { brands: GeinsBrandListTypeType[] }
+    >(BRANDS_QUERY);
+
+    if (data) {
+      data.brands.forEach((brand) => {
+        items.value.push({
+          header: 'Brand',
+          data: { description: brand.description }
+        });
+      });
+    } else {
+      console.error('No data returned from query.');
+    }
+  } catch (error) {
+    console.error('Error fetching brands:', error);
+  }
+
 };
 
-onMounted(() => {});
+
+onMounted(() => {
+
+});
 
 const clear = async () => {
   items.value = [];
@@ -67,8 +88,7 @@ const clear = async () => {
           </table>
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b
-              ><br />
+              <b>{{ item.header }}</b><br />
               <textarea style="border: 0; width: 500px; height: 100px">{{
                 JSON.stringify(item.data)
               }}</textarea>

@@ -14,7 +14,8 @@ import { ref } from 'vue';
         <td>
           <NuxtLink to="/core/channels">Channels</NuxtLink><br />
           <NuxtLink to="/core/event">Event</NuxtLink><br />
-          <NuxtLink to="/core/routing">Routing</NuxtLink>
+          <NuxtLink to="/core/routing">Routing</NuxtLink><br />
+          <NuxtLink to="/core/graphqlquery">GraphQL query</NuxtLink>
         </td>
         <td>
           <NuxtLink to="/crm/register">Register User / New User</NuxtLink><br />
@@ -44,7 +45,7 @@ import { ref } from 'vue';
           <NuxtLink to="/search/product">Product</NuxtLink>
         </td>
         <td>
-          <NuxtLink to="/openquery">Open Query</NuxtLink>
+
         </td>
       </tr>
     </table>

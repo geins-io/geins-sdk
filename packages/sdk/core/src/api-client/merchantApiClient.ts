@@ -3,26 +3,38 @@ import { AUTH_COOKIES } from '../constants';
 import {
   ApolloClient,
   InMemoryCache,
-  NormalizedCache,
   NormalizedCacheObject,
-  gql,
+  DocumentNode,
+  FetchPolicy,
+  ApolloQueryResult,
+  FetchResult, // Import FetchResult
+  OperationVariables,
 } from '@apollo/client';
 
-export enum FetchPolicy {
+export enum FetchPolicyOptions {
   CACHE_FIRST = 'cache-first',
   NETWORK_ONLY = 'network-only',
   CACHE_ONLY = 'cache-only',
   NO_CACHE = 'no-cache',
   STANDBY = 'standby',
 }
+
 export enum OperationType {
   QUERY = 'query',
   MUTATION = 'mutation',
 }
+
+interface RequestOptions {
+  fetchPolicy?: FetchPolicy;
+  pollInterval?: number;
+  context?: any;
+  [key: string]: any;
+}
+
 export class MerchantApiClient {
   private cookieService: CookieService | undefined;
   private client: ApolloClient<NormalizedCacheObject>;
-  fetchPolicy: FetchPolicy = FetchPolicy.CACHE_FIRST;
+  fetchPolicy: FetchPolicy = FetchPolicyOptions.CACHE_FIRST;
   pollInterval: number = 0;
 
   constructor(apiUrl: string, apiKey: string, fetchPolicy?: FetchPolicy) {
@@ -52,47 +64,19 @@ export class MerchantApiClient {
     this.client.clearStore();
   }
 
-  private getOperationObject2(
-    operationType: 'query' | 'mutation',
-    document: any,
-    variables: any = {},
-    options: any = {},
-  ) {
-    const loggedInUser = this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
-    const operationObj: any = {
-      variables,
-      options: {
-        fetchPolicy: options.fetchPolicy || this.fetchPolicy,
-        pollInterval: options.pollInterval || this.pollInterval,
-      },
-      ...(loggedInUser && {
-        context: {
-          headers: {
-            Authorization: `Bearer ${loggedInUser}`,
-          },
-        },
-      }),
-    };
-
-    operationObj[operationType] = document;
-    return operationObj;
-  }
-
   private getOperationObject(
     operationType: OperationType,
-    document: any,
-    variables: any = {},
-    options: any = {},
+    document: DocumentNode,
+    variables: OperationVariables = {},
+    options: RequestOptions = {},
   ) {
     const loggedInUser = this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
 
     const operationObj: any = {
+      [operationType]: document, // 'query' or 'mutation'
       variables,
-      options: {
-        fetchPolicy: options.fetchPolicy || this.fetchPolicy,
-        pollInterval: options.pollInterval || this.pollInterval,
-      },
-      [operationType]: document, // Correctly setting query or mutation based on operation type
+      fetchPolicy: options.fetchPolicy || this.fetchPolicy,
+      pollInterval: options.pollInterval || this.pollInterval,
     };
 
     if (loggedInUser) {
@@ -106,23 +90,38 @@ export class MerchantApiClient {
     return operationObj;
   }
 
-  async runQuery(query: any, variables: any = {}, options: any = {}) {
+  async runQuery<
+    TData = any,
+    TVariables extends OperationVariables = OperationVariables,
+  >(
+    query: DocumentNode,
+    variables: TVariables = {} as TVariables,
+    options: RequestOptions = {},
+  ): Promise<ApolloQueryResult<TData>> {
     const q = this.getOperationObject(
       OperationType.QUERY,
       query,
       variables,
       options,
     );
-    return this.client.query(q);
+    return this.client.query<TData, TVariables>(q);
   }
 
-  async runMutation(mutation: any, variables: any = {}, options: any = {}) {
+  async runMutation<
+    TData = any,
+    TVariables extends OperationVariables = OperationVariables,
+  >(
+    mutation: DocumentNode,
+    variables: TVariables = {} as TVariables,
+    options: RequestOptions = {},
+  ): Promise<FetchResult<TData>> {
+    // Correct return type
     const q = this.getOperationObject(
       OperationType.MUTATION,
       mutation,
       variables,
       options,
     );
-    return this.client.mutate(q);
+    return this.client.mutate<TData, TVariables>(q);
   }
 }
