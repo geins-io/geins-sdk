@@ -27,31 +27,20 @@ const eventPushAlert = () => {
 };
 
 onMounted(() => {
-  /*   const myEventHandler = function (data: GeinsEventMessage) {
-      items.value.push({ header: data.subject, data: data });
-      if (data.subject === 'auth') {
-        logWrite(data.subject, data);
-      }
-      if (data.subject === 'toast') {
-        logWrite(data.subject, data);
-      }
-      if (data.subject === 'alert') {
-        logWrite(data.subject, data);
-        alert(data.payload);
-      }
-    };
-    geinsCore.events.listnerAdd(myEventHandler); */
-
-  const myAuthHandler2 = function (data: any) {
-    logWrite('USER LISTNDER', data);
-    // items.value.push({ header: data.subject, data: data });
+  const myEventHandler = function (data: GeinsEventMessage) {
+    items.value.push({ header: data.subject, data: data });
+    if (data.subject === 'auth') {
+      logWrite(data.subject, data);
+    }
+    if (data.subject === 'toast') {
+      logWrite(data.subject, data);
+    }
+    if (data.subject === 'alert') {
+      logWrite(data.subject, data);
+      alert(data.payload);
+    }
   };
-  geinsCore.events.listnerAdd(myAuthHandler2, GeinsEventType.USER);
-
-  const listners = geinsCore.events.listnerCount(GeinsEventType.USER);
-  logWrite('USER LISTNERS', listners);
-  const listners2 = geinsCore.events.listnerCount(GeinsEventType.USER_LOGIN);
-  logWrite('USER LISTNERS login', listners2);
+  geinsCore.events.listnerAdd(myEventHandler);
 });
 
 const clear = async () => {
