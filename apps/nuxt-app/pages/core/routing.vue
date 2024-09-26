@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { GeinsCredentials } from '@geins/types';
+import type { GeinsSettings } from '@geins/types';
 import { logWrite, RoutingService, RoutingStore } from '@geins/core';
 import DataDump from '~/components/DataDump.vue';
 
 const config = useRuntimeConfig();
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
-const apiKey = geinsCredentials.apiKey;
+const geinsSettings = config.public.geins.settings as GeinsSettings;
+const apiKey = geinsSettings.apiKey;
 const store = new RoutingStore();
 const routingService = new RoutingService(apiKey, store);
 
@@ -68,7 +68,7 @@ const testRouteRedirect = async () => {
   }
 };
 
-onMounted(async () => { });
+onMounted(async () => {});
 </script>
 <template>
   <div>

@@ -1,37 +1,37 @@
-import type { GeinsCredentials } from '@geins/types';
+import type { GeinsSettings } from '@geins/types';
 
 export abstract class BaseApiService {
   protected client: any;
-  protected geinsCredentials: GeinsCredentials;
+  protected geinsSettings: GeinsSettings;
   protected channelId: string;
 
-  constructor(client: any, credentials: GeinsCredentials) {
+  constructor(client: any, geinsSettings: GeinsSettings) {
     this.client = client;
 
-    if (!credentials.channel) {
+    if (!geinsSettings.channel) {
       throw new Error('Channel is required');
     }
 
-    this.geinsCredentials = credentials;
+    this.geinsSettings = geinsSettings;
 
-    this.channelId = `${credentials.channel}|${credentials.tld}`;
+    this.channelId = `${geinsSettings.channel}|${geinsSettings.tld}`;
   }
 
   protected createVariables(vars: any) {
     const variables = { ...vars };
 
     if (!variables.languageId) {
-      if (!this.geinsCredentials.locale) {
+      if (!this.geinsSettings.locale) {
         throw new Error('Language is required');
       }
-      variables.languageId = this.geinsCredentials.locale;
+      variables.languageId = this.geinsSettings.locale;
     }
 
     if (!variables.marketId) {
-      if (!this.geinsCredentials.market) {
+      if (!this.geinsSettings.market) {
         throw new Error('Market is required');
       }
-      variables.marketId = this.geinsCredentials.market;
+      variables.marketId = this.geinsSettings.market;
     }
 
     if (!variables.channelId) {

@@ -12,11 +12,11 @@ class GeinsCMS extends BasePackage {
 
   constructor(core: GeinsCore) {
     super(core);
-    const { client, credentials } = core;
+    const { client, geinsSettings } = core;
 
-    this.menu = new MenuService(client, credentials);
-    this.page = new ContentPageService(client, credentials);
-    this.area = new ContentAreaService(client, credentials);
+    this.menu = new MenuService(client, geinsSettings);
+    this.page = new ContentPageService(client, geinsSettings);
+    this.area = new ContentAreaService(client, geinsSettings);
   }
 }
 

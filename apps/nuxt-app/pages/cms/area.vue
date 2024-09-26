@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { ContentAreaType, GeinsCredentials } from '@geins/types';
+import type { ContentAreaType, GeinsSettings } from '@geins/types';
 import { logWrite, GeinsCore, AUTH_COOKIES } from '@geins/core';
 import { GeinsCMS } from '@geins/cms';
 import { authClaimsTokenSerializeToObject } from '@geins/crm';
 const config = useRuntimeConfig();
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
-const geinsCore = new GeinsCore(geinsCredentials);
+const geinsSettings = config.public.geins.settings as GeinsSettings;
+const geinsCore = new GeinsCore(geinsSettings);
 const geinsCMS = new GeinsCMS(geinsCore);
 
 const user = ref<any>();
@@ -30,10 +30,10 @@ const getAreaData = async () => {
   resetComponentData();
   logWrite(
     'getting content area with family:""' +
-    family.value +
-    '"and area:""' +
-    areaName.value +
-    '"',
+      family.value +
+      '"and area:""' +
+      areaName.value +
+      '"',
   );
 
   const { data } = await useAsyncData('contentArea', () =>
@@ -134,14 +134,23 @@ onMounted(() => {
           </table>
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b><br />
-              <textarea v-model="item.data" style="border: 0; width: 600px; height: 300px"></textarea>
+              <b>{{ item.header }}</b
+              ><br />
+              <textarea
+                v-model="item.data"
+                style="border: 0; width: 600px; height: 300px"
+              ></textarea>
             </p>
           </div>
         </td>
         <td></td>
         <td style="vertical-align: top">
-          <CmsContentArea v-if="pageData" :family="family" :area="areaName" :data="pageData" />
+          <CmsContentArea
+            v-if="pageData"
+            :family="family"
+            :area="areaName"
+            :data="pageData"
+          />
         </td>
       </tr>
     </table>

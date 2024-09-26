@@ -4,14 +4,14 @@ import { useRouter, useRoute } from 'vue-router';
 import { GeinsCore, AuthClientConnectionModes, logWrite } from '@geins/core';
 import { GeinsCRM } from '@geins/crm';
 import type {
-  GeinsCredentials,
+  GeinsSettings,
   AuthSettings,
   AuthCredentials,
   AuthResponse,
 } from '@geins/types';
 
 const config = useRuntimeConfig();
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
+const geinsSettings = config.public.geins.settings as GeinsSettings;
 const authSettings = {
   clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
@@ -26,7 +26,7 @@ const router = useRouter();
 const route = useRoute();
 
 // Initialize Geins Core and GeinsCRM
-const core = new GeinsCore(geinsCredentials);
+const core = new GeinsCore(geinsSettings);
 const geinsCRM = new GeinsCRM(core, authSettings);
 
 const populateFromQuery = () => {

@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { GeinsCredentials, GeinsEventMessage } from '@geins/types';
-import type { } from '@geins/core';
+import type { GeinsSettings, GeinsEventMessage } from '@geins/types';
+import type {} from '@geins/core';
 import { logWrite, GeinsCore, GeinsEventType } from '@geins/core';
 
-
 const config = useRuntimeConfig();
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
-const geinsCore = new GeinsCore(geinsCredentials);
+const geinsSettings = config.public.geins.settings as GeinsSettings;
+const geinsCore = new GeinsCore(geinsSettings);
 
 const items = ref<any[]>([]);
 
@@ -85,7 +84,8 @@ const clear = async () => {
           </table>
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b><br />
+              <b>{{ item.header }}</b
+              ><br />
               <textarea style="border: 0; width: 500px; height: 100px">{{
                 JSON.stringify(item.data)
               }}</textarea>

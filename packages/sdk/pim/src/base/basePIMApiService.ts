@@ -1,12 +1,12 @@
-import type { GeinsCredentials, GeinsMarketLanguageType } from '@geins/types';
+import type { GeinsSettings, GeinsMarketLanguageType } from '@geins/types';
 import { logWrite, BaseApiService } from '@geins/core';
 
 export abstract class BasePIMApiServicesService extends BaseApiService {
   constructor(
     client: any,
-    credentials: GeinsCredentials,
+    geinsSettings: GeinsSettings,
     protected marketLanguage?: GeinsMarketLanguageType,
   ) {
-    super(client, credentials);
+    super(client, geinsSettings);
   }
 }

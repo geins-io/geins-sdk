@@ -9,8 +9,8 @@ class GeinsPIM extends BasePackage {
     private marketLanguage?: GeinsMarketLanguageType,
   ) {
     super(core);
-    const { client, credentials } = core;
-    this.brands = new BrandsService(client, credentials, marketLanguage);
+    const { client, geinsSettings } = core;
+    this.brands = new BrandsService(client, geinsSettings, marketLanguage);
   }
 }
 

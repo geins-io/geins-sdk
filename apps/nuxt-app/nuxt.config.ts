@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     public: {
       geins: {
         debug: true,
-        credentials: {
+        settings: {
           apiKey:
             process.env.GEINS_API_KEY || 'CF2FF80B-6F85-4CD9-ACE5-F41962891E07',
           accountName: process.env.GEINS_ACCOUNT_NAME || 'demogeins',

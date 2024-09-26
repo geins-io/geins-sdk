@@ -1,4 +1,4 @@
-import type { GeinsCredentials, GeinsChannelTypeType } from '@geins/types';
+import type { GeinsSettings, GeinsChannelTypeType } from '@geins/types';
 import { MerchantApiClient, ENDPOINTS } from './api-client';
 import {
   CookieService,
@@ -16,7 +16,7 @@ export class GeinsCore {
   private endpointsUrls: any;
   private apiClient: any;
   private openApiClient: any;
-  private geinsCredentials: GeinsCredentials;
+  private settings: GeinsSettings;
 
   // cookie service
   private cookieService: CookieService | undefined;
@@ -29,25 +29,25 @@ export class GeinsCore {
   public channel: Channel | undefined;
   // private currentChannel: Channel | undefined;
 
-  constructor(credentials: GeinsCredentials) {
-    if (!credentials.channel) {
+  constructor(geinsSettings: GeinsSettings) {
+    if (!geinsSettings.channel) {
       throw new Error('Channel is required');
     }
 
-    if (!credentials.apiKey) {
+    if (!geinsSettings.apiKey) {
       throw new Error('API Key is required');
     }
 
     // Initialize API Client
-    if (credentials.apiKey && credentials.accountName) {
+    if (geinsSettings.apiKey && geinsSettings.accountName) {
       this.endpointsUrls = buildEndpoints(
-        credentials.apiKey,
-        credentials.accountName,
-        credentials.environment,
+        geinsSettings.apiKey,
+        geinsSettings.accountName,
+        geinsSettings.environment,
       );
     }
 
-    this.geinsCredentials = credentials;
+    this.settings = geinsSettings;
 
     // Initialize BroadcastChannel
     if (!isServerContext()) {
@@ -55,16 +55,16 @@ export class GeinsCore {
     }
 
     this.eventService = new EventService();
-    this.channels = new ChannelsService(this.client, this.credentials);
-    this.channel = new Channel(this.credentials);
+    this.channels = new ChannelsService(this.client, this.settings);
+    this.channel = new Channel(this.settings);
   }
 
   // Initialize API Client
   private initOpenQueryClient() {
-    if (this.geinsCredentials.apiKey && this.geinsCredentials.accountName) {
+    if (this.settings.apiKey && this.settings.accountName) {
       this.openApiClient = new OpenAPIClientService(
         this.endpointsUrls.main,
-        this.geinsCredentials.apiKey,
+        this.settings.apiKey,
       );
     } else {
       throw new Error('API Key and Account Name are required');
@@ -73,10 +73,10 @@ export class GeinsCore {
 
   // Initialize API Client
   private initApiClient() {
-    if (this.geinsCredentials.apiKey && this.geinsCredentials.accountName) {
+    if (this.settings.apiKey && this.settings.accountName) {
       this.apiClient = new MerchantApiClient(
         this.endpointsUrls.main,
-        this.geinsCredentials.apiKey,
+        this.settings.apiKey,
       );
     } else {
       throw new Error('API Key and Account Name are required');
@@ -114,8 +114,8 @@ export class GeinsCore {
     return this.endpointsUrls;
   }
 
-  get credentials(): GeinsCredentials {
-    return this.geinsCredentials;
+  get geinsSettings(): GeinsSettings {
+    return this.settings;
   }
 
   get events(): EventService {
