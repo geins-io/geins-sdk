@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { logWrite, GeinsCore, AuthClientConnectionMode } from '@geins/core';
+import { logWrite, GeinsCore, AuthClientConnectionModes } from '@geins/core';
 import type { GeinsCredentials, AuthSettings, AuthCredentials, AuthResponse } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 import CookieDump from '~/components/CookieDump.vue';
@@ -9,7 +9,7 @@ import CookieDump from '~/components/CookieDump.vue';
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const authSettings = {
-  clientConnectionMode: AuthClientConnectionMode.Direct,
+  clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
 
 const geinsCore = new GeinsCore(geinsCredentials);

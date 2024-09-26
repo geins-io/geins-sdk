@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { GeinsCore, AuthClientConnectionMode, logWrite } from '@geins/core';
+import { GeinsCore, AuthClientConnectionModes, logWrite } from '@geins/core';
 import { GeinsCRM } from '@geins/crm';
 import type {
   GeinsCredentials,

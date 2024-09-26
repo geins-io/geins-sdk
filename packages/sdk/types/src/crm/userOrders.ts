@@ -1,4 +1,4 @@
-import { UserAddressType } from './user';
+/* import { UserAddressType } from './user';
 
 export type UserOrdersOrderType = {
   id: number;
@@ -52,3 +52,4 @@ export type UserOrdersRefundType = {
   total: number;
   vat: number;
 };
+ */

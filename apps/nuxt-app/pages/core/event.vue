@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { GeinsCredentials } from '@geins/types';
-import { logWrite, GeinsCore } from '@geins/core';
+import type { GeinsCredentials, GeinsEventMessage } from '@geins/types';
+import type { } from '@geins/core';
+import { logWrite, GeinsCore, GeinsEventType } from '@geins/core';
+
 
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
@@ -10,30 +12,46 @@ const geinsCore = new GeinsCore(geinsCredentials);
 const items = ref<any[]>([]);
 
 const eventPushToast = () => {
-  geinsCore.events.push({ type: 'toast', payload: 'Hello world' });
+  geinsCore.events.push({ subject: 'toast', payload: 'Hello world' });
 };
 const eventPushAuth = () => {
-  geinsCore.events.push({ type: 'auth', payload: { method: 'login' } });
+  geinsCore.events.push({ subject: 'auth', payload: { method: 'login' } });
+  const message: GeinsEventMessage = {
+    subject: 'user.auth',
+    payload: { method: 'login yes' },
+  };
+  geinsCore.events.push(message, GeinsEventType.USER_LOGIN);
 };
 const eventPushAlert = () => {
-  geinsCore.events.push({ type: 'alert', payload: 'Hello world' });
+  geinsCore.events.push({ subject: 'alert', payload: 'Hello world' });
 };
 
 onMounted(() => {
-  const myEventHandler = function (data: any) {
-    items.value.push({ header: data.type, data: data });
-    if (data.type === 'auth') {
-      logWrite(data.type, data);
-    }
-    if (data.type === 'toast') {
-      logWrite(data.type, data);
-    }
-    if (data.type === 'alert') {
-      logWrite(data.type, data);
-      alert(data.payload);
-    }
+  /*   const myEventHandler = function (data: GeinsEventMessage) {
+      items.value.push({ header: data.subject, data: data });
+      if (data.subject === 'auth') {
+        logWrite(data.subject, data);
+      }
+      if (data.subject === 'toast') {
+        logWrite(data.subject, data);
+      }
+      if (data.subject === 'alert') {
+        logWrite(data.subject, data);
+        alert(data.payload);
+      }
+    };
+    geinsCore.events.listnerAdd(myEventHandler); */
+
+  const myAuthHandler2 = function (data: any) {
+    logWrite('USER LISTNDER', data);
+    // items.value.push({ header: data.subject, data: data });
   };
-  geinsCore.events.listnerAdd(myEventHandler);
+  geinsCore.events.listnerAdd(myAuthHandler2, GeinsEventType.USER);
+
+  const listners = geinsCore.events.listnerCount(GeinsEventType.USER);
+  logWrite('USER LISTNERS', listners);
+  const listners2 = geinsCore.events.listnerCount(GeinsEventType.USER_LOGIN);
+  logWrite('USER LISTNERS login', listners2);
 });
 
 const clear = async () => {
