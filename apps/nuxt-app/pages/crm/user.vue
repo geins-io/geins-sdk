@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { logWrite, GeinsCore, AuthClientConnectionModes } from '@geins/core';
+import { logWrite, GeinsCore, AuthClientConnectionModes, GeinsEventType } from '@geins/core';
 import type { GeinsCredentials, AuthSettings } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 import CookieDump from '~/components/CookieDump.vue';
@@ -66,6 +66,11 @@ const getUserOrdersObject = async () => {
   });
 };
 
+const logOut = async () => {
+  await geinsCRM.auth.logout();
+  userObject.value = null;
+};
+
 const getUserOrderObject = async (id: number) => {
   //const order = await geinsCRM.user.order(id);
   //logWrite('order with id:' + id, order);
@@ -87,6 +92,8 @@ onMounted(async () => {
     }
   }, 1000);
 });
+
+
 
 /**
  * Fetches and updates the user information.
@@ -132,11 +139,11 @@ const handleRefresh = async () => {
                 <button :disabled="userLoggedIn === false" @click="getUser">
                   Get User
                 </button>
-                <button
-                  :disabled="userLoggedIn === false"
-                  @click="handleRefresh"
-                >
+                <button :disabled="userLoggedIn === false" @click="handleRefresh">
                   Refresh
+                </button>
+                <button @click="logOut">
+                  Logout
                 </button>
               </td>
             </tr>
@@ -147,11 +154,9 @@ const handleRefresh = async () => {
           </div>
         </td>
         <td style="vertical-align: top; padding-left: 50px">
-          <b>User is logged in: {{ userLoggedIn }}</b
-          ><br /><br />
+          <b>User is logged in: {{ userLoggedIn }}</b><br /><br />
           <div v-if="userLoggedIn">
-            <b>Time to logout: {{ timeToLoggout }}</b
-            ><br /><br />
+            <b>Time to logout: {{ timeToLoggout }}</b><br /><br />
           </div>
           <div v-if="userOrderObject" style="width: 500px; overflow-x: scroll">
             <b>User Order Object:</b>

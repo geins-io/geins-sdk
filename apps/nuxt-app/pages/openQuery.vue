@@ -1,46 +1,34 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { GeinsCredentials, GeinsEventMessage } from '@geins/types';
-import type { } from '@geins/core';
-import { logWrite, GeinsCore, GeinsEventType } from '@geins/core';
-
+import type { GeinsCredentials, } from '@geins/types';
+import { logWrite, GeinsCore, gql } from '@geins/core';
 
 const config = useRuntimeConfig();
 const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
 const geinsCore = new GeinsCore(geinsCredentials);
 
 const items = ref<any[]>([]);
+const query = async () => {
 
-const eventPushToast = () => {
-  geinsCore.events.push({ subject: 'toast', payload: 'Hello world' });
+  /*   const qu: GeinsQueryType = {
+      query: gql`
+        query test($test: String!) {
+          test(test: $test) {
+            header
+            data
+          }
+        }
+      `,
+      variables: {
+        test: 'test',
+      },
+    }; */
+  geinsCore.openQueryClient.query('test', { test: 'test' });
 };
-const eventPushAuth = () => {
-  geinsCore.events.push({ subject: 'auth', payload: { method: 'login' } });
-  const message: GeinsEventMessage = {
-    subject: 'user.auth',
-    payload: { method: 'login yes' },
-  };
-  geinsCore.events.push(message, GeinsEventType.USER_LOGIN);
-};
-const eventPushAlert = () => {
-  geinsCore.events.push({ subject: 'alert', payload: 'Hello world' });
-};
+
 
 onMounted(() => {
-  const myEventHandler = function (data: GeinsEventMessage) {
-    items.value.push({ header: data.subject, data: data });
-    if (data.subject === 'auth') {
-      logWrite(data.subject, data);
-    }
-    if (data.subject === 'toast') {
-      logWrite(data.subject, data);
-    }
-    if (data.subject === 'alert') {
-      logWrite(data.subject, data);
-      alert(data.payload);
-    }
-  };
-  geinsCore.events.listnerAdd(myEventHandler);
+
 });
 
 const clear = async () => {
@@ -62,9 +50,7 @@ const clear = async () => {
           <table>
             <tr>
               <td>
-                <button @click="eventPushToast">Event push</button>
-                <button @click="eventPushAuth">Auth Event push</button>
-                <button @click="eventPushAlert">Event push to alert</button>
+                <button @click="query">Query</button>
               </td>
               <td></td>
               <td></td>

@@ -1,11 +1,8 @@
 import events from 'events';
 import { BroadcastChannel } from 'broadcast-channel';
 import { isServerContext } from '../utils';
+import type { GeinsEventMessage } from '@geins/types';
 
-interface EventData {
-  type: string;
-  payload: any;
-}
 export class EventService {
   private eventName: string = 'geins-event';
   private emitter: any;
@@ -19,10 +16,10 @@ export class EventService {
     }
   }
 
-  addBroadcastListener() {
+  private addBroadcastListener() {
     if (this.broadcast) {
       this.broadcast.onmessage = (data: any) => {
-        this.emitter.emit(data.eventName, data.data);
+        this.emitter.emit(data.eventName, data.eventMessage);
       };
     }
   }
@@ -51,10 +48,10 @@ export class EventService {
     return this.emitter.listeners(eventName);
   }
 
-  push(data?: any, eventName: string = this.eventName) {
-    this.emitter.emit(eventName, data);
+  push(eventMessage?: GeinsEventMessage, eventName: string = this.eventName) {
+    this.emitter.emit(eventName, eventMessage);
     if (this.broadcast) {
-      this.broadcast?.postMessage({ data, eventName });
+      this.broadcast?.postMessage({ eventMessage, eventName });
     }
   }
 }

@@ -5,6 +5,7 @@ import {
   EventService,
   ChannelsService,
   ChannelService,
+  OpenAPIClientService,
   logWrite,
 } from './services/';
 import { Channel } from './logic';
@@ -14,6 +15,7 @@ export class GeinsCore {
   // api client
   private endpointsUrls: any;
   private apiClient: any;
+  private openApiClient: any;
   private geinsCredentials: GeinsCredentials;
 
   // cookie service
@@ -58,6 +60,18 @@ export class GeinsCore {
   }
 
   // Initialize API Client
+  private initOpenQueryClient() {
+    if (this.geinsCredentials.apiKey && this.geinsCredentials.accountName) {
+      this.openApiClient = new OpenAPIClientService(
+        this.endpointsUrls.main,
+        this.geinsCredentials.apiKey,
+      );
+    } else {
+      throw new Error('API Key and Account Name are required');
+    }
+  }
+
+  // Initialize API Client
   private initApiClient() {
     if (this.geinsCredentials.apiKey && this.geinsCredentials.accountName) {
       this.apiClient = new MerchantApiClient(
@@ -82,6 +96,16 @@ export class GeinsCore {
     }
     if (!this.apiClient) {
       this.initApiClient();
+    }
+    return this.apiClient;
+  }
+
+  get openQueryClient(): any {
+    if (!this.endpointsUrls) {
+      throw new Error('Endpoints are not set');
+    }
+    if (!this.apiClient) {
+      this.initOpenQueryClient();
     }
     return this.apiClient;
   }

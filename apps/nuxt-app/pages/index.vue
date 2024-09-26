@@ -43,7 +43,9 @@ import { ref } from 'vue';
         <td>
           <NuxtLink to="/search/product">Product</NuxtLink>
         </td>
-        <td></td>
+        <td>
+          <NuxtLink to="/openquery">Open Query</NuxtLink>
+        </td>
       </tr>
     </table>
   </div>

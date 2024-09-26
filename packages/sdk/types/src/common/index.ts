@@ -1,4 +1,5 @@
 export * from './channel';
+export * from './event';
 
 /* export type GeinsCustomerTypeType = 'PERSON' | 'ORGANIZATION'; */
 

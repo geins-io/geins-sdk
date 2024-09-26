@@ -8,6 +8,7 @@ import {
   GeinsUserInputTypeType,
   GeinsUserOrdersType,
   GeinsCustomerType,
+  GeinsEventType,
 } from '@geins/types';
 import { AuthClientDirect, AuthClientProxy } from './auth';
 import type { AuthInterface, UserInterface } from './types';
@@ -105,13 +106,38 @@ class GeinsCRM extends BasePackage {
       throw new Error('AuthClient is not initialized');
     }
     return {
-      login: this.authClient.login.bind(this.authClient),
-      logout: this.authClient.logout.bind(this.authClient),
+      login: this.authLogin.bind(this),
+      logout: this.authLogout.bind(this),
       refresh: this.authClient.refresh.bind(this.authClient),
       getUser: this.authClient.getUser.bind(this.authClient),
       changePassword: this.authClient.changePassword.bind(this.authClient),
       newUser: this.authRegisterNewUser.bind(this),
     };
+  }
+
+  private authLogin(
+    credentials: AuthCredentials,
+  ): Promise<AuthResponse | undefined> {
+    if (!this.authClient) {
+      throw new Error('AuthClient is not initialized');
+    }
+    const loginResult = this.authClient.login(credentials);
+    this.pushEvent(
+      { subject: GeinsEventType.USER_LOGIN, payload: credentials.username },
+      GeinsEventType.USER_LOGIN,
+    );
+    return loginResult;
+  }
+
+  private authLogout(): Promise<AuthResponse | undefined> {
+    if (!this.authClient) {
+      throw new Error('AuthClient is not initialized');
+    }
+    this.pushEvent(
+      { subject: GeinsEventType.USER_LOGOUT, payload: {} },
+      GeinsEventType.USER_LOGOUT,
+    );
+    return this.authClient.logout();
   }
 
   private authUserGetFromCookieTokens(): AuthResponse | undefined {
