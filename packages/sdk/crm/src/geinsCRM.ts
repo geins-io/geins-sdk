@@ -4,6 +4,7 @@ import {
   AuthClientConnectionModes,
   AuthCredentials,
   AuthResponse,
+  GeinsSettings,
   GeinsUserGetType,
   GeinsUserInputTypeType,
   GeinsUserOrdersType,
@@ -20,7 +21,7 @@ import {
 
 class GeinsCRM extends BasePackage {
   private client: any;
-  private credentials: any;
+  private geinsSettings: GeinsSettings;
   private authClient: AuthClientDirect | AuthClientProxy;
   private userService: UserService | undefined;
   private passwordResetService: PasswordResetService | undefined;
@@ -28,9 +29,9 @@ class GeinsCRM extends BasePackage {
 
   constructor(core: GeinsCore, authSettings: AuthSettings) {
     super(core);
-    const { client, credentials } = core;
+    const { client, geinsSettings } = core;
     this.client = client;
-    this.credentials = credentials;
+    this.geinsSettings = geinsSettings;
 
     if (authSettings.clientConnectionMode === AuthClientConnectionModes.Proxy) {
       const proxyUrl = authSettings.proxyUrl || '/api/auth';
@@ -39,9 +40,9 @@ class GeinsCRM extends BasePackage {
       authSettings.clientConnectionMode === AuthClientConnectionModes.Direct
     ) {
       const endpoints = buildEndpoints(
-        credentials.apiKey,
-        credentials.accountName,
-        credentials.environment,
+        geinsSettings.apiKey,
+        geinsSettings.accountName,
+        geinsSettings.environment,
       );
       this.authClient = new AuthClientDirect(
         endpoints.authSign,
@@ -53,7 +54,7 @@ class GeinsCRM extends BasePackage {
   }
 
   private async initUserService(): Promise<void> {
-    this.userService = new UserService(this.client, this.credentials);
+    this.userService = new UserService(this.client, this.geinsSettings);
     if (!this.userService) {
       throw new Error('Failed to initialize user service');
     }
@@ -62,7 +63,7 @@ class GeinsCRM extends BasePackage {
   private async initPasswordService(): Promise<void> {
     this.passwordResetService = new PasswordResetService(
       this.client,
-      this.credentials,
+      this.geinsSettings,
     );
     if (!this.passwordResetService) {
       throw new Error('Failed to initialize password reset service');
@@ -72,7 +73,7 @@ class GeinsCRM extends BasePackage {
   private async initUserOrderService(): Promise<void> {
     this.userOrdersService = new UserOrdersService(
       this.client,
-      this.credentials,
+      this.geinsSettings,
     );
     if (!this.userOrdersService) {
       throw new Error('Failed to initialize user order service');

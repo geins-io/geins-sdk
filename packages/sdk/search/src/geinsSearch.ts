@@ -4,8 +4,8 @@ class GeinsSearch extends BasePackage {
   public product: ProductSearchService;
   constructor(core: GeinsCore) {
     super(core);
-    const { client, credentials } = core;
-    this.product = new ProductSearchService(client, credentials);
+    const { client, geinsSettings } = core;
+    this.product = new ProductSearchService(client, geinsSettings);
   }
 }
 

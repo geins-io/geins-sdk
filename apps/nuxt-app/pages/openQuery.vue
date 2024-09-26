@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { GeinsCredentials, } from '@geins/types';
+import type { GeinsSettings } from '@geins/types';
 import { logWrite, GeinsCore, gql } from '@geins/core';
 
 const config = useRuntimeConfig();
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
-const geinsCore = new GeinsCore(geinsCredentials);
+const geinsSettings = config.public.geins.settings as GeinsSettings;
+const geinsCore = new GeinsCore(geinsSettings);
 
 const items = ref<any[]>([]);
 const query = async () => {
-
   /*   const qu: GeinsQueryType = {
       query: gql`
         query test($test: String!) {
@@ -26,10 +25,7 @@ const query = async () => {
   geinsCore.openQueryClient.query('test', { test: 'test' });
 };
 
-
-onMounted(() => {
-
-});
+onMounted(() => {});
 
 const clear = async () => {
   items.value = [];
@@ -71,7 +67,8 @@ const clear = async () => {
           </table>
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b><br />
+              <b>{{ item.header }}</b
+              ><br />
               <textarea style="border: 0; width: 500px; height: 100px">{{
                 JSON.stringify(item.data)
               }}</textarea>

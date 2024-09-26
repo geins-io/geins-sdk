@@ -2,17 +2,22 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { logWrite, GeinsCore, AuthClientConnectionModes } from '@geins/core';
-import type { GeinsCredentials, AuthSettings, AuthCredentials, AuthResponse } from '@geins/types';
+import type {
+  GeinsSettings,
+  AuthSettings,
+  AuthCredentials,
+  AuthResponse,
+} from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 import CookieDump from '~/components/CookieDump.vue';
 
 const config = useRuntimeConfig();
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
+const geinsSettings = config.public.geins.settings as GeinsSettings;
 const authSettings = {
   clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
 
-const geinsCore = new GeinsCore(geinsCredentials);
+const geinsCore = new GeinsCore(geinsSettings);
 const geinsCRM = new GeinsCRM(geinsCore, authSettings);
 const resultObject = ref<any>(null);
 const errorMessage = ref<string | null>(null);
@@ -24,15 +29,16 @@ const router = useRouter();
 const requestReset = async () => {
   const result = await geinsCRM.passwordResetRequest(email.value);
   resultObject.value = result;
-
 };
 
 const commitReset = async () => {
-  const result = await geinsCRM.passwordResetCommit(resetToken.value, password.value);
+  const result = await geinsCRM.passwordResetCommit(
+    resetToken.value,
+    password.value,
+  );
   resultObject.value = result;
 
   loginUser();
-
 };
 
 const loginUser = async () => {
@@ -60,15 +66,14 @@ const loginUser = async () => {
   }
 };
 
-onMounted(async () => {
-
-});
+onMounted(async () => {});
 </script>
 <template>
   <div>
     <h2>Nuxt @geins/crm password reset</h2>
     <p>
-      This page is used to test the password reset functionality of the @geins/crm package.
+      This page is used to test the password reset functionality of the
+      @geins/crm package.
     </p>
     <p>
       <b>
@@ -86,9 +91,7 @@ onMounted(async () => {
               <td>
                 email:<br />
                 <input v-model="email" />
-                <button @click="requestReset">
-                  Request Reset
-                </button>
+                <button @click="requestReset">Request Reset</button>
               </td>
             </tr>
             <tr>
@@ -105,7 +108,10 @@ onMounted(async () => {
                   <tr>
                     <td>
                       reset token:<br />
-                      <textarea v-model="resetToken" style="width: 500px;"></textarea>
+                      <textarea
+                        v-model="resetToken"
+                        style="width: 500px"
+                      ></textarea>
                     </td>
                   </tr>
                   <tr>
@@ -116,10 +122,10 @@ onMounted(async () => {
                   </tr>
                   <tr>
                     <td>
-                      <button @click="commitReset">
-                        Commit Reset
-                      </button>
-                      <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+                      <button @click="commitReset">Commit Reset</button>
+                      <div v-if="errorMessage" class="error">
+                        {{ errorMessage }}
+                      </div>
                     </td>
                   </tr>
                 </table>
@@ -132,7 +138,6 @@ onMounted(async () => {
           </div>
         </td>
         <td style="vertical-align: top; padding-left: 50px">
-
           <div style="width: 500px; overflow-x: scroll">
             <b>Result Object:</b>
             <pre>{{ JSON.stringify(resultObject, null, 2) }}</pre>

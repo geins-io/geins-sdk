@@ -4,18 +4,18 @@ import {
   AUTH_COOKIES,
   AUTH_HEADERS,
 } from '@geins/core';
-import type { GeinsCredentials } from '@geins/types';
+import type { GeinsSettings } from '@geins/types';
 import { AuthService } from '@geins/crm';
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event);
-  const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
+  const geinsSettings = config.public.geins.settings as GeinsSettings;
   const endpoints = buildEndpoints(
-    geinsCredentials.apiKey,
-    geinsCredentials.accountName,
-    geinsCredentials.environment,
+    geinsSettings.apiKey,
+    geinsSettings.accountName,
+    geinsSettings.environment,
   );
-// Remove the logWrite statement
+  // Remove the logWrite statement
   const authService = new AuthService(endpoints.authSign, endpoints.auth);
 
   const login = async (

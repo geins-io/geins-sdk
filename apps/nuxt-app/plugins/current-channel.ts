@@ -1,14 +1,13 @@
 import { defineNuxtPlugin } from '#app';
-import type { GeinsCredentials } from '@geins/types';
+import type { GeinsSettings } from '@geins/types';
 import { Channel } from '@geins/core';
 
 export default defineNuxtPlugin(async (nuxtApp) => {
-  // Retrieve GeinsCredentials from runtime config
-  const geinsCredentials = nuxtApp.$config.public.geins
-    .credentials as GeinsCredentials;
+  // Retrieve GeinsSettings from runtime config
+  const geinsSettings = nuxtApp.$config.public.geins.settings as GeinsSettings;
 
-  // Initialize the Channel with credentials
-  const channel = new Channel(geinsCredentials);
+  // Initialize the Channel with settings
+  const channel = new Channel(geinsSettings);
 
   // Await the channel initialization
   try {

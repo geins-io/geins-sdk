@@ -1,4 +1,4 @@
-import type { GeinsCredentials, GeinsChannelTypeType } from '@geins/types';
+import type { GeinsSettings, GeinsChannelTypeType } from '@geins/types';
 import { MerchantApiClient, FetchPolicy } from '../api-client';
 import { isServerContext, buildEndpoints } from '../utils';
 import { ChannelStore } from '../stores';
@@ -14,32 +14,32 @@ export class Channel {
   private store: ChannelStore | undefined;
   private apiClient: MerchantApiClient | undefined;
 
-  constructor(private geinsCredentials: GeinsCredentials) {
-    if (!geinsCredentials.channel) {
+  constructor(private geinsSettings: GeinsSettings) {
+    if (!geinsSettings.channel) {
       throw new Error('Channel is required');
     }
 
-    if (!geinsCredentials.apiKey) {
+    if (!geinsSettings.apiKey) {
       throw new Error('API Key is required');
     }
 
     this.store = new ChannelStore();
 
-    this.channelId = `${geinsCredentials.channel}|${geinsCredentials.tld}`;
+    this.channelId = `${geinsSettings.channel}|${geinsSettings.tld}`;
     this.initApiClient();
   }
 
   private initApiClient() {
-    if (this.geinsCredentials.apiKey && this.geinsCredentials.accountName) {
+    if (this.geinsSettings.apiKey && this.geinsSettings.accountName) {
       const endpointsUrls = buildEndpoints(
-        this.geinsCredentials.apiKey,
-        this.geinsCredentials.accountName,
-        this.geinsCredentials.environment,
+        this.geinsSettings.apiKey,
+        this.geinsSettings.accountName,
+        this.geinsSettings.environment,
       );
 
       this.apiClient = new MerchantApiClient(
         endpointsUrls.main,
-        this.geinsCredentials.apiKey,
+        this.geinsSettings.apiKey,
         FetchPolicy.CACHE_FIRST,
       );
     } else {
@@ -50,13 +50,13 @@ export class Channel {
   private initChannelService() {
     this.channelService = new ChannelService(
       this.apiClient,
-      this.geinsCredentials,
+      this.geinsSettings,
     );
   }
 
-  public static getInstance(credentials: GeinsCredentials) {
+  public static getInstance(geinsSettings: GeinsSettings) {
     if (!instance) {
-      instance = new Channel(credentials);
+      instance = new Channel(geinsSettings);
     }
     return instance;
   }

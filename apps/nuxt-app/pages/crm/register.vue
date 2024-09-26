@@ -7,11 +7,11 @@ import {
   CookieService,
   AuthClientConnectionMode,
   GeinsCustomerType,
-  GeinsGender
+  GeinsGender,
 } from '@geins/core';
 import type {
   AuthSettings,
-  GeinsCredentials,
+  GeinsSettings,
   GeinsUserInputTypeType,
 } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
@@ -22,11 +22,11 @@ import { fake } from '~/utils/faker';
 const cookieService = new CookieService();
 
 const config = useRuntimeConfig();
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
+const geinsSettings = config.public.geins.settings as GeinsSettings;
 const authSettings = {
   clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
-const geinsCore = new GeinsCore(geinsCredentials);
+const geinsCore = new GeinsCore(geinsSettings);
 const geinsCRM = new GeinsCRM(geinsCore, authSettings);
 
 const items = ref<any[]>([]);

@@ -10,7 +10,7 @@ export interface KeyValue {
   value: string;
 }
 
-export type GeinsCredentials = {
+export type GeinsSettings = {
   apiKey: string;
   accountName: string;
   channel: string;

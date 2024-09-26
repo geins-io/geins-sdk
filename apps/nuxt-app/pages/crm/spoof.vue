@@ -1,19 +1,18 @@
 <script setup lang="ts">
-
 import { ref, onMounted } from 'vue';
 import { logWrite, GeinsCore, AuthClientConnectionMode } from '@geins/core';
 
-import type { GeinsCredentials, AuthSettings } from '@geins/types';
+import type { GeinsSettings, AuthSettings } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 import CookieDump from '~/components/CookieDump.vue';
 
 const config = useRuntimeConfig();
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
+const geinsSettings = config.public.geins.settings as GeinsSettings;
 const authSettings = {
   clientConnectionMode: AuthClientConnectionModes.Direct,
 } as AuthSettings;
 
-const geinsCore = new GeinsCore(geinsCredentials);
+const geinsCore = new GeinsCore(geinsSettings);
 const geinsCRM = new GeinsCRM(geinsCore, authSettings);
 
 const items = ref<any[]>([]);

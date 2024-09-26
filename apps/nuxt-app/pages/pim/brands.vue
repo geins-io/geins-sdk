@@ -2,7 +2,7 @@
 import { useNuxtApp } from '#app';
 import { ref, onMounted } from 'vue';
 import type {
-  GeinsCredentials,
+  GeinsSettings,
   BrandsQueryVariables,
   GeinsBrandListTypeType,
 } from '@geins/types';
@@ -18,8 +18,8 @@ const marketAndLanguage = ref({
   languageId: $currentChannel.defaultLanguageId,
 });
 
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
-const geinsCore = new GeinsCore(geinsCredentials);
+const geinsSettings = config.public.geins.settings as GeinsSettings;
+const geinsCore = new GeinsCore(geinsSettings);
 const geinsPIM = new GeinsPIM(geinsCore);
 
 const brands = ref<GeinsBrandListTypeType[]>([]);
@@ -39,7 +39,7 @@ const clear = async () => {
   logWrite('clear');
 };
 
-onMounted(async () => { });
+onMounted(async () => {});
 </script>
 <template>
   <div>
@@ -92,8 +92,12 @@ onMounted(async () => { });
 
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b><br />
-              <textarea v-model="item.data" style="border: 0; width: 600px; height: 100px"></textarea>
+              <b>{{ item.header }}</b
+              ><br />
+              <textarea
+                v-model="item.data"
+                style="border: 0; width: 600px; height: 100px"
+              ></textarea>
             </p>
           </div>
         </td>
@@ -113,7 +117,10 @@ onMounted(async () => { });
               <tr v-for="(brand, index) in brands" :key="index">
                 <td>{{ brand.brandId }}</td>
                 <td>
-                  <img v-if="brand.logo" :src="`${geinsCore.endpoints.image}/product/40x40/${brand.logo}`" />
+                  <img
+                    v-if="brand.logo"
+                    :src="`${geinsCore.endpoints.image}/product/40x40/${brand.logo}`"
+                  />
                   <i v-else>x</i>
                 </td>
 

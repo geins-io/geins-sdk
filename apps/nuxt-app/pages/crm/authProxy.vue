@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import { GeinsCore, AuthClientConnectionModes, logWrite } from '@geins/core';
 import { GeinsCRM } from '@geins/crm';
 import type {
-  GeinsCredentials,
+  GeinsSettings,
   AuthSettings,
   AuthCredentials,
   AuthResponse,
@@ -11,13 +11,13 @@ import type {
 import CookieDump from '~/components/CookieDump.vue';
 
 const config = useRuntimeConfig();
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
+const geinsSettings = config.public.geins.settings as GeinsSettings;
 const authSettings = {
   clientConnectionMode: AuthClientConnectionModes.Proxy,
 } as AuthSettings;
 
 // Initialize Geins Core and GeinsCRM
-const core = new GeinsCore(geinsCredentials);
+const core = new GeinsCore(geinsSettings);
 const geinsCRM = new GeinsCRM(core, authSettings);
 
 // State variables
