@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { GeinsCredentials, } from '@geins/types';
+import type { GeinsSettings, } from '@geins/types';
 import { logWrite, GeinsCore, gql } from '@geins/core';
 import type { GeinsBrandListTypeType } from '@geins/types';
 
 
 const config = useRuntimeConfig();
-const geinsCredentials = config.public.geins.credentials as GeinsCredentials;
-const geinsCore = new GeinsCore(geinsCredentials);
+const geinsSettings = config.public.geins.settings as GeinsSettings;
+const geinsCore = new GeinsCore(geinsSettings);
+
 
 const items = ref<any[]>([]);
 const query = async () => {

@@ -89,10 +89,10 @@ export class GeinsCore {
 
   get graphql(): GraphQLClient {
     if (!this.graphQLClient) {
-      if (this.geinsCredentials.apiKey && this.geinsCredentials.accountName) {
+      if (this.settings.apiKey && this.settings.accountName) {
         this.graphQLClient = new GraphQLClient(
           this.endpointsUrls.main,
-          this.geinsCredentials.apiKey,
+          this.settings.apiKey,
         );
       } else {
         throw new Error('API Key and Account Name are required');
