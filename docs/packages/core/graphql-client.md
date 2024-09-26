@@ -46,7 +46,7 @@ The `@geins/types` package exports TypeScript interfaces and types generated fro
 
 ### Installation
 
-First, install the `@geins/types` refer to the [installation guide](/types).
+First, install the `@geins/types` package. Refer to the [installation guide](/types) for detailed instructions.
 
 ### Importing Types
 
