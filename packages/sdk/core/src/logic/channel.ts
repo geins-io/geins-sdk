@@ -1,5 +1,5 @@
 import type { GeinsSettings, GeinsChannelTypeType } from '@geins/types';
-import { MerchantApiClient, FetchPolicy } from '../api-client';
+import { MerchantApiClient, FetchPolicyOptions } from '../api-client';
 import { isServerContext, buildEndpoints } from '../utils';
 import { ChannelStore } from '../stores';
 import { ChannelService, logWrite } from '../services';
@@ -40,7 +40,7 @@ export class Channel {
       this.apiClient = new MerchantApiClient(
         endpointsUrls.main,
         this.geinsSettings.apiKey,
-        FetchPolicy.CACHE_FIRST,
+        FetchPolicyOptions.CACHE_FIRST,
       );
     } else {
       throw new Error('API Key and Account Name are required');
