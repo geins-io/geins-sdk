@@ -72,7 +72,7 @@ export class GraphQLClient {
           variables,
           options,
         );
-      return result.data ? result.data : null;
+      return result.data || null;
     } catch (error) {
       console.error('Mutation error:', error);
       return null;
