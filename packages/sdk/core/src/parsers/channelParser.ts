@@ -9,8 +9,6 @@ import type {
 export function parseChannelsResult(
   result: any,
 ): GeinsChannelTypeType[] | undefined {
-  console.log('result', result);
-  console.log('result', result?.data);
   if (!result || !result.data) {
     throw new Error('Invalid result structure for channels');
   }
