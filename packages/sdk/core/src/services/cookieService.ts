@@ -59,7 +59,7 @@ export class CookieService {
   private domain = '';
   private secure = true;
   private httpOnly = false;
-  private maxAge: number; // Ensure maxAge is a number or undefined
+  private maxAge: number;
   private cookie = Cookie();
 
   /**
@@ -113,6 +113,21 @@ export class CookieService {
     return maxAge;
   }
 
+  private configToCookieOptions(
+    config: CookieServiceConfig,
+  ): CookieSerializeOptions {
+    return {
+      path: config.path,
+      domain: config.domain,
+      secure: config.secure,
+      httpOnly: config.httpOnly,
+      maxAge:
+        config.maxAge !== undefined
+          ? this.parseMaxAge(config.maxAge)
+          : undefined,
+    };
+  }
+
   /**
    * Retrieves all cookies.
    * @returns {Record<string, string>} - An object containing all cookies.
@@ -144,6 +159,13 @@ export class CookieService {
    * @param {CookieServiceConfig} [config] - Optional configuration for setting the cookie.
    */
   public set(cookie: CookieType, config?: CookieServiceConfig): void {
+    const baseConfig = this.getConfig();
+    const mergedConfig = { ...baseConfig, ...config, ...cookie };
+    const options = this.configToCookieOptions(mergedConfig);
+
+    this.cookie.set(cookie.name, cookie.payload, options);
+  }
+  private set_(cookie: CookieType, config?: CookieServiceConfig): void {
     // Merge default config with provided config, parsing maxAge if necessary
     const defaultConfig = this.getConfig();
     const mergedConfig: CookieServiceConfig = {
