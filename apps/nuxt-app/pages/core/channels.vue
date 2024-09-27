@@ -14,13 +14,13 @@ const channels = ref<any>();
 const items = ref<{ header: string; data: string }[]>([]);
 
 const getChannels = async () => {
-  const result = await geinsCore.channels.get();
+  const result = await geinsCore.channel.all();
   channels.value = result;
   logWrite('Channels', result);
 };
 
 const getChannel = async () => {
-  const result = await geinsCore.getChannel();
+  const result = await geinsCore.channel.current();
   channel.value = result;
   logWrite('Channel', result);
 };
@@ -71,12 +71,8 @@ onMounted(() => {
 
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b
-              ><br />
-              <textarea
-                v-model="item.data"
-                style="border: 0; width: 600px; height: 100px"
-              ></textarea>
+              <b>{{ item.header }}</b><br />
+              <textarea v-model="item.data" style="border: 0; width: 600px; height: 100px"></textarea>
             </p>
           </div>
         </td>

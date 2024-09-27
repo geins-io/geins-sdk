@@ -4,10 +4,10 @@ import { queries } from '../graphql';
 import { parseChannelsResult } from '../parsers/channelParser';
 
 export class ChannelsService extends BaseApiService {
-  async get(): Promise<GeinsChannelTypeType[] | null> {
+  async get(): Promise<GeinsChannelTypeType[] | undefined> {
     return await this.runQueryParsed(queries.channels, {});
   }
-  protected parseResult(result: any): GeinsChannelTypeType[] | null {
+  protected parseResult(result: any): GeinsChannelTypeType[] | undefined {
     return parseChannelsResult(result);
   }
 }

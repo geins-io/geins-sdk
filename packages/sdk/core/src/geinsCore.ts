@@ -1,14 +1,13 @@
 import type { GeinsSettings, GeinsChannelTypeType } from '@geins/types';
-import { MerchantApiClient, GraphQLClient, ENDPOINTS } from './api-client';
-import {
-  CookieService,
-  EventService,
-  ChannelsService,
-  ChannelService,
-  logWrite,
-} from './services/';
+import { MerchantApiClient, GraphQLClient } from './api-client';
+import { CookieService, EventService, ChannelsService } from './services/';
 import { Channel } from './logic';
 import { isServerContext, buildEndpoints } from './utils';
+
+interface GeinsChannelInterface {
+  current: () => Promise<GeinsChannelTypeType | undefined>;
+  all: () => Promise<GeinsChannelTypeType[] | undefined>;
+}
 
 export class GeinsCore {
   // api client
@@ -24,9 +23,8 @@ export class GeinsCore {
   private eventService: EventService;
 
   // channel
-  public channels: ChannelsService;
-  public channel: Channel | undefined;
-  // private currentChannel: Channel | undefined;
+  private currentChannel: Channel | undefined;
+  private accountChannels: ChannelsService | undefined;
 
   constructor(geinsSettings: GeinsSettings) {
     if (!geinsSettings.channel) {
@@ -52,10 +50,8 @@ export class GeinsCore {
     if (!isServerContext()) {
       this.cookieService = new CookieService();
     }
-
+    this.currentChannel = new Channel(this.settings);
     this.eventService = new EventService();
-    this.channels = new ChannelsService(this.client, this.settings);
-    this.channel = new Channel(this.settings);
   }
 
   // Initialize API Client
@@ -69,12 +65,32 @@ export class GeinsCore {
       throw new Error('API Key and Account Name are required');
     }
   }
+  get channel(): GeinsChannelInterface {
+    return {
+      current: this.channelGet.bind(this),
+      all: this.channelsGet.bind(this),
+    };
+  }
 
-  public async getChannel(): Promise<GeinsChannelTypeType | null | undefined> {
-    if (!this.channel) {
-      throw new Error('Channel are not set');
+  private async channelGet(): Promise<GeinsChannelTypeType | undefined> {
+    if (!this.currentChannel) {
+      this.currentChannel = new Channel(this.settings);
     }
-    return this.channel?.getChannel();
+    if (!this.currentChannel) {
+      throw new Error('Failed to initialize channel');
+    }
+    return this.currentChannel?.get() ?? undefined;
+  }
+
+  private async channelsGet(): Promise<GeinsChannelTypeType[] | undefined> {
+    if (!this.accountChannels) {
+      this.accountChannels = new ChannelsService(this.client, this.settings);
+    }
+    return this.accountChannels.get() ?? undefined;
+  }
+
+  get endpoints(): any {
+    return this.endpointsUrls;
   }
 
   get client(): any {
@@ -99,10 +115,6 @@ export class GeinsCore {
       }
     }
     return this.graphQLClient;
-  }
-
-  get endpoints(): any {
-    return this.endpointsUrls;
   }
 
   get geinsSettings(): GeinsSettings {

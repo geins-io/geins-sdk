@@ -8,7 +8,7 @@ import type {
 
 export function parseChannelsResult(
   result: any,
-): GeinsChannelTypeType[] | null {
+): GeinsChannelTypeType[] | undefined {
   console.log('result', result);
   console.log('result', result?.data);
   if (!result || !result.data) {
@@ -17,23 +17,25 @@ export function parseChannelsResult(
   const channels = result.data.channels;
   if (!channels || channels.length === 0) {
     console.warn('No channel found');
-    return null;
+    return undefined;
   }
   return channels.map((channel: any) => parseChannel(channel));
 }
 
-export function parseChannelResult(result: any): GeinsChannelTypeType | null {
+export function parseChannelResult(
+  result: any,
+): GeinsChannelTypeType | undefined {
   if (!result || !result.data) {
     throw new Error('Invalid result structure for channel');
   }
   const channel = result.data.channel;
   if (!channel) {
     console.warn('No channel found');
-    return null;
+    return undefined;
   }
   return parseChannel(channel);
 }
-export function parseChannel(channel: any): GeinsChannelTypeType | null {
+export function parseChannel(channel: any): GeinsChannelTypeType | undefined {
   if (!channel || !channel.id) {
     throw new Error('Invalid result structure for channel');
   }

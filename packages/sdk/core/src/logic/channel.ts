@@ -1,15 +1,13 @@
 import type { GeinsSettings, GeinsChannelTypeType } from '@geins/types';
 import { MerchantApiClient, FetchPolicyOptions } from '../api-client';
-import { isServerContext, buildEndpoints } from '../utils';
+import { buildEndpoints } from '../utils';
 import { ChannelStore } from '../stores';
-import { ChannelService, logWrite } from '../services';
+import { ChannelService } from '../services';
 
 let instance: Channel | null = null;
-const oneHourMs = 60 * 60 * 1000; // 1 hour in milliseconds
 
 export class Channel {
   private channelId: string;
-  private channel: GeinsChannelTypeType | undefined;
   private channelService: ChannelService | undefined;
   private store: ChannelStore | undefined;
   private apiClient: MerchantApiClient | undefined;
@@ -24,7 +22,6 @@ export class Channel {
     }
 
     this.store = new ChannelStore();
-
     this.channelId = `${geinsSettings.channel}|${geinsSettings.tld}`;
     this.initApiClient();
   }
@@ -77,6 +74,9 @@ export class Channel {
 
   private async setChannel() {
     if (!this.channelService) {
+      if (!this.apiClient) {
+        this.initApiClient();
+      }
       this.initChannelService();
     }
     const channel = await this.channelService?.get(this.channelId);
@@ -84,11 +84,12 @@ export class Channel {
     return channel;
   }
 
-  public async getChannel(): Promise<GeinsChannelTypeType | null | undefined> {
+  public async get(): Promise<GeinsChannelTypeType | undefined> {
     const cachedChannel = await this.getKey(this.channelId);
     if (cachedChannel) {
       return JSON.parse(cachedChannel);
     }
-    return this.setChannel();
+    const channel = await this.setChannel();
+    return channel ?? undefined;
   }
 }

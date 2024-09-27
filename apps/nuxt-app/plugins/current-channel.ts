@@ -7,11 +7,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const geinsSettings = nuxtApp.$config.public.geins.settings as GeinsSettings;
 
   // Initialize the Channel with settings
-  const channel = new Channel(geinsSettings);
+  const channel = Channel.getInstance(geinsSettings);
 
   // Await the channel initialization
   try {
-    const currentChannel = await channel.getChannel();
+    const currentChannel = await channel.get();
 
     // Provide currentChannel to the Nuxt context
     nuxtApp.provide('currentChannel', currentChannel);
