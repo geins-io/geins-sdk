@@ -1,3 +1,4 @@
+import type { GeinsChannelTypeType } from '../generated';
 export * from './channel';
 export * from './event';
 
@@ -19,3 +20,8 @@ export type GeinsSettings = {
   market: string;
   environment?: Environment;
 };
+
+export interface GeinsChannelInterface {
+  current: () => Promise<GeinsChannelTypeType | undefined>;
+  all: () => Promise<GeinsChannelTypeType[] | undefined>;
+}

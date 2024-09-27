@@ -1,3 +1,10 @@
+/**
+ * Endpoints for the current environment.
+ * - main: The main api endpoint used to query Geins.
+ * - auth: The auth endpoint.
+ * - authSign: The auth sign endpoint.
+ * - image: The base image url
+ */
 export interface GeinsEndpoints {
   main: string;
   auth: string;
