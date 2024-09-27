@@ -120,7 +120,22 @@ export class GeinsCore {
   get geinsSettings(): GeinsSettings {
     return this.settings;
   }
-
+  /**
+   * Returns the EventService instance.
+   * @returns EventService
+   * @example
+   * const eventService = core.events;
+   * eventService.listnerAdd((data) => {
+   *  console.log(data);
+   * });
+   * eventService.push({
+   * subject: 'USER_LOGIN',
+   * payload: {
+   * user: 'luke.skywalker@tatooine.com',
+   * },
+   * broadcast: true,
+   * });
+   */
   get events(): EventService {
     return this.eventService;
   }

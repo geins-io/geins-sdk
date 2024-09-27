@@ -171,17 +171,13 @@ class GeinsCRM extends BasePackage {
     if (!registerResult?.succeeded) {
       throw new Error('Failed to register user');
     }
-    // Remove logWrite statement
-    // update user to MC with information
+
     if (user) {
       const userResult = await this.userUpdate(user);
-      logWrite('userResult', userResult);
       if (!userResult) {
         throw new Error('Failed to update user with information');
       }
-    }
-    // no info just crate a new user in MC
-    else {
+    } else {
       const registerUserAs: GeinsUserInputTypeType = {
         newsletter: false,
         customerType: GeinsCustomerType.PersonType,
@@ -193,7 +189,6 @@ class GeinsCRM extends BasePackage {
         throw new Error('Failed to create user in MC');
       }
     }
-    // get user
 
     return this.authClient.getUser();
   }
@@ -256,6 +251,10 @@ class GeinsCRM extends BasePackage {
     if (!this.userService) {
       await this.initUserService();
     }
+    this.pushEvent(
+      { subject: GeinsEventType.USER_UPDATE, payload: user },
+      GeinsEventType.USER_UPDATE,
+    );
     return this.userService?.update(user);
   }
 
@@ -267,6 +266,10 @@ class GeinsCRM extends BasePackage {
   }
 
   private async userRemove(): Promise<any> {
+    this.pushEvent(
+      { subject: GeinsEventType.USER_DELETE, payload: {} },
+      GeinsEventType.USER_DELETE,
+    );
     throw new Error('Method not implemented.');
   }
 }

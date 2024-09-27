@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import type { GeinsSettings, GeinsEventMessage } from '@geins/types';
-import type {} from '@geins/core';
 import { logWrite, GeinsCore, GeinsEventType } from '@geins/core';
 
 const config = useRuntimeConfig();
 const geinsSettings = config.public.geins.settings as GeinsSettings;
 const geinsCore = new GeinsCore(geinsSettings);
+
+
 
 const items = ref<any[]>([]);
 
@@ -26,12 +27,14 @@ const eventPushAlert = () => {
 };
 
 onMounted(() => {
-  const myEventHandler = function (data: GeinsEventMessage) {
+  // custom events
+  const myCustomEventHandler = function (data: GeinsEventMessage) {
     items.value.push({ header: data.subject, data: data });
-    if (data.subject === 'auth') {
+    logWrite(data.subject, data);
+    if (data.subject === GeinsEventType.USER_LOGIN) {
       logWrite(data.subject, data);
     }
-    if (data.subject === 'toast') {
+    if (data.subject === GeinsEventType.USER_LOGOUT) {
       logWrite(data.subject, data);
     }
     if (data.subject === 'alert') {
@@ -39,7 +42,14 @@ onMounted(() => {
       alert(data.payload);
     }
   };
-  geinsCore.events.listnerAdd(myEventHandler);
+  geinsCore.events.listnerAdd(myCustomEventHandler);
+
+  // login event
+  const myEventHandlerLogin = function (data: GeinsEventMessage) {
+    items.value.push({ header: data.subject, data: data });
+    logWrite(data.subject, data);
+  };
+  geinsCore.events.listnerAdd(myEventHandlerLogin, GeinsEventType.USER_LOGIN);
 });
 
 const clear = async () => {
@@ -84,8 +94,7 @@ const clear = async () => {
           </table>
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b
-              ><br />
+              <b>{{ item.header }}</b><br />
               <textarea style="border: 0; width: 500px; height: 100px">{{
                 JSON.stringify(item.data)
               }}</textarea>

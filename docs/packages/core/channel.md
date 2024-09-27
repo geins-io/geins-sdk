@@ -1,4 +1,4 @@
-# Understanding Channels in `GeinsCore`
+# Channels
 
 The Geins SDK provides powerful tools for managing channels, allowing you to configure and access different channels within your application. Channels represent different sales channels or storefronts, each potentially with its own settings, products, and configurations.
 
