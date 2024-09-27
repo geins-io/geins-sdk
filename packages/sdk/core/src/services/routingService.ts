@@ -1,7 +1,7 @@
 import { EndpointApiClient } from '../api-client';
+import { IStore } from '../base';
 
-let instance: RoutingService | null = null;
-const oneHourMs = 60 * 60 * 1000; // 1 hour in milliseconds
+const ONE_HOUR_MS = 60 * 60 * 1000; // 1 hour in milliseconds
 const KEY_URL_HISTORY = 'urlHistory';
 const KEY_LAST_FETCH_TIME = 'urlHistory:lastFetchTime';
 
@@ -23,12 +23,13 @@ export interface RoutingItem {
 }
 
 export class RoutingService {
-  private store: any;
+  private static instance: RoutingService | null = null;
+  private store: IStore;
   private apiKey: string;
   private apiClient: EndpointApiClient;
   private state: RoutingServiceState;
 
-  constructor(apiKey: string, store: any) {
+  private constructor(apiKey: string, store: IStore) {
     if (!apiKey) {
       this.state = RoutingServiceState.ERROR;
       throw new Error('API key is required');
@@ -46,30 +47,44 @@ export class RoutingService {
     this.state = RoutingServiceState.READY;
   }
 
-  public static getInstance(apiKey: string, store: any) {
-    if (!instance) {
-      instance = new RoutingService(apiKey, store);
+  /**
+   * Retrieves the singleton instance of the RoutingService.
+   * @param apiKey - The API key used for authentication.
+   * @param store - The storage interface for caching routes.
+   * @returns The singleton instance of RoutingService.
+   */
+  public static getInstance(apiKey: string, store: IStore): RoutingService {
+    if (!RoutingService.instance) {
+      RoutingService.instance = new RoutingService(apiKey, store);
     }
-    return instance;
+    return RoutingService.instance;
   }
 
-  setKey(key: string, value: string): void {
-    this.store.setKey(key, value);
+  private async setKey(key: string, value: string): Promise<void> {
+    console.log('setKey', key, value);
+    await this.store.setKey(key, value);
   }
 
-  getKey(key: string): string {
-    return this.store.getKey(key);
+  private async getKey(key: string): Promise<string | null> {
+    return await this.store.getKey(key);
   }
 
-  async getRoutingRules(): Promise<RoutingRule[]> {
+  /**
+   * Retrieves all routing rules from the store.
+   * @returns A promise that resolves to an array of RoutingRule objects.
+   */
+  public async getRoutingRules(): Promise<RoutingRule[]> {
     const keys = await this.store.getKeys();
     const rules: RoutingRule[] = [];
     for (const key of keys) {
-      const item = await this.store.getKey(key);
-      if (item) {
+      if (key === KEY_URL_HISTORY || key === KEY_LAST_FETCH_TIME) {
+        continue;
+      }
+      const toUrl = await this.store.getKey(key);
+      if (toUrl) {
         rules.push({
           fromUrl: key,
-          toUrl: item,
+          toUrl,
           httpStatusCode: 301,
           isCanonical: false,
         });
@@ -78,83 +93,113 @@ export class RoutingService {
     return rules;
   }
 
-  async getAllRoutes() {
-    return this.store.getKeys();
+  /**
+   * Retrieves all route keys from the store.
+   * @returns A promise that resolves to an array of route keys.
+   */
+  public async getAllRoutes(): Promise<string[]> {
+    return await this.store.getKeys();
   }
 
-  async fillUrlHistory() {
+  /**
+   * Fetches the URL history from the API and updates the store.
+   * If the history was fetched less than an hour ago, it uses the cached data.
+   * @returns A promise that resolves to an array of route keys.
+   * @throws An error if the URL history could not be fetched.
+   */
+  public async fillUrlHistory(): Promise<string[]> {
     if (this.state === RoutingServiceState.FETCHING) {
-      console.log('Already fetching URL history, skipping...');
-      return;
+      return await this.store.getKeys();
     }
     this.state = RoutingServiceState.FETCHING;
 
-    const cacheKey = KEY_URL_HISTORY;
-    const lastFetchTimeKey = KEY_LAST_FETCH_TIME;
+    try {
+      const lastFetchTimeKey = KEY_LAST_FETCH_TIME;
+      const lastFetchTime = await this.getKey(lastFetchTimeKey);
+      const now = new Date();
 
-    const lastFetchTime = this.getKey(lastFetchTimeKey);
-    const now = new Date();
+      // Check if less than 1 hour has passed since last fetch
+      if (lastFetchTime) {
+        const lastFetchDate = new Date(lastFetchTime);
+        const timeElapsed = now.getTime() - lastFetchDate.getTime();
 
-    // Check if less than 1 hour has passed since last fetch
-    if (lastFetchTime) {
-      const lastFetchDate = new Date(lastFetchTime as string);
-      const timeElapsed = now.getTime() - lastFetchDate.getTime();
+        if (timeElapsed < ONE_HOUR_MS) {
+          const cachedRoutes = await this.getKey(KEY_URL_HISTORY);
+          if (cachedRoutes) {
+            this.state = RoutingServiceState.READY;
+            return await this.store.getKeys();
+          }
+        }
+      }
 
-      if (timeElapsed < oneHourMs) {
-        const cachedRoutes = this.getKey(cacheKey);
-        if (cachedRoutes) return cachedRoutes;
+      // Fetch new data from API
+      const history = await this.apiClient.getUrlHistory();
+      for (const item of history) {
+        if (item.oldUrl && item.newUrl && !item.deleted) {
+          await this.setKey(item.oldUrl, item.newUrl);
+        }
+      }
+
+      // Set the new last fetch time in the cache
+      await this.setKey(lastFetchTimeKey, now.toISOString());
+      this.state = RoutingServiceState.READY;
+      return await this.store.getKeys();
+    } catch (error) {
+      this.state = RoutingServiceState.ERROR;
+      console.error('Error fetching URL history:', error);
+      throw error;
+    } finally {
+      if (this.state !== RoutingServiceState.ERROR) {
+        this.state = RoutingServiceState.READY;
       }
     }
-
-    // Fetch new data from API
-    const history = await this.apiClient.getUrlHistory();
-    for (const item of history) {
-      if (item.oldUrl && item.newUrl && !item.deleted) {
-        this.setKey(item.oldUrl, item.newUrl);
-      }
-    }
-
-    // Set the new last fetch time in the cache
-    this.setKey(lastFetchTimeKey, now.toISOString());
-    this.state = RoutingServiceState.READY;
-    return this.store.getKeys(); // Return all cached keys
   }
 
-  async getRoute(path: string) {
-    console.log('Getting route for path:', path);
-    return this.getKey(path);
+  /**
+   * Retrieves the route for the given path from the store.
+   * @param path - The path for which to get the route.
+   * @returns A promise that resolves to the route or null if not found.
+   */
+  public async getRoute(path: string): Promise<string | null> {
+    return await this.getKey(path);
   }
 
-  async refreshUrlHistoryIfNeeded() {
+  /**
+   * Refreshes the URL history if more than an hour has passed since the last fetch.
+   * @returns A promise that resolves to an array of route keys.
+   */
+  public async refreshUrlHistoryIfNeeded(): Promise<string[]> {
     const now = new Date();
 
-    const lastFetchTime = this.getKey(KEY_LAST_FETCH_TIME);
+    const lastFetchTime = await this.getKey(KEY_LAST_FETCH_TIME);
     if (lastFetchTime) {
-      const lastFetchDate = new Date(lastFetchTime as string);
+      const lastFetchDate = new Date(lastFetchTime);
       const timeElapsed = now.getTime() - lastFetchDate.getTime();
 
-      if (timeElapsed >= oneHourMs) {
-        console.log('Fetching new URL history as more than 1 hour has passed');
-        await this.fillUrlHistory();
+      if (timeElapsed >= ONE_HOUR_MS) {
+        return await this.fillUrlHistory();
       } else {
-        const timeLeft = oneHourMs - timeElapsed;
-        console.log('No need to fetch new URL history. Time left:', timeLeft);
+        return await this.store.getKeys();
       }
     } else {
-      // If no last fetch time, initiate a fetch
-      await this.fillUrlHistory();
+      return await this.fillUrlHistory();
     }
-    return history;
   }
 
-  async getLastFetchTime() {
-    return this.getKey(KEY_LAST_FETCH_TIME);
+  /**
+   * Retrieves the last time the URL history was fetched.
+   * @returns A promise that resolves to the last fetch time as a string or null if not set.
+   */
+  public async getLastFetchTime(): Promise<string | null> {
+    return await this.getKey(KEY_LAST_FETCH_TIME);
   }
 
-  async fillRoutes() {
-    await this.fillUrlHistory();
-    return {
-      urlHistory: this.store.getKeys(), // Return all cached routes or relevant info
-    };
+  /**
+   * Fills the routes by fetching the URL history and returns the updated routes.
+   * @returns A promise that resolves to an object containing the urlHistory array.
+   */
+  public async fillRoutes(): Promise<{ urlHistory: string[] }> {
+    const urlHistory = await this.fillUrlHistory();
+    return { urlHistory };
   }
 }

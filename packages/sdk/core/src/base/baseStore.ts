@@ -13,3 +13,9 @@ export abstract class BaseStore {
 
   protected abstract getKeys(): Promise<string[]>;
 }
+
+export interface IStore {
+  setKey(key: string, value: string): Promise<void>;
+  getKey(key: string): Promise<string | null>;
+  getKeys(): Promise<string[]>;
+}
