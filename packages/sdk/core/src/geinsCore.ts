@@ -139,7 +139,15 @@ export class GeinsCore {
   get events(): EventService {
     return this.eventService;
   }
-
+  /**
+   * Returns the CookieService instance.
+   * @returns CookieService
+   * @example
+   * const cookieService = core.cookies;
+   * cookieService.set('cookieName', 'cookieValue');
+   * const cookieValue = cookieService.get('cookieName');
+   *
+   */
   get cookies(): CookieService {
     if (!this.cookieService) {
       this.cookieService = new CookieService();
