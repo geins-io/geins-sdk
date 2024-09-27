@@ -2,6 +2,9 @@
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
+title: Geins Web SDK
+titleTemplate: Geins Web SDK
+
 hero:
   name: 'Geins Web SDK'
   text: 'A perfect developer experience for web devlopment'
@@ -9,10 +12,13 @@ hero:
   actions:
     - theme: brand
       text: Quickstart
-      link: /quick-start
+      link: /guide/quick-start
     - theme: alt
       text: Explore the SDK
       link: /packages
+  image:
+    src: /geins-logo-badge.png
+    alt: Geins logo
 
 features:
   - icon:
@@ -29,3 +35,6 @@ features:
     title: TypeScript support
     details: Full typescript support out of the box
 ---
+
+<style>
+</style>
