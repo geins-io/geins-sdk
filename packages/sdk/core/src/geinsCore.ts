@@ -1,13 +1,13 @@
-import type { GeinsSettings, GeinsChannelTypeType } from '@geins/types';
+import type {
+  GeinsSettings,
+  GeinsChannelTypeType,
+  GeinsEndpoints,
+} from '@geins/types';
+import { GeinsChannelInterface } from '@geins/types';
 import { MerchantApiClient, GraphQLClient } from './api-client';
 import { CookieService, EventService, ChannelsService } from './services/';
 import { Channel } from './logic';
 import { isServerContext, buildEndpoints } from './utils';
-
-interface GeinsChannelInterface {
-  current: () => Promise<GeinsChannelTypeType | undefined>;
-  all: () => Promise<GeinsChannelTypeType[] | undefined>;
-}
 
 export class GeinsCore {
   // api client
@@ -65,6 +65,12 @@ export class GeinsCore {
       throw new Error('API Key and Account Name are required');
     }
   }
+  /**
+   * Channels
+   * Methods:
+   * - current() gets the current channel for application set from the settings;
+   * - all() get all channels for the account;
+   */
   get channel(): GeinsChannelInterface {
     return {
       current: this.channelGet.bind(this),
@@ -89,11 +95,21 @@ export class GeinsCore {
     return this.accountChannels.get() ?? undefined;
   }
 
-  get endpoints(): any {
+  /**
+   * Endpoints for the current environment.
+   * - main: The main api endpoint used to query Geins.
+   * - auth: The auth endpoint.
+   * - authSign: The auth sign endpoint.
+   * - image: The base image url
+   */
+  get endpoints(): GeinsEndpoints {
     return this.endpointsUrls;
   }
 
-  get client(): any {
+  /**
+   * Returns the API Client instance.
+   */
+  get client(): MerchantApiClient {
     if (!this.endpointsUrls) {
       throw new Error('Endpoints are not set');
     }
@@ -102,7 +118,11 @@ export class GeinsCore {
     }
     return this.apiClient;
   }
-
+  /**
+   * Returns the GraphQL Client instance.
+   * @returns GraphQLClient
+   * Use to query Geins using GraphQL.
+   */
   get graphql(): GraphQLClient {
     if (!this.graphQLClient) {
       if (this.settings.apiKey && this.settings.accountName) {
@@ -117,9 +137,13 @@ export class GeinsCore {
     return this.graphQLClient;
   }
 
+  /**
+   * Returns the GeinsSettings that was used to to instance the class.
+   */
   get geinsSettings(): GeinsSettings {
     return this.settings;
   }
+
   /**
    * Returns the EventService instance.
    * @returns EventService
@@ -140,6 +164,15 @@ export class GeinsCore {
     return this.eventService;
   }
 
+  /**
+   * Returns the CookieService instance.
+   * @returns CookieService
+   * @example
+   * const cookieService = core.cookies;
+   * cookieService.set('cookieName', 'cookieValue');
+   * const cookieValue = cookieService.get('cookieName');
+   *
+   */
   get cookies(): CookieService {
     if (!this.cookieService) {
       this.cookieService = new CookieService();

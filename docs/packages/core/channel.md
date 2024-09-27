@@ -226,7 +226,6 @@ For more information on channels and other SDK features, refer to the [Geins API
 
 - **Use Cases**: Channels are particularly useful for applications that need to support multiple storefronts, markets, or localized experiences.
 - **Performance**: Utilizing caching mechanisms provided by the `Channel` class can improve application performance by reducing unnecessary API calls.
-- **Support**: If you encounter any issues or have questions, consult the Geins SDK documentation or reach out to the support team.
 
 Happy coding!
 

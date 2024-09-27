@@ -1,4 +1,4 @@
-# Using the `GraphQLClient` from `GeinsCore`
+# GraphQLClient
 
 The `GeinsCore` class is the main entry point of the Geins SDK, providing essential functionalities to interact with the Geins API. One of the powerful features it exposes is the `GraphQLClient`, accessible via the `graphql` property. The `GraphQLClient` allows you to execute custom GraphQL queries and mutations, giving you the flexibility to fetch and manipulate data as needed.
 

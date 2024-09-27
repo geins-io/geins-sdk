@@ -1,81 +1,175 @@
-# @geins/core
+Introduction to @geins/core Package
 
-## Introduction
+# Introduction to @geins/core
 
-## Quick Start
+The `@geins/core` package serves as the foundation of the Geins SDK, providing essential functionalities such as event handling, cookie management, and API communication. It is the central piece that all other packages, like `@geins/cms`, depend upon to function correctly.
 
-# Using the GraphQLClient from GeinsCore
+## Why Use GeinsCore?
 
-The GeinsCore class is the main entry point of the Geins SDK, providing essential functionalities to interact with the Geins API. One of the powerful features it exposes is the GraphQLClient, accessible via the graphql property. The GraphQLClient allows you to execute custom GraphQL queries and mutations, giving you the flexibility to fetch and manipulate data as needed.
+The `GeinsCore` class encapsulates core services that are crucial for building applications with the Geins SDK. By initializing an instance of `GeinsCore`, you gain access to:
 
-This article will guide you through the process of using the GraphQLClient provided by GeinsCore, including examples of running queries and mutations. We'll also demonstrate how to use the TypeScript types exported by the @geins/types package to ensure type safety in your applications.
+- **Event Handling:** Manage and respond to events within your application.
+- **Cookie Management:** Simplify cookie operations across client and server environments.
+- **API Clients:** Interact with Geins APIs using provided clients for REST and GraphQL.
+- **Channel Information:** Access current and available channels for your application.
 
-## Overview
+All other Geins packages require an instance of `GeinsCore` to function, making it an indispensable part of your application setup.
 
-- `GeinsCore`: The central class of the Geins SDK, used to configure and access various services.
-- `GraphQLClient`: A class exposed through GeinsCore that allows you to execute custom GraphQL queries and mutations against the Geins API.
-- `gql`: A function exposed through @geins/core used to parse GraphQL queries and mutations.
-- `@geins/types`: A package that exports TypeScript types generated from the Geins GraphQL schema, providing type definitions for the API.
-  By using the `GraphQLClient` and types from `@geins/types`, you can interact with the Geins API in a flexible and type-safe manner, leveraging the power of GraphQL and TypeScript.
+## Setting Up GeinsCore
 
-## Accessing the GraphQLClient
+To get started, you need to create an instance of `GeinsCore` by providing necessary configuration settings.
 
-Once you have an instance of GeinsCore (refer to the [initialization guide](/core)), you can access the `GraphQLClient` through the graphql property.
+### GeinsSettings Type
 
-```typescript
-const graphqlClient = geinsCore.graphql;
-```
-
-The `GraphQLClient` provides two primary methods:
-
-- `runQuery<TData, TVariables>(query, variables?, options?)`
-- `runMutation<TData, TVariables>(mutation, variables?, options?)`
-
-## Using TypeScript Types from @geins/types
-
-The `@geins/types` package exports TypeScript interfaces and types generated from the Geins GraphQL schema. These types correspond to the data structures returned by the API and can be used to ensure type safety in your application.
-
-### Installation
-
-Make sure to install the `@geins/types` package in your project, refer to the [installation guide](/types).
-
-### Importing Types
-
-You can import the necessary types directly from `@geins/types`:
+The `GeinsSettings` type defines the configuration required to initialize `GeinsCore`:
 
 ```typescript
-import {
-  GeinsProductTypeType,
-  GeinsProductsResultTypeType,
-} from '@geins/types';
+export type GeinsSettings = {
+  apiKey: string;
+  accountName: string;
+  channel: string;
+  tld: string;
+  locale: string;
+  market: string;
+  environment?: Environment;
+};
 ```
 
-## Running GraphQL Queries
+These settings include authentication details and application-specific configurations like channel and locale.
 
-### Method Signature
+### Initializing GeinsCore
+
+Here's how you can initialize an instance of `GeinsCore`:
 
 ```typescript
-runQuery<TData, TVariables>(
-  query: DocumentNode,
-  variables?: TVariables,
-  options?: {
-    fetchPolicy?: FetchPolicy;
-    [key: string]: any;
-  }
-): Promise<TData | null>;
+import { GeinsCore } from '@geins/core';
 
+const geinsSettings = {
+  apiKey: 'your-api-key',
+  accountName: 'your-account-name',
+  channel: 'your-channel-id',
+  tld: 'your-tld',
+  locale: 'your-locale',
+  market: 'your-market',
+  environment: 'production', // or 'staging', 'development'
+};
+
+const geinsCore = new GeinsCore(geinsSettings);
 ```
 
-- `TData`: The expected shape of the response data.
-- `TVariables`: The shape of the variables object for the query.
-- `query`: The GraphQL query, written using gql.
-- `variables`: An optional object containing variables for the query.
-- `options`: Optional settings, such as fetchPolicy.
+Ensure that all required fields in `GeinsSettings` are provided; otherwise, an error will be thrown during initialization.
 
-## Quick Start
+## Core Functionalities
 
-## User token
+Once you have an instance of `GeinsCore`, you can access its core functionalities.
 
-## API Reference
+### Event Handling with EventService
 
-## Examples
+The `EventService` allows you to manage custom events within your application. For detailed documentation, refer to the [Events Documentation](/packages/core/events).
+
+```typescript
+// Accessing the EventService
+const eventService = geinsCore.events;
+
+// Adding an event listener
+eventService.listnerAdd((data) => {
+  console.log('Event received:', data);
+});
+
+// Emitting an event
+eventService.push({
+  subject: 'USER_LOGIN',
+  payload: { userId: 'user-123' },
+  broadcast: true,
+});
+```
+
+### Cookie Management with CookieService
+
+The `CookieService` simplifies cookie operations, ensuring consistency across environments. For more information, see the [Cookies Documentation](/packages/core/cookies).
+
+```typescript
+// Accessing the CookieService
+const cookieService = geinsCore.cookies;
+
+// Setting a cookie
+cookieService.set({
+  name: 'session_id',
+  payload: 'abc123xyz',
+  secure: true,
+  httpOnly: true,
+  maxAge: 86400, // 1 day in seconds
+});
+
+// Getting a cookie
+const sessionId = cookieService.get('session_id');
+
+// Removing a cookie
+cookieService.remove('session_id');
+```
+
+### API Clients
+
+The `GeinsCore` provides API clients for interacting with Geins services.
+
+#### Merchant API Client
+
+For detailed usage, refer to the [API Client Documentation](/packages/core/api-client).
+
+```typescript
+// Accessing the Merchant API client
+const apiClient = geinsCore.client;
+
+// Making an API call
+apiClient.someApiMethod().then((response) => {
+  console.log('API response:', response);
+});
+```
+
+#### GraphQL Client
+
+For more information, see the [GraphQL Client Documentation](/packages/core/graphql-client).
+
+```typescript
+// Accessing the GraphQL client
+const graphQLClient = geinsCore.graphql;
+
+// Making a GraphQL query
+const query = `{ user(id: "user-123") { name email } }`;
+graphQLClient.query(query).then((response) => {
+  console.log('GraphQL response:', response);
+});
+```
+
+### Channel Information
+
+You can access information about the current channel and all available channels. For more details, check the [Channels Documentation](/packages/core/channel).
+
+```typescript
+// Getting the current channel
+geinsCore.channel.current().then((channel) => {
+  console.log('Current channel:', channel);
+});
+
+// Getting all channels
+geinsCore.channel.all().then((channels) => {
+  console.log('All channels:', channels);
+});
+```
+
+## Integration with Other Packages
+
+Packages like `@geins/cms` depend on an instance of `GeinsCore` for core functionalities.
+
+```typescript
+import { GeinsCMS } from '@geins/cms';
+
+const geinsCMS = new GeinsCMS(geinsCore);
+
+// Using the CMS package
+geinsCMS.getContent('homepage').then((content) => {
+  console.log('Homepage content:', content);
+});
+```
+
+By passing the `geinsCore` instance to other packages, you ensure they have access to the necessary services like event handling and API clients.
