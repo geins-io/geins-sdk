@@ -100,6 +100,25 @@ export class RoutingService {
     return await this.store.getKeys();
   }
 
+  private async shouldFetchNewData(): Promise<boolean> {
+    const lastFetchTime = await this.getKey(KEY_LAST_FETCH_TIME);
+    if (!lastFetchTime) return true;
+
+    const lastFetchDate = new Date(lastFetchTime);
+    const timeElapsed = Date.now() - lastFetchDate.getTime();
+    return timeElapsed >= ONE_HOUR_MS;
+  }
+
+  private async fetchAndProcessUrlHistory(): Promise<void> {
+    const history = await this.apiClient.getUrlHistory();
+    for (const item of history) {
+      if (item.oldUrl && item.newUrl && !item.deleted) {
+        await this.setKey(item.oldUrl, item.newUrl);
+      }
+    }
+    await this.setKey(KEY_LAST_FETCH_TIME, new Date().toISOString());
+  }
+
   /**
    * Fetches the URL history from the API and updates the store.
    * If the history was fetched less than an hour ago, it uses the cached data.
@@ -108,40 +127,14 @@ export class RoutingService {
    */
   public async fillUrlHistory(): Promise<string[]> {
     if (this.state === RoutingServiceState.FETCHING) {
-      return await this.store.getKeys();
+      return this.store.getKeys();
     }
+
     this.state = RoutingServiceState.FETCHING;
-
     try {
-      const lastFetchTimeKey = KEY_LAST_FETCH_TIME;
-      const lastFetchTime = await this.getKey(lastFetchTimeKey);
-      const now = new Date();
-
-      // Check if less than 1 hour has passed since last fetch
-      if (lastFetchTime) {
-        const lastFetchDate = new Date(lastFetchTime);
-        const timeElapsed = now.getTime() - lastFetchDate.getTime();
-
-        if (timeElapsed < ONE_HOUR_MS) {
-          const cachedRoutes = await this.getKey(KEY_URL_HISTORY);
-          if (cachedRoutes) {
-            this.state = RoutingServiceState.READY;
-            return await this.store.getKeys();
-          }
-        }
+      if (await this.shouldFetchNewData()) {
+        await this.fetchAndProcessUrlHistory();
       }
-
-      // Fetch new data from API
-      const history = await this.apiClient.getUrlHistory();
-      for (const item of history) {
-        if (item.oldUrl && item.newUrl && !item.deleted) {
-          await this.setKey(item.oldUrl, item.newUrl);
-        }
-      }
-
-      // Set the new last fetch time in the cache
-      await this.setKey(lastFetchTimeKey, now.toISOString());
-      this.state = RoutingServiceState.READY;
       return await this.store.getKeys();
     } catch (error) {
       this.state = RoutingServiceState.ERROR;
