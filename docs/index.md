@@ -17,21 +17,21 @@ hero:
       text: Explore the SDK
       link: /packages
   image:
-    src: /geins-logo-badge.png
+    src: /img/geins-logo-badge.png
     alt: Geins logo
 
 features:
   - icon:
-      light: /assets/geins-g-icon.svg
-      dark: /assets/geins-g-icon-white.svg
+      light: /logo/geins-g-icon.svg
+      dark: /logo/geins-g-icon-white.svg
     title: Integrated with Geins
     details: Fully integrated with Geins and easy to make your own.
   - icon:
-      src: /assets/nodejs-icon.svg
+      src: /img/nodejs-icon.svg
     title: Native node.js
     details: Fully native node.js support.
   - icon:
-      src: /assets/typescript-icon.svg
+      src: /img/typescript-icon.svg
     title: TypeScript support
     details: Full typescript support out of the box
 ---
