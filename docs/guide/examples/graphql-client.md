@@ -2,7 +2,7 @@
 
 ## Accessing the GraphQLClient
 
-Once you have an instance of GeinsCore (refer to the [initialization guide](/core)), you can access the `GraphQLClient` through the graphql property.
+Once you have an instance of GeinsCore (refer to the [initialization guide](../../packages/core/)), you can access the `GraphQLClient` through the graphql property.
 
 ```typescript
 const graphqlClient = geinsCore.graphql;
