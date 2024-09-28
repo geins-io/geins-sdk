@@ -5,19 +5,19 @@ import { withMermaid } from 'vitepress-plugin-mermaid';
 export default withMermaid({
   title: 'Geins SDK',
   description: 'A perfect developer experience for node.js devlopment',
-  head: [['link', { rel: 'icon', href: '/assets/favicon.ico' }]],
+  head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: {
-      light: '/assets/geins-g.svg',
-      dark: '/assets/geins-g-white.svg',
+      light: '/logo/geins-g.svg',
+      dark: '/logo/geins-g-white.svg',
       alt: 'Geins SDK',
     },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Quickstart', link: '/guide/quick-start' },
-      { text: 'Package Refrence', link: '/Packages' },
+      { text: 'Package Refrence', link: '/packages/' },
     ],
 
     sidebar: {
@@ -60,7 +60,7 @@ export default withMermaid({
       'packages/': [
         {
           text: 'Packages',
-          link: '/packages',
+          link: '/packages/',
           items: [
             {
               text: '@geins/core',
