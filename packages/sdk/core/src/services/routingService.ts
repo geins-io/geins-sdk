@@ -138,7 +138,6 @@ export class RoutingService {
       return await this.store.getKeys();
     } catch (error) {
       this.state = RoutingServiceState.ERROR;
-      console.error('Error fetching URL history:', error);
       throw error;
     } finally {
       if (this.state !== RoutingServiceState.ERROR) {
