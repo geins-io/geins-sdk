@@ -2,18 +2,7 @@
   --vp-c-brand-1: #000;
   --vp-c-brand-2: #066AFF;
 
-
-/*   --vp-button-brand-border:var( --vp-c-gray-2);
-  --vp-button-brand-text: var( --vp-c-gray-1);
-  --vp-button-brand-bg: var( --vp-c-black);
- */
-
- --vp-button-brand-bg: var(--vp-c-black);
-
-  /*
   --vp-button-brand-bg: var(--vp-c-black);
-
-  */
 
   --vp-button-brand-hover-border: var(--vp-c-black);
   --vp-button-brand-hover-text: var(--vp-c-black);
