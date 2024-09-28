@@ -61,7 +61,6 @@ export class RoutingService {
   }
 
   private async setKey(key: string, value: string): Promise<void> {
-    console.log('setKey', key, value);
     await this.store.setKey(key, value);
   }
 
