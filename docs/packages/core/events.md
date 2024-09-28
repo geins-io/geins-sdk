@@ -4,23 +4,7 @@ The Geins SDK provides a robust event management system that allows you to handl
 
 This article will guide you through the events module in `GeinsCore`, including how to listen for events, emit events, and manage event messages and types. We'll also provide practical examples, including TypeScript methods, to illustrate how to integrate event handling into your application effectively.
 
-## Table of Contents
-
-- [What are Events?](#what-are-events)
-- [Overview](#overview)
-- [Event Message Structure](#event-message-structure)
-- [Emitting an Event](#emitting-an-event)
-- [Broadcasts of Events](#broadcasts-of-events)
-- [Listening for Events](#listening-for-events)
-- [Managing Event Listeners](#managing-event-listeners)
-- [Events Always Emitted by the SDK](#events-always-emitted-by-the-sdk)
-- [Example: Sending Data to a Third-Party Service on User Login](#example-sending-data-to-a-third-party-service-on-user-login)
-- [Example: TypeScript Methods](#example-typescript-methods)
-- [Additional Tips](#additional-tips)
-- [Conclusion](#conclusion)
-- [Final Notes](#final-notes)
-
-## What are Events?
+## Usage
 
 The SDK emits events to notify your application of important changes or actions. You can listen for these events and respond accordingly. Events are useful for updating the user experience across browser tabs, integrating third-party services, tracking user actions, and more.
 
