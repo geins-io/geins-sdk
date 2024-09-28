@@ -1,7 +1,27 @@
 :root {
-  --vp-c-brand-1: #066AFF;
+  --vp-c-brand-1: #000;
   --vp-c-brand-2: #066AFF;
-  --vp-button-brand-bg: #066AFF;
+
+
+/*   --vp-button-brand-border:var( --vp-c-gray-2);
+  --vp-button-brand-text: var( --vp-c-gray-1);
+  --vp-button-brand-bg: var( --vp-c-black);
+ */
+
+ --vp-button-brand-bg: var(--vp-c-black);
+
+  /*
+  --vp-button-brand-bg: var(--vp-c-black);
+
+  */
+
+  --vp-button-brand-hover-border: var(--vp-c-black);
+  --vp-button-brand-hover-text: var(--vp-c-black);
+  --vp-button-brand-hover-bg: transparent;
+
+  --vp-button-brand-active-border: var(--vp-c-black);
+  --vp-button-brand-active-text: var(--vp-c-black);
+  --vp-button-brand-active-bg: transparent;
 
   --vp-home-hero-name-color: transparent;
   --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #EC4619 30%, #EC4619);
@@ -16,7 +36,21 @@
 }
 
 .dark {
+  --vp-c-brand-1: #fff;
   --vp-code-color: #ffa820;
+
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: var(--vp-c-black);
+  --vp-button-brand-bg: var(--vp-c-white);
+
+  --vp-button-brand-hover-border: var(--vp-c-white);
+  --vp-button-brand-hover-text: var(--vp-c-white);
+  --vp-button-brand-hover-bg: transparent;
+
+   --vp-button-brand-active-border:var( --vp-c-gray-2);
+  --vp-button-brand-active-text: var(--vp-c-gray-1);
+  --vp-button-brand-active-bg: var( --vp-c-gray-soft);
+
 }
 
 
