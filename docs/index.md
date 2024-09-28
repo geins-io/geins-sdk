@@ -12,7 +12,7 @@ hero:
   actions:
     - theme: brand
       text: Quickstart
-      link: /guide/quick-start
+      link: /guide/quickstart
     - theme: alt
       text: Explore the SDK
       link: /packages

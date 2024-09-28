@@ -16,7 +16,7 @@ export default withMermaid({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Quickstart', link: '/guide/quick-start' },
+      { text: 'Quickstart', link: '/guide/quickstart' },
       { text: 'Package Refrence', link: '/packages/' },
     ],
 
@@ -34,7 +34,7 @@ export default withMermaid({
               link: '/guide/installation',
             },
             {
-              text: 'Quick Start',
+              text: 'Quickstart',
               link: '/guide/quickstart',
             },
           ],
@@ -106,6 +106,10 @@ export default withMermaid({
           ],
         },
       ],
+    },
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2024-present Geins',
     },
 
     socialLinks: [
