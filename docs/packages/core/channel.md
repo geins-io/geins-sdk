@@ -4,22 +4,6 @@ The Geins SDK provides powerful tools for managing channels, allowing you to con
 
 This article will guide you through the concept of channels in the `GeinsCore` SDK, how to access them, and how to use the `Channel` class independently. We'll also provide code examples to illustrate how to implement channels in your application, reflecting the recent refactoring you've applied.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [What are Channels?](#what-are-channels)
-- [Accessing Channels via `GeinsCore`](#accessing-channels-via-geinscore)
-  - [Example: Getting the Current Channel](#example-getting-the-current-channel)
-  - [Example: Getting All Channels](#example-getting-all-channels)
-- [Using the `Channel` Class Independently](#using-the-channel-class-independently)
-  - [Example: Initializing and Using `Channel`](#example-initializing-and-using-channel)
-- [Channel Classes and Services](#channel-classes-and-services)
-  - [`Channel` Class](#channel-class)
-  - [`ChannelsService` and `ChannelService`](#channelsservice-and-channelservice)
-- [Additional Tips](#additional-tips)
-- [Conclusion](#conclusion)
-- [Final Notes](#final-notes)
-
 ## Overview
 
 - **Channels**: Represent different sales channels or storefronts in the Geins platform.

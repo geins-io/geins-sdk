@@ -4,22 +4,6 @@ The `GeinsCore` class is the main entry point of the Geins SDK, providing essent
 
 This article will guide you through the process of using the `GraphQLClient` provided by `GeinsCore`, including examples of running queries and mutations. We'll also demonstrate how to use the TypeScript types exported by the `@geins/types` package to ensure type safety in your applications.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Accessing the `GraphQLClient`](#accessing-the-graphqlclient)
-- [Using TypeScript Types from `@geins/types`](#using-typescript-types)
-- [Running GraphQL Queries](#running-graphql-queries)
-  - [Example: Fetching Products](#example-fetching-products)
-- [Running GraphQL Mutations](#running-graphql-mutations)
-  - [Example: Adding a Product to Cart](#example-adding-a-product-to-cart)
-- [Handling Responses and Errors](#handling-responses-and-errors)
-- [Setting Fetch Policies](#setting-fetch-policies)
-- [Additional Tips](#additional-tips)
-- [Conclusion](#conclusion)
-- [Complete Example: Fetching Brands](#complete-example-fetching-brands)
-- [Final Notes](#final-notes)
-
 ## Overview
 
 - **`GeinsCore`**: The central class of the Geins SDK, used to configure and access various services.
