@@ -108,27 +108,9 @@ const sessionId = cookieService.get('session_id');
 cookieService.remove('session_id');
 ```
 
-### API Clients
+### GraphQL Client
 
-The `GeinsCore` provides API clients for interacting with Geins services.
-
-#### Merchant API Client
-
-For detailed usage, refer to the [API Client Documentation](/packages/core/api-client).
-
-```typescript
-// Accessing the Merchant API client
-const apiClient = geinsCore.client;
-
-// Making an API call
-apiClient.someApiMethod().then((response) => {
-  console.log('API response:', response);
-});
-```
-
-#### GraphQL Client
-
-For more information, see the [GraphQL Client Documentation](/packages/core/graphql-client).
+For more information, see the [GraphQL Client Documentation](./graphql-client).
 
 ```typescript
 // Accessing the GraphQL client
@@ -143,7 +125,7 @@ graphQLClient.query(query).then((response) => {
 
 ### Channel Information
 
-You can access information about the current channel and all available channels. For more details, check the [Channels Documentation](/packages/core/channel).
+You can access information about the current channel and all available channels. For more details, check the [Channels Documentation](./channel.md).
 
 ```typescript
 // Getting the current channel
