@@ -19,7 +19,7 @@ const props = defineProps({
         width: '500px',
         height: item.data.length > 100
           ? Math.min(200, item.data.length * 10) + 'px'
-          : '20px',
+          : '50px',
       }">{{ item.data }}</textarea>
     </p>
   </div>

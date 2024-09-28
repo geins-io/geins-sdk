@@ -8,7 +8,8 @@ const config = useRuntimeConfig();
 const geinsSettings = config.public.geins.settings as GeinsSettings;
 const apiKey = geinsSettings.apiKey;
 const store = new RoutingStore();
-const routingService = new RoutingService(apiKey, store);
+const routingService = RoutingService.getInstance(apiKey, store);
+
 
 const items = ref<any[]>([]);
 const url = ref('');
@@ -68,7 +69,7 @@ const testRouteRedirect = async () => {
   }
 };
 
-onMounted(async () => {});
+onMounted(async () => { });
 </script>
 <template>
   <div>
