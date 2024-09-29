@@ -11,12 +11,9 @@ export class ChannelService extends BaseApiService {
     this.cache = new SimpleCache<GeinsChannelTypeType>(15 * 60 * 1000); // 15 minutes cache
   }
   async get(channelId: string): Promise<GeinsChannelTypeType | undefined> {
-    console.log('get channel', channelId);
     const cacheKey = `channel_${channelId}`;
     const cachedChannel = this.cache.get(cacheKey);
-    console.log('**cache hit', cacheKey);
     if (cachedChannel) {
-      console.log('cache hit', cacheKey);
       return cachedChannel;
     }
 
