@@ -1,7 +1,17 @@
-import type { GeinsUserGetType } from '@geins/types';
-import { BaseApiService, logWrite, GeinsUserInputTypeType } from '@geins/core';
+import type { GeinsUserGetType, GeinsSettings } from '@geins/types';
+import {
+  BaseApiService,
+  logWrite,
+  GeinsUserInputTypeType,
+  SimpleCache,
+} from '@geins/core';
 import { queries, mutaions } from '../graphql';
 export class UserService extends BaseApiService {
+  private cache: SimpleCache<GeinsUserGetType>;
+  constructor(client: any, geinsSettings: GeinsSettings) {
+    super(client, geinsSettings);
+    this.cache = new SimpleCache<GeinsUserGetType>(5 * 60 * 1000); // 5 minutes cache
+  }
   private async generateVars(variables: any) {
     return this.createVariables(variables);
   }
@@ -24,8 +34,21 @@ export class UserService extends BaseApiService {
   }
 
   async get(): Promise<GeinsUserGetType | null> {
+    const cacheKey = 'current_user';
+    const cachedUser = this.cache.get(cacheKey);
+    if (cachedUser) {
+      return cachedUser;
+    }
+
     const vars = await this.generateVars({});
-    return this.runQueryParsed(queries.userGet, vars);
+    const user = await this.runQueryParsed<GeinsUserGetType>(
+      queries.userGet,
+      vars,
+    );
+    if (user) {
+      this.cache.set(cacheKey, user);
+    }
+    return user;
   }
 
   async create(user: GeinsUserInputTypeType): Promise<any> {
@@ -37,6 +60,7 @@ export class UserService extends BaseApiService {
   async update(user: GeinsUserInputTypeType): Promise<any> {
     const variables = { user };
     const vars = await this.generateMutationVars(variables);
+    this.cache.delete('current_user'); // Invalidate cache on update
     return this.runMutation(mutaions.userUpdate, vars);
   }
 
