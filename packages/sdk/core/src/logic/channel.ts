@@ -1,4 +1,5 @@
 import type { GeinsSettings, GeinsChannelTypeType } from '@geins/types';
+import { SimpleCache } from '../utils/simpleCache';
 import { MerchantApiClient, FetchPolicyOptions } from '../api-client';
 import { buildEndpoints } from '../utils';
 import { ChannelStore } from '../stores';
@@ -9,6 +10,7 @@ let instance: Channel | null = null;
 export class Channel {
   private channelId: string;
   private channelService: ChannelService | undefined;
+  private cache: SimpleCache<GeinsChannelTypeType>;
   private store: ChannelStore | undefined;
   private apiClient: MerchantApiClient | undefined;
 
@@ -23,6 +25,7 @@ export class Channel {
 
     this.store = new ChannelStore();
     this.channelId = `${geinsSettings.channel}|${geinsSettings.tld}`;
+    this.cache = new SimpleCache<GeinsChannelTypeType>(60 * 60 * 1000); // 1 hour cache
     this.initApiClient();
   }
 
@@ -80,15 +83,18 @@ export class Channel {
       this.initChannelService();
     }
     const channel = await this.channelService?.get(this.channelId);
-    this.setKey(this.channelId, JSON.stringify(channel));
+    if (channel) {
+      this.cache.set(this.channelId, channel);
+    }
     return channel;
   }
 
   public async get(): Promise<GeinsChannelTypeType | undefined> {
-    const cachedChannel = await this.getKey(this.channelId);
+    const cachedChannel = this.cache.get(this.channelId);
     if (cachedChannel) {
-      return JSON.parse(cachedChannel);
+      return cachedChannel;
     }
+
     const channel = await this.setChannel();
     return channel ?? undefined;
   }

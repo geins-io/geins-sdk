@@ -1,6 +1,8 @@
 .temp
 .turbo
 .DS_Store
+.repopackignore
+repopack*
 
 .output
 .nuxt
