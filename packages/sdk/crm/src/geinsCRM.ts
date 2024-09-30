@@ -173,6 +173,7 @@ class GeinsCRM extends BasePackage {
     }
 
     const userToken = registerResult.tokens?.token;
+    const refreshToken = registerResult.tokens?.refreshToken;
     if (user) {
       const userResult = await this.userUpdate(user, userToken);
       if (!userResult) {
@@ -191,7 +192,7 @@ class GeinsCRM extends BasePackage {
       }
     }
 
-    return this.authClient.getUser();
+    return this.authClient.getUser(refreshToken, userToken);
   }
 
   get user(): UserInterface {

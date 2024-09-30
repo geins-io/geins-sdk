@@ -7,6 +7,7 @@ import {
   validSettings,
   validUserCredentials,
 } from '../../../../test/globalSettings';
+import exp from 'constants';
 
 function randomString(length: number): string {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -71,18 +72,22 @@ describe('GeinsCRM', () => {
     expect(loginResult!.succeeded).toBe(false);
   });
 
-  /*  it('should register a user with credentials', async () => {
+  it('should register a user with credentials', async () => {
     const randomUsername = `${randomString(10).toLowerCase()}@test-user.com`;
     const randonmPassword = randomString(10);
 
-    const credentials: AuthCredentials = {
-      username: 'aaatest@test.se',
-      password: 'randonmPassword',
-    };
-
     const result = await geinsCRM.auth.newUser({
       username: randomUsername,
-      password: 'randonmPassword',
+      password: randonmPassword,
     });
-  }); */
+    expect(result).toBeDefined();
+    expect(result).toHaveProperty('succeeded');
+    expect(result!.succeeded).toBe(true);
+    expect(result).toHaveProperty('tokens');
+    expect(result).toHaveProperty('user');
+    expect(result!.user).toBeDefined();
+    expect(result!.tokens).toBeDefined();
+    expect(result!.user).toHaveProperty('username');
+    expect(result!.user?.username).toBe(randomUsername);
+  });
 });
