@@ -21,7 +21,6 @@ export class EndpointApiClient {
           'Content-Type': 'application/json',
         },
       };
-      console.log('Fetching data from:', endpointUrl);
       const response = await fetch(endpointUrl, options);
 
       if (!response.ok) {
@@ -41,7 +40,6 @@ export class EndpointApiClient {
     const endpoint =
       this.getEndpointUrl(API_ENDPOINT_URL_HISTORY) +
       (lastFetchTime ? `?offset=${lastFetchTime}` : '');
-    console.log('endpoint', endpoint);
     return this.request(endpoint);
   }
 

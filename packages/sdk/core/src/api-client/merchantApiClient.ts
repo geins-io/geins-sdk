@@ -10,6 +10,7 @@ import {
   FetchResult, // Import FetchResult
   OperationVariables,
 } from '@apollo/client/core';
+import { logWrite } from '../services';
 
 export enum FetchPolicyOptions {
   CACHE_FIRST = 'cache-first',
@@ -64,18 +65,42 @@ export class MerchantApiClient {
     this.client.clearStore();
   }
 
+  private getFetchPolicy(
+    operationType: OperationType,
+    selectedFetchPolicy: FetchPolicy | undefined,
+  ) {
+    if (operationType === OperationType.QUERY) {
+      if (selectedFetchPolicy) {
+        return selectedFetchPolicy;
+      } else {
+        return this.fetchPolicy;
+      }
+    }
+
+    if (
+      selectedFetchPolicy === FetchPolicyOptions.NO_CACHE ||
+      selectedFetchPolicy === FetchPolicyOptions.NETWORK_ONLY
+    ) {
+      return selectedFetchPolicy;
+    }
+
+    return FetchPolicyOptions.NETWORK_ONLY;
+  }
+
   private getOperationObject(
     operationType: OperationType,
     document: DocumentNode,
     variables: OperationVariables = {},
     options: RequestOptions = {},
+    userToken?: string | undefined,
   ) {
-    const loggedInUser = this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
+    const loggedInUser =
+      userToken ?? this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
 
     const operationObj: any = {
-      [operationType]: document, // 'query' or 'mutation'
+      [operationType]: document,
       variables,
-      fetchPolicy: options.fetchPolicy || this.fetchPolicy,
+      fetchPolicy: this.getFetchPolicy(operationType, options.fetchPolicy),
       pollInterval: options.pollInterval || this.pollInterval,
     };
 
@@ -114,6 +139,7 @@ export class MerchantApiClient {
     mutation: DocumentNode,
     variables: TVariables = {} as TVariables,
     options: RequestOptions = {},
+    userToken?: string | undefined,
   ): Promise<FetchResult<TData>> {
     // Correct return type
     const q = this.getOperationObject(
@@ -121,6 +147,7 @@ export class MerchantApiClient {
       mutation,
       variables,
       options,
+      userToken,
     );
     return this.client.mutate<TData, TVariables>(q);
   }

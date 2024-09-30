@@ -30,7 +30,10 @@ export interface AuthInterface {
 export interface UserInterface {
   authorized(): Boolean;
   get(): Promise<GeinsUserGetType | null | undefined>;
-  update(user: GeinsUserInputTypeType): Promise<any>;
+  update(
+    user: GeinsUserInputTypeType,
+    userToken?: string | undefined,
+  ): Promise<any>;
   orders(): Promise<GeinsUserOrdersType | null | undefined>;
   remove(): Promise<any>;
 }

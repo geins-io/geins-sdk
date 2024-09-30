@@ -1,4 +1,5 @@
 import type { GeinsSettings } from '@geins/types';
+import { FetchPolicyOptions } from '../api-client';
 
 export abstract class BaseApiService {
   protected client: any;
@@ -57,11 +58,20 @@ export abstract class BaseApiService {
     return parsedResult as T;
   }
 
-  protected async runMutation(query: any, variables: any) {
+  protected async runMutation(
+    query: any,
+    variables: any,
+    userToken?: string | undefined,
+  ) {
     if (!this.client) {
       throw new Error('Merchant API Client is not set');
     }
-    return this.client.runMutation(query, variables);
+    return this.client.runMutation(
+      query,
+      variables,
+      FetchPolicyOptions.NETWORK_ONLY,
+      userToken,
+    );
   }
 
   protected parseResult(result: any): any {

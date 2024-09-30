@@ -8,6 +8,15 @@ import {
   validUserCredentials,
 } from '../../../../test/globalSettings';
 
+function randomString(length: number): string {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
 describe('GeinsCRM', () => {
   const authSettings: AuthSettings = {
     clientConnectionMode: 'Direct',
@@ -60,5 +69,20 @@ describe('GeinsCRM', () => {
     expect(loginResult).toBeDefined();
     expect(loginResult).toHaveProperty('succeeded');
     expect(loginResult!.succeeded).toBe(false);
+  });
+
+  it('should register a user with credentials', async () => {
+    const randomUsername = `${randomString(10).toLowerCase()}@test-user.com`;
+    const randonmPassword = randomString(10);
+
+    const credentials: AuthCredentials = {
+      username: 'aaatest@test.se',
+      password: 'randonmPassword',
+    };
+
+    const result = await geinsCRM.auth.newUser({
+      username: randomUsername,
+      password: 'randonmPassword',
+    });
   });
 });

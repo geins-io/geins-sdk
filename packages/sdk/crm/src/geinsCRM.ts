@@ -172,8 +172,9 @@ class GeinsCRM extends BasePackage {
       throw new Error('Failed to register user');
     }
 
+    const userToken = registerResult.tokens?.token;
     if (user) {
-      const userResult = await this.userUpdate(user);
+      const userResult = await this.userUpdate(user, userToken);
       if (!userResult) {
         throw new Error('Failed to update user with information');
       }
@@ -183,7 +184,7 @@ class GeinsCRM extends BasePackage {
         customerType: GeinsCustomerType.PersonType,
       };
 
-      const userResult = await this.userCreate(registerUserAs);
+      const userResult = await this.userCreate(registerUserAs, userToken);
 
       if (!userResult) {
         throw new Error('Failed to create user in MC');
@@ -240,14 +241,20 @@ class GeinsCRM extends BasePackage {
     return this.userService?.get();
   }
 
-  private async userCreate(user: GeinsUserInputTypeType): Promise<any> {
+  private async userCreate(
+    user: GeinsUserInputTypeType,
+    userToken?: string | undefined,
+  ): Promise<any> {
     if (!this.userService) {
       await this.initUserService();
     }
-    return this.userService?.create(user);
+    return this.userService?.create(user, userToken);
   }
 
-  private async userUpdate(user: GeinsUserInputTypeType): Promise<any> {
+  private async userUpdate(
+    user: GeinsUserInputTypeType,
+    userToken?: string | undefined,
+  ): Promise<any> {
     if (!this.userService) {
       await this.initUserService();
     }
@@ -255,7 +262,7 @@ class GeinsCRM extends BasePackage {
       { subject: GeinsEventType.USER_UPDATE, payload: user },
       GeinsEventType.USER_UPDATE,
     );
-    return this.userService?.update(user);
+    return this.userService?.update(user, userToken);
   }
 
   private async userOrders(): Promise<GeinsUserOrdersType | null | undefined> {
