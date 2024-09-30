@@ -12,7 +12,7 @@
     "link": "yarn link"
   },
   "dependencies": {
-    "@apollo/client": "^3.11.4",
+    "@apollo/client": "^3.11.8",
     "cookie-universal": "^2.2.2",
     "graphql": "^16.9.0",
     "node-cache": "^5.1.2",
@@ -21,11 +21,11 @@
   "devDependencies": {
     "@geins/types": "*",
     "@geins/eslint-config": "*",
-    "@rollup/plugin-commonjs": "^26.0.1",
-    "@rollup/plugin-graphql": "^2.0.4",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "typescript": "^5.4.5",
-    "eslint": "^9"
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@rollup/plugin-graphql": "^2.0.5",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-typescript": "^12.1.0",
+    "typescript": "^5.6.2",
+    "eslint": "^9.11.1"
   }
 }
