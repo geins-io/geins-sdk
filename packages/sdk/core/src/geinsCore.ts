@@ -2,6 +2,7 @@ import type {
   GeinsSettings,
   GeinsChannelTypeType,
   GeinsEndpoints,
+  Environment,
 } from '@geins/types';
 import { GeinsChannelInterface } from '@geins/types';
 import { MerchantApiClient, GraphQLClient } from './api-client';
@@ -35,22 +36,33 @@ export class GeinsCore {
       throw new Error('API Key is required');
     }
 
-    // Initialize API Client
-    if (geinsSettings.apiKey && geinsSettings.accountName) {
-      this.endpointsUrls = buildEndpoints(
-        geinsSettings.apiKey,
-        geinsSettings.accountName,
-        geinsSettings.environment,
-      );
+    if (!geinsSettings.accountName) {
+      throw new Error('Account name is required');
     }
 
-    this.settings = geinsSettings;
+    // Set default environment if not provided
+    const defaultSettings: Partial<GeinsSettings> = {
+      environment: 'prod',
+    };
+
+    // Merge provided settings with defaults
+    this.settings = { ...defaultSettings, ...geinsSettings };
+
+    // Initialize API Client
+    if (this.settings.apiKey && this.settings.accountName) {
+      this.endpointsUrls = buildEndpoints(
+        this.settings.apiKey,
+        this.settings.accountName,
+        this.settings.environment,
+      );
+    }
 
     // Initialize BroadcastChannel
     if (!isServerContext()) {
       this.cookieService = new CookieService();
     }
     this.currentChannel = new Channel(this.settings);
+
     this.eventService = new EventService();
   }
 
@@ -62,7 +74,7 @@ export class GeinsCore {
         this.settings.apiKey,
       );
     } else {
-      throw new Error('API Key and Account Name are required');
+      throw new Error('Failed to initialize API Client');
     }
   }
   /**

@@ -1,0 +1,27 @@
+// Root-level tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "baseUrl": "./", // Base URL for module resolution
+    "paths": {
+      "@geins/*": [
+        "packages/*/src"
+      ] // Path alias for packages (adjust as needed)
+    }
+  },
+  "include": [
+    "packages/**/*"
+  ], // Include all packages in the monorepo
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

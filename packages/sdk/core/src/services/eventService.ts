@@ -1,4 +1,4 @@
-import events from 'events';
+import { EventEmitter } from 'events';
 import { BroadcastChannel } from 'broadcast-channel';
 import { isServerContext } from '../utils';
 import type { GeinsEventMessage } from '@geins/types';
@@ -18,7 +18,7 @@ export class EventService {
   private broadcast: BroadcastChannel | undefined;
   private broadcastChannelId: string = 'geins-channel';
   constructor() {
-    this.emitter = new events.EventEmitter();
+    this.emitter = new EventEmitter();
     if (!isServerContext()) {
       this.broadcast = new BroadcastChannel(this.broadcastChannelId);
       this.addBroadcastListener();
