@@ -1,7 +1,7 @@
 .temp
 .turbo
 .DS_Store
-.repopackignore
+.repopack*
 repopack*
 
 .output
