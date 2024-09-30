@@ -205,7 +205,6 @@ export class AuthService {
 
   // error handler
   private handleError(message: string, error: unknown): any {
-    console.error(message, error);
     return { succeeded: false, error: { message, details: error } };
   }
 }

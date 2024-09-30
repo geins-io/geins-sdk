@@ -9,7 +9,7 @@ import {
   ApolloQueryResult,
   FetchResult, // Import FetchResult
   OperationVariables,
-} from '@apollo/client';
+} from '@apollo/client/core';
 
 export enum FetchPolicyOptions {
   CACHE_FIRST = 'cache-first',
