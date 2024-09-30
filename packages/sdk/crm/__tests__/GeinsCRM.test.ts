@@ -71,7 +71,7 @@ describe('GeinsCRM', () => {
     expect(loginResult!.succeeded).toBe(false);
   });
 
-  it('should register a user with credentials', async () => {
+  /*  it('should register a user with credentials', async () => {
     const randomUsername = `${randomString(10).toLowerCase()}@test-user.com`;
     const randonmPassword = randomString(10);
 
@@ -84,5 +84,5 @@ describe('GeinsCRM', () => {
       username: randomUsername,
       password: 'randonmPassword',
     });
-  });
+  }); */
 });

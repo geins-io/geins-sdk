@@ -15,17 +15,22 @@ export default {
     'graphql',
   ],
   transform: {
-    // Use ts-jest with configuration settings directly in the transform object
     '^.+\\.[tj]sx?$': [
       'ts-jest',
       {
-        tsconfig: '<rootDir>/tsconfig.json', // Specify the path to your TypeScript config
+        tsconfig: '<rootDir>/tsconfig.json',
       },
     ],
-    '^.+\\.(gql|graphql)$': 'jest-transform-stub', // Use jest-transform-stub for .gql and .graphql files
+    '^.+\\.(gql|graphql)$': '@graphql-tools/jest-transform',
   },
   moduleNameMapper: {
-    '\\.(gql|graphql)$': 'jest-transform-stub',
+    // '\\.(gql|graphql)$': '@graphql-tools/jest-transform',
   },
   setupFiles: ['<rootDir>/jest.setup.js'],
+
+  globals: {
+    graphql: {
+      noDescription: true,
+    },
+  },
 };

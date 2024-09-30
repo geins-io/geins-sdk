@@ -1,35 +1,22 @@
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
-export type MakeEmpty<
-  T extends { [key: string]: unknown },
-  K extends keyof T,
-> = { [_ in K]?: never };
-export type Incremental<T> =
-  | T
-  | {
-      [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
-    };
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export interface Scalars {
-  ID: { input: string | number; output: string | number };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
+  ID: { input: string | number; output: string | number; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
   /** The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard. */
-  DateTime: { input: string; output: string };
-  Decimal: { input: number; output: number };
-  Guid: { input: string; output: string };
-  Long: { input: number; output: number };
+  DateTime: { input: string; output: string; }
+  Decimal: { input: number; output: number; }
+  Guid: { input: string; output: string; }
+  Long: { input: number; output: number; }
 }
 
 export interface GeinsAddressInputTypeType {
@@ -97,9 +84,7 @@ export interface GeinsBalanceTypeType {
   /** The cart total selling price incl. VAT if balance hadn't been withdrawn . */
   totalSellingPriceExBalanceIncVat: Scalars['Decimal']['output'];
   /** Cart total incl. VAT, excl. balance, formatted as a currency string */
-  totalSellingPriceExBalanceIncVatFormatted?: Maybe<
-    Scalars['String']['output']
-  >;
+  totalSellingPriceExBalanceIncVatFormatted?: Maybe<Scalars['String']['output']>;
 }
 
 /** Type containing brand listing information */
@@ -495,7 +480,7 @@ export interface GeinsCheckoutOrderTypeType {
 
 export enum GeinsCheckoutStatus {
   CustomerBlacklistedType = 'CUSTOMER_BLACKLISTED',
-  OkType = 'OK',
+  OkType = 'OK'
 }
 
 export interface GeinsCheckoutTypeType {
@@ -544,7 +529,7 @@ export enum GeinsCustomerType {
   /** Organization */
   OrganizationType = 'ORGANIZATION',
   /** Private person */
-  PersonType = 'PERSON',
+  PersonType = 'PERSON'
 }
 
 /** SKU dimensions */
@@ -560,7 +545,7 @@ export interface GeinsDimensionsTypeType {
 export enum GeinsDiscountType {
   NoneType = 'NONE',
   PriceCampaignType = 'PRICE_CAMPAIGN',
-  SalePriceType = 'SALE_PRICE',
+  SalePriceType = 'SALE_PRICE'
 }
 
 /** Type containing collection of filters */
@@ -600,7 +585,7 @@ export enum GeinsFilterMode {
   /** Get the counts for the results, including the ones excluded by the groups */
   ByGroupType = 'BY_GROUP',
   /** Get the counts for the current filter results */
-  CurrentType = 'CURRENT',
+  CurrentType = 'CURRENT'
 }
 
 /** Filter group */
@@ -640,7 +625,7 @@ export interface GeinsFilterValueTypeType {
 export enum GeinsGender {
   ManType = 'MAN',
   UnspecifiedType = 'UNSPECIFIED',
-  WomanType = 'WOMAN',
+  WomanType = 'WOMAN'
 }
 
 /** Type containing Google taxonomy data */
@@ -805,6 +790,7 @@ export interface GeinsMutationType {
   updateUser?: Maybe<GeinsUserTypeType>;
 }
 
+
 export interface GeinsMutationAddPackageToCartArgsType {
   allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -812,10 +798,9 @@ export interface GeinsMutationAddPackageToCartArgsType {
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
   packageId: Scalars['Int']['input'];
-  selections?: InputMaybe<
-    Array<InputMaybe<GeinsProductPackageSelectionTypeType>>
-  >;
+  selections?: InputMaybe<Array<InputMaybe<GeinsProductPackageSelectionTypeType>>>;
 }
+
 
 export interface GeinsMutationAddToCartArgsType {
   allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
@@ -826,6 +811,7 @@ export interface GeinsMutationAddToCartArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
 
+
 export interface GeinsMutationCommitResetArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
   languageId?: InputMaybe<Scalars['String']['input']>;
@@ -834,12 +820,14 @@ export interface GeinsMutationCommitResetArgsType {
   resetKey: Scalars['String']['input'];
 }
 
+
 export interface GeinsMutationCompleteCartArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 export interface GeinsMutationCreateOrUpdateCheckoutArgsType {
   cartId: Scalars['String']['input'];
@@ -849,11 +837,13 @@ export interface GeinsMutationCreateOrUpdateCheckoutArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
 
+
 export interface GeinsMutationDeleteUserArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 export interface GeinsMutationMonitorProductAvailabilityArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -863,6 +853,7 @@ export interface GeinsMutationMonitorProductAvailabilityArgsType {
   skuId: Scalars['Int']['input'];
 }
 
+
 export interface GeinsMutationPlaceOrderArgsType {
   cartId: Scalars['String']['input'];
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -870,6 +861,7 @@ export interface GeinsMutationPlaceOrderArgsType {
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 export interface GeinsMutationPostProductReviewArgsType {
   alias: Scalars['String']['input'];
@@ -881,12 +873,14 @@ export interface GeinsMutationPostProductReviewArgsType {
   rating?: InputMaybe<Scalars['Int']['input']>;
 }
 
+
 export interface GeinsMutationRequestPasswordResetArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 export interface GeinsMutationSetCartPromoCodeArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -896,6 +890,7 @@ export interface GeinsMutationSetCartPromoCodeArgsType {
   promoCode: Scalars['String']['input'];
 }
 
+
 export interface GeinsMutationSetCartShippingFeeArgsType {
   cartId: Scalars['String']['input'];
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -904,6 +899,7 @@ export interface GeinsMutationSetCartShippingFeeArgsType {
   shippingFee: Scalars['Decimal']['input'];
 }
 
+
 export interface GeinsMutationSubscribeToNewsletterArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
@@ -911,6 +907,7 @@ export interface GeinsMutationSubscribeToNewsletterArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 }
+
 
 export interface GeinsMutationUpdateCartGroupArgsType {
   allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
@@ -921,6 +918,7 @@ export interface GeinsMutationUpdateCartGroupArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
 
+
 export interface GeinsMutationUpdateCartItemArgsType {
   allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -929,6 +927,7 @@ export interface GeinsMutationUpdateCartItemArgsType {
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 export interface GeinsMutationUpdateUserArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -1231,7 +1230,7 @@ export enum GeinsPaymentType {
   /** Svea */
   SveaType = 'SVEA',
   /** Walley */
-  WalleyType = 'WALLEY',
+  WalleyType = 'WALLEY'
 }
 
 export interface GeinsPlaceOrderResponseTypeType {
@@ -1375,7 +1374,7 @@ export enum GeinsProductRelation {
   /** Product is related to this product */
   RelatedType = 'RELATED',
   /** Product is similar to this product */
-  SimilarType = 'SIMILAR',
+  SimilarType = 'SIMILAR'
 }
 
 /** The results of the reviews query. */
@@ -1554,12 +1553,14 @@ export interface GeinsQueryType {
   widgetArea?: Maybe<GeinsPageWidgetCollectionTypeType>;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryBrandsArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 /** Gets all available channels */
 export interface GeinsQueryCategoriesArgsType {
@@ -1570,6 +1571,7 @@ export interface GeinsQueryCategoriesArgsType {
   parentCategoryId?: InputMaybe<Scalars['Int']['input']>;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryCategoryArgsType {
   alias?: InputMaybe<Scalars['String']['input']>;
@@ -1578,10 +1580,12 @@ export interface GeinsQueryCategoryArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryChannelArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 /** Gets all available channels */
 export interface GeinsQueryCheckoutArgsType {
@@ -1593,6 +1597,7 @@ export interface GeinsQueryCheckoutArgsType {
   paymentType: GeinsPaymentType;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryCmsPagesArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -1601,6 +1606,7 @@ export interface GeinsQueryCmsPagesArgsType {
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 /** Gets all available channels */
 export interface GeinsQueryGetCartArgsType {
@@ -1613,6 +1619,7 @@ export interface GeinsQueryGetCartArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryGetCheckoutArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -1621,6 +1628,7 @@ export interface GeinsQueryGetCheckoutArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
   paymentType: GeinsPaymentType;
 }
+
 
 /** Gets all available channels */
 export interface GeinsQueryGetCheckoutAndOrderArgsType {
@@ -1631,6 +1639,7 @@ export interface GeinsQueryGetCheckoutAndOrderArgsType {
   paymentType: GeinsPaymentType;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryGetMenuAtLocationArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -1638,6 +1647,7 @@ export interface GeinsQueryGetMenuAtLocationArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
   menuLocationId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 /** Gets all available channels */
 export interface GeinsQueryGetOrderArgsType {
@@ -1647,6 +1657,7 @@ export interface GeinsQueryGetOrderArgsType {
   orderId: Scalars['Int']['input'];
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryGetOrderPublicArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -1655,6 +1666,7 @@ export interface GeinsQueryGetOrderPublicArgsType {
   publicOrderId: Scalars['Guid']['input'];
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryGetOrdersArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -1662,12 +1674,14 @@ export interface GeinsQueryGetOrdersArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryGetUserArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 /** Gets all available channels */
 export interface GeinsQueryListPageInfoArgsType {
@@ -1678,6 +1692,7 @@ export interface GeinsQueryListPageInfoArgsType {
   url?: InputMaybe<Scalars['String']['input']>;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryProductArgsType {
   alias?: InputMaybe<Scalars['String']['input']>;
@@ -1685,6 +1700,7 @@ export interface GeinsQueryProductArgsType {
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 /** Gets all available channels */
 export interface GeinsQueryProductsArgsType {
@@ -1700,6 +1716,7 @@ export interface GeinsQueryProductsArgsType {
   url?: InputMaybe<Scalars['String']['input']>;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryRelatedProductsArgsType {
   alias: Scalars['String']['input'];
@@ -1707,6 +1724,7 @@ export interface GeinsQueryRelatedProductsArgsType {
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 /** Gets all available channels */
 export interface GeinsQueryReviewsArgsType {
@@ -1718,6 +1736,7 @@ export interface GeinsQueryReviewsArgsType {
   take?: InputMaybe<Scalars['Int']['input']>;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryUrlHistoryArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
@@ -1725,6 +1744,7 @@ export interface GeinsQueryUrlHistoryArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
   url?: InputMaybe<Scalars['String']['input']>;
 }
+
 
 /** Gets all available channels */
 export interface GeinsQueryValidateOrderCreationArgsType {
@@ -1735,6 +1755,7 @@ export interface GeinsQueryValidateOrderCreationArgsType {
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
 
+
 /** Gets all available channels */
 export interface GeinsQueryWidgetAreaArgsType {
   alias?: InputMaybe<Scalars['String']['input']>;
@@ -1743,9 +1764,7 @@ export interface GeinsQueryWidgetAreaArgsType {
   customerType?: InputMaybe<GeinsCustomerType>;
   displaySetting?: InputMaybe<Scalars['String']['input']>;
   family?: InputMaybe<Scalars['String']['input']>;
-  filters?: InputMaybe<
-    Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>
-  >;
+  filters?: InputMaybe<Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>>;
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
   preview?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1923,7 +1942,7 @@ export enum GeinsSortType {
   /** Sort by total stock balance, including oversellable, in descending order */
   TotalStockDescType = 'TOTAL_STOCK_DESC',
   /** Sort by votes */
-  VotesType = 'VOTES',
+  VotesType = 'VOTES'
 }
 
 /** Type containing information about SKU stock */
@@ -2097,480 +2116,477 @@ export interface GeinsVatGroupTypeType {
 }
 
 export type GeinsMenuType = {
-  id: string;
-  title?: string | null;
+  id: string,
+  title?: string | null,
   menuItems?: Array<{
-    id: string;
-    label?: string | null;
-    open: boolean;
-    hidden: boolean;
-    targetBlank: boolean;
-    type: string;
-    order: number;
-    title?: string | null;
-    canonicalUrl?: string | null;
+    id: string,
+    label?: string | null,
+    open: boolean,
+    hidden: boolean,
+    targetBlank: boolean,
+    type: string,
+    order: number,
+    title?: string | null,
+    canonicalUrl?: string | null,
     children?: Array<{
-      id: string;
-      label?: string | null;
-      open: boolean;
-      hidden: boolean;
-      targetBlank: boolean;
-      type: string;
-      order: number;
-      title?: string | null;
-      canonicalUrl?: string | null;
+      id: string,
+      label?: string | null,
+      open: boolean,
+      hidden: boolean,
+      targetBlank: boolean,
+      type: string,
+      order: number,
+      title?: string | null,
+      canonicalUrl?: string | null,
       children?: Array<{
-        id: string;
-        label?: string | null;
-        open: boolean;
-        hidden: boolean;
-        targetBlank: boolean;
-        type: string;
-        order: number;
-        title?: string | null;
-        canonicalUrl?: string | null;
-      } | null> | null;
-    } | null> | null;
-  } | null> | null;
+        id: string,
+        label?: string | null,
+        open: boolean,
+        hidden: boolean,
+        targetBlank: boolean,
+        type: string,
+        order: number,
+        title?: string | null,
+        canonicalUrl?: string | null
+      } | null> | null
+    } | null> | null
+  } | null> | null
 };
 
 export type GeinsMenuItemBaseType = {
-  id: string;
-  label?: string | null;
-  open: boolean;
-  hidden: boolean;
-  targetBlank: boolean;
-  type: string;
-  order: number;
-  title?: string | null;
-  canonicalUrl?: string | null;
+  id: string,
+  label?: string | null,
+  open: boolean,
+  hidden: boolean,
+  targetBlank: boolean,
+  type: string,
+  order: number,
+  title?: string | null,
+  canonicalUrl?: string | null,
   children?: Array<{
-    id: string;
-    label?: string | null;
-    open: boolean;
-    hidden: boolean;
-    targetBlank: boolean;
-    type: string;
-    order: number;
-    title?: string | null;
-    canonicalUrl?: string | null;
+    id: string,
+    label?: string | null,
+    open: boolean,
+    hidden: boolean,
+    targetBlank: boolean,
+    type: string,
+    order: number,
+    title?: string | null,
+    canonicalUrl?: string | null,
     children?: Array<{
-      id: string;
-      label?: string | null;
-      open: boolean;
-      hidden: boolean;
-      targetBlank: boolean;
-      type: string;
-      order: number;
-      title?: string | null;
-      canonicalUrl?: string | null;
-    } | null> | null;
-  } | null> | null;
+      id: string,
+      label?: string | null,
+      open: boolean,
+      hidden: boolean,
+      targetBlank: boolean,
+      type: string,
+      order: number,
+      title?: string | null,
+      canonicalUrl?: string | null
+    } | null> | null
+  } | null> | null
 };
 
 export type GeinsMenuItemType = {
-  id: string;
-  label?: string | null;
-  open: boolean;
-  hidden: boolean;
-  targetBlank: boolean;
-  type: string;
-  order: number;
-  title?: string | null;
-  canonicalUrl?: string | null;
+  id: string,
+  label?: string | null,
+  open: boolean,
+  hidden: boolean,
+  targetBlank: boolean,
+  type: string,
+  order: number,
+  title?: string | null,
+  canonicalUrl?: string | null
 };
 
 export type GeinsChannelFieldsType = {
-  id: string;
-  name: string;
-  type: string;
-  url: string;
-  defaultLanguageId: string;
-  defaultMarketId: string;
+  id: string,
+  name: string,
+  type: string,
+  url: string,
+  defaultLanguageId: string,
+  defaultMarketId: string
 };
 
 export type GeinsMarketFieldsType = {
-  id: string;
-  alias?: string | null;
-  onlyDisplayInCheckout?: boolean | null;
-  virtual?: boolean | null;
-  groupKey: string;
+  id: string,
+  alias?: string | null,
+  onlyDisplayInCheckout?: boolean | null,
+  virtual?: boolean | null,
+  groupKey: string,
   allowedLanguages?: Array<{
-    id: string;
-    name: string;
-    code: string;
-  } | null> | null;
+    id: string,
+    name: string,
+    code: string
+  } | null> | null,
   country?: {
-    name: string;
-    code: string;
-  } | null;
+    name: string,
+    code: string
+  } | null,
   currency?: {
-    code: string;
-    symbol: string;
-  } | null;
+    code: string,
+    symbol: string
+  } | null
 };
 
 export type GeinsLanguageFieldsType = {
-  id: string;
-  name: string;
-  code: string;
+  id: string,
+  name: string,
+  code: string
 };
 
 export type GeinsCountryFieldsType = {
-  name: string;
-  code: string;
+  name: string,
+  code: string
 };
 
 export type GeinsCurrencyFieldsType = {
-  code: string;
-  symbol: string;
+  code: string,
+  symbol: string
 };
 
 export type GeinsCartType = {
-  id?: string | null;
-  promoCode?: string | null;
+  id?: string | null,
+  promoCode?: string | null,
   appliedCampaigns?: Array<{
-    name?: string | null;
-    hideTitle?: boolean | null;
-  } | null> | null;
+    name?: string | null,
+    hideTitle?: boolean | null
+  } | null> | null,
   items?: Array<{
-    quantity: number;
-    skuId: number;
+    quantity: number,
+    skuId: number,
     campaign?: {
       appliedCampaigns?: Array<{
-        name?: string | null;
-        hideTitle?: boolean | null;
-      } | null> | null;
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
       prices?: Array<{
-        quantity: number;
+        quantity: number,
         price?: {
-          isDiscounted: boolean;
-          sellingPriceIncVat: number;
-          sellingPriceExVat: number;
-          regularPriceIncVat: number;
-          regularPriceExVat: number;
-          vat: number;
-          discountPercentage: number;
-          regularPriceIncVatFormatted?: string | null;
-          sellingPriceIncVatFormatted?: string | null;
-          regularPriceExVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-        } | null;
-      } | null> | null;
-    } | null;
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null
+      } | null> | null
+    } | null,
     unitPrice?: {
-      isDiscounted: boolean;
-      sellingPriceIncVat: number;
-      sellingPriceExVat: number;
-      regularPriceIncVat: number;
-      regularPriceExVat: number;
-      vat: number;
-      discountPercentage: number;
-      regularPriceIncVatFormatted?: string | null;
-      sellingPriceIncVatFormatted?: string | null;
-      regularPriceExVatFormatted?: string | null;
-      sellingPriceExVatFormatted?: string | null;
-    } | null;
+      isDiscounted: boolean,
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      vat: number,
+      discountPercentage: number,
+      regularPriceIncVatFormatted?: string | null,
+      sellingPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null
+    } | null,
     product?: {
-      productId: number;
-      articleNumber?: string | null;
-      name?: string | null;
-      alias: string;
-      canonicalUrl?: string | null;
+      productId: number,
+      articleNumber?: string | null,
+      name?: string | null,
+      alias: string,
+      canonicalUrl?: string | null,
       brand?: {
-        name?: string | null;
-      } | null;
+        name?: string | null
+      } | null,
       productImages?: Array<{
-        fileName: string;
-      } | null> | null;
+        fileName: string
+      } | null> | null,
       primaryCategory?: {
-        name: string;
-      } | null;
+        name: string
+      } | null,
       skus?: Array<{
-        skuId: number;
-        name?: string | null;
+        skuId: number,
+        name?: string | null,
         stock?: {
-          inStock: number;
-          oversellable: number;
-          totalStock: number;
-          static?: number | null;
-          incoming?: string | null;
-        } | null;
-      } | null> | null;
+          inStock: number,
+          oversellable: number,
+          totalStock: number,
+          static?: number | null,
+          incoming?: string | null
+        } | null
+      } | null> | null,
       unitPrice?: {
-        isDiscounted: boolean;
-        sellingPriceIncVat: number;
-        sellingPriceExVat: number;
-        regularPriceIncVat: number;
-        regularPriceExVat: number;
-        vat: number;
-        discountPercentage: number;
-        regularPriceIncVatFormatted?: string | null;
-        sellingPriceIncVatFormatted?: string | null;
-        regularPriceExVatFormatted?: string | null;
-        sellingPriceExVatFormatted?: string | null;
-      } | null;
-    } | null;
+        isDiscounted: boolean,
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        vat: number,
+        discountPercentage: number,
+        regularPriceIncVatFormatted?: string | null,
+        sellingPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null
+      } | null
+    } | null,
     totalPrice?: {
-      isDiscounted: boolean;
-      sellingPriceIncVat: number;
-      sellingPriceExVat: number;
-      regularPriceIncVat: number;
-      regularPriceExVat: number;
-      vat: number;
-      discountPercentage: number;
-      regularPriceIncVatFormatted?: string | null;
-      sellingPriceIncVatFormatted?: string | null;
-      regularPriceExVatFormatted?: string | null;
-      sellingPriceExVatFormatted?: string | null;
-    } | null;
-  } | null> | null;
+      isDiscounted: boolean,
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      vat: number,
+      discountPercentage: number,
+      regularPriceIncVatFormatted?: string | null,
+      sellingPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null
+    } | null
+  } | null> | null,
   summary?: {
-    fixedAmountDiscountIncVat: number;
-    fixedAmountDiscountExVat: number;
+    fixedAmountDiscountIncVat: number,
+    fixedAmountDiscountExVat: number,
     balance?: {
-      pending: number;
-      pendingFormatted?: string | null;
-      totalSellingPriceExBalanceExVat: number;
-      totalSellingPriceExBalanceIncVat: number;
-      totalSellingPriceExBalanceIncVatFormatted?: string | null;
-    } | null;
+      pending: number,
+      pendingFormatted?: string | null,
+      totalSellingPriceExBalanceExVat: number,
+      totalSellingPriceExBalanceIncVat: number,
+      totalSellingPriceExBalanceIncVatFormatted?: string | null
+    } | null,
     subTotal?: {
-      regularPriceIncVatFormatted?: string | null;
-      regularPriceExVatFormatted?: string | null;
-      sellingPriceIncVatFormatted?: string | null;
-      sellingPriceExVatFormatted?: string | null;
-      sellingPriceExVat: number;
-      sellingPriceIncVat: number;
-      vat: number;
-    } | null;
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      sellingPriceExVat: number,
+      sellingPriceIncVat: number,
+      vat: number
+    } | null,
     shipping?: {
-      amountLeftToFreeShipping: number;
-      amountLeftToFreeShippingFormatted?: string | null;
-      feeExVatFormatted?: string | null;
-      feeIncVatFormatted?: string | null;
-      feeIncVat: number;
-      feeExVat: number;
-      isDefault: boolean;
-    } | null;
+      amountLeftToFreeShipping: number,
+      amountLeftToFreeShippingFormatted?: string | null,
+      feeExVatFormatted?: string | null,
+      feeIncVatFormatted?: string | null,
+      feeIncVat: number,
+      feeExVat: number,
+      isDefault: boolean
+    } | null,
     total?: {
-      isDiscounted: boolean;
-      sellingPriceIncVatFormatted?: string | null;
-      sellingPriceExVatFormatted?: string | null;
-      sellingPriceIncVat: number;
-      sellingPriceExVat: number;
-      discountIncVatFormatted?: string | null;
-      discountExVatFormatted?: string | null;
-      discountExVat: number;
-      discountIncVat: number;
-      vatFormatted?: string | null;
-      vat: number;
-    } | null;
-  } | null;
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      discountExVat: number,
+      discountIncVat: number,
+      vatFormatted?: string | null,
+      vat: number
+    } | null
+  } | null
 };
 
 export type GeinsPriceType = {
-  isDiscounted: boolean;
-  sellingPriceIncVat: number;
-  sellingPriceExVat: number;
-  regularPriceIncVat: number;
-  regularPriceExVat: number;
-  vat: number;
-  discountPercentage: number;
-  regularPriceIncVatFormatted?: string | null;
-  sellingPriceIncVatFormatted?: string | null;
-  regularPriceExVatFormatted?: string | null;
-  sellingPriceExVatFormatted?: string | null;
+  isDiscounted: boolean,
+  sellingPriceIncVat: number,
+  sellingPriceExVat: number,
+  regularPriceIncVat: number,
+  regularPriceExVat: number,
+  vat: number,
+  discountPercentage: number,
+  regularPriceIncVatFormatted?: string | null,
+  sellingPriceIncVatFormatted?: string | null,
+  regularPriceExVatFormatted?: string | null,
+  sellingPriceExVatFormatted?: string | null
 };
 
 export type GeinsStockType = {
-  inStock: number;
-  oversellable: number;
-  totalStock: number;
-  static?: number | null;
-  incoming?: string | null;
+  inStock: number,
+  oversellable: number,
+  totalStock: number,
+  static?: number | null,
+  incoming?: string | null
 };
 
 export type GeinsAddressType = {
-  firstName: string;
-  lastName: string;
-  company: string;
-  mobile: string;
-  phone: string;
-  careOf: string;
-  entryCode: string;
-  addressLine1: string;
-  addressLine2: string;
-  addressLine3: string;
-  zip: string;
-  city: string;
-  state: string;
-  country: string;
+  firstName: string,
+  lastName: string,
+  company: string,
+  mobile: string,
+  phone: string,
+  careOf: string,
+  entryCode: string,
+  addressLine1: string,
+  addressLine2: string,
+  addressLine3: string,
+  zip: string,
+  city: string,
+  state: string,
+  country: string
 };
 
 export type GeinsUserType = {
-  id: number;
-  email: string;
-  customerType?: GeinsCustomerType | null;
-  gender?: GeinsGender | null;
-  metaData?: string | null;
-  entityId?: string | null;
+  id: number,
+  email: string,
+  customerType?: GeinsCustomerType | null,
+  gender?: GeinsGender | null,
+  metaData?: string | null,
+  entityId?: string | null,
   address?: {
-    firstName: string;
-    lastName: string;
-    company: string;
-    mobile: string;
-    phone: string;
-    careOf: string;
-    entryCode: string;
-    addressLine1: string;
-    addressLine2: string;
-    addressLine3: string;
-    zip: string;
-    city: string;
-    state: string;
-    country: string;
-  } | null;
+    firstName: string,
+    lastName: string,
+    company: string,
+    mobile: string,
+    phone: string,
+    careOf: string,
+    entryCode: string,
+    addressLine1: string,
+    addressLine2: string,
+    addressLine3: string,
+    zip: string,
+    city: string,
+    state: string,
+    country: string
+  } | null,
   balances?: Array<{
-    currency: string;
-    amount: number;
-  } | null> | null;
+    currency: string,
+    amount: number
+  } | null> | null
 };
 
 export type GeinsUserBalanceType = {
-  currency: string;
-  amount: number;
+  currency: string,
+  amount: number
 };
 
-export type GeinsMenuAtLocationVariablesType =
-  | Exact<{
-      menuLocationId?: InputMaybe<Scalars['String']['input']>;
-      channelId?: InputMaybe<Scalars['String']['input']>;
-      languageId?: InputMaybe<Scalars['String']['input']>;
-      marketId?: InputMaybe<Scalars['String']['input']>;
-    }>
-  | undefined;
+export type GeinsMenuAtLocationVariablesType = Exact<{
+  menuLocationId?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
 
 export type GeinsMenuAtLocationType = {
   getMenuAtLocation?: {
-    id: string;
-    title?: string | null;
+    id: string,
+    title?: string | null,
     menuItems?: Array<{
-      id: string;
-      label?: string | null;
-      open: boolean;
-      hidden: boolean;
-      targetBlank: boolean;
-      type: string;
-      order: number;
-      title?: string | null;
-      canonicalUrl?: string | null;
+      id: string,
+      label?: string | null,
+      open: boolean,
+      hidden: boolean,
+      targetBlank: boolean,
+      type: string,
+      order: number,
+      title?: string | null,
+      canonicalUrl?: string | null,
       children?: Array<{
-        id: string;
-        label?: string | null;
-        open: boolean;
-        hidden: boolean;
-        targetBlank: boolean;
-        type: string;
-        order: number;
-        title?: string | null;
-        canonicalUrl?: string | null;
+        id: string,
+        label?: string | null,
+        open: boolean,
+        hidden: boolean,
+        targetBlank: boolean,
+        type: string,
+        order: number,
+        title?: string | null,
+        canonicalUrl?: string | null,
         children?: Array<{
-          id: string;
-          label?: string | null;
-          open: boolean;
-          hidden: boolean;
-          targetBlank: boolean;
-          type: string;
-          order: number;
-          title?: string | null;
-          canonicalUrl?: string | null;
-        } | null> | null;
-      } | null> | null;
-    } | null> | null;
-  } | null;
+          id: string,
+          label?: string | null,
+          open: boolean,
+          hidden: boolean,
+          targetBlank: boolean,
+          type: string,
+          order: number,
+          title?: string | null,
+          canonicalUrl?: string | null
+        } | null> | null
+      } | null> | null
+    } | null> | null
+  } | null
 };
 
-export type GeinsGetChannelVariablesType =
-  | Exact<{
-      channelId?: InputMaybe<Scalars['String']['input']>;
-    }>
-  | undefined;
+export type GeinsGetChannelVariablesType = Exact<{
+  channelId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
 
 export type GeinsGetChannelType = {
   channel?: {
-    id: string;
-    name: string;
-    type: string;
-    url: string;
-    defaultLanguageId: string;
-    defaultMarketId: string;
+    id: string,
+    name: string,
+    type: string,
+    url: string,
+    defaultLanguageId: string,
+    defaultMarketId: string,
     markets?: Array<{
-      id: string;
-      alias?: string | null;
-      onlyDisplayInCheckout?: boolean | null;
-      virtual?: boolean | null;
-      groupKey: string;
+      id: string,
+      alias?: string | null,
+      onlyDisplayInCheckout?: boolean | null,
+      virtual?: boolean | null,
+      groupKey: string,
       allowedLanguages?: Array<{
-        id: string;
-        name: string;
-        code: string;
-      } | null> | null;
+        id: string,
+        name: string,
+        code: string
+      } | null> | null,
       country?: {
-        name: string;
-        code: string;
-      } | null;
+        name: string,
+        code: string
+      } | null,
       currency?: {
-        code: string;
-        symbol: string;
-      } | null;
-    } | null> | null;
+        code: string,
+        symbol: string
+      } | null
+    } | null> | null,
     languages?: Array<{
-      id: string;
-      name: string;
-      code: string;
-    } | null> | null;
-  } | null;
+      id: string,
+      name: string,
+      code: string
+    } | null> | null
+  } | null
 };
 
-export type GeinsGetChannelsVariablesType =
-  | Exact<{ [key: string]: never }>
-  | undefined;
+export type GeinsGetChannelsVariablesType = Exact<{ [key: string]: never; }> | undefined;
+
 
 export type GeinsGetChannelsType = {
   channels?: Array<{
-    id: string;
-    name: string;
-    type: string;
-    url: string;
-    defaultLanguageId: string;
-    defaultMarketId: string;
+    id: string,
+    name: string,
+    type: string,
+    url: string,
+    defaultLanguageId: string,
+    defaultMarketId: string,
     markets?: Array<{
-      id: string;
-      alias?: string | null;
-      onlyDisplayInCheckout?: boolean | null;
-      virtual?: boolean | null;
-      groupKey: string;
+      id: string,
+      alias?: string | null,
+      onlyDisplayInCheckout?: boolean | null,
+      virtual?: boolean | null,
+      groupKey: string,
       allowedLanguages?: Array<{
-        id: string;
-        name: string;
-        code: string;
-      } | null> | null;
+        id: string,
+        name: string,
+        code: string
+      } | null> | null,
       country?: {
-        name: string;
-        code: string;
-      } | null;
+        name: string,
+        code: string
+      } | null,
       currency?: {
-        code: string;
-        symbol: string;
-      } | null;
-    } | null> | null;
+        code: string,
+        symbol: string
+      } | null
+    } | null> | null,
     languages?: Array<{
-      id: string;
-      name: string;
-      code: string;
-    } | null> | null;
-  } | null> | null;
+      id: string,
+      name: string,
+      code: string
+    } | null> | null
+  } | null> | null
 };
 
 export type GeinsUserPasswordResetCommitVariablesType = Exact<{
@@ -2581,8 +2597,9 @@ export type GeinsUserPasswordResetCommitVariablesType = Exact<{
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
+
 export type GeinsUserPasswordResetCommitType = {
-  commitReset?: boolean | null;
+  commitReset?: boolean | null
 };
 
 export type GeinsUserRequestPasswordResetVariablesType = Exact<{
@@ -2592,254 +2609,254 @@ export type GeinsUserRequestPasswordResetVariablesType = Exact<{
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
+
 export type GeinsUserRequestPasswordResetType = {
-  requestPasswordReset?: boolean | null;
+  requestPasswordReset?: boolean | null
 };
 
-export type GeinsUserOrdersVariablesType =
-  | Exact<{
-      channelId?: InputMaybe<Scalars['String']['input']>;
-      languageId?: InputMaybe<Scalars['String']['input']>;
-      marketId?: InputMaybe<Scalars['String']['input']>;
-    }>
-  | undefined;
+export type GeinsUserOrdersVariablesType = Exact<{
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
 
 export type GeinsUserOrdersType = {
   getOrders?: Array<{
-    createdAt?: string | null;
-    id?: number | null;
-    status: string;
+    createdAt?: string | null,
+    id?: number | null,
+    status: string,
     cart?: {
-      id?: string | null;
-      promoCode?: string | null;
+      id?: string | null,
+      promoCode?: string | null,
       appliedCampaigns?: Array<{
-        name?: string | null;
-        hideTitle?: boolean | null;
-      } | null> | null;
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
       items?: Array<{
-        quantity: number;
-        skuId: number;
+        quantity: number,
+        skuId: number,
         campaign?: {
           appliedCampaigns?: Array<{
-            name?: string | null;
-            hideTitle?: boolean | null;
-          } | null> | null;
+            name?: string | null,
+            hideTitle?: boolean | null
+          } | null> | null,
           prices?: Array<{
-            quantity: number;
+            quantity: number,
             price?: {
-              isDiscounted: boolean;
-              sellingPriceIncVat: number;
-              sellingPriceExVat: number;
-              regularPriceIncVat: number;
-              regularPriceExVat: number;
-              vat: number;
-              discountPercentage: number;
-              regularPriceIncVatFormatted?: string | null;
-              sellingPriceIncVatFormatted?: string | null;
-              regularPriceExVatFormatted?: string | null;
-              sellingPriceExVatFormatted?: string | null;
-            } | null;
-          } | null> | null;
-        } | null;
+              isDiscounted: boolean,
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              vat: number,
+              discountPercentage: number,
+              regularPriceIncVatFormatted?: string | null,
+              sellingPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null
+            } | null
+          } | null> | null
+        } | null,
         unitPrice?: {
-          isDiscounted: boolean;
-          sellingPriceIncVat: number;
-          sellingPriceExVat: number;
-          regularPriceIncVat: number;
-          regularPriceExVat: number;
-          vat: number;
-          discountPercentage: number;
-          regularPriceIncVatFormatted?: string | null;
-          sellingPriceIncVatFormatted?: string | null;
-          regularPriceExVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-        } | null;
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null,
         product?: {
-          productId: number;
-          articleNumber?: string | null;
-          name?: string | null;
-          alias: string;
-          canonicalUrl?: string | null;
+          productId: number,
+          articleNumber?: string | null,
+          name?: string | null,
+          alias: string,
+          canonicalUrl?: string | null,
           brand?: {
-            name?: string | null;
-          } | null;
+            name?: string | null
+          } | null,
           productImages?: Array<{
-            fileName: string;
-          } | null> | null;
+            fileName: string
+          } | null> | null,
           primaryCategory?: {
-            name: string;
-          } | null;
+            name: string
+          } | null,
           skus?: Array<{
-            skuId: number;
-            name?: string | null;
+            skuId: number,
+            name?: string | null,
             stock?: {
-              inStock: number;
-              oversellable: number;
-              totalStock: number;
-              static?: number | null;
-              incoming?: string | null;
-            } | null;
-          } | null> | null;
+              inStock: number,
+              oversellable: number,
+              totalStock: number,
+              static?: number | null,
+              incoming?: string | null
+            } | null
+          } | null> | null,
           unitPrice?: {
-            isDiscounted: boolean;
-            sellingPriceIncVat: number;
-            sellingPriceExVat: number;
-            regularPriceIncVat: number;
-            regularPriceExVat: number;
-            vat: number;
-            discountPercentage: number;
-            regularPriceIncVatFormatted?: string | null;
-            sellingPriceIncVatFormatted?: string | null;
-            regularPriceExVatFormatted?: string | null;
-            sellingPriceExVatFormatted?: string | null;
-          } | null;
-        } | null;
+            isDiscounted: boolean,
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            vat: number,
+            discountPercentage: number,
+            regularPriceIncVatFormatted?: string | null,
+            sellingPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null
+          } | null
+        } | null,
         totalPrice?: {
-          isDiscounted: boolean;
-          sellingPriceIncVat: number;
-          sellingPriceExVat: number;
-          regularPriceIncVat: number;
-          regularPriceExVat: number;
-          vat: number;
-          discountPercentage: number;
-          regularPriceIncVatFormatted?: string | null;
-          sellingPriceIncVatFormatted?: string | null;
-          regularPriceExVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-        } | null;
-      } | null> | null;
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null
+      } | null> | null,
       summary?: {
-        fixedAmountDiscountIncVat: number;
-        fixedAmountDiscountExVat: number;
+        fixedAmountDiscountIncVat: number,
+        fixedAmountDiscountExVat: number,
         balance?: {
-          pending: number;
-          pendingFormatted?: string | null;
-          totalSellingPriceExBalanceExVat: number;
-          totalSellingPriceExBalanceIncVat: number;
-          totalSellingPriceExBalanceIncVatFormatted?: string | null;
-        } | null;
+          pending: number,
+          pendingFormatted?: string | null,
+          totalSellingPriceExBalanceExVat: number,
+          totalSellingPriceExBalanceIncVat: number,
+          totalSellingPriceExBalanceIncVatFormatted?: string | null
+        } | null,
         subTotal?: {
-          regularPriceIncVatFormatted?: string | null;
-          regularPriceExVatFormatted?: string | null;
-          sellingPriceIncVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-          sellingPriceExVat: number;
-          sellingPriceIncVat: number;
-          vat: number;
-        } | null;
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          sellingPriceExVat: number,
+          sellingPriceIncVat: number,
+          vat: number
+        } | null,
         shipping?: {
-          amountLeftToFreeShipping: number;
-          amountLeftToFreeShippingFormatted?: string | null;
-          feeExVatFormatted?: string | null;
-          feeIncVatFormatted?: string | null;
-          feeIncVat: number;
-          feeExVat: number;
-          isDefault: boolean;
-        } | null;
+          amountLeftToFreeShipping: number,
+          amountLeftToFreeShippingFormatted?: string | null,
+          feeExVatFormatted?: string | null,
+          feeIncVatFormatted?: string | null,
+          feeIncVat: number,
+          feeExVat: number,
+          isDefault: boolean
+        } | null,
         total?: {
-          isDiscounted: boolean;
-          sellingPriceIncVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-          sellingPriceIncVat: number;
-          sellingPriceExVat: number;
-          discountIncVatFormatted?: string | null;
-          discountExVatFormatted?: string | null;
-          discountExVat: number;
-          discountIncVat: number;
-          vatFormatted?: string | null;
-          vat: number;
-        } | null;
-      } | null;
-    } | null;
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          discountExVat: number,
+          discountIncVat: number,
+          vatFormatted?: string | null,
+          vat: number
+        } | null
+      } | null
+    } | null,
     billingAddress?: {
-      firstName: string;
-      lastName: string;
-      company: string;
-      mobile: string;
-      phone: string;
-      careOf: string;
-      entryCode: string;
-      addressLine1: string;
-      addressLine2: string;
-      addressLine3: string;
-      zip: string;
-      city: string;
-      state: string;
-      country: string;
-    } | null;
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
     shippingAddress?: {
-      firstName: string;
-      lastName: string;
-      company: string;
-      mobile: string;
-      phone: string;
-      careOf: string;
-      entryCode: string;
-      addressLine1: string;
-      addressLine2: string;
-      addressLine3: string;
-      zip: string;
-      city: string;
-      state: string;
-      country: string;
-    } | null;
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
     shippingDetails?: Array<{
-      name: string;
-      trackingLink?: string | null;
-    } | null> | null;
+      name: string,
+      trackingLink?: string | null
+    } | null> | null,
     paymentDetails?: Array<{
-      displayName: string;
-    } | null> | null;
+      displayName: string
+    } | null> | null,
     refunds?: Array<{
-      id: number;
-      itemId: number;
-      createdAt: string;
-      reason?: string | null;
-      total: number;
-      vat: number;
-    } | null> | null;
-  } | null> | null;
+      id: number,
+      itemId: number,
+      createdAt: string,
+      reason?: string | null,
+      total: number,
+      vat: number
+    } | null> | null
+  } | null> | null
 };
 
-export type GeinsUserDeleteVariablesType = Exact<{ [key: string]: never }>;
+export type GeinsUserDeleteVariablesType = Exact<{ [key: string]: never; }>;
+
 
 export type GeinsUserDeleteType = {
-  deleteUser?: boolean | null;
+  deleteUser?: boolean | null
 };
 
-export type GeinsUserGetVariablesType =
-  | Exact<{ [key: string]: never }>
-  | undefined;
+export type GeinsUserGetVariablesType = Exact<{ [key: string]: never; }> | undefined;
+
 
 export type GeinsUserGetType = {
   getUser?: {
-    id: number;
-    email: string;
-    customerType?: GeinsCustomerType | null;
-    gender?: GeinsGender | null;
-    metaData?: string | null;
-    entityId?: string | null;
+    id: number,
+    email: string,
+    customerType?: GeinsCustomerType | null,
+    gender?: GeinsGender | null,
+    metaData?: string | null,
+    entityId?: string | null,
     address?: {
-      firstName: string;
-      lastName: string;
-      company: string;
-      mobile: string;
-      phone: string;
-      careOf: string;
-      entryCode: string;
-      addressLine1: string;
-      addressLine2: string;
-      addressLine3: string;
-      zip: string;
-      city: string;
-      state: string;
-      country: string;
-    } | null;
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
     balances?: Array<{
-      currency: string;
-      amount: number;
-    } | null> | null;
-  } | null;
+      currency: string,
+      amount: number
+    } | null> | null
+  } | null
 };
 
 export type GeinsUserCreateVariablesType = Exact<{
@@ -2849,10 +2866,11 @@ export type GeinsUserCreateVariablesType = Exact<{
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
+
 export type GeinsUserCreateType = {
   updateUser?: {
-    email: string;
-  } | null;
+    email: string
+  } | null
 };
 
 export type GeinsUserUpdateVariablesType = Exact<{
@@ -2862,35 +2880,36 @@ export type GeinsUserUpdateVariablesType = Exact<{
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
+
 export type GeinsUserUpdateType = {
   updateUser?: {
-    id: number;
-    email: string;
-    customerType?: GeinsCustomerType | null;
-    gender?: GeinsGender | null;
-    metaData?: string | null;
-    entityId?: string | null;
+    id: number,
+    email: string,
+    customerType?: GeinsCustomerType | null,
+    gender?: GeinsGender | null,
+    metaData?: string | null,
+    entityId?: string | null,
     address?: {
-      firstName: string;
-      lastName: string;
-      company: string;
-      mobile: string;
-      phone: string;
-      careOf: string;
-      entryCode: string;
-      addressLine1: string;
-      addressLine2: string;
-      addressLine3: string;
-      zip: string;
-      city: string;
-      state: string;
-      country: string;
-    } | null;
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
     balances?: Array<{
-      currency: string;
-      amount: number;
-    } | null> | null;
-  } | null;
+      currency: string,
+      amount: number
+    } | null> | null
+  } | null
 };
 
 /**

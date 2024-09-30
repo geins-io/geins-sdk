@@ -25,7 +25,7 @@ export class Channel {
 
     this.store = new ChannelStore();
     this.channelId = `${geinsSettings.channel}|${geinsSettings.tld}`;
-    this.cache = new SimpleCache<GeinsChannelTypeType>(60 * 60 * 1000); // 1 hour cache
+    this.cache = new SimpleCache<GeinsChannelTypeType>(60 * 60 * 1000);
     this.initApiClient();
   }
 
