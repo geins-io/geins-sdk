@@ -33,7 +33,7 @@ export class GeinsCore {
     }
 
     if (!geinsSettings.apiKey) {
-      throw new Error('API Key is requireds');
+      throw new Error('API Key is required');
     }
 
     if (!geinsSettings.accountName) {
