@@ -1,19 +1,21 @@
-import { logWrite, AUTH_HEADERS } from '@geins/core';
+import { logWrite, AUTH_HEADERS, GeinsCore } from '@geins/core';
 import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { AuthClient } from './authClient';
 import { AuthService } from './authService';
 
 export class AuthClientProxy extends AuthClient {
   private readonly authEndpointApp: string;
+  public readonly core: GeinsCore;
   /**
    * Global refresh token for sending as header to proxy and renewing the authentication session.
    * Used to obtain a new access token without requiring user re-authentication.
    */
   private refreshToken: string | undefined;
 
-  constructor(authEndpointApp: string) {
+  constructor(core: GeinsCore, authEndpointApp: string) {
     super();
     this.authEndpointApp = authEndpointApp;
+    this.core = core;
   }
 
   private async request<T>(path: string, options: RequestInit): Promise<T> {
@@ -93,17 +95,11 @@ export class AuthClientProxy extends AuthClient {
     });
 
     if (!result || !result.succeeded) {
+      this.clearCookies();
       return undefined;
     }
 
-    if (result && result.tokens?.refreshToken) {
-      this.setCookieRefreshToken(result.tokens.refreshToken);
-    }
-
-    if (result && result.succeeded && result.tokens?.token) {
-      const maxAge = result.tokens.maxAge || 900;
-      this.setCookieUserToken(result.tokens.token, maxAge);
-    }
+    this.setTokens(result.tokens);
 
     return result;
   }
@@ -143,7 +139,7 @@ export class AuthClientProxy extends AuthClient {
         return undefined;
       }
 
-      this.setCookieTokens(result.tokens);
+      this.setTokens(result.tokens);
 
       return result;
     }

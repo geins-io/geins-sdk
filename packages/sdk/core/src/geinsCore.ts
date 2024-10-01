@@ -6,7 +6,12 @@ import type {
 } from '@geins/types';
 import { GeinsChannelInterface } from '@geins/types';
 import { MerchantApiClient, GraphQLClient } from './api-client';
-import { CookieService, EventService, ChannelsService } from './services/';
+import {
+  CookieService,
+  EventService,
+  ChannelsService,
+  logWrite,
+} from './services/';
 import { Channel } from './logic';
 import { isServerContext, buildEndpoints } from './utils';
 
@@ -16,6 +21,7 @@ export class GeinsCore {
   private apiClient: any;
   private graphQLClient: GraphQLClient | undefined;
   private settings: GeinsSettings;
+  private userToken: string | undefined;
 
   // cookie service
   private cookieService: CookieService | undefined;
@@ -27,7 +33,7 @@ export class GeinsCore {
   private currentChannel: Channel | undefined;
   private accountChannels: ChannelsService | undefined;
 
-  constructor(geinsSettings: GeinsSettings) {
+  constructor(geinsSettings: GeinsSettings, userToken?: string | undefined) {
     if (!geinsSettings.channel) {
       throw new Error('Channel is required');
     }
@@ -47,6 +53,7 @@ export class GeinsCore {
 
     // Merge provided settings with defaults
     this.settings = { ...defaultSettings, ...geinsSettings };
+    this.userToken = userToken;
 
     // Initialize API Client
     if (this.settings.apiKey && this.settings.accountName) {
@@ -72,6 +79,7 @@ export class GeinsCore {
       this.apiClient = new MerchantApiClient(
         this.endpointsUrls.main,
         this.settings.apiKey,
+        this.userToken,
       );
     } else {
       throw new Error('Failed to initialize API Client');
@@ -154,6 +162,22 @@ export class GeinsCore {
    */
   get geinsSettings(): GeinsSettings {
     return this.settings;
+  }
+
+  /**
+   * Returns the user token if a user is logged in.
+   */
+  get authToken(): string | undefined {
+    return this.userToken;
+  }
+
+  /**
+   * Sets the user token.
+   * @param token
+   */
+  set authToken(token: string | undefined) {
+    this.userToken = token;
+    this.initApiClient();
   }
 
   /**

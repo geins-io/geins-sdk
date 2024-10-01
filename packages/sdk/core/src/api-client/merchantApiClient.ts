@@ -35,12 +35,19 @@ interface RequestOptions {
 export class MerchantApiClient {
   private cookieService: CookieService | undefined;
   private client: ApolloClient<NormalizedCacheObject>;
+  private userToken: string | undefined;
   fetchPolicy: FetchPolicy = FetchPolicyOptions.CACHE_FIRST;
   pollInterval: number = 0;
 
-  constructor(apiUrl: string, apiKey: string, fetchPolicy?: FetchPolicy) {
+  constructor(
+    apiUrl: string,
+    apiKey: string,
+    userToken: string | undefined,
+    fetchPolicy?: FetchPolicy,
+  ) {
     this.client = this.createClient(apiUrl, apiKey);
     this.cookieService = new CookieService();
+    this.userToken = userToken;
     if (fetchPolicy) {
       this.fetchPolicy = fetchPolicy;
     }
@@ -95,7 +102,9 @@ export class MerchantApiClient {
     userToken?: string | undefined,
   ) {
     const loggedInUser =
-      userToken ?? this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
+      this.userToken ||
+      userToken ||
+      this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
 
     const operationObj: any = {
       [operationType]: document,

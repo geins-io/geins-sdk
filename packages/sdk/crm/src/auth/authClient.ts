@@ -1,10 +1,11 @@
-import { CookieService, AUTH_COOKIES, logWrite } from '@geins/core';
+import { CookieService, AUTH_COOKIES, logWrite, GeinsCore } from '@geins/core';
 import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 import { AuthService } from './authService';
 
 export abstract class AuthClient {
   protected cookieService: CookieService;
+  abstract core: GeinsCore;
 
   constructor() {
     this.cookieService = new CookieService();
@@ -92,7 +93,7 @@ export abstract class AuthClient {
     };
   }
 
-  protected setCookieTokens(tokens?: {
+  protected setTokens(tokens?: {
     refreshToken?: string;
     token?: string;
     maxAge?: number;
@@ -103,6 +104,7 @@ export abstract class AuthClient {
     if (tokens?.token) {
       const maxAge = tokens.maxAge || 900;
       this.setCookieUserToken(tokens.token, maxAge);
+      this.core.authToken = tokens.token;
     }
   }
 

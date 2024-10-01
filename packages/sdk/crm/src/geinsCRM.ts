@@ -35,7 +35,7 @@ class GeinsCRM extends BasePackage {
 
     if (authSettings.clientConnectionMode === AuthClientConnectionModes.Proxy) {
       const proxyUrl = authSettings.proxyUrl || '/api/auth';
-      this.authClient = new AuthClientProxy(proxyUrl);
+      this.authClient = new AuthClientProxy(core, proxyUrl);
     } else if (
       authSettings.clientConnectionMode === AuthClientConnectionModes.Direct
     ) {
@@ -45,6 +45,7 @@ class GeinsCRM extends BasePackage {
         geinsSettings.environment,
       );
       this.authClient = new AuthClientDirect(
+        core,
         endpoints.authSign,
         endpoints.auth,
       );
@@ -236,9 +237,6 @@ class GeinsCRM extends BasePackage {
 
     // see if cookies are present
     const userFromCookies = this.authUserGetFromCookieTokens();
-    if (!userFromCookies || userFromCookies.tokens?.expired) {
-      return undefined;
-    }
     return this.userService?.get();
   }
 

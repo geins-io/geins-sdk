@@ -7,7 +7,6 @@ import {
   validSettings,
   validUserCredentials,
 } from '../../../../test/globalSettings';
-import exp from 'constants';
 
 function randomString(length: number): string {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
