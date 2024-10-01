@@ -552,9 +552,3 @@ geinsCore.events.push(eventMessage, GeinsEventType.USER_LOGIN);
 ```
 
 Emits a `USER_LOGIN` event with the specified message, broadcasting it across all contexts.
-
-## Additional Tips
-
-- **Secure Event Handling**: Ensure that sensitive information is not exposed through event payloads. Always validate and sanitize event data as needed.
-- **Performance Optimization**: Avoid emitting unnecessary events to reduce overhead. Only emit events that are essential for your application's functionality.
-- **Event Naming Conventions**: Use clear and consistent naming conventions for your events to make it easier to manage and understand the flow of events within your application.

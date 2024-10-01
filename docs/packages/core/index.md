@@ -1,8 +1,8 @@
-# @geins/core Package
+# Package: @geins/core
 
 The `@geins/core` package serves as the foundation of the Geins SDK, providing essential functionalities such as event handling, cookie management, and API communication. It is the central piece that all other packages, like `@geins/cms`, depend upon to function correctly.
 
-## Why Use GeinsCore?
+## Overview
 
 The `GeinsCore` class encapsulates core services that are crucial for building applications with the Geins SDK. By initializing an instance of `GeinsCore`, you gain access to:
 

@@ -1,19 +1,28 @@
-.env
-.temp
+# turborepo
 .turbo
-.DS_Store
-.repopack*
-repopack*
 
+# filesystem
+.DS_Store
+.temp
+
+
+# node / nuxt / vite / rollup
+.bin
 .output
 .nuxt
 node_modules
 dist
-.bin
 
 # vscode
 .vscode
 
-# docs
+# vitepress docs
 docs/.vitepress/dist
 docs/.vitepress/cache
+
+# environment
+.env
+
+# repopack
+.repopack*
+repopack*

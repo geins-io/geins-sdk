@@ -1,8 +1,40 @@
 # GraphQLClient
 
-The `GeinsCore` class is the main entry point of the Geins SDK, providing essential functionalities to interact with the Geins API. One of the powerful features it exposes is the `GraphQLClient`, accessible via the `graphql` property. The `GraphQLClient` allows you to execute custom GraphQL queries and mutations, giving you the flexibility to fetch and manipulate data as needed.
+The `GraphQLClient` allows you to execute custom GraphQL queries and mutations, giving you the flexibility to fetch and manipulate data as needed.
 
-This article will guide you through the process of using the `GraphQLClient` provided by `GeinsCore`, including examples of running queries and mutations. We'll also demonstrate how to use the TypeScript types exported by the `@geins/types` package to ensure type safety in your applications.
+## Quick Start
+
+```typescript
+import { GeinsCore, gql } from '@geins/core';
+
+const geinsCore = new GeinsCore(geinsSettings);
+const graphqlClient = geinsCore.graphql;
+
+const MY_PLP_QUERY = gql`
+  query MyProductList($skip: Int, $take: Int) {
+    products(skip: $skip, take: $take) {
+      count
+      products {
+        productId
+        name
+        unitPrice {
+          sellingPriceIncVat
+          sellingPriceIncVatFormatted
+        }
+        productImages {
+          fileName
+        }
+        canonicalUrl
+      }
+    }
+  }
+`;
+
+const myProductList = await graphqlClient.runQuery<
+  { products: GeinsProductsResultTypeType },
+  { skip: number; take: number }
+>(MY_PLP_QUERY, { skip: 0, take: 80 });
+```
 
 ## Overview
 
@@ -353,7 +385,3 @@ In this example:
 - **Custom Operations**: You can use the `GraphQLClient` to execute any custom GraphQL operation supported by the Geins API.
 - **Extensibility**: The flexibility of the `GraphQLClient` allows you to build complex data-fetching logic tailored to your application's needs.
 - **TypeScript Types**: Utilize the types exported by `@geins/types` to enhance type safety and reduce boilerplate code.
-
-Happy coding!
-
-By following this guide, you should now be able to effectively use the `GraphQLClient` provided by `GeinsCore` to interact with the Geins API. Remember to import and use the types from `@geins/types` to ensure type safety and improve your development experience.
