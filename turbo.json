@@ -17,14 +17,14 @@
     "link": {
       "dependsOn": []
     },
-    "dev": {
-      "cache": false
-    },
     "test": {
       "dependsOn": [
         "^build"
       ],
       "outputs": []
+    },
+    "dev": {
+      "cache": false
     }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "geins",
+  "name": "geins-sdk",
   "version": "0.1.0",
   "author": "Geins",
   "private": true,
@@ -63,6 +63,6 @@
   },
   "packageManager": "yarn@1.22.22",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   }
 }

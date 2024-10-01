@@ -1,4 +1,4 @@
-// Root jest.config.js
+// global config for jest
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 export default {
   testEnvironment: 'node',

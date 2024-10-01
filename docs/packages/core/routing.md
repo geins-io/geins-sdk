@@ -2,11 +2,9 @@
 
 The `RoutingService` class is designed to manage URL redirects and routing rules within your application. It fetches URL history from the Geins API and caches it, allowing your application to handle redirects efficiently and keep routing information up-to-date.
 
-## Purpose
+## Overview
 
 The primary purpose of the `RoutingService` is to provide a centralized way to manage URL changes, especially when pages are moved or URLs are updated. It ensures that users and search engines are redirected to the correct URLs, improving user experience and maintaining SEO rankings.
-
-## Key Features
 
 - Fetches URL history from the Geins API.
 - Caches routing data to minimize API calls.
@@ -190,6 +188,5 @@ export interface IStore {
 
 ## Notes
 
-- Ensure that you handle errors appropriately, especially when the API key is invalid or the store encounters issues.
 - The provided `RoutingStore` is suitable for applications that do not require persistent storage across restarts.
 - Consider implementing caching strategies that suit your application's scaling and performance needs.

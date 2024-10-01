@@ -191,26 +191,3 @@ These services handle API interactions related to channels.
   - Returns a Promise resolving to `GeinsChannelTypeType | undefined`.
 
 Both services extend the `BaseApiService`, which provides common API interaction methods.
-
-## Additional Tips
-
-- **Caching**: The `Channel` class caches channel data to improve performance. Cached data is stored for 24 hours by default.
-- **Error Handling**: Always include error handling when fetching channel data to manage potential issues like network errors or invalid configurations.
-- **Configuration**: Ensure that `GeinsSettings` is correctly configured with all required fields, such as `apiKey`, `accountName`, and `channel`.
-
-## Conclusion
-
-Channels in the Geins SDK provide a flexible way to manage multiple sales channels or storefronts within your application. Whether you use the `Channel` class independently or access channels via `GeinsCore`, you have the tools to fetch and utilize channel data effectively.
-
-By understanding how channels work and how to implement them, you can tailor your application's behavior to different channels, manage configurations, and enhance the user experience.
-
-For more information on channels and other SDK features, refer to the [Geins API Documentation](https://docs.geins.io/).
-
-## Final Notes
-
-- **Use Cases**: Channels are particularly useful for applications that need to support multiple storefronts, markets, or localized experiences.
-- **Performance**: Utilizing caching mechanisms provided by the `Channel` class can improve application performance by reducing unnecessary API calls.
-
-Happy coding!
-
-By following this guide, you should now be able to effectively use channels within the `GeinsCore` SDK, whether through `GeinsCore` or by using the `Channel` class independently.

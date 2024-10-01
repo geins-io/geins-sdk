@@ -5,6 +5,7 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "yarn build",

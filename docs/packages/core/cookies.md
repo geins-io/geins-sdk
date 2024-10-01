@@ -1,21 +1,6 @@
 # Cookies
 
-## Introduction
-
-The GeinsCore SDK provides essential services to streamline application development. One such service is the `CookieService`, which offers a unified way to manage cookies within your application via the `GeinsCore` class.
-
-## What is the CookieService?
-
-The `CookieService` is a utility accessed through the `GeinsCore` class. It simplifies cookie operations like setting, getting, and removing cookies, ensuring consistent behavior across different environments (client and server).
-
-## Why Does the CookieService Exist?
-
-Managing cookies can be complex due to varying browser behaviors and server-side considerations. The `CookieService` exists to:
-
-- Provide a consistent API for cookie management.
-- Abstract away environment-specific implementations.
-- Enhance security by handling cookie options appropriately.
-- Integrate seamlessly with other GeinsCore services.
+The `CookieService`, which offers a unified way to manage cookies within your application via the `GeinsCore` class.
 
 ## Overview
 
