@@ -73,6 +73,14 @@ export abstract class AuthClient {
     return this.cookieService.get(AUTH_COOKIES.USER_AUTH);
   }
 
+  protected getCookieMaxAge(): number {
+    const maxAge = this.cookieService.get(AUTH_COOKIES.USER_MAX_AGE);
+    if (!maxAge) {
+      return 1800;
+    }
+    return parseInt(maxAge, 10);
+  }
+
   protected getCurrentTokens(
     refreshToken?: string,
     userToken?: string,
@@ -106,7 +114,6 @@ export abstract class AuthClient {
     rememberUser: boolean,
   ): void {
     const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes
-    const tokenMaxAge = authResponse?.tokens?.maxAge || 900;
     const { user, tokens } = authResponse;
 
     this.cookieService.set({
@@ -115,13 +122,7 @@ export abstract class AuthClient {
       maxAge,
     });
 
-    if (tokens?.refreshToken) {
-      this.setCookieRefreshToken(tokens?.refreshToken, maxAge);
-    }
-
-    if (tokens?.token) {
-      this.setCookieUserToken(tokens.token, tokenMaxAge);
-    }
+    this.setTokens(tokens);
 
     if (user?.username) {
       this.cookieService.set({
@@ -131,16 +132,24 @@ export abstract class AuthClient {
       });
     }
 
-    if (user?.GeinsCustomerTypeType) {
+    if (user?.customerType) {
       this.cookieService.set({
         name: AUTH_COOKIES.USER_TYPE,
-        payload: user.GeinsCustomerTypeType,
+        payload: user.customerType,
         maxAge,
       });
     }
   }
 
+  protected refreshCookies(authResponse: AuthResponse): void {
+    const rememberUser = this.getCookieMaxAge() === 604800;
+    this.setCookiesLogin(authResponse, rememberUser);
+  }
+
   protected setCookieRefreshToken(token: string, maxAge?: number): void {
+    if (!maxAge) {
+      maxAge = this.getCookieMaxAge();
+    }
     this.cookieService.set({
       name: AUTH_COOKIES.REFRESH_TOKEN,
       payload: token,
@@ -169,8 +178,7 @@ export abstract class AuthClient {
 
     const username = spoofedUser?.spoofedBy || 'preview@geins.io';
     const spoofDate = spoofedUser?.spoofDate;
-    const GeinsCustomerTypeType =
-      spoofedUser?.GeinsCustomerTypeType || 'preview';
+    const customerType = spoofedUser?.customerType || 'preview';
 
     this.cookieService.set({
       name: AUTH_COOKIES.USER,
@@ -186,7 +194,7 @@ export abstract class AuthClient {
 
     this.cookieService.set({
       name: AUTH_COOKIES.USER_TYPE,
-      payload: GeinsCustomerTypeType,
+      payload: customerType,
       maxAge,
     });
 

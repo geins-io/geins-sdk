@@ -120,7 +120,7 @@ export interface AuthUser {
    * The type of customer (e.g., regular, premium) the authenticated user is.
    * This field is optional.
    */
-  GeinsCustomerTypeType?: string;
+  customerType?: string;
 
   /**
    * The discount percentage (if any) available to the authenticated user.

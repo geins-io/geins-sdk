@@ -58,7 +58,7 @@ export class AuthClientDirect extends AuthClient {
       return undefined;
     }
 
-    this.setTokens(result.tokens);
+    this.refreshCookies(result);
 
     return result;
   }
@@ -84,7 +84,7 @@ export class AuthClientDirect extends AuthClient {
       return undefined;
     }
 
-    this.setTokens(result.tokens);
+    this.refreshCookies(result);
 
     return result;
   }

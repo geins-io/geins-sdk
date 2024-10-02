@@ -95,7 +95,7 @@ export class AuthClientProxy extends AuthClient {
       return undefined;
     }
 
-    this.setTokens(result.tokens);
+    this.refreshCookies(result);
 
     return result;
   }
@@ -139,7 +139,7 @@ export class AuthClientProxy extends AuthClient {
         return undefined;
       }
 
-      this.setTokens(result.tokens);
+      this.refreshCookies(result);
 
       return result;
     }
