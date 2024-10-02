@@ -73,14 +73,6 @@ export abstract class AuthClient {
     return this.cookieService.get(AUTH_COOKIES.USER_AUTH);
   }
 
-  protected getCookieMaxAge(): number {
-    const maxAge = this.cookieService.get(AUTH_COOKIES.USER_MAX_AGE);
-    if (!maxAge) {
-      return 1800;
-    }
-    return parseInt(maxAge, 10);
-  }
-
   protected getCurrentTokens(
     refreshToken?: string,
     userToken?: string,
@@ -149,9 +141,6 @@ export abstract class AuthClient {
   }
 
   protected setCookieRefreshToken(token: string, maxAge?: number): void {
-    if (!maxAge) {
-      maxAge = this.getCookieMaxAge();
-    }
     this.cookieService.set({
       name: AUTH_COOKIES.REFRESH_TOKEN,
       payload: token,

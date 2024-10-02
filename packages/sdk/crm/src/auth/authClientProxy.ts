@@ -41,10 +41,6 @@ export class AuthClientProxy extends AuthClient {
       throw new Error('API request failed');
     }
 
-    if (result.body?.data?.tokens?.refreshToken) {
-      this.setCookieRefreshToken(result.body?.data?.tokens?.refreshToken);
-    }
-
     return result.body?.data as T;
   }
 
