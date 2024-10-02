@@ -21,7 +21,7 @@ export class GeinsCore {
   private apiClient: any;
   private graphQLClient: GraphQLClient | undefined;
   private settings: GeinsSettings;
-  private userToken: string | undefined;
+  private authToken: string | undefined;
 
   // cookie service
   private cookieService: CookieService | undefined;
@@ -33,7 +33,7 @@ export class GeinsCore {
   private currentChannel: Channel | undefined;
   private accountChannels: ChannelsService | undefined;
 
-  constructor(geinsSettings: GeinsSettings, userToken?: string | undefined) {
+  constructor(geinsSettings: GeinsSettings, userToken?: string) {
     if (!geinsSettings.channel) {
       throw new Error('Channel is required');
     }
@@ -53,7 +53,9 @@ export class GeinsCore {
 
     // Merge provided settings with defaults
     this.settings = { ...defaultSettings, ...geinsSettings };
-    this.userToken = userToken;
+
+    // Set user token if provided
+    this.authToken = userToken;
 
     // Initialize API Client
     if (this.settings.apiKey && this.settings.accountName) {
@@ -167,16 +169,16 @@ export class GeinsCore {
   /**
    * Returns the user token if a user is logged in.
    */
-  get authToken(): string | undefined {
-    return this.userToken;
+  get userToken(): string | undefined {
+    return this.authToken;
   }
 
   /**
-   * Sets the user token.
+   * Sets the user token
    * @param token
    */
-  set authToken(token: string | undefined) {
-    this.userToken = token;
+  set userToken(token: string | undefined) {
+    this.authToken = token;
     this.initApiClient();
   }
 

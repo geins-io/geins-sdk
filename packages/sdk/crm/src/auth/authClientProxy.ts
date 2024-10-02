@@ -129,6 +129,10 @@ export class AuthClientProxy extends AuthClient {
       }
     }
 
+    if (tokens.userToken) {
+      this.core.userToken = tokens.userToken;
+    }
+
     if ((this.refreshToken && !userToken) || user?.tokens?.expiresSoon) {
       const result = await this.request<AuthResponse>('/user', {
         method: 'GET',

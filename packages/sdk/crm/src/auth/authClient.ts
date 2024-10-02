@@ -102,9 +102,9 @@ export abstract class AuthClient {
       this.setCookieRefreshToken(tokens.refreshToken);
     }
     if (tokens?.token) {
+      this.core.userToken = tokens.token;
       const maxAge = tokens.maxAge || 900;
       this.setCookieUserToken(tokens.token, maxAge);
-      this.core.authToken = tokens.token;
     }
   }
 
