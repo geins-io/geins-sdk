@@ -10,7 +10,6 @@ import {
   FetchResult, // Import FetchResult
   OperationVariables,
 } from '@apollo/client/core';
-import { logWrite } from '../services';
 
 export enum FetchPolicyOptions {
   CACHE_FIRST = 'cache-first',
@@ -35,14 +34,14 @@ interface RequestOptions {
 export class MerchantApiClient {
   private cookieService: CookieService | undefined;
   private client: ApolloClient<NormalizedCacheObject>;
-  private userToken: string | undefined;
+  private userToken?: string;
   fetchPolicy: FetchPolicy = FetchPolicyOptions.CACHE_FIRST;
   pollInterval: number = 0;
 
   constructor(
     apiUrl: string,
     apiKey: string,
-    userToken: string | undefined,
+    userToken?: string,
     fetchPolicy?: FetchPolicy,
   ) {
     this.client = this.createClient(apiUrl, apiKey);

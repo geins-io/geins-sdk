@@ -1,4 +1,4 @@
-import { logWrite, AUTH_HEADERS, GeinsCore } from '@geins/core';
+import { AUTH_HEADERS, GeinsCore } from '@geins/core';
 import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { AuthClient } from './authClient';
 import { AuthService } from './authService';
@@ -126,7 +126,7 @@ export class AuthClientProxy extends AuthClient {
     }
 
     if (tokens.userToken) {
-      this.core.userToken = tokens.userToken;
+      this.core.setUserToken(tokens.userToken);
     }
 
     if ((this.refreshToken && !userToken) || user?.tokens?.expiresSoon) {

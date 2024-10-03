@@ -1,4 +1,4 @@
-import { logWrite, GeinsCore } from '@geins/core';
+import { GeinsCore } from '@geins/core';
 import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { AuthClient } from './authClient';
 import { AuthService } from './authService';

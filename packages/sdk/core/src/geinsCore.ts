@@ -6,12 +6,7 @@ import type {
 } from '@geins/types';
 import { GeinsChannelInterface } from '@geins/types';
 import { MerchantApiClient, GraphQLClient } from './api-client';
-import {
-  CookieService,
-  EventService,
-  ChannelsService,
-  logWrite,
-} from './services/';
+import { CookieService, EventService, ChannelsService } from './services/';
 import { Channel } from './logic';
 import { isServerContext, buildEndpoints } from './utils';
 
@@ -21,7 +16,7 @@ export class GeinsCore {
   private apiClient: any;
   private graphQLClient: GraphQLClient | undefined;
   private settings: GeinsSettings;
-  private authToken: string | undefined;
+  private userToken?: string;
 
   // cookie service
   private cookieService: CookieService | undefined;
@@ -55,7 +50,7 @@ export class GeinsCore {
     this.settings = { ...defaultSettings, ...geinsSettings };
 
     // Set user token if provided
-    this.authToken = userToken;
+    this.userToken = userToken;
 
     // Initialize API Client
     if (this.settings.apiKey && this.settings.accountName) {
@@ -118,6 +113,28 @@ export class GeinsCore {
   }
 
   /**
+   * Set the user token.
+   * @param userToken
+   */
+  public setUserToken(userToken?: string): void {
+    this.userToken = userToken;
+    console.log(
+      '🚀 ~ GeinsCore ~ setUserToken ~ this.userToken:',
+      this.userToken,
+    );
+
+    this.initApiClient();
+  }
+
+  /**
+   * Get the user token. Returns a token if user is authenticated.
+   * @returns string | undefined
+   */
+  public getUserToken(): string | undefined {
+    return this.userToken;
+  }
+
+  /**
    * Endpoints for the current environment.
    * - main: The main api endpoint used to query Geins.
    * - auth: The auth endpoint.
@@ -164,22 +181,6 @@ export class GeinsCore {
    */
   get geinsSettings(): GeinsSettings {
     return this.settings;
-  }
-
-  /**
-   * Returns the user token if a user is logged in.
-   */
-  get userToken(): string | undefined {
-    return this.authToken;
-  }
-
-  /**
-   * Sets the user token
-   * @param token
-   */
-  set userToken(token: string | undefined) {
-    this.authToken = token;
-    this.initApiClient();
   }
 
   /**

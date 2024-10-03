@@ -1,4 +1,4 @@
-import { CookieService, AUTH_COOKIES, logWrite, GeinsCore } from '@geins/core';
+import { CookieService, AUTH_COOKIES, GeinsCore } from '@geins/core';
 import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 import { AuthService } from './authService';
@@ -37,6 +37,7 @@ export abstract class AuthClient {
 
   public async logout(): Promise<AuthResponse | undefined> {
     this.clearCookies();
+    this.core.setUserToken();
     return { succeeded: true };
   }
 
@@ -102,7 +103,7 @@ export abstract class AuthClient {
       this.setCookieRefreshToken(tokens.refreshToken);
     }
     if (tokens?.token) {
-      this.core.userToken = tokens.token;
+      this.core.setUserToken(tokens.token);
       const maxAge = tokens.maxAge || 900;
       this.setCookieUserToken(tokens.token, maxAge);
     }
