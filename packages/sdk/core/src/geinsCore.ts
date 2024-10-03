@@ -118,10 +118,6 @@ export class GeinsCore {
    */
   public setUserToken(userToken?: string): void {
     this.userToken = userToken;
-    console.log(
-      '🚀 ~ GeinsCore ~ setUserToken ~ this.userToken:',
-      this.userToken,
-    );
 
     this.initApiClient();
   }
