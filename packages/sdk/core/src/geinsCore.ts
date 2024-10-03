@@ -16,6 +16,7 @@ export class GeinsCore {
   private apiClient: any;
   private graphQLClient: GraphQLClient | undefined;
   private settings: GeinsSettings;
+  private userToken?: string;
 
   // cookie service
   private cookieService: CookieService | undefined;
@@ -27,7 +28,7 @@ export class GeinsCore {
   private currentChannel: Channel | undefined;
   private accountChannels: ChannelsService | undefined;
 
-  constructor(geinsSettings: GeinsSettings) {
+  constructor(geinsSettings: GeinsSettings, userToken?: string) {
     if (!geinsSettings.channel) {
       throw new Error('Channel is required');
     }
@@ -47,6 +48,9 @@ export class GeinsCore {
 
     // Merge provided settings with defaults
     this.settings = { ...defaultSettings, ...geinsSettings };
+
+    // Set user token if provided
+    this.userToken = userToken;
 
     // Initialize API Client
     if (this.settings.apiKey && this.settings.accountName) {
@@ -72,6 +76,7 @@ export class GeinsCore {
       this.apiClient = new MerchantApiClient(
         this.endpointsUrls.main,
         this.settings.apiKey,
+        this.userToken,
       );
     } else {
       throw new Error('Failed to initialize API Client');
@@ -105,6 +110,24 @@ export class GeinsCore {
       this.accountChannels = new ChannelsService(this.client, this.settings);
     }
     return this.accountChannels.get() ?? undefined;
+  }
+
+  /**
+   * Set the user token.
+   * @param userToken
+   */
+  public setUserToken(userToken?: string): void {
+    this.userToken = userToken;
+
+    this.initApiClient();
+  }
+
+  /**
+   * Get the user token. Returns a token if user is authenticated.
+   * @returns string | undefined
+   */
+  public getUserToken(): string | undefined {
+    return this.userToken;
   }
 
   /**

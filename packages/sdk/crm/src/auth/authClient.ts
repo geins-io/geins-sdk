@@ -1,10 +1,11 @@
-import { CookieService, AUTH_COOKIES, logWrite } from '@geins/core';
+import { CookieService, AUTH_COOKIES, GeinsCore } from '@geins/core';
 import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 import { AuthService } from './authService';
 
 export abstract class AuthClient {
   protected cookieService: CookieService;
+  abstract core: GeinsCore;
 
   constructor() {
     this.cookieService = new CookieService();
@@ -36,6 +37,7 @@ export abstract class AuthClient {
 
   public async logout(): Promise<AuthResponse | undefined> {
     this.clearCookies();
+    this.core.setUserToken();
     return { succeeded: true };
   }
 
@@ -92,7 +94,7 @@ export abstract class AuthClient {
     };
   }
 
-  protected setCookieTokens(tokens?: {
+  protected setTokens(tokens?: {
     refreshToken?: string;
     token?: string;
     maxAge?: number;
@@ -101,6 +103,7 @@ export abstract class AuthClient {
       this.setCookieRefreshToken(tokens.refreshToken);
     }
     if (tokens?.token) {
+      this.core.setUserToken(tokens.token);
       const maxAge = tokens.maxAge || 900;
       this.setCookieUserToken(tokens.token, maxAge);
     }
@@ -112,7 +115,6 @@ export abstract class AuthClient {
     rememberUser: boolean,
   ): void {
     const maxAge = rememberUser ? 604800 : 1800; // 7 days or 30 minutes
-    const tokenMaxAge = authResponse?.tokens?.maxAge || 900;
     const { user, tokens } = authResponse;
 
     this.cookieService.set({
@@ -121,13 +123,7 @@ export abstract class AuthClient {
       maxAge,
     });
 
-    if (tokens?.refreshToken) {
-      this.setCookieRefreshToken(tokens?.refreshToken, maxAge);
-    }
-
-    if (tokens?.token) {
-      this.setCookieUserToken(tokens.token, tokenMaxAge);
-    }
+    this.setTokens(tokens);
 
     if (user?.username) {
       this.cookieService.set({
@@ -137,13 +133,18 @@ export abstract class AuthClient {
       });
     }
 
-    if (user?.GeinsCustomerTypeType) {
+    if (user?.customerType) {
       this.cookieService.set({
         name: AUTH_COOKIES.USER_TYPE,
-        payload: user.GeinsCustomerTypeType,
+        payload: user.customerType,
         maxAge,
       });
     }
+  }
+
+  protected refreshCookies(authResponse: AuthResponse): void {
+    const rememberUser = this.getCookieMaxAge() === 604800;
+    this.setCookiesLogin(authResponse, rememberUser);
   }
 
   protected setCookieRefreshToken(token: string, maxAge?: number): void {
@@ -178,8 +179,7 @@ export abstract class AuthClient {
 
     const username = spoofedUser?.spoofedBy || 'preview@geins.io';
     const spoofDate = spoofedUser?.spoofDate;
-    const GeinsCustomerTypeType =
-      spoofedUser?.GeinsCustomerTypeType || 'preview';
+    const customerType = spoofedUser?.customerType || 'preview';
 
     this.cookieService.set({
       name: AUTH_COOKIES.USER,
@@ -195,7 +195,7 @@ export abstract class AuthClient {
 
     this.cookieService.set({
       name: AUTH_COOKIES.USER_TYPE,
-      payload: GeinsCustomerTypeType,
+      payload: customerType,
       maxAge,
     });
 

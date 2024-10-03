@@ -12,7 +12,7 @@ export interface ContentAreaVariables extends BaseCmsVariables {
 }
 
 export interface BaseCmsVariables extends GeinsBaseApiVars {
-  GeinsCustomerTypeType?: GeinsCustomerType | null;
+  customerType?: GeinsCustomerType | null;
   preview?: boolean | null;
   filters?: Array<KeyValue> | null;
   displaySetting?: string | null;

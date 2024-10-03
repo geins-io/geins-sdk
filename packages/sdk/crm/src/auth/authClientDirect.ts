@@ -1,14 +1,16 @@
-import { logWrite } from '@geins/core';
+import { GeinsCore } from '@geins/core';
 import type { AuthResponse, AuthCredentials } from '@geins/types';
 import { AuthClient } from './authClient';
 import { AuthService } from './authService';
 
 export class AuthClientDirect extends AuthClient {
   private authService: AuthService;
+  public readonly core: GeinsCore;
 
-  constructor(signEndpoint: string, authEndpoint: string) {
+  constructor(core: GeinsCore, signEndpoint: string, authEndpoint: string) {
     super();
     this.authService = new AuthService(signEndpoint, authEndpoint);
+    this.core = core;
   }
 
   async login(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
@@ -50,18 +52,14 @@ export class AuthClientDirect extends AuthClient {
     }
 
     const result = await this.authService.refresh(refreshToken);
+
     if (!result || !result.succeeded) {
+      this.clearCookies();
       return undefined;
     }
 
-    if (result && result.tokens?.refreshToken) {
-      this.setCookieRefreshToken(result.tokens.refreshToken);
-    }
+    this.refreshCookies(result);
 
-    if (result && result.succeeded && result.tokens?.token) {
-      const maxAge = result.tokens.maxAge || 900;
-      this.setCookieUserToken(result.tokens.token, maxAge);
-    }
     return result;
   }
 
@@ -86,7 +84,7 @@ export class AuthClientDirect extends AuthClient {
       return undefined;
     }
 
-    this.setCookieTokens(result.tokens);
+    this.refreshCookies(result);
 
     return result;
   }
