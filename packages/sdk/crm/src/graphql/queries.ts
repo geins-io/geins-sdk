@@ -10,7 +10,7 @@ const queries = {
   userGet,
   userOrders,
 };
-const mutaions = {
+const mutations = {
   userRegister,
   userUpdate,
   userDelete,
@@ -18,4 +18,4 @@ const mutaions = {
   pwResetCommit,
 };
 
-export { queries, mutaions };
+export { queries, mutations };

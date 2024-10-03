@@ -40,6 +40,7 @@ export class Channel {
       this.apiClient = new MerchantApiClient(
         endpointsUrls.main,
         this.geinsSettings.apiKey,
+        '',
         FetchPolicyOptions.CACHE_FIRST,
       );
     } else {

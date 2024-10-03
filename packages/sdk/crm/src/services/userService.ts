@@ -5,7 +5,7 @@ import {
   GeinsUserInputTypeType,
   SimpleCache,
 } from '@geins/core';
-import { queries, mutaions } from '../graphql';
+import { queries, mutations } from '../graphql';
 export class UserService extends BaseApiService {
   private cache: SimpleCache<GeinsUserGetType>;
   constructor(client: any, geinsSettings: GeinsSettings) {
@@ -57,7 +57,7 @@ export class UserService extends BaseApiService {
   ): Promise<any> {
     const variables = { user };
     const vars = await this.generateMutationVars(variables);
-    return this.runMutation(mutaions.userRegister, vars, userToken);
+    return this.runMutation(mutations.userRegister, vars, userToken);
   }
 
   async update(
@@ -67,12 +67,12 @@ export class UserService extends BaseApiService {
     const variables = { user };
     const vars = await this.generateMutationVars(variables);
     this.cache.delete('current_user');
-    return this.runMutation(mutaions.userUpdate, vars, userToken);
+    return this.runMutation(mutations.userUpdate, vars, userToken);
   }
 
   async delete(): Promise<any> {
     var vars = await this.generateVars({});
-    return this.runMutation(mutaions.userDelete, vars);
+    return this.runMutation(mutations.userDelete, vars);
   }
 
   protected parseResult(data: any): GeinsUserGetType | null {
