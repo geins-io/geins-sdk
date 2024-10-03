@@ -20,7 +20,7 @@ import {
 } from './services';
 
 class GeinsCRM extends BasePackage {
-  private client: any;
+  private apiClient: any;
   private geinsSettings: GeinsSettings;
   private authClient: AuthClientDirect | AuthClientProxy;
   private userService: UserService | undefined;
@@ -30,12 +30,12 @@ class GeinsCRM extends BasePackage {
   constructor(core: GeinsCore, authSettings: AuthSettings) {
     super(core);
     const { client, geinsSettings } = core;
-    this.client = client;
+    this.apiClient = client;
     this.geinsSettings = geinsSettings;
 
     if (authSettings.clientConnectionMode === AuthClientConnectionModes.Proxy) {
       const proxyUrl = authSettings.proxyUrl || '/api/auth';
-      this.authClient = new AuthClientProxy(core, proxyUrl);
+      this.authClient = new AuthClientProxy(proxyUrl);
     } else if (
       authSettings.clientConnectionMode === AuthClientConnectionModes.Direct
     ) {
@@ -45,7 +45,6 @@ class GeinsCRM extends BasePackage {
         geinsSettings.environment,
       );
       this.authClient = new AuthClientDirect(
-        core,
         endpoints.authSign,
         endpoints.auth,
       );
@@ -55,7 +54,7 @@ class GeinsCRM extends BasePackage {
   }
 
   private async initUserService(): Promise<void> {
-    this.userService = new UserService(this.client, this.geinsSettings);
+    this.userService = new UserService(this.apiClient, this.geinsSettings);
     if (!this.userService) {
       throw new Error('Failed to initialize user service');
     }
@@ -63,7 +62,7 @@ class GeinsCRM extends BasePackage {
 
   private async initPasswordService(): Promise<void> {
     this.passwordResetService = new PasswordResetService(
-      this.client,
+      this.apiClient,
       this.geinsSettings,
     );
     if (!this.passwordResetService) {
@@ -73,7 +72,7 @@ class GeinsCRM extends BasePackage {
 
   private async initUserOrderService(): Promise<void> {
     this.userOrdersService = new UserOrdersService(
-      this.client,
+      this.apiClient,
       this.geinsSettings,
     );
     if (!this.userOrdersService) {
@@ -117,15 +116,26 @@ class GeinsCRM extends BasePackage {
     };
   }
 
-  private authLogin(
+  private async authLogin(
     credentials: AuthCredentials,
   ): Promise<AuthResponse | undefined> {
     if (!this.authClient) {
       throw new Error('AuthClient is not initialized');
     }
-    const loginResult = this.authClient.login(credentials);
+    const loginResult = await this.authClient.login(credentials);
+    if (loginResult && loginResult.succeeded) {
+      if (loginResult.tokens?.token) {
+        this.core.setUserToken(loginResult.tokens?.token);
+      }
+    }
     this.pushEvent(
-      { subject: GeinsEventType.USER_LOGIN, payload: credentials.username },
+      {
+        subject: GeinsEventType.USER_LOGIN,
+        payload: {
+          success: loginResult?.succeeded,
+          user: credentials.username,
+        },
+      },
       GeinsEventType.USER_LOGIN,
     );
     return loginResult;
@@ -236,7 +246,10 @@ class GeinsCRM extends BasePackage {
     }
 
     // see if cookies are present
-    const userFromCookies = this.authUserGetFromCookieTokens();
+    //const userFromCookies = this.authUserGetFromCookieTokens();
+
+    //console.log('userGet', userFromCookies);
+    logWrite('userGet', this.core.getUserToken());
     return this.userService?.get();
   }
 

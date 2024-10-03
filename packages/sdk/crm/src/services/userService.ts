@@ -4,12 +4,13 @@ import {
   logWrite,
   GeinsUserInputTypeType,
   SimpleCache,
+  MerchantApiClient,
 } from '@geins/core';
 import { queries, mutations } from '../graphql';
 export class UserService extends BaseApiService {
   private cache: SimpleCache<GeinsUserGetType>;
-  constructor(client: any, geinsSettings: GeinsSettings) {
-    super(client, geinsSettings);
+  constructor(apiClient: MerchantApiClient, geinsSettings: GeinsSettings) {
+    super(apiClient, geinsSettings);
     this.cache = new SimpleCache<GeinsUserGetType>(5 * 60 * 1000); // 5 minutes cache
   }
   private async generateVars(variables: any) {
@@ -30,7 +31,11 @@ export class UserService extends BaseApiService {
 
   async getRaw(): Promise<any> {
     const vars = await this.generateVars({});
-    return this.runQuery(queries.userGet, vars);
+    const options = {
+      query: queries.userGet,
+      variables: vars,
+    };
+    return this.runQuery(options);
   }
 
   async get(): Promise<GeinsUserGetType | null> {
@@ -39,12 +44,11 @@ export class UserService extends BaseApiService {
     if (cachedUser) {
       return cachedUser;
     }
-
-    const vars = await this.generateVars({});
-    const user = await this.runQueryParsed<GeinsUserGetType>(
-      queries.userGet,
-      vars,
-    );
+    const options = {
+      query: queries.userGet,
+      variables: await this.generateVars({}),
+    };
+    const user = await this.runQueryParsed<GeinsUserGetType>(options);
     if (user) {
       this.cache.set(cacheKey, user);
     }
@@ -55,24 +59,33 @@ export class UserService extends BaseApiService {
     user: GeinsUserInputTypeType,
     userToken?: string | undefined,
   ): Promise<any> {
-    const variables = { user };
-    const vars = await this.generateMutationVars(variables);
-    return this.runMutation(mutations.userRegister, vars, userToken);
+    const options = {
+      query: mutations.userRegister,
+      variables: await this.generateMutationVars({ user }),
+      userToken,
+    };
+    return this.runMutation(options);
   }
 
   async update(
     user: GeinsUserInputTypeType,
     userToken?: string | undefined,
   ): Promise<any> {
-    const variables = { user };
-    const vars = await this.generateMutationVars(variables);
+    const options = {
+      query: mutations.userUpdate,
+      variables: await this.generateMutationVars({ user }),
+      userToken,
+    };
     this.cache.delete('current_user');
-    return this.runMutation(mutations.userUpdate, vars, userToken);
+    return this.runMutation(options);
   }
 
   async delete(): Promise<any> {
-    var vars = await this.generateVars({});
-    return this.runMutation(mutations.userDelete, vars);
+    const options = {
+      query: mutations.userDelete,
+      variables: await this.generateVars({}),
+    };
+    return this.runMutation(options);
   }
 
   protected parseResult(data: any): GeinsUserGetType | null {

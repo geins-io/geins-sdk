@@ -23,13 +23,19 @@ export class BrandsService extends BasePIMApiServicesService {
   }
 
   async getRaw(variables: BrandsQueryVariables): Promise<any> {
-    const vars = await this.generateVars(variables);
-    return await this.runQuery(queries.brands, vars);
+    const options = {
+      query: queries.brands,
+      variables: await this.generateVars(variables),
+    };
+    return await this.runQuery(options);
   }
 
   async get(variables: BrandsQueryVariables): Promise<GeinsBrandTypeType[]> {
-    const vars = await this.generateVars(variables);
-    return await this.runQueryParsed(queries.brands, vars);
+    const options = {
+      query: queries.brands,
+      variables: await this.generateVars(variables),
+    };
+    return await this.runQueryParsed(options);
   }
 
   protected parseResult(result: any): GeinsBrandTypeType[] {

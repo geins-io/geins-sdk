@@ -1,13 +1,17 @@
 import type { GeinsSettings } from '@geins/types';
-import { FetchPolicyOptions } from '../api-client';
+import {
+  FetchPolicyOptions,
+  MerchantApiClient,
+  GraphQLQueryOptions,
+} from '../api-client/merchantApiClient';
 
 export abstract class BaseApiService {
-  protected client: any;
+  protected apiClient: MerchantApiClient;
   protected geinsSettings: GeinsSettings;
   protected channelId: string;
 
-  constructor(client: any, geinsSettings: GeinsSettings) {
-    this.client = client;
+  constructor(apiClient: MerchantApiClient, geinsSettings: GeinsSettings) {
+    this.apiClient = apiClient;
 
     if (!geinsSettings.channel) {
       throw new Error('Channel is required');
@@ -42,36 +46,24 @@ export abstract class BaseApiService {
     return variables;
   }
 
-  protected async runQuery(query: any, variables: any) {
-    if (!this.client) {
+  protected async runQuery(options: GraphQLQueryOptions) {
+    if (!this.apiClient) {
       throw new Error('Merchant API Client is not set');
     }
-    return this.client.runQuery(query, variables);
+    return this.apiClient.runQuery(options);
   }
 
-  protected async runQueryParsed<T>(query: any, variables: any): Promise<T> {
-    const result = await this.runQuery(query, variables);
-
-    // Assuming result is JSON. If not, adjust parsing accordingly.
+  protected async runQueryParsed<T>(options: GraphQLQueryOptions): Promise<T> {
+    const result = await this.runQuery(options);
     const parsedResult = this.parseResult(result);
-
     return parsedResult as T;
   }
 
-  protected async runMutation(
-    query: any,
-    variables: any,
-    userToken?: string | undefined,
-  ) {
-    if (!this.client) {
+  protected async runMutation(options: GraphQLQueryOptions) {
+    if (!this.apiClient) {
       throw new Error('Merchant API Client is not set');
     }
-    return this.client.runMutation(
-      query,
-      variables,
-      FetchPolicyOptions.NETWORK_ONLY,
-      userToken,
-    );
+    return this.apiClient.runMutation(options);
   }
 
   protected parseResult(result: any): any {

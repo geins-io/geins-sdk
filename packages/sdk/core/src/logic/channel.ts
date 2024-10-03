@@ -36,13 +36,13 @@ export class Channel {
         this.geinsSettings.accountName,
         this.geinsSettings.environment,
       );
+      const options = {
+        apiUrl: endpointsUrls.main,
+        apiKey: this.geinsSettings.apiKey,
+        requestOptions: { fetchPolicy: FetchPolicyOptions.CACHE_FIRST },
+      };
 
-      this.apiClient = new MerchantApiClient(
-        endpointsUrls.main,
-        this.geinsSettings.apiKey,
-        '',
-        FetchPolicyOptions.CACHE_FIRST,
-      );
+      this.apiClient = new MerchantApiClient(options);
     } else {
       throw new Error('API Key and Account Name are required');
     }

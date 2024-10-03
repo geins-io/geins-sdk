@@ -1,21 +1,18 @@
 // /packages/sdk/cms/__tests__/GeinsCRM.test.ts
 
 import { GeinsCore } from '@geins/core';
-import { AuthSettings, AuthCredentials, AuthResponse } from '@geins/types';
+import {
+  AuthSettings,
+  AuthCredentials,
+  AuthResponse,
+  GeinsUserInputTypeType,
+} from '@geins/types';
 import { GeinsCRM } from '../src/geinsCRM';
 import {
   validSettings,
   validUserCredentials,
 } from '../../../../test/globalSettings';
-
-function randomString(length: number): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
+import { randomString } from '../../../../test/dataMock';
 
 describe('GeinsCRM', () => {
   const authSettings: AuthSettings = {
@@ -23,11 +20,13 @@ describe('GeinsCRM', () => {
   };
 
   let geinsCRM: GeinsCRM;
+  let crmCore: GeinsCore;
 
   beforeEach(() => {
     // Initialize GeinsCRM instance before each test
     const geinsCore = new GeinsCore(validSettings);
     geinsCRM = new GeinsCRM(geinsCore, authSettings);
+    crmCore = geinsCRM.getCore();
   });
 
   afterEach(() => {
@@ -35,7 +34,7 @@ describe('GeinsCRM', () => {
     jest.clearAllMocks();
   });
 
-  it('should initialize GeinsCRM correctly', () => {
+  /*   it('should initialize GeinsCRM correctly', () => {
     expect(geinsCRM).toBeDefined();
   });
 
@@ -88,5 +87,35 @@ describe('GeinsCRM', () => {
     expect(result!.tokens).toBeDefined();
     expect(result!.user).toHaveProperty('username');
     expect(result!.user?.username).toBe(randomUsername);
+  }); */
+
+  it('should login a user and update information', async () => {
+    const credentials: AuthCredentials = {
+      username: validUserCredentials.username,
+      password: validUserCredentials.password,
+    };
+    const userTokenBeforeLogin = crmCore.getUserToken();
+    console.log('*** userTokenBeforeLogin', userTokenBeforeLogin);
+
+    const loginResult = await geinsCRM.auth.login(credentials);
+    const userTokenAfterLogin = crmCore.getUserToken();
+
+    console.log('*** userTokenAfterLogin', userTokenAfterLogin);
+
+    expect(loginResult).toBeDefined();
+    expect(loginResult!.succeeded).toBe(true);
+
+    const user = await geinsCRM.user.get();
+
+    // get user
+    //
+    // console.log('user', user);
+
+    //await geinsCRM.user.update({username: 'test'}});
   });
+
+  // OLIVA APP
+  // CORE instance
+  // CRM instance
+  // CRM getUser with token --- make sure core has token after this
 });

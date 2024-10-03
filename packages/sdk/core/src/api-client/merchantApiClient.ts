@@ -7,7 +7,7 @@ import {
   DocumentNode,
   FetchPolicy,
   ApolloQueryResult,
-  FetchResult, // Import FetchResult
+  FetchResult,
   OperationVariables,
 } from '@apollo/client/core';
 
@@ -24,27 +24,37 @@ export enum OperationType {
   MUTATION = 'mutation',
 }
 
-interface RequestOptions {
+export interface RequestOptions {
   fetchPolicy?: FetchPolicy;
   pollInterval?: number;
   context?: any;
   [key: string]: any;
 }
 
+export interface MerchantApiClientOptions {
+  apiUrl: string;
+  apiKey: string;
+  userToken?: string;
+  fetchPolicy?: FetchPolicy;
+}
+
+export interface GraphQLQueryOptions {
+  query?: any;
+  variables?: any;
+  requestOptions?: RequestOptions;
+  userToken?: string;
+}
+
 export class MerchantApiClient {
   private cookieService: CookieService | undefined;
-  private client: ApolloClient<NormalizedCacheObject>;
+  private apolloClient: ApolloClient<NormalizedCacheObject>;
   private userToken?: string;
   fetchPolicy: FetchPolicy = FetchPolicyOptions.CACHE_FIRST;
   pollInterval: number = 0;
 
-  constructor(
-    apiUrl: string,
-    apiKey: string,
-    userToken?: string,
-    fetchPolicy?: FetchPolicy,
-  ) {
-    this.client = this.createClient(apiUrl, apiKey);
+  constructor(options: MerchantApiClientOptions) {
+    const { apiUrl, apiKey, userToken, fetchPolicy } = options;
+    this.apolloClient = this.createClient(apiUrl, apiKey);
     this.cookieService = new CookieService();
     this.userToken = userToken;
     if (fetchPolicy) {
@@ -64,11 +74,11 @@ export class MerchantApiClient {
   }
 
   getClient(): ApolloClient<NormalizedCacheObject> | undefined {
-    return this.client;
+    return this.apolloClient;
   }
 
   clearCache() {
-    this.client.clearStore();
+    this.apolloClient.clearStore();
   }
 
   private getFetchPolicy(
@@ -100,7 +110,7 @@ export class MerchantApiClient {
     options: RequestOptions = {},
     userToken?: string | undefined,
   ) {
-    const loggedInUser =
+    const token =
       this.userToken ||
       userToken ||
       this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
@@ -112,10 +122,10 @@ export class MerchantApiClient {
       pollInterval: options.pollInterval || this.pollInterval,
     };
 
-    if (loggedInUser) {
+    if (token) {
       operationObj.context = {
         headers: {
-          Authorization: `Bearer ${loggedInUser}`,
+          Authorization: `Bearer ${token}`,
         },
       };
     }
@@ -126,37 +136,30 @@ export class MerchantApiClient {
   async runQuery<
     TData = any,
     TVariables extends OperationVariables = OperationVariables,
-  >(
-    query: DocumentNode,
-    variables: TVariables = {} as TVariables,
-    options: RequestOptions = {},
-  ): Promise<ApolloQueryResult<TData>> {
+  >(options: GraphQLQueryOptions): Promise<ApolloQueryResult<TData>> {
+    const { query, variables, requestOptions, userToken } = options;
     const q = this.getOperationObject(
       OperationType.QUERY,
       query,
       variables,
-      options,
+      requestOptions,
     );
-    return this.client.query<TData, TVariables>(q);
+
+    return this.apolloClient.query<TData, TVariables>(q);
   }
 
   async runMutation<
     TData = any,
     TVariables extends OperationVariables = OperationVariables,
-  >(
-    mutation: DocumentNode,
-    variables: TVariables = {} as TVariables,
-    options: RequestOptions = {},
-    userToken?: string | undefined,
-  ): Promise<FetchResult<TData>> {
-    // Correct return type
+  >(options: GraphQLQueryOptions): Promise<FetchResult<TData>> {
+    const { query, variables, requestOptions, userToken } = options;
     const q = this.getOperationObject(
       OperationType.MUTATION,
-      mutation,
+      query,
       variables,
-      options,
+      requestOptions,
       userToken,
     );
-    return this.client.mutate<TData, TVariables>(q);
+    return this.apolloClient.mutate<TData, TVariables>(q);
   }
 }

@@ -5,14 +5,26 @@ import {
   ApolloQueryResult,
   OperationVariables,
 } from '@apollo/client';
-import { MerchantApiClient } from './merchantApiClient';
+import { MerchantApiClient, GraphQLQueryOptions } from './merchantApiClient';
+
+interface GraphQLApiClientOptions {
+  apiUrl: string;
+  apiKey: string;
+  userToken?: string;
+  fetchPolicy?: FetchPolicy;
+}
 
 export class GraphQLClient {
   private merchantApiClient: MerchantApiClient;
 
-  constructor(apiUrl: string, apiKey: string, fetchPolicy?: FetchPolicy) {
-    // Initialize MerchantApiClient with the given fetchPolicy
-    this.merchantApiClient = new MerchantApiClient(apiUrl, apiKey, fetchPolicy);
+  constructor(options: GraphQLApiClientOptions) {
+    const { apiUrl, apiKey, fetchPolicy } = options;
+    const merchantApiClientOptions = {
+      apiUrl,
+      apiKey,
+      fetchPolicy,
+    };
+    this.merchantApiClient = new MerchantApiClient(merchantApiClientOptions);
   }
 
   /**
@@ -25,21 +37,11 @@ export class GraphQLClient {
   async runQuery<
     TData = any,
     TVariables extends OperationVariables = OperationVariables,
-  >(
-    query: DocumentNode,
-    variables?: TVariables,
-    options: {
-      fetchPolicy?: FetchPolicy;
-      [key: string]: any;
-    } = {},
-  ): Promise<TData | null> {
+  >(options: GraphQLQueryOptions): Promise<TData | null> {
+    const { query, variables, requestOptions, userToken } = options;
     try {
       const result: ApolloQueryResult<TData> =
-        await this.merchantApiClient.runQuery<TData, TVariables>(
-          query,
-          variables,
-          options,
-        );
+        await this.merchantApiClient.runQuery<TData, TVariables>(options);
       return result.data ? result.data : null;
     } catch (error) {
       console.error('Query error:', error);
@@ -57,21 +59,10 @@ export class GraphQLClient {
   async runMutation<
     TData = any,
     TVariables extends OperationVariables = OperationVariables,
-  >(
-    mutation: DocumentNode,
-    variables?: TVariables,
-    options: {
-      fetchPolicy?: FetchPolicy;
-      [key: string]: any;
-    } = {},
-  ): Promise<TData | null> {
+  >(options: GraphQLQueryOptions): Promise<TData | null> {
     try {
       const result: FetchResult<TData> =
-        await this.merchantApiClient.runMutation<TData, TVariables>(
-          mutation,
-          variables,
-          options,
-        );
+        await this.merchantApiClient.runMutation<TData, TVariables>(options);
       return result.data || null;
     } catch (error) {
       console.error('Mutation error:', error);

@@ -25,4 +25,8 @@ export abstract class BasePackage {
     }
     this.core.events.push(eventMessage, eventNameStr);
   }
+
+  public getCore() {
+    return this.core;
+  }
 }

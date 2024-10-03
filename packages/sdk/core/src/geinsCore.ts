@@ -6,7 +6,9 @@ import type {
 } from '@geins/types';
 import { GeinsChannelInterface } from '@geins/types';
 import { MerchantApiClient, GraphQLClient } from './api-client';
-import { CookieService, EventService, ChannelsService } from './services/';
+import { ChannelsService } from './services/channelsService';
+import { CookieService } from './services/cookieService';
+import { EventService } from './services/eventService';
 import { Channel } from './logic';
 import { isServerContext, buildEndpoints } from './utils';
 
@@ -14,7 +16,7 @@ export class GeinsCore {
   // api client
   private endpointsUrls: any;
   private apiClient: any;
-  private graphQLClient: GraphQLClient | undefined;
+  private graphQLClient: any;
   private settings: GeinsSettings;
   private userToken?: string;
 
@@ -73,15 +75,30 @@ export class GeinsCore {
   // Initialize API Client
   private initApiClient() {
     if (this.settings.apiKey && this.settings.accountName) {
-      this.apiClient = new MerchantApiClient(
-        this.endpointsUrls.main,
-        this.settings.apiKey,
-        this.userToken,
-      );
+      const options = {
+        apiUrl: this.endpointsUrls.main,
+        apiKey: this.settings.apiKey,
+        userToken: this.userToken,
+      };
+      this.apiClient = new MerchantApiClient(options);
     } else {
       throw new Error('Failed to initialize API Client');
     }
   }
+  // Initialize GraphQL Client
+  private initGraphQLClient() {
+    if (this.settings.apiKey && this.settings.accountName) {
+      const options = {
+        apiUrl: this.endpointsUrls.main,
+        apiKey: this.settings.apiKey,
+        userToken: this.userToken,
+      };
+      this.graphQLClient = new GraphQLClient(options);
+    } else {
+      throw new Error('API Key and Account Name are required');
+    }
+  }
+
   /**
    * Channels
    * Methods:
@@ -161,10 +178,7 @@ export class GeinsCore {
   get graphql(): GraphQLClient {
     if (!this.graphQLClient) {
       if (this.settings.apiKey && this.settings.accountName) {
-        this.graphQLClient = new GraphQLClient(
-          this.endpointsUrls.main,
-          this.settings.apiKey,
-        );
+        this.initGraphQLClient();
       } else {
         throw new Error('API Key and Account Name are required');
       }

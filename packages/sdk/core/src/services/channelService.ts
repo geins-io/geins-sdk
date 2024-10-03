@@ -16,11 +16,11 @@ export class ChannelService extends BaseApiService {
     if (cachedChannel) {
       return cachedChannel;
     }
-
-    const channel = await this.runQueryParsed<GeinsChannelTypeType>(
-      queries.channel,
-      { channelId },
-    );
+    const options: any = {
+      query: queries.channel,
+      variables: { channelId },
+    };
+    const channel = await this.runQueryParsed<GeinsChannelTypeType>(options);
     if (channel) {
       this.cache.set(cacheKey, channel);
     }

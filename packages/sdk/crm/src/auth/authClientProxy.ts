@@ -5,17 +5,16 @@ import { AuthService } from './authService';
 
 export class AuthClientProxy extends AuthClient {
   private readonly authEndpointApp: string;
-  public readonly core: GeinsCore;
+
   /**
    * Global refresh token for sending as header to proxy and renewing the authentication session.
    * Used to obtain a new access token without requiring user re-authentication.
    */
   private refreshToken: string | undefined;
 
-  constructor(core: GeinsCore, authEndpointApp: string) {
+  constructor(authEndpointApp: string) {
     super();
     this.authEndpointApp = authEndpointApp;
-    this.core = core;
   }
 
   private async request<T>(path: string, options: RequestInit): Promise<T> {
@@ -123,10 +122,6 @@ export class AuthClientProxy extends AuthClient {
         this.clearCookies();
         return undefined;
       }
-    }
-
-    if (tokens.userToken) {
-      this.core.setUserToken(tokens.userToken);
     }
 
     if ((this.refreshToken && !userToken) || user?.tokens?.expiresSoon) {

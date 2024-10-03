@@ -12,13 +12,19 @@ export class ContentPageService extends BaseApiService {
   }
 
   async getRaw(variables: ContentPageVariables) {
-    const vars = await this.generateVars(variables);
-    return await this.runQuery(queries.contentArea, vars);
+    const options = {
+      query: queries.contentArea,
+      variables: await this.generateVars(variables),
+    };
+    return await this.runQuery(options);
   }
 
   async get(variables: ContentPageVariables) {
-    const vars = await this.generateVars(variables);
-    return await this.runQueryParsed(queries.contentArea, vars);
+    const options = {
+      query: queries.contentArea,
+      variables: await this.generateVars(variables),
+    };
+    return await this.runQueryParsed(options);
   }
 
   protected parseResult(result: any): ContentAreaType {
