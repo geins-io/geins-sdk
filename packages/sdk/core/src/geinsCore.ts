@@ -15,7 +15,7 @@ import { isServerContext, buildEndpoints } from './utils';
 export class GeinsCore {
   // api client
   private endpointsUrls: any;
-  private apiClient: any;
+  private _apiClient!: MerchantApiClient;
   private graphQLClient: any;
   private settings: GeinsSettings;
   private userToken?: string;
@@ -80,7 +80,7 @@ export class GeinsCore {
         apiKey: this.settings.apiKey,
         userToken: this.userToken,
       };
-      this.apiClient = new MerchantApiClient(options);
+      this._apiClient = new MerchantApiClient(options);
     } else {
       throw new Error('Failed to initialize API Client');
     }
@@ -133,10 +133,12 @@ export class GeinsCore {
    * Set the user token.
    * @param userToken
    */
-  public setUserToken(userToken?: string): void {
+  public setUserToken(userToken: string): void {
     this.userToken = userToken;
-
-    this.initApiClient();
+    //console.log('*** core setUserToken', userToken);
+    if (this._apiClient) {
+      this._apiClient.updateToken(userToken);
+    }
   }
 
   /**
@@ -165,10 +167,10 @@ export class GeinsCore {
     if (!this.endpointsUrls) {
       throw new Error('Endpoints are not set');
     }
-    if (!this.apiClient) {
+    if (!this._apiClient) {
       this.initApiClient();
     }
-    return this.apiClient;
+    return this._apiClient;
   }
   /**
    * Returns the GraphQL Client instance.

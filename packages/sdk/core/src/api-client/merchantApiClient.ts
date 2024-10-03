@@ -48,7 +48,7 @@ export interface GraphQLQueryOptions {
 export class MerchantApiClient {
   private cookieService: CookieService | undefined;
   private apolloClient: ApolloClient<NormalizedCacheObject>;
-  private userToken?: string;
+  public userToken?: string;
   fetchPolicy: FetchPolicy = FetchPolicyOptions.CACHE_FIRST;
   pollInterval: number = 0;
 
@@ -60,6 +60,10 @@ export class MerchantApiClient {
     if (fetchPolicy) {
       this.fetchPolicy = fetchPolicy;
     }
+  }
+
+  public updateToken(newToken: string) {
+    this.userToken = newToken;
   }
 
   createClient(apiUrl: string, apiKey: string) {
@@ -138,11 +142,13 @@ export class MerchantApiClient {
     TVariables extends OperationVariables = OperationVariables,
   >(options: GraphQLQueryOptions): Promise<ApolloQueryResult<TData>> {
     const { query, variables, requestOptions, userToken } = options;
+    //console.log('*** query options', options);
     const q = this.getOperationObject(
       OperationType.QUERY,
       query,
       variables,
       requestOptions,
+      userToken,
     );
 
     return this.apolloClient.query<TData, TVariables>(q);

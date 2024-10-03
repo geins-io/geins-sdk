@@ -6,12 +6,12 @@ import {
 } from '../api-client/merchantApiClient';
 
 export abstract class BaseApiService {
-  protected apiClient: MerchantApiClient;
+  protected _apiClient: any;
   protected geinsSettings: GeinsSettings;
   protected channelId: string;
 
-  constructor(apiClient: MerchantApiClient, geinsSettings: GeinsSettings) {
-    this.apiClient = apiClient;
+  constructor(apiClient: any, geinsSettings: GeinsSettings) {
+    this._apiClient = apiClient;
 
     if (!geinsSettings.channel) {
       throw new Error('Channel is required');
@@ -47,10 +47,10 @@ export abstract class BaseApiService {
   }
 
   protected async runQuery(options: GraphQLQueryOptions) {
-    if (!this.apiClient) {
+    if (!this._apiClient) {
       throw new Error('Merchant API Client is not set');
     }
-    return this.apiClient.runQuery(options);
+    return this._apiClient().runQuery(options);
   }
 
   protected async runQueryParsed<T>(options: GraphQLQueryOptions): Promise<T> {
@@ -60,10 +60,10 @@ export abstract class BaseApiService {
   }
 
   protected async runMutation(options: GraphQLQueryOptions) {
-    if (!this.apiClient) {
+    if (!this._apiClient) {
       throw new Error('Merchant API Client is not set');
     }
-    return this.apiClient.runMutation(options);
+    return this._apiClient().runMutation(options);
   }
 
   protected parseResult(result: any): any {

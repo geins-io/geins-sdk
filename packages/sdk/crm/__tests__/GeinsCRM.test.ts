@@ -95,17 +95,18 @@ describe('GeinsCRM', () => {
       password: validUserCredentials.password,
     };
     const userTokenBeforeLogin = crmCore.getUserToken();
-    console.log('*** userTokenBeforeLogin', userTokenBeforeLogin);
+    // console.log('*** userTokenBeforeLogin', userTokenBeforeLogin);
 
     const loginResult = await geinsCRM.auth.login(credentials);
     const userTokenAfterLogin = crmCore.getUserToken();
 
-    console.log('*** userTokenAfterLogin', userTokenAfterLogin);
+    // console.log('*** userTokenAfterLogin', userTokenAfterLogin);
 
     expect(loginResult).toBeDefined();
     expect(loginResult!.succeeded).toBe(true);
 
     const user = await geinsCRM.user.get();
+    console.log('*** user', user);
 
     // get user
     //

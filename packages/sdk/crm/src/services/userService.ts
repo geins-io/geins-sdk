@@ -9,7 +9,7 @@ import {
 import { queries, mutations } from '../graphql';
 export class UserService extends BaseApiService {
   private cache: SimpleCache<GeinsUserGetType>;
-  constructor(apiClient: MerchantApiClient, geinsSettings: GeinsSettings) {
+  constructor(apiClient: any, geinsSettings: GeinsSettings) {
     super(apiClient, geinsSettings);
     this.cache = new SimpleCache<GeinsUserGetType>(5 * 60 * 1000); // 5 minutes cache
   }
