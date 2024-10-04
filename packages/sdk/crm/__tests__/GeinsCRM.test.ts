@@ -156,17 +156,15 @@ describe('GeinsCRM', () => {
     expect(userTokenFromCore).toBe(validToken);
   });
 
-  it('if user-token is present but invalied and used with api calls', async () => {
-    const invalidToken = 'validToken';
+  it('if user-token is present but invalid and used with api calls', async () => {
+    const invalidToken = 'invalidToken';
 
     const isloatedCore = new GeinsCore(validSettings);
     const isolatedCRM = new GeinsCRM(isloatedCore, authSettings);
 
     const user = await isolatedCRM.user.get(invalidToken);
-    expect(user).toBeDefined();
-
-    const userTokenFromCore = isloatedCore.getUserToken();
-    expect(userTokenFromCore).toBe(invalidToken);
+    console.log(user);
+    expect(user).toBeUndefined();
   });
 
   it('if refresh-token is present get user-token to used with api calls', async () => {
