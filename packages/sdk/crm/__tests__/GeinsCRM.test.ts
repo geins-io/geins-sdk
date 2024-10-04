@@ -134,7 +134,7 @@ describe('GeinsCRM', () => {
     expect(cleanUpdateResult!.address).toEqual(changedUserInfo.address);
   });
 
-  it('if refresh-token and user-token is present and used with api calls', async () => {
+  it('if user-token and user-token is present and used with api calls', async () => {
     const credentials: AuthCredentials = {
       username: validUserCredentials.username,
       password: validUserCredentials.password,
@@ -144,7 +144,6 @@ describe('GeinsCRM', () => {
     expect(loginResult!.succeeded).toBe(true);
     expect(loginResult!.tokens).toBeDefined();
     expect(loginResult!.tokens?.token).toBeDefined();
-
     const validToken = loginResult!.tokens?.token;
 
     const isloatedCore = new GeinsCore(validSettings);
@@ -155,6 +154,19 @@ describe('GeinsCRM', () => {
 
     const userTokenFromCore = isloatedCore.getUserToken();
     expect(userTokenFromCore).toBe(validToken);
+  });
+
+  it('if user-token is present but invalied and used with api calls', async () => {
+    const invalidToken = 'validToken';
+
+    const isloatedCore = new GeinsCore(validSettings);
+    const isolatedCRM = new GeinsCRM(isloatedCore, authSettings);
+
+    const user = await isolatedCRM.user.get(invalidToken);
+    expect(user).toBeDefined();
+
+    const userTokenFromCore = isloatedCore.getUserToken();
+    expect(userTokenFromCore).toBe(invalidToken);
   });
 
   it('if refresh-token is present get user-token to used with api calls', async () => {
