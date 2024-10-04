@@ -1,7 +1,11 @@
 import { GeinsCore } from '../geinsCore';
-import type { GeinsEventMessage } from '@geins/types';
+import { MerchantApiClient } from '../api-client/merchantApiClient';
+import type { GeinsEventMessage, GeinsSettings } from '@geins/types';
 import { GeinsEventType } from '@geins/types';
 export abstract class BasePackage {
+  protected _geinsSettings: GeinsSettings;
+  protected _apiClient: () => MerchantApiClient;
+
   constructor(protected core: GeinsCore) {
     if (!core) {
       throw new Error('Core is required');
@@ -12,6 +16,9 @@ export abstract class BasePackage {
     if (!core.geinsSettings) {
       throw new Error('Settings are required');
     }
+    const { client, geinsSettings } = core;
+    this._geinsSettings = geinsSettings;
+    this._apiClient = () => client ?? undefined;
   }
 
   protected pushEvent(
@@ -24,5 +31,9 @@ export abstract class BasePackage {
       this.core.events.push(eventMessage, parentEvent);
     }
     this.core.events.push(eventMessage, eventNameStr);
+  }
+
+  public getCore() {
+    return this.core;
   }
 }

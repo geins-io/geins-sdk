@@ -17,7 +17,6 @@ describe('Channel', () => {
 
   it('should get current channel correctly', async () => {
     const currentChannel = await channel.get();
-    //console.log('currentChannel:', currentChannel);
     expect(currentChannel).toBeDefined();
     expect(currentChannel).toHaveProperty('id');
     expect(currentChannel).toHaveProperty('name');

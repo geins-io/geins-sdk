@@ -1,21 +1,26 @@
 // /packages/sdk/cms/__tests__/GeinsCRM.test.ts
 
 import { GeinsCore } from '@geins/core';
-import { AuthSettings, AuthCredentials, AuthResponse } from '@geins/types';
+import {
+  AuthSettings,
+  AuthCredentials,
+  AuthResponse,
+  GeinsUserInputTypeType,
+  GeinsAddressType,
+} from '@geins/types';
 import { GeinsCRM } from '../src/geinsCRM';
 import {
   validSettings,
   validUserCredentials,
 } from '../../../../test/globalSettings';
-
-function randomString(length: number): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
+import {
+  randomString,
+  randomInt,
+  randomNumber,
+  randomAddress,
+  randomUserData,
+  cleanObject,
+} from '../../../../test/dataMock';
 
 describe('GeinsCRM', () => {
   const authSettings: AuthSettings = {
@@ -88,5 +93,131 @@ describe('GeinsCRM', () => {
     expect(result!.tokens).toBeDefined();
     expect(result!.user).toHaveProperty('username');
     expect(result!.user?.username).toBe(randomUsername);
+  });
+
+  it('should login a user and update information', async () => {
+    const credentials: AuthCredentials = {
+      username: validUserCredentials.username,
+      password: validUserCredentials.password,
+    };
+
+    // create random user data
+    const changedUserInfo = randomUserData();
+
+    const loginResult = await geinsCRM.auth.login(credentials);
+    expect(loginResult).toBeDefined();
+    expect(loginResult!.succeeded).toBe(true);
+
+    // get user information
+    const user = await geinsCRM.user.get();
+    expect(user).toBeDefined();
+    expect(user).toHaveProperty('email');
+    expect(user).toHaveProperty('customerType');
+    expect(user).toHaveProperty('address');
+
+    // update user information
+    const updateResult = await geinsCRM.user.update(changedUserInfo);
+    expect(updateResult).toBeDefined();
+    expect(updateResult).toHaveProperty('email');
+    expect(updateResult).toHaveProperty('personalId');
+    expect(updateResult).toHaveProperty('gender');
+    expect(updateResult).toHaveProperty('customerType');
+    expect(updateResult).toHaveProperty('address');
+
+    // check so that the user information has been updated
+    expect(updateResult!.personalId).toBe(changedUserInfo.personalId);
+    expect(updateResult!.gender).toBe(changedUserInfo.gender);
+    expect(updateResult!.customerType).toBe(changedUserInfo.customerType);
+
+    // clean adress object and compare
+    const cleanUpdateResult = cleanObject(updateResult);
+    expect(cleanUpdateResult!.address).toEqual(changedUserInfo.address);
+  });
+
+  it('if user-token and user-token is present and used with api calls', async () => {
+    const credentials: AuthCredentials = {
+      username: validUserCredentials.username,
+      password: validUserCredentials.password,
+    };
+    const loginResult = await geinsCRM.auth.login(credentials);
+    expect(loginResult).toBeDefined();
+    expect(loginResult!.succeeded).toBe(true);
+    expect(loginResult!.tokens).toBeDefined();
+    expect(loginResult!.tokens?.token).toBeDefined();
+    const validToken = loginResult!.tokens?.token;
+
+    const isloatedCore = new GeinsCore(validSettings);
+    const isolatedCRM = new GeinsCRM(isloatedCore, authSettings);
+
+    const user = await isolatedCRM.user.get(validToken);
+    expect(user).toBeDefined();
+
+    const userTokenFromCore = isloatedCore.getUserToken();
+    expect(userTokenFromCore).toBe(validToken);
+  });
+
+  it('if user-token is present but invalied and used with api calls', async () => {
+    const invalidToken = 'validToken';
+
+    const isloatedCore = new GeinsCore(validSettings);
+    const isolatedCRM = new GeinsCRM(isloatedCore, authSettings);
+
+    const user = await isolatedCRM.user.get(invalidToken);
+    expect(user).toBeDefined();
+
+    const userTokenFromCore = isloatedCore.getUserToken();
+    expect(userTokenFromCore).toBe(invalidToken);
+  });
+
+  it('if refresh-token is present get user-token to used with api calls', async () => {
+    const credentials: AuthCredentials = {
+      username: validUserCredentials.username,
+      password: validUserCredentials.password,
+    };
+
+    const loginResult = await geinsCRM.auth.login(credentials);
+    expect(loginResult).toBeDefined();
+    expect(loginResult!.succeeded).toBe(true);
+    expect(loginResult!.tokens).toBeDefined();
+    expect(loginResult!.tokens?.token).toBeDefined();
+
+    const refreshToken = loginResult!.tokens?.refreshToken;
+    const validToken = loginResult!.tokens?.token;
+
+    const isloatedCore = new GeinsCore(validSettings);
+    const isolatedCRM = new GeinsCRM(isloatedCore, authSettings);
+
+    const authUser = await isolatedCRM.auth.getUser(refreshToken);
+    expect(authUser).toBeDefined();
+
+    const userTokenFromCore = isloatedCore.getUserToken();
+    expect(userTokenFromCore).toBe(validToken);
+  });
+
+  it('if refresh-token is present get the user-token to used with api calls', async () => {
+    const credentials: AuthCredentials = {
+      username: validUserCredentials.username,
+      password: validUserCredentials.password,
+    };
+
+    const loginResult = await geinsCRM.auth.login(credentials);
+    expect(loginResult).toBeDefined();
+    expect(loginResult!.succeeded).toBe(true);
+    expect(loginResult!.tokens).toBeDefined();
+    expect(loginResult!.tokens?.token).toBeDefined();
+
+    const refreshToken = loginResult!.tokens?.refreshToken;
+
+    const isloatedCore = new GeinsCore(validSettings);
+    const isolatedCRM = new GeinsCRM(isloatedCore, authSettings);
+
+    const authUser = await isolatedCRM.auth.refresh(refreshToken);
+    const tokens = authUser?.tokens;
+    expect(tokens).toBeDefined();
+
+    expect(authUser).toBeDefined();
+
+    const userTokenFromCore = isloatedCore.getUserToken();
+    expect(userTokenFromCore).toBe(tokens?.token);
   });
 });

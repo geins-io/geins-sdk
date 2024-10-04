@@ -19,11 +19,11 @@ export class ChannelsService extends BaseApiService {
     if (cachedChannels) {
       return cachedChannels;
     }
-
-    const channels = await this.runQueryParsed<GeinsChannelTypeType[]>(
-      queries.channels,
-      {},
-    );
+    const options: any = {
+      query: queries.channels,
+      variables: {},
+    };
+    const channels = await this.runQueryParsed<GeinsChannelTypeType[]>(options);
     if (channels) {
       this.cache.set(cacheKey, channels);
     }

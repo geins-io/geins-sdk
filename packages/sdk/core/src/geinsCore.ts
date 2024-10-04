@@ -5,28 +5,33 @@ import type {
   Environment,
 } from '@geins/types';
 import { GeinsChannelInterface } from '@geins/types';
-import { MerchantApiClient, GraphQLClient } from './api-client';
-import { CookieService, EventService, ChannelsService } from './services/';
+import { MerchantApiClient } from './api-client';
+import { ChannelsService } from './services/channelsService';
+import { CookieService } from './services/cookieService';
+import { EventService } from './services/eventService';
 import { Channel } from './logic';
 import { isServerContext, buildEndpoints } from './utils';
+import { GraphQLService } from './services';
 
 export class GeinsCore {
   // api client
-  private endpointsUrls: any;
-  private apiClient: any;
-  private graphQLClient: GraphQLClient | undefined;
-  private settings: GeinsSettings;
-  private userToken?: string;
+  private _endpointsUrls: any;
+  private _apiClient!: MerchantApiClient;
+  private _geinsSettings: GeinsSettings;
+  private _userToken?: string | undefined;
+
+  // exposed graphql service
+  private _graphQLService!: GraphQLService;
 
   // cookie service
-  private cookieService: CookieService | undefined;
+  private _cookieService!: CookieService;
 
   // events
-  private eventService: EventService;
+  private _eventService: EventService;
 
   // channel
-  private currentChannel: Channel | undefined;
-  private accountChannels: ChannelsService | undefined;
+  private _currentChannel!: Channel;
+  private _accountChannels!: ChannelsService;
 
   constructor(geinsSettings: GeinsSettings, userToken?: string) {
     if (!geinsSettings.channel) {
@@ -47,41 +52,50 @@ export class GeinsCore {
     };
 
     // Merge provided settings with defaults
-    this.settings = { ...defaultSettings, ...geinsSettings };
+    this._geinsSettings = { ...defaultSettings, ...geinsSettings };
 
     // Set user token if provided
-    this.userToken = userToken;
+    this._userToken = userToken;
 
     // Initialize API Client
-    if (this.settings.apiKey && this.settings.accountName) {
-      this.endpointsUrls = buildEndpoints(
-        this.settings.apiKey,
-        this.settings.accountName,
-        this.settings.environment,
+    if (this._geinsSettings.apiKey && this._geinsSettings.accountName) {
+      this._endpointsUrls = buildEndpoints(
+        this._geinsSettings.apiKey,
+        this._geinsSettings.accountName,
+        this._geinsSettings.environment,
       );
     }
 
     // Initialize BroadcastChannel
     if (!isServerContext()) {
-      this.cookieService = new CookieService();
+      this._cookieService = new CookieService();
     }
-    this.currentChannel = new Channel(this.settings);
+    this._currentChannel = new Channel(this._geinsSettings);
 
-    this.eventService = new EventService();
+    this._eventService = new EventService();
   }
 
   // Initialize API Client
   private initApiClient() {
-    if (this.settings.apiKey && this.settings.accountName) {
-      this.apiClient = new MerchantApiClient(
-        this.endpointsUrls.main,
-        this.settings.apiKey,
-        this.userToken,
-      );
+    if (this._geinsSettings.apiKey && this._geinsSettings.accountName) {
+      const options = {
+        apiUrl: this._endpointsUrls.main,
+        apiKey: this._geinsSettings.apiKey,
+        userToken: this._userToken,
+      };
+      this._apiClient = new MerchantApiClient(options);
     } else {
       throw new Error('Failed to initialize API Client');
     }
   }
+
+  private initGraphQLService(): void {
+    this._graphQLService = new GraphQLService(
+      this._apiClient,
+      this._geinsSettings,
+    );
+  }
+
   /**
    * Channels
    * Methods:
@@ -96,20 +110,23 @@ export class GeinsCore {
   }
 
   private async channelGet(): Promise<GeinsChannelTypeType | undefined> {
-    if (!this.currentChannel) {
-      this.currentChannel = new Channel(this.settings);
+    if (!this._currentChannel) {
+      this._currentChannel = new Channel(this._geinsSettings);
     }
-    if (!this.currentChannel) {
+    if (!this._currentChannel) {
       throw new Error('Failed to initialize channel');
     }
-    return this.currentChannel?.get() ?? undefined;
+    return this._currentChannel?.get() ?? undefined;
   }
 
   private async channelsGet(): Promise<GeinsChannelTypeType[] | undefined> {
-    if (!this.accountChannels) {
-      this.accountChannels = new ChannelsService(this.client, this.settings);
+    if (!this._accountChannels) {
+      this._accountChannels = new ChannelsService(
+        this.client,
+        this._geinsSettings,
+      );
     }
-    return this.accountChannels.get() ?? undefined;
+    return this._accountChannels.get() ?? undefined;
   }
 
   /**
@@ -117,9 +134,10 @@ export class GeinsCore {
    * @param userToken
    */
   public setUserToken(userToken?: string): void {
-    this.userToken = userToken;
-
-    this.initApiClient();
+    this._userToken = userToken;
+    if (this._apiClient) {
+      this._apiClient.updateToken(userToken);
+    }
   }
 
   /**
@@ -127,7 +145,7 @@ export class GeinsCore {
    * @returns string | undefined
    */
   public getUserToken(): string | undefined {
-    return this.userToken;
+    return this._userToken;
   }
 
   /**
@@ -138,45 +156,42 @@ export class GeinsCore {
    * - image: The base image url
    */
   get endpoints(): GeinsEndpoints {
-    return this.endpointsUrls;
+    return this._endpointsUrls;
   }
 
   /**
    * Returns the API Client instance.
    */
   get client(): MerchantApiClient {
-    if (!this.endpointsUrls) {
+    if (!this._endpointsUrls) {
       throw new Error('Endpoints are not set');
     }
-    if (!this.apiClient) {
+    if (!this._apiClient) {
       this.initApiClient();
     }
-    return this.apiClient;
+    return this._apiClient;
   }
   /**
    * Returns the GraphQL Client instance.
    * @returns GraphQLClient
    * Use to query Geins using GraphQL.
    */
-  get graphql(): GraphQLClient {
-    if (!this.graphQLClient) {
-      if (this.settings.apiKey && this.settings.accountName) {
-        this.graphQLClient = new GraphQLClient(
-          this.endpointsUrls.main,
-          this.settings.apiKey,
-        );
+  get graphql(): GraphQLService {
+    if (!this._graphQLService && this._apiClient) {
+      if (this._geinsSettings.apiKey && this._geinsSettings.accountName) {
+        this.initGraphQLService();
       } else {
         throw new Error('API Key and Account Name are required');
       }
     }
-    return this.graphQLClient;
+    return this._graphQLService;
   }
 
   /**
    * Returns the GeinsSettings that was used to to instance the class.
    */
   get geinsSettings(): GeinsSettings {
-    return this.settings;
+    return this._geinsSettings;
   }
 
   /**
@@ -196,7 +211,7 @@ export class GeinsCore {
    * });
    */
   get events(): EventService {
-    return this.eventService;
+    return this._eventService;
   }
 
   /**
@@ -209,9 +224,9 @@ export class GeinsCore {
    *
    */
   get cookies(): CookieService {
-    if (!this.cookieService) {
-      this.cookieService = new CookieService();
+    if (!this._cookieService) {
+      this._cookieService = new CookieService();
     }
-    return this.cookieService;
+    return this._cookieService;
   }
 }

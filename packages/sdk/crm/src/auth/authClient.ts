@@ -5,7 +5,6 @@ import { AuthService } from './authService';
 
 export abstract class AuthClient {
   protected cookieService: CookieService;
-  abstract core: GeinsCore;
 
   constructor() {
     this.cookieService = new CookieService();
@@ -15,7 +14,7 @@ export abstract class AuthClient {
     credentials: AuthCredentials,
   ): Promise<AuthResponse | undefined>;
 
-  abstract refresh(): Promise<AuthResponse | undefined>;
+  abstract refresh(refreshToken?: string): Promise<AuthResponse | undefined>;
   abstract changePassword(
     credentials: AuthCredentials,
   ): Promise<AuthResponse | undefined>;
@@ -37,7 +36,7 @@ export abstract class AuthClient {
 
   public async logout(): Promise<AuthResponse | undefined> {
     this.clearCookies();
-    this.core.setUserToken();
+
     return { succeeded: true };
   }
 
@@ -47,6 +46,7 @@ export abstract class AuthClient {
   ): AuthResponse | undefined {
     token = token || this.getCookieUserToken();
     refreshToken = refreshToken || this.getCookieRefreshToken();
+
     if (!token || !refreshToken) {
       return undefined;
     }
@@ -103,7 +103,6 @@ export abstract class AuthClient {
       this.setCookieRefreshToken(tokens.refreshToken);
     }
     if (tokens?.token) {
-      this.core.setUserToken(tokens.token);
       const maxAge = tokens.maxAge || 900;
       this.setCookieUserToken(tokens.token, maxAge);
     }

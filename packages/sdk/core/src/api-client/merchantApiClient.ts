@@ -7,7 +7,7 @@ import {
   DocumentNode,
   FetchPolicy,
   ApolloQueryResult,
-  FetchResult, // Import FetchResult
+  FetchResult,
   OperationVariables,
 } from '@apollo/client/core';
 
@@ -24,32 +24,50 @@ export enum OperationType {
   MUTATION = 'mutation',
 }
 
-interface RequestOptions {
+export interface RequestOptions {
   fetchPolicy?: FetchPolicy;
   pollInterval?: number;
   context?: any;
   [key: string]: any;
 }
 
+export interface MerchantApiClientOptions {
+  apiUrl: string;
+  apiKey: string;
+  fetchPolicy?: FetchPolicy;
+  userToken?: string;
+}
+
+export interface GraphQLQueryOptions {
+  query?: any;
+  variables?: any;
+  requestOptions?: RequestOptions;
+}
+
 export class MerchantApiClient {
-  private cookieService: CookieService | undefined;
-  private client: ApolloClient<NormalizedCacheObject>;
-  private userToken?: string;
+  private _cookieService: CookieService | undefined;
+  private _apolloClient: ApolloClient<NormalizedCacheObject>;
+  private _userToken?: string;
   fetchPolicy: FetchPolicy = FetchPolicyOptions.CACHE_FIRST;
   pollInterval: number = 0;
 
-  constructor(
-    apiUrl: string,
-    apiKey: string,
-    userToken?: string,
-    fetchPolicy?: FetchPolicy,
-  ) {
-    this.client = this.createClient(apiUrl, apiKey);
-    this.cookieService = new CookieService();
-    this.userToken = userToken;
+  constructor(options: MerchantApiClientOptions) {
+    const { apiUrl, apiKey, userToken, fetchPolicy } = options;
+    this._apolloClient = this.createClient(apiUrl, apiKey);
+    this._cookieService = new CookieService();
+    if (userToken) {
+      this._userToken = userToken;
+    }
     if (fetchPolicy) {
       this.fetchPolicy = fetchPolicy;
     }
+  }
+
+  public updateToken(newToken?: string) {
+    this._userToken = newToken;
+  }
+  public get userToken() {
+    return this._userToken;
   }
 
   createClient(apiUrl: string, apiKey: string) {
@@ -64,11 +82,11 @@ export class MerchantApiClient {
   }
 
   getClient(): ApolloClient<NormalizedCacheObject> | undefined {
-    return this.client;
+    return this._apolloClient;
   }
 
   clearCache() {
-    this.client.clearStore();
+    this._apolloClient.clearStore();
   }
 
   private getFetchPolicy(
@@ -98,12 +116,9 @@ export class MerchantApiClient {
     document: DocumentNode,
     variables: OperationVariables = {},
     options: RequestOptions = {},
-    userToken?: string | undefined,
   ) {
-    const loggedInUser =
-      this.userToken ||
-      userToken ||
-      this.cookieService?.get(AUTH_COOKIES.USER_AUTH);
+    const token =
+      this._userToken || this._cookieService?.get(AUTH_COOKIES.USER_AUTH);
 
     const operationObj: any = {
       [operationType]: document,
@@ -112,10 +127,10 @@ export class MerchantApiClient {
       pollInterval: options.pollInterval || this.pollInterval,
     };
 
-    if (loggedInUser) {
+    if (token) {
       operationObj.context = {
         headers: {
-          Authorization: `Bearer ${loggedInUser}`,
+          Authorization: `Bearer ${token}`,
         },
       };
     }
@@ -126,37 +141,30 @@ export class MerchantApiClient {
   async runQuery<
     TData = any,
     TVariables extends OperationVariables = OperationVariables,
-  >(
-    query: DocumentNode,
-    variables: TVariables = {} as TVariables,
-    options: RequestOptions = {},
-  ): Promise<ApolloQueryResult<TData>> {
+  >(options: GraphQLQueryOptions): Promise<ApolloQueryResult<TData>> {
+    const { query, variables, requestOptions } = options;
+    //console.log('*** query options', options);
     const q = this.getOperationObject(
       OperationType.QUERY,
       query,
       variables,
-      options,
+      requestOptions,
     );
-    return this.client.query<TData, TVariables>(q);
+
+    return this._apolloClient.query<TData, TVariables>(q);
   }
 
   async runMutation<
     TData = any,
     TVariables extends OperationVariables = OperationVariables,
-  >(
-    mutation: DocumentNode,
-    variables: TVariables = {} as TVariables,
-    options: RequestOptions = {},
-    userToken?: string | undefined,
-  ): Promise<FetchResult<TData>> {
-    // Correct return type
+  >(options: GraphQLQueryOptions): Promise<FetchResult<TData>> {
+    const { query, variables, requestOptions } = options;
     const q = this.getOperationObject(
       OperationType.MUTATION,
-      mutation,
+      query,
       variables,
-      options,
-      userToken,
+      requestOptions,
     );
-    return this.client.mutate<TData, TVariables>(q);
+    return this._apolloClient.mutate<TData, TVariables>(q);
   }
 }

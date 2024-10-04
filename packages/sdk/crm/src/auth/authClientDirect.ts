@@ -5,12 +5,10 @@ import { AuthService } from './authService';
 
 export class AuthClientDirect extends AuthClient {
   private authService: AuthService;
-  public readonly core: GeinsCore;
 
-  constructor(core: GeinsCore, signEndpoint: string, authEndpoint: string) {
+  constructor(signEndpoint: string, authEndpoint: string) {
     super();
     this.authService = new AuthService(signEndpoint, authEndpoint);
-    this.core = core;
   }
 
   async login(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
@@ -45,13 +43,13 @@ export class AuthClientDirect extends AuthClient {
     return result;
   }
 
-  async refresh(): Promise<AuthResponse | undefined> {
-    const refreshToken = this.getCookieRefreshToken();
-    if (!refreshToken) {
+  async refresh(refreshToken?: string): Promise<AuthResponse | undefined> {
+    const token = refreshToken || this.getCookieRefreshToken();
+    if (!token) {
       return undefined;
     }
 
-    const result = await this.authService.refresh(refreshToken);
+    const result = await this.authService.refresh(token);
 
     if (!result || !result.succeeded) {
       this.clearCookies();

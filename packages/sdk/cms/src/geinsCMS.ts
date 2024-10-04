@@ -6,17 +6,40 @@ import {
 } from './services';
 
 class GeinsCMS extends BasePackage {
-  public menu: MenuService;
-  public page: ContentPageService;
-  public area: ContentAreaService;
+  private _menu!: MenuService;
+  private _page!: ContentPageService;
+  private _area!: ContentAreaService;
 
   constructor(core: GeinsCore) {
     super(core);
     const { client, geinsSettings } = core;
+    this._geinsSettings = geinsSettings;
+    this._apiClient = () => client ?? undefined;
+    this.initServices();
+  }
 
-    this.menu = new MenuService(client, geinsSettings);
-    this.page = new ContentPageService(client, geinsSettings);
-    this.area = new ContentAreaService(client, geinsSettings);
+  private async initServices(): Promise<void> {
+    this._menu = new MenuService(() => this._apiClient(), this._geinsSettings);
+    this._page = new ContentPageService(
+      () => this._apiClient(),
+      this._geinsSettings,
+    );
+    this._area = new ContentAreaService(
+      () => this._apiClient(),
+      this._geinsSettings,
+    );
+  }
+
+  get menu(): MenuService {
+    return this._menu;
+  }
+
+  get area(): ContentAreaService {
+    return this._area;
+  }
+
+  get page(): ContentPageService {
+    return this._page;
   }
 }
 

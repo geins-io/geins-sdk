@@ -10,14 +10,21 @@ export class PasswordResetService extends BaseApiService {
     const variables = {
       email,
     };
-    const vars = await this.generateVars(variables);
-    return this.runMutation(mutations.pwResetRequest, vars);
+    const options = {
+      query: mutations.pwResetRequest,
+      variables: await this.generateVars(variables),
+    };
+    return this.runMutation(options);
   }
 
   async commit(resetKey: string, password: string): Promise<any> {
     const pwd = await digest(password);
     const variables = { resetKey, password: pwd };
     const vars = await this.generateVars(variables);
-    return this.runMutation(mutations.pwResetCommit, vars);
+    const options = {
+      query: mutations.pwResetCommit,
+      variables: vars,
+    };
+    return this.runMutation(options);
   }
 }

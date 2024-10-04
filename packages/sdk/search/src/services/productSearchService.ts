@@ -27,15 +27,21 @@ export class ProductSearchService extends BaseApiService {
     if (!variables.searchText) {
       throw new Error('searchText is required');
     }
-    const vars = await this.generateVars(variables);
-    return await this.runQuery(queries.products, vars);
+    const options = {
+      query: queries.products,
+      variables: await this.generateVars(variables),
+    };
+    return await this.runQuery(options);
   }
 
   async get(variables: ProductSearchVars) {
     if (!variables.searchText) {
       throw new Error('searchText is required');
     }
-    const vars = await this.generateVars(variables);
+    const options = {
+      query: queries.products,
+      variables: await this.generateVars(variables),
+    };
     throw new Error('Not implemented');
   }
 
@@ -48,7 +54,11 @@ export class ProductSearchService extends BaseApiService {
       take: 0,
       skip: 0,
     });
-    return await this.runQuery(queries.filters, modifiedVars);
+    const options = {
+      query: queries.filters,
+      variables: modifiedVars,
+    };
+    return await this.runQuery(options);
   }
 
   async getFilters(variables: ProductSearchVars) {
@@ -57,7 +67,11 @@ export class ProductSearchService extends BaseApiService {
       take: 0,
       skip: 0,
     });
-    const { data } = await this.runQuery(queries.filters, modifiedVars);
+    const options = {
+      query: queries.filters,
+      variables: modifiedVars,
+    };
+    const { data } = await this.runQuery(options);
     const filters = data?.products?.filters
       ? parseFilters(data.products.filters)
       : [];

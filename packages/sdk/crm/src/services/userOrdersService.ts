@@ -7,21 +7,24 @@ export class UserOrdersService extends BaseApiService {
   }
 
   async getRaw(variables: any): Promise<any> {
-    const vars = await this.generateVars(variables);
-    return this.runQuery(queries.userOrders, vars);
+    const options = {
+      query: queries.userOrders,
+      variables: await this.generateVars(variables),
+    };
+    return this.runQuery(options);
   }
 
-  async get(): Promise<GeinsUserOrdersType | null> {
-    const vars = await this.generateVars({});
-    return await this.runQueryParsed<GeinsUserOrdersType>(
-      queries.userOrders,
-      vars,
-    );
+  async get(): Promise<GeinsUserOrdersType | undefined> {
+    const options = {
+      query: queries.userOrders,
+      variables: await this.generateVars({}),
+    };
+    return await this.runQueryParsed<GeinsUserOrdersType>(options);
   }
 
-  protected parseResult(result: any): GeinsUserOrdersType | null {
+  protected parseResult(result: any): GeinsUserOrdersType | undefined {
     if (!result || !result.data || !result.data.getOrders) {
-      return null;
+      return undefined;
     }
     return result.data.getOrders as GeinsUserOrdersType;
   }

@@ -1,5 +1,5 @@
-import { EndpointApiClient } from '../api-client';
-import { IStore } from '../base';
+import { EndpointApiClient } from '../api-client/endpointClient';
+import { IStore } from '../base/baseStore';
 
 const ONE_HOUR_MS = 60 * 60 * 1000; // 1 hour in milliseconds
 const KEY_URL_HISTORY = 'urlHistory';

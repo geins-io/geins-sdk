@@ -9,13 +9,21 @@ export class MenuService extends BaseApiService {
     const vars = this.createVariables(variables);
     return vars;
   }
+
   async getRaw(variables: MenuVariables) {
-    const vars = await this.generateVars(variables);
-    return await this.runQuery(queries.menu, vars);
+    const options = {
+      query: queries.menu,
+      variables: await this.generateVars(variables),
+    };
+    return await this.runQuery(options);
   }
+
   async get(variables: MenuVariables) {
-    const vars = await this.generateVars(variables);
-    return await this.runQueryParsed(queries.menu, vars);
+    const options = {
+      query: queries.menu,
+      variables: await this.generateVars(variables),
+    };
+    return await this.runQueryParsed(options);
   }
 
   protected parseResult(result: any): any {

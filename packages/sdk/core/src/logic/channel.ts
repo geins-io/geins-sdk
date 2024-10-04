@@ -12,7 +12,7 @@ export class Channel {
   private channelService: ChannelService | undefined;
   private cache: SimpleCache<GeinsChannelTypeType>;
   private store: ChannelStore | undefined;
-  private apiClient: MerchantApiClient | undefined;
+  private _apiClient!: () => MerchantApiClient;
 
   constructor(private geinsSettings: GeinsSettings) {
     if (!geinsSettings.channel) {
@@ -36,13 +36,13 @@ export class Channel {
         this.geinsSettings.accountName,
         this.geinsSettings.environment,
       );
+      const options = {
+        apiUrl: endpointsUrls.main,
+        apiKey: this.geinsSettings.apiKey,
+        requestOptions: { fetchPolicy: FetchPolicyOptions.CACHE_FIRST },
+      };
 
-      this.apiClient = new MerchantApiClient(
-        endpointsUrls.main,
-        this.geinsSettings.apiKey,
-        '',
-        FetchPolicyOptions.CACHE_FIRST,
-      );
+      this._apiClient = () => new MerchantApiClient(options);
     } else {
       throw new Error('API Key and Account Name are required');
     }
@@ -50,7 +50,7 @@ export class Channel {
 
   private initChannelService() {
     this.channelService = new ChannelService(
-      this.apiClient,
+      () => this._apiClient(),
       this.geinsSettings,
     );
   }
@@ -78,7 +78,7 @@ export class Channel {
 
   private async setChannel() {
     if (!this.channelService) {
-      if (!this.apiClient) {
+      if (!this._apiClient) {
         this.initApiClient();
       }
       this.initChannelService();
