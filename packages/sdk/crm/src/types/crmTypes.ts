@@ -10,7 +10,7 @@ import {
 export interface AuthInterface {
   login(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
   logout(): Promise<AuthResponse | undefined>;
-  refresh(): Promise<AuthResponse | undefined>;
+  refresh(refreshToken?: string): Promise<AuthResponse | undefined>;
   getUser(
     refreshToken?: string,
     userToken?: string,

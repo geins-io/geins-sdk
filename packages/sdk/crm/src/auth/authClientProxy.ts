@@ -83,8 +83,8 @@ export class AuthClientProxy extends AuthClient {
     return result;
   }
 
-  async refresh(): Promise<AuthResponse | undefined> {
-    this.refreshToken = this.getCookieRefreshToken();
+  async refresh(refreshToken?: string): Promise<AuthResponse | undefined> {
+    this.refreshToken = refreshToken || this.getCookieRefreshToken();
     const result = await this.request<AuthResponse>('/refresh', {
       method: 'GET',
     });

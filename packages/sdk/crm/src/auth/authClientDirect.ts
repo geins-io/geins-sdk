@@ -43,13 +43,13 @@ export class AuthClientDirect extends AuthClient {
     return result;
   }
 
-  async refresh(): Promise<AuthResponse | undefined> {
-    const refreshToken = this.getCookieRefreshToken();
-    if (!refreshToken) {
+  async refresh(refreshToken?: string): Promise<AuthResponse | undefined> {
+    const token = refreshToken || this.getCookieRefreshToken();
+    if (!token) {
       return undefined;
     }
 
-    const result = await this.authService.refresh(refreshToken);
+    const result = await this.authService.refresh(token);
 
     if (!result || !result.succeeded) {
       this.clearCookies();

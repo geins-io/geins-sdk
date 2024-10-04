@@ -109,8 +109,8 @@ class GeinsCRM extends BasePackage {
     return {
       login: this.authLogin.bind(this),
       logout: this.authLogout.bind(this),
-      refresh: this._authClient.refresh.bind(this._authClient),
-      getUser: this._authClient.getUser.bind(this._authClient),
+      refresh: this.authRefresh.bind(this),
+      getUser: this.authGetUser.bind(this),
       changePassword: this._authClient.changePassword.bind(this._authClient),
       newUser: this.authRegisterNewUser.bind(this),
     };
@@ -165,6 +165,27 @@ class GeinsCRM extends BasePackage {
       tokens.token,
       tokens.refreshToken,
     );
+  }
+
+  private async authRefresh(
+    refreshToken?: string,
+  ): Promise<AuthResponse | undefined> {
+    const user = await this._authClient.getUser(refreshToken);
+    if (user && user.succeeded && user.tokens?.token) {
+      this.core.setUserToken(user.tokens?.token);
+    }
+    return user;
+  }
+
+  private async authGetUser(
+    refreshToken?: string,
+    userToken?: string,
+  ): Promise<AuthResponse | undefined> {
+    const user = await this._authClient.getUser(refreshToken, userToken);
+    if (user && user.succeeded && user.tokens?.token) {
+      this.core.setUserToken(user.tokens?.token);
+    }
+    return user;
   }
 
   private async authRegisterNewUser(

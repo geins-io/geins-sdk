@@ -14,7 +14,7 @@ export abstract class AuthClient {
     credentials: AuthCredentials,
   ): Promise<AuthResponse | undefined>;
 
-  abstract refresh(): Promise<AuthResponse | undefined>;
+  abstract refresh(refreshToken?: string): Promise<AuthResponse | undefined>;
   abstract changePassword(
     credentials: AuthCredentials,
   ): Promise<AuthResponse | undefined>;
@@ -46,6 +46,7 @@ export abstract class AuthClient {
   ): AuthResponse | undefined {
     token = token || this.getCookieUserToken();
     refreshToken = refreshToken || this.getCookieRefreshToken();
+
     if (!token || !refreshToken) {
       return undefined;
     }
