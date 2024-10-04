@@ -1,11 +1,20 @@
 import { GeinsCore, BasePackage } from '@geins/core';
 import { ProductSearchService } from './services';
 class GeinsSearch extends BasePackage {
-  public product: ProductSearchService;
+  private _product!: ProductSearchService;
   constructor(core: GeinsCore) {
     super(core);
     const { client, geinsSettings } = core;
-    this.product = new ProductSearchService(client, geinsSettings);
+    this._apiClient = () => core.client ?? undefined;
+    this._geinsSettings = geinsSettings;
+    this.initServices();
+  }
+
+  private async initServices(): Promise<void> {
+    this._product = new ProductSearchService(
+      () => this._apiClient(),
+      this._geinsSettings,
+    );
   }
 }
 

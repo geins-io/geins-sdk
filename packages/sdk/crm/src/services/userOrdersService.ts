@@ -14,7 +14,7 @@ export class UserOrdersService extends BaseApiService {
     return this.runQuery(options);
   }
 
-  async get(): Promise<GeinsUserOrdersType | null> {
+  async get(): Promise<GeinsUserOrdersType | undefined> {
     const options = {
       query: queries.userOrders,
       variables: await this.generateVars({}),
@@ -22,9 +22,9 @@ export class UserOrdersService extends BaseApiService {
     return await this.runQueryParsed<GeinsUserOrdersType>(options);
   }
 
-  protected parseResult(result: any): GeinsUserOrdersType | null {
+  protected parseResult(result: any): GeinsUserOrdersType | undefined {
     if (!result || !result.data || !result.data.getOrders) {
-      return null;
+      return undefined;
     }
     return result.data.getOrders as GeinsUserOrdersType;
   }

@@ -1,14 +1,10 @@
 import type { GeinsSettings } from '@geins/types';
-import {
-  FetchPolicyOptions,
-  MerchantApiClient,
-  GraphQLQueryOptions,
-} from '../api-client/merchantApiClient';
+import { GraphQLQueryOptions } from '../api-client/merchantApiClient';
 
 export abstract class BaseApiService {
   protected _apiClient: any;
-  protected geinsSettings: GeinsSettings;
-  protected channelId: string;
+  protected _geinsSettings: GeinsSettings;
+  protected _channelId: string;
 
   constructor(apiClient: any, geinsSettings: GeinsSettings) {
     this._apiClient = apiClient;
@@ -17,30 +13,29 @@ export abstract class BaseApiService {
       throw new Error('Channel is required');
     }
 
-    this.geinsSettings = geinsSettings;
-
-    this.channelId = `${geinsSettings.channel}|${geinsSettings.tld}`;
+    this._geinsSettings = geinsSettings;
+    this._channelId = `${geinsSettings.channel}|${geinsSettings.tld}`;
   }
 
   protected createVariables(vars: any) {
     const variables = { ...vars };
 
     if (!variables.languageId) {
-      if (!this.geinsSettings.locale) {
+      if (!this._geinsSettings.locale) {
         throw new Error('Language is required');
       }
-      variables.languageId = this.geinsSettings.locale;
+      variables.languageId = this._geinsSettings.locale;
     }
 
     if (!variables.marketId) {
-      if (!this.geinsSettings.market) {
+      if (!this._geinsSettings.market) {
         throw new Error('Market is required');
       }
-      variables.marketId = this.geinsSettings.market;
+      variables.marketId = this._geinsSettings.market;
     }
 
     if (!variables.channelId) {
-      variables.channelId = this.channelId;
+      variables.channelId = this._channelId;
     }
 
     return variables;

@@ -3,7 +3,7 @@
 fragment User on UserType {
   id
   email
-  entityId: personalId
+  personalId
   customerType
   gender
   address {

@@ -6,13 +6,21 @@ import {
   AuthCredentials,
   AuthResponse,
   GeinsUserInputTypeType,
+  GeinsAddressType,
 } from '@geins/types';
 import { GeinsCRM } from '../src/geinsCRM';
 import {
   validSettings,
   validUserCredentials,
 } from '../../../../test/globalSettings';
-import { randomString } from '../../../../test/dataMock';
+import {
+  randomString,
+  randomInt,
+  randomNumber,
+  randomAddress,
+  randomUserData,
+  cleanObject,
+} from '../../../../test/dataMock';
 
 describe('GeinsCRM', () => {
   const authSettings: AuthSettings = {
@@ -20,13 +28,11 @@ describe('GeinsCRM', () => {
   };
 
   let geinsCRM: GeinsCRM;
-  let crmCore: GeinsCore;
 
   beforeEach(() => {
     // Initialize GeinsCRM instance before each test
     const geinsCore = new GeinsCore(validSettings);
     geinsCRM = new GeinsCRM(geinsCore, authSettings);
-    crmCore = geinsCRM.getCore();
   });
 
   afterEach(() => {
@@ -34,7 +40,7 @@ describe('GeinsCRM', () => {
     jest.clearAllMocks();
   });
 
-  /*   it('should initialize GeinsCRM correctly', () => {
+  it('should initialize GeinsCRM correctly', () => {
     expect(geinsCRM).toBeDefined();
   });
 
@@ -87,36 +93,83 @@ describe('GeinsCRM', () => {
     expect(result!.tokens).toBeDefined();
     expect(result!.user).toHaveProperty('username');
     expect(result!.user?.username).toBe(randomUsername);
-  }); */
+  });
 
   it('should login a user and update information', async () => {
     const credentials: AuthCredentials = {
       username: validUserCredentials.username,
       password: validUserCredentials.password,
     };
-    const userTokenBeforeLogin = crmCore.getUserToken();
-    // console.log('*** userTokenBeforeLogin', userTokenBeforeLogin);
+
+    // create random user data
+    const changedUserInfo = randomUserData();
 
     const loginResult = await geinsCRM.auth.login(credentials);
-    const userTokenAfterLogin = crmCore.getUserToken();
-
-    // console.log('*** userTokenAfterLogin', userTokenAfterLogin);
-
     expect(loginResult).toBeDefined();
     expect(loginResult!.succeeded).toBe(true);
 
+    // get user information
     const user = await geinsCRM.user.get();
-    console.log('*** user', user);
+    expect(user).toBeDefined();
+    expect(user).toHaveProperty('email');
+    expect(user).toHaveProperty('customerType');
+    expect(user).toHaveProperty('address');
 
-    // get user
-    //
-    // console.log('user', user);
+    // update user information
+    const updateResult = await geinsCRM.user.update(changedUserInfo);
+    expect(updateResult).toBeDefined();
+    expect(updateResult).toHaveProperty('email');
+    expect(updateResult).toHaveProperty('personalId');
+    expect(updateResult).toHaveProperty('gender');
+    expect(updateResult).toHaveProperty('customerType');
+    expect(updateResult).toHaveProperty('address');
 
-    //await geinsCRM.user.update({username: 'test'}});
+    // check so that the user information has been updated
+    expect(updateResult!.personalId).toBe(changedUserInfo.personalId);
+    expect(updateResult!.gender).toBe(changedUserInfo.gender);
+    expect(updateResult!.customerType).toBe(changedUserInfo.customerType);
+
+    // clean adress object and compare
+    const cleanUpdateResult = cleanObject(updateResult);
+    expect(cleanUpdateResult!.address).toEqual(changedUserInfo.address);
   });
 
-  // OLIVA APP
-  // CORE instance
-  // CRM instance
-  // CRM getUser with token --- make sure core has token after this
+  it('if token is present and valid it should be used with api calls', async () => {
+    // get a valid user tokem
+    const credentials: AuthCredentials = {
+      username: validUserCredentials.username,
+      password: validUserCredentials.password,
+    };
+    const loginResult = await geinsCRM.auth.login(credentials);
+    expect(loginResult).toBeDefined();
+    expect(loginResult!.succeeded).toBe(true);
+    expect(loginResult!.tokens).toBeDefined();
+    expect(loginResult!.tokens?.token).toBeDefined();
+
+    const validToken = loginResult!.tokens?.token;
+
+    // setting up core
+    const isloatedCore = new GeinsCore(validSettings);
+    const isolatedCRM = new GeinsCRM(isloatedCore, authSettings);
+
+    const userGetResult = await isolatedCRM.user.get(validToken);
+    expect(userGetResult).toBeDefined();
+
+    const userTokenFromCore = isloatedCore.getUserToken();
+    expect(userTokenFromCore).toBe(validToken);
+  });
+
+  it('if token is present and INvalid it should not be set', async () => {
+    const badToken = 'badtoken';
+
+    // setting up core
+    const isloatedCore = new GeinsCore(validSettings);
+    const isolatedCRM = new GeinsCRM(isloatedCore, authSettings);
+
+    const userGetResult = await isolatedCRM.user.get(badToken);
+    expect(userGetResult).toBeUndefined();
+
+    const userTokenFromCore = isloatedCore.getUserToken();
+    expect(userTokenFromCore).toBeUndefined();
+  });
 });

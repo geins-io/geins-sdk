@@ -1,4 +1,9 @@
-import { GeinsUserInputTypeType, GeinsAddressTypeType } from '@geins/types';
+import {
+  GeinsUserInputTypeType,
+  GeinsAddressTypeType,
+  GeinsCustomerType,
+  GeinsGender,
+} from '@geins/types';
 
 export function randomString(length: number): string {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -6,6 +11,41 @@ export function randomString(length: number): string {
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
+  return result;
+}
+
+export function randomNameString(length: number): string {
+  let result = randomString(length);
+  result = result.toLowerCase();
+  result = result.charAt(0).toUpperCase() + result.slice(1);
+  return result;
+}
+
+export function randomStreetString(length: number): string {
+  let result = randomString(length);
+  result = result.toLowerCase();
+  result = result.charAt(0).toUpperCase() + result.slice(1);
+
+  // if longer than 10 characters, add a space in the middle
+  if (result.length > 10) {
+    const middle = Math.floor(result.length / 2);
+    result = result.slice(0, middle) + ' ' + result.slice(middle);
+  }
+  result = `${result} street ${randomNumber(2)}`;
+  return result;
+}
+
+export function randomNumber(length: number): string {
+  const chars = '0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+export function randomPropertyString(): string {
+  let result = randomString(randomInt(4, 10));
+  result = result.toLowerCase();
   return result;
 }
 
@@ -28,15 +68,57 @@ export function randomArray<T>(length: number, generator: () => T): T[] {
   }
   return result;
 }
+export function randomJson(): any {
+  return {
+    [randomPropertyString()]: randomString(10),
+    [randomPropertyString()]: randomInt(0, 100),
+    [randomPropertyString()]: randomBool(),
+    [randomPropertyString()]: randomDate(),
+    [randomPropertyString()]: randomArray(5, () => randomString(5)),
+  };
+}
 
 export function randomObject<T>(generator: () => T): T {
   return generator();
 }
 
-interface CustomerInfo {
-  name: string;
-  email: string;
-  phone: string;
+export function randomAddress(): GeinsAddressTypeType {
+  return {
+    firstName: randomNameString(randomInt(5, 10)),
+    lastName: randomNameString(randomInt(5, 10)),
+    company: randomString(randomInt(5, 10)),
+    mobile: randomNumber(10),
+    phone: randomNumber(10),
+    careOf: randomString(randomInt(5, 10)),
+    entryCode: randomNumber(4),
+    addressLine1: randomStreetString(randomInt(7, 15)),
+    addressLine2: randomString(randomInt(7, 15)),
+    addressLine3: randomString(randomInt(5, 10)),
+    zip: randomNumber(5),
+    city: randomString(randomInt(5, 10)),
+    state: '',
+    country: 'USA',
+  };
+}
+function randomCustomerType(): GeinsCustomerType {
+  return randomBool()
+    ? GeinsCustomerType.PersonType
+    : GeinsCustomerType.OrganizationType;
+}
+
+function randomGender(): GeinsGender {
+  return randomBool() ? GeinsGender.ManType : GeinsGender.WomanType;
+}
+
+export function randomUserData(): GeinsUserInputTypeType {
+  return {
+    personalId: randomNumber(10),
+    gender: randomGender(),
+    customerType: randomCustomerType(),
+    address: randomAddress(),
+    newsletter: randomBool(),
+    metaData: JSON.stringify(randomJson()),
+  };
 }
 
 export function randomCustomerInfoName(): GeinsUserInputTypeType {
@@ -46,4 +128,19 @@ export function randomCustomerInfoName(): GeinsUserInputTypeType {
       lastName: randomString(10),
     },
   };
+}
+
+export function cleanObject(obj: any): any {
+  const newObj: any = {};
+  for (const key in obj) {
+    if (key === '__typename') {
+      continue;
+    }
+    if (typeof obj[key] === 'object') {
+      newObj[key] = cleanObject(obj[key]);
+    } else if (obj[key] !== undefined) {
+      newObj[key] = obj[key];
+    }
+  }
+  return newObj;
 }
