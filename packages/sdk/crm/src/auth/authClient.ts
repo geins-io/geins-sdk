@@ -11,11 +11,164 @@ export abstract class AuthClient {
     this._cookieService = new CookieService();
   }
 
-  abstract login(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
-  abstract refresh(refreshToken?: string): Promise<AuthResponse | undefined>;
-  abstract changePassword(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
-  abstract getUser(refreshToken?: string, userToken?: string): Promise<AuthResponse | undefined>;
-  abstract register(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
+  // abstract methods
+  protected abstract handleLogin(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
+  protected abstract handleRefresh(refreshToken?: string): Promise<AuthResponse | undefined>;
+  protected abstract handleGetUser(
+    refreshToken?: string,
+    userToken?: string,
+  ): Promise<AuthResponse | undefined>;
+  protected abstract handleChangePassword(
+    credentials: AuthCredentials,
+    refreshToken: string,
+  ): Promise<AuthResponse | undefined>;
+  protected abstract handleRegister(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
+
+  // base methods
+  async login(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
+    const result = await this.handleLogin(credentials);
+    if (!result) {
+      return undefined;
+    }
+
+    if (result.succeeded) {
+      this.setCookiesLogin(result, credentials.rememberUser || false);
+    }
+
+    return result;
+  }
+
+  async refresh(refreshToken?: string): Promise<AuthResponse | undefined> {
+    this._refreshToken = refreshToken || this.getCookieRefreshToken();
+
+    if (!refreshToken) {
+      this.clearAuthCookies();
+      return undefined;
+    }
+
+    if (!this._refreshToken) {
+      return undefined;
+    }
+
+    const result = await this.handleRefresh(this._refreshToken);
+
+    if (!result || !result.succeeded) {
+      this.clearAuthCookies();
+      return undefined;
+    }
+
+    if (result.tokens) {
+      this.refreshLoginCookies(result.tokens);
+    }
+
+    return result;
+  }
+
+  async getUser(refreshToken?: string, userToken?: string): Promise<AuthResponse | undefined> {
+    const tokens = this.getCurrentTokens(refreshToken, userToken);
+    this._refreshToken = tokens.refreshToken;
+
+    if (!tokens.refreshToken) {
+      this.clearAuthAndRefreshToken();
+      return undefined;
+    }
+
+    if (tokens.userToken && tokens.refreshToken) {
+      return this.handleUserTokenScenario({
+        userToken: tokens.userToken,
+        refreshToken: tokens.refreshToken,
+      });
+    }
+
+    return this.handleRefreshTokenOnlyScenario(tokens.refreshToken);
+  }
+
+  async changePassword(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
+    if (!this._refreshToken) {
+      return undefined;
+    }
+
+    const result = await this.handleChangePassword(credentials, this._refreshToken);
+
+    if (result && result.succeeded) {
+      this.setCookiesLogin(result, credentials.rememberUser || false);
+    }
+    return result;
+  }
+
+  async register(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
+    const result = await this.handleRegister(credentials);
+
+    if (!result) {
+      return undefined;
+    }
+
+    if (result.succeeded) {
+      this.setCookiesLogin(result, credentials.rememberUser || false);
+    }
+
+    return result;
+  }
+
+  private clearAuthAndRefreshToken(): void {
+    this.clearAuthCookies();
+    this._refreshToken = undefined;
+  }
+
+  private async handleUserTokenScenario(tokens: {
+    refreshToken: string;
+    userToken: string;
+  }): Promise<AuthResponse | undefined> {
+    let authResponse = await AuthService.getUserObjectFromToken(tokens.userToken, tokens.refreshToken);
+
+    if (!authResponse) {
+      this.clearAuthAndRefreshToken();
+      return undefined;
+    }
+
+    if (authResponse.tokens?.expiresSoon) {
+      return this.refreshUserTokens(tokens);
+    }
+
+    return authResponse;
+  }
+
+  private async refreshUserTokens(tokens: {
+    refreshToken: string;
+    userToken: string;
+  }): Promise<AuthResponse | undefined> {
+    const authResponse = await this.handleGetUser(tokens.refreshToken, tokens.userToken);
+
+    if (!authResponse || !authResponse.succeeded) {
+      this.clearAuthAndRefreshToken();
+      return undefined;
+    }
+
+    if (authResponse.tokens) {
+      this._refreshToken = tokens.refreshToken;
+      this.refreshLoginCookies(authResponse.tokens);
+    }
+
+    return authResponse;
+  }
+
+  private async handleRefreshTokenOnlyScenario(refreshToken: string): Promise<AuthResponse | undefined> {
+    const authResponse = await this.handleGetUser(refreshToken);
+
+    if (!authResponse || !authResponse.succeeded) {
+      this.clearAuthAndRefreshToken();
+      return undefined;
+    }
+
+    if (authResponse.tokens) {
+      this._refreshToken = refreshToken;
+      this.refreshLoginCookies(authResponse.tokens);
+    }
+
+    return authResponse;
+  }
+
+  // cookie methods
   public async logout(): Promise<AuthResponse | undefined> {
     this.clearAuth();
     return { succeeded: true };
@@ -79,7 +232,6 @@ export abstract class AuthClient {
     this.setCookiesTokens(authResponse);
   }
 
-  // set cookie values
   protected setCookiesLogin(authResponse: AuthResponse, rememberUser: boolean): void {
     const maxAge = rememberUser ? AUTH_COOKIES_MAX_AGE.REMEMBER_USER : AUTH_COOKIES_MAX_AGE.DEFAULT;
     const { user, tokens } = authResponse;
