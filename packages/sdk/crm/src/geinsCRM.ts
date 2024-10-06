@@ -99,7 +99,6 @@ class GeinsCRM extends BasePackage {
       logout: this.authLogout.bind(this),
       refresh: this.authRefresh.bind(this),
       getUser: this.authGetUser.bind(this),
-      changePassword: this._authClient.changePassword.bind(this._authClient),
       newUser: this.authRegisterNewUser.bind(this),
       authorized: this.authAuthorized.bind(this),
     };
