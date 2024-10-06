@@ -130,8 +130,10 @@ class GeinsCRM extends BasePackage {
     }
     const loginResult = await this._authClient.login(credentials);
     if (loginResult && loginResult.succeeded && loginResult.tokens?.token) {
-      this.setAuthTokens(loginResult.tokens);
-    } else {
+      const loginResult = await this._authClient.login(credentials);
+      if (loginResult?.succeeded && loginResult.tokens?.token) {
+        this.setAuthTokens(loginResult.tokens);
+      } else {
       this._authClient.clearAuth();
     }
     this.pushEvent(
