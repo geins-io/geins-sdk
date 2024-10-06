@@ -43,7 +43,7 @@ const myProductList = await graphqlClient.runQuery<
 - **`gql`**: A function exposed through `@geins/core` used to parse GraphQL queries and mutations.
 - **`@geins/types`**: A package that exports TypeScript types generated from the Geins GraphQL schema, providing type definitions for the API.
 
-By using the `GraphQLClient` and types from `@geins/types`, you can interact with the Geins API in a flexible and type-safe manner, leveraging the power of GraphQL and TypeScript.
+By using the `GraphQLClient` and types from `@geins/types`, you can interact with the Geins API in a flexible and type-safe manner, leveraging the power of GraphQL and TypeScript. Using the `GraphQLClient` will automatically handle authentication and spoofing for you.
 
 ## Accessing the `GraphQLClient`
 
@@ -69,10 +69,7 @@ First, install the `@geins/types` package. Refer to the [installation guide](../
 You can import the necessary types directly from `@geins/types`:
 
 ```typescript
-import {
-  GeinsProductTypeType,
-  GeinsProductsResultTypeType,
-} from '@geins/types';
+import { GeinsProductTypeType, GeinsProductsResultTypeType } from '@geins/types';
 ```
 
 - **`GeinsProductTypeType`**: Represents the product data structure.
@@ -108,10 +105,7 @@ Let's fetch a list of products using a GraphQL query and utilize the types from 
 
 ```typescript
 import { gql } from '@geins/core';
-import {
-  GeinsProductTypeType,
-  GeinsProductsResultTypeType,
-} from '@geins/types';
+import { GeinsProductTypeType, GeinsProductsResultTypeType } from '@geins/types';
 ```
 
 #### Define the GraphQL Query
@@ -247,14 +241,11 @@ async function addToCart() {
 
     if (data && data.addToCart) {
       console.log('Cart ID:', data.addToCart.id);
-      data.addToCart.items?.forEach((cartItem) => {
+      data.addToCart.items?.forEach(cartItem => {
         console.log('Product:', cartItem.product?.name);
         console.log('Quantity:', cartItem.quantity);
       });
-      console.log(
-        'Total:',
-        data.addToCart.summary?.total?.sellingPriceIncVatFormatted,
-      );
+      console.log('Total:', data.addToCart.summary?.total?.sellingPriceIncVatFormatted);
     } else {
       console.error('No data returned from mutation.');
     }
@@ -357,7 +348,7 @@ async function fetchBrands() {
     }>(BRANDS_QUERY);
 
     if (data) {
-      data.brands.forEach((brand) => {
+      data.brands.forEach(brand => {
         console.log('Brand ID:', brand.brandId);
         console.log('Name:', brand.name);
         console.log('Description:', brand.description);
