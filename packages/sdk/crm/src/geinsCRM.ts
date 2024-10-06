@@ -116,7 +116,7 @@ class GeinsCRM extends BasePackage {
     }
     // try to to get user with refreshToken
     const user = await this._authClient.getUser(refreshToken);
-    if (user && user.succeeded && user.tokens) {
+    if (user?.succeeded && user.tokens) {
       this.setAuthTokens(user.tokens);
     } else {
       this._authClient.clearAuth();
