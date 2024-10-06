@@ -14,7 +14,7 @@ export interface AuthInterface {
   getUser(refreshToken?: string, userToken?: string): Promise<AuthResponse | undefined>;
   newUser(credentials: AuthCredentials, user?: GeinsUserInputTypeType): Promise<AuthResponse | undefined>;
   changePassword(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
-  authorized(refreshToken?: string): Promise<Boolean>;
+  authorized(refreshToken?: string): Promise<boolean>;
 }
 
 /**
