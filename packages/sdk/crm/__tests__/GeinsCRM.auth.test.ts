@@ -1,20 +1,9 @@
 // /packages/sdk/cms/__tests__/GeinsCRM.auth.test.ts
 
 import { GeinsCore, CookieService, AUTH_COOKIES } from '@geins/core';
-import {
-  AuthSettings,
-  AuthCredentials,
-  AuthResponse,
-  GeinsUserInputTypeType,
-  GeinsAddressType,
-} from '@geins/types';
+import { AuthSettings, AuthCredentials } from '@geins/types';
 import { GeinsCRM } from '../src/geinsCRM';
-import {
-  validSettings,
-  validUserCredentials,
-  expectedCookiesAuthAll,
-  expectedCookiesAuthTokens,
-} from '../../../../test/globalSettings';
+import { validSettings, validUserCredentials, expectedCookiesAuthAll } from '../../../../test/globalSettings';
 import { setupMockFetchForInternalApi } from '../../../../test/setupAuthMockFetch';
 import { randomString, randomUserData, cleanObject } from '../../../../test/dataMock';
 import { AuthService } from '../src/auth/authService';
