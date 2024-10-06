@@ -1,4 +1,4 @@
-// /packages/sdk/cms/__tests__/GeinsCRM.auth.test.ts
+// /packages/sdk/crm/__tests__/GeinsCRM.auth.test.ts
 
 import { GeinsCore, CookieService, AUTH_COOKIES } from '@geins/core';
 import { AuthSettings, AuthCredentials } from '@geins/types';
