@@ -55,16 +55,15 @@ export class UserService extends BaseApiService {
     return user;
   }
 
-  async create(
-    user: GeinsUserInputTypeType,
-    userToken?: string | undefined,
-  ): Promise<any> {
+  async create(user: GeinsUserInputTypeType, userToken?: string | undefined): Promise<any> {
     const options = {
       query: mutations.userRegister,
       variables: await this.generateMutationVars({ user }),
       userToken,
     };
-    return this.runMutation(options);
+    const result = this.runMutation(options);
+
+    return result;
   }
 
   async update(user: GeinsUserInputTypeType): Promise<GeinsUserType> {

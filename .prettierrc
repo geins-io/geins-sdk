@@ -1,7 +1,11 @@
 {
-  "plugins": ["prettier-plugin-vue"],
+  "plugins": [
+    "prettier-plugin-vue"
+  ],
+  "printWidth": 110,
   "tabWidth": 2,
   "useTabs": false,
   "endOfLine": "auto",
+  "arrowParens": "avoid",
   "singleQuote": true
 }

@@ -38,36 +38,24 @@ export class AuthService {
   public async login(credentials: AuthCredentials): Promise<AuthResponse> {
     try {
       this.ensureClientInitialized();
+
       const result = await this.client!.login(
         credentials.username,
         credentials.password,
         credentials.rememberUser,
       );
 
-      const authResponse = await AuthService.getUserObjectFromToken(
-        result.token,
-        result.refreshToken,
-      );
-      if (!authResponse) {
-        // Removed unreachable code
-      }
-      return authResponse;
+      return await AuthService.getUserObjectFromToken(result.token, result.refreshToken);
     } catch (error) {
       return this.handleError('Login failed', error);
     }
   }
 
   // get user if userToken is provided parse from token if not use refresh token to get user
-  public async getUser(
-    refreshToken: string,
-    userToken?: string,
-  ): Promise<AuthResponse> {
+  public async getUser(refreshToken: string, userToken?: string): Promise<AuthResponse> {
     try {
       if (userToken) {
-        const authResponse = await AuthService.getUserObjectFromToken(
-          userToken,
-          refreshToken,
-        );
+        const authResponse = await AuthService.getUserObjectFromToken(userToken, refreshToken);
         if (!authResponse) {
           return { succeeded: false };
         }
@@ -85,26 +73,17 @@ export class AuthService {
   }
 
   // change password
-  public async changePassword(
-    credentials: AuthCredentials,
-    refreshToken: string,
-  ): Promise<AuthResponse> {
+  public async changePassword(credentials: AuthCredentials, refreshToken: string): Promise<AuthResponse> {
     if (!credentials.newPassword || !refreshToken) {
       return { succeeded: false };
     }
     try {
       this.ensureClientInitialized();
-      const result = await this.client!.changePassword(
-        credentials,
-        refreshToken,
-      );
+      const result = await this.client!.changePassword(credentials, refreshToken);
       if (!result.token) {
         return { succeeded: false };
       }
-      const authResponse = await AuthService.getUserObjectFromToken(
-        result.token,
-        result.refreshToken,
-      );
+      const authResponse = await AuthService.getUserObjectFromToken(result.token, result.refreshToken);
       if (!authResponse) {
         return { succeeded: false };
       }
@@ -126,10 +105,7 @@ export class AuthService {
       if (!result.token) {
         return { succeeded: false };
       }
-      const authResponse = await AuthService.getUserObjectFromToken(
-        result.token,
-        result.refreshToken,
-      );
+      const authResponse = await AuthService.getUserObjectFromToken(result.token, result.refreshToken);
       if (!authResponse) {
         return { succeeded: false };
       }
@@ -143,29 +119,20 @@ export class AuthService {
   public async register(credentials: AuthCredentials): Promise<AuthResponse> {
     try {
       this.ensureClientInitialized();
-      const result = await this.client!.register(
-        credentials.username,
-        credentials.password,
-      );
+      const result = await this.client!.register(credentials.username, credentials.password);
 
       if (!result) {
         return { succeeded: false };
       }
 
-      return await AuthService.getUserObjectFromToken(
-        result.token,
-        result.refreshToken,
-      );
+      return await AuthService.getUserObjectFromToken(result.token, result.refreshToken);
     } catch (error) {
       return this.handleError('Register new user failed', error);
     }
   }
 
   // serialize user from jwt token
-  static getUserObjectFromToken(
-    userToken: string,
-    refreshToken?: string,
-  ): AuthResponse {
+  static getUserObjectFromToken(userToken: string, refreshToken?: string): AuthResponse {
     try {
       const userFromToken = authClaimsTokenSerializeToObject(userToken);
       if (!userFromToken) {

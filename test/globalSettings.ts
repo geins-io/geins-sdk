@@ -1,6 +1,8 @@
 // test-utils/globalSettings.ts
-
-import { Environment, GeinsSettings } from '@geins/types';
+import 'node-fetch';
+import { AUTH_COOKIES, buildEndpoints } from '@geins/core';
+import { AuthService } from '@geins/crm';
+import { Environment, GeinsSettings, AuthCredentials } from '@geins/types';
 import dotenv from 'dotenv';
 
 // Load environment variables from .env
@@ -17,7 +19,17 @@ export const validSettings: GeinsSettings = {
   environment: (process.env.GEINS_ENVIRONMENT || 'prod') as Environment,
 };
 
-export const validUserCredentials = {
+export const validUserCredentials: AuthCredentials = {
   username: process.env.GEINS_USERNAME!,
   password: process.env.GEINS_PASSWORD!,
+  rememberUser: true,
 };
+
+export const expectedCookiesAuthAll = [
+  AUTH_COOKIES.USER_MAX_AGE,
+  AUTH_COOKIES.REFRESH_TOKEN,
+  AUTH_COOKIES.USER_AUTH,
+  AUTH_COOKIES.USER,
+  AUTH_COOKIES.USER_TYPE,
+];
+export const expectedCookiesAuthTokens = [AUTH_COOKIES.REFRESH_TOKEN, AUTH_COOKIES.USER_AUTH];

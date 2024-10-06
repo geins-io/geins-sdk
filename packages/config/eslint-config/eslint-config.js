@@ -26,12 +26,29 @@ export const geinsSharedConfig = [
       turbo,
       'only-warn': onlyWarn,
     },
+    rules: {
+      'brace-style': ['error', '1tbs', { allowSingleLine: true }], // Allow single-line braces
+      'max-len': ['error', { code: 110, ignoreUrls: true }], // Set maximum line length to 100 characters
+      'function-paren-newline': ['error', 'consistent'], // Ensure function parameters are consistently on a single line
+      'function-call-argument-newline': ['error', 'consistent'], // Ensure function call arguments are consistently on a single line
+      'prettier/prettier': [
+        'error',
+        {
+          printWidth: 110,
+          singleQuote: true,
+          trailingComma: 'none',
+          arrowParens: 'avoid',
+          bracketSpacing: true,
+          endOfLine: 'lf',
+        },
+      ],
+    },
   },
   prettierRecommended,
 ];
 
 const nuxtConfig = createConfigForNuxt();
-geinsSharedConfig.forEach((config) => {
+geinsSharedConfig.forEach(config => {
   nuxtConfig.append(config);
 });
 export const geinsSharedConfigNuxt = nuxtConfig;

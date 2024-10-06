@@ -1,3 +1,3 @@
 export * from './endpoints';
-export * from './cookieNames';
+export * from './cookies';
 export * from './headerNames';

@@ -21,16 +21,12 @@ export function authClaimsTokenSerialize(token: string): string | null {
 
   return Object.entries(claims)
     .map(([key, value]) =>
-      Array.isArray(value)
-        ? value.map((v) => `${key}=${v}`).join(';')
-        : `${key}=${value}`,
+      Array.isArray(value) ? value.map(v => `${key}=${v}`).join(';') : `${key}=${value}`,
     )
     .join(';');
 }
 
-export function authClaimsTokenSerializeToObject(
-  token: string,
-): Record<string, string> | null {
+export function authClaimsTokenSerializeToObject(token: string): Record<string, string> | null {
   try {
     const serializedClaims = authClaimsTokenSerialize(token);
     if (!serializedClaims) {
@@ -58,19 +54,12 @@ export function authClaimsTokenSerializeToObject(
 
 export function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const byteArray = new Uint8Array(buffer);
-  const binaryString = byteArray.reduce(
-    (acc, byte) => acc + String.fromCharCode(byte),
-    '',
-  );
+  const binaryString = byteArray.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
   return btoa(binaryString);
 }
 
 export async function digest(password: string): Promise<string> {
-  const salt =
-    'Dd1dfLonNy6Am2fXQl2AcoI+IbhLhXvaibnDNn8uEa6vbJ05eyJajSuGFm9uQSmD';
-  const buffer = await crypto.subtle.digest(
-    'SHA-384',
-    new TextEncoder().encode(password + salt),
-  );
+  const salt = 'Dd1dfLonNy6Am2fXQl2AcoI+IbhLhXvaibnDNn8uEa6vbJ05eyJajSuGFm9uQSmD';
+  const buffer = await crypto.subtle.digest('SHA-384', new TextEncoder().encode(password + salt));
   return arrayBufferToBase64(buffer);
 }
