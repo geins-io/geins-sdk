@@ -129,11 +129,9 @@ class GeinsCRM extends BasePackage {
       throw new Error('AuthClient is not initialized');
     }
     const loginResult = await this._authClient.login(credentials);
-    if (loginResult && loginResult.succeeded && loginResult.tokens?.token) {
-      const loginResult = await this._authClient.login(credentials);
-      if (loginResult?.succeeded && loginResult.tokens?.token) {
-        this.setAuthTokens(loginResult.tokens);
-      } else {
+    if (loginResult?.succeeded && loginResult.tokens?.token) {
+      this.setAuthTokens(loginResult.tokens);
+    } else {
       this._authClient.clearAuth();
     }
     this.pushEvent(
