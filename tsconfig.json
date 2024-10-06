@@ -14,11 +14,15 @@
     "paths": {
       "@geins/*": [
         "packages/*/src"
+      ],
+      "@geins/core/CookieService": [
+        "./test/__mocks__/CookieService.ts"
       ]
     }
   },
   "include": [
-    "packages/**/*"
+    "packages/**/*",
+    ".temp/CookieService.test.ts"
   ],
   "exclude": [
     "node_modules",

@@ -5,7 +5,6 @@ import {
   ContentPageService,
   ContentAreaService,
 } from '../src/services';
-import exp from 'constants';
 
 // Mock the services
 jest.mock('../src/services/MenuService');

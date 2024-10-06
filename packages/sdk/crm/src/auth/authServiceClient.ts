@@ -84,7 +84,6 @@ export class AuthServiceClient {
     const challangeToken = await this.requestAuthChallenge(username);
     const authenticationSignature =
       await this.verifyAuthChallenge(challangeToken);
-
     const requestBody: Record<string, any> = {
       username,
       signature: authenticationSignature,

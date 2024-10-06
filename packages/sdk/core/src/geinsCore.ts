@@ -33,7 +33,7 @@ export class GeinsCore {
   private _currentChannel!: Channel;
   private _accountChannels!: ChannelsService;
 
-  constructor(geinsSettings: GeinsSettings, userToken?: string) {
+  constructor(geinsSettings: GeinsSettings) {
     if (!geinsSettings.channel) {
       throw new Error('Channel is required');
     }
@@ -53,9 +53,6 @@ export class GeinsCore {
 
     // Merge provided settings with defaults
     this._geinsSettings = { ...defaultSettings, ...geinsSettings };
-
-    // Set user token if provided
-    this._userToken = userToken;
 
     // Initialize API Client
     if (this._geinsSettings.apiKey && this._geinsSettings.accountName) {
