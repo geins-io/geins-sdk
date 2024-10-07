@@ -24,6 +24,10 @@ export class AuthClientProxy extends AuthClient {
       };
     }
 
+    if (options.method === 'GET' || options.method === 'HEAD') {
+      delete options.body;
+    }
+
     const response = await fetch(`${this._authEndpointApp}${path}`, {
       ...options,
     });
@@ -45,16 +49,16 @@ export class AuthClientProxy extends AuthClient {
   }
 
   protected async handleRefresh(refreshToken: string): Promise<AuthResponse | undefined> {
+    this._refreshToken = refreshToken;
     return this.request('/refresh', {
       method: 'POST',
-      body: JSON.stringify(refreshToken),
     });
   }
 
   protected async handleGetUser(refreshToken: string, userToken?: string): Promise<AuthResponse | undefined> {
+    this._refreshToken = refreshToken;
     return this.request('/user', {
       method: 'GET',
-      body: JSON.stringify(refreshToken),
     });
   }
 

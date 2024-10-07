@@ -40,9 +40,21 @@ const newPassword = computed(
     Math.random().toString(36).substring(2, 15),
 );
 
+const checkUserLoggedIn = async () => {
+  const isLoggedIn = await geinsCRM.auth.authorized();
+  if (isLoggedIn === true) {
+    userLoggedIn.value = true;
+  } else {
+    userLoggedIn.value = false;
+  }
+};
 
-
-
+onMounted(() => {
+  checkUserLoggedIn();
+  if (userLoggedIn.value) {
+    handleUpdate();
+  }
+});
 
 const handleLogin = async (validCredentials = true) => {
   user.value = null;
