@@ -1,9 +1,5 @@
 import { GeinsCore, BasePackage } from '@geins/core';
-import {
-  MenuService,
-  ContentPageService,
-  ContentAreaService,
-} from './services';
+import { MenuService, ContentPageService, ContentAreaService } from './services';
 
 class GeinsCMS extends BasePackage {
   private _menu!: MenuService;
@@ -20,14 +16,8 @@ class GeinsCMS extends BasePackage {
 
   private async initServices(): Promise<void> {
     this._menu = new MenuService(() => this._apiClient(), this._geinsSettings);
-    this._page = new ContentPageService(
-      () => this._apiClient(),
-      this._geinsSettings,
-    );
-    this._area = new ContentAreaService(
-      () => this._apiClient(),
-      this._geinsSettings,
-    );
+    this._page = new ContentPageService(() => this._apiClient(), this._geinsSettings);
+    this._area = new ContentAreaService(() => this._apiClient(), this._geinsSettings);
   }
 
   get menu(): MenuService {

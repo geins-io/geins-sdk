@@ -33,3 +33,10 @@ export const expectedCookiesAuthAll = [
   AUTH_COOKIES.USER_TYPE,
 ];
 export const expectedCookiesAuthTokens = [AUTH_COOKIES.REFRESH_TOKEN, AUTH_COOKIES.USER_AUTH];
+
+export const cmsSettings = {
+  area: {
+    family: process.env.GEINS_CMS_FAMILY!,
+    areaName: process.env.GEINS_CMS_AREA!,
+  },
+};

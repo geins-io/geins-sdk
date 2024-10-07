@@ -112,20 +112,36 @@ const handleRefresh = async () => {
 };
 
 const handleChangePassword = async () => {
-  const newPasswordCredentials = {
-    ...credentials.value,
-    newPassword: newPassword.value,
-  };
-  logWrite(`New Password:`, newPassword.value);
+  /*   const newPasswordCredentials = {
+      ...credentials.value,
+      newPassword: newPassword.value,
+    };
+    logWrite(`New Password:`, newPassword.value);
 
-  const result = await geinsCRM.auth.changePassword(newPasswordCredentials);
-  logWrite(`change password result`, result);
-  if (!result) {
-    logWrite(`change password failed`, result);
-    return;
-  }
+    const result = await geinsCRM.auth.changePassword(newPasswordCredentials);
+    logWrite(`change password result`, result);
+    if (!result) {
+      logWrite(`change password failed`, result);
+      return;
+    } */
   password.value = newPassword.value;
 };
+
+
+const checkUserLoggedIn = async () => {
+  const isLoggedIn = await geinsCRM.auth.authorized();
+  if (isLoggedIn === true) {
+    userLoggedIn.value = true;
+    return true;
+  } else {
+    userLoggedIn.value = false;
+    return false;
+  }
+};
+if (await checkUserLoggedIn()) {
+  handleUpdate();
+}
+
 </script>
 
 <template>

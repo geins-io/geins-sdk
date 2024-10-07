@@ -7,4 +7,4 @@ export * from './services';
 export * from './stores';
 export * from './utils';
 export * from './logic';
-export { gql } from '@apollo/client';
+export { gql } from '@apollo/client/core';

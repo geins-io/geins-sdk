@@ -49,7 +49,7 @@ export abstract class BaseApiService {
   }
 
   protected async runQueryParsed<T>(options: GraphQLQueryOptions): Promise<T> {
-    const result = await this.runQuery(options);
+    const result = this.cleanObject(await this.runQuery(options));
     const parsedResult = this.parseResult(result);
     return parsedResult as T;
   }
@@ -66,8 +66,31 @@ export abstract class BaseApiService {
   }
 
   protected cleanObject<T extends Record<string, any>>(obj: T): Partial<T> {
-    return Object.fromEntries(
-      Object.entries(obj).filter(([_, v]) => v != null),
-    ) as Partial<T>;
+    const cleanedObj = Object.entries(obj).reduce(
+      (acc, [key, value]) => {
+        // Skip __typename properties
+        if (key.startsWith('__typename')) {
+          return acc;
+        }
+
+        // Check if the value is an array, and clean each object inside it
+        if (Array.isArray(value)) {
+          acc[key] = value.map(item => (item && typeof item === 'object' ? this.cleanObject(item) : item));
+        }
+        // Recursively clean if the value is a non-null object
+        else if (value && typeof value === 'object') {
+          acc[key] = this.cleanObject(value);
+        }
+        // Otherwise, keep the value as-is
+        else {
+          acc[key] = value;
+        }
+
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+
+    return cleanedObj as Partial<T>;
   }
 }

@@ -89,10 +89,7 @@ export class MerchantApiClient {
     this._apolloClient.clearStore();
   }
 
-  private getFetchPolicy(
-    operationType: OperationType,
-    selectedFetchPolicy: FetchPolicy | undefined,
-  ) {
+  private getFetchPolicy(operationType: OperationType, selectedFetchPolicy: FetchPolicy | undefined) {
     if (operationType === OperationType.QUERY) {
       if (selectedFetchPolicy) {
         return selectedFetchPolicy;
@@ -117,8 +114,8 @@ export class MerchantApiClient {
     variables: OperationVariables = {},
     options: RequestOptions = {},
   ) {
-    const token =
-      this._userToken || this._cookieService?.get(AUTH_COOKIES.USER_AUTH);
+    const token = this._userToken || this._cookieService?.get(AUTH_COOKIES.USER_AUTH);
+    // remove typename from variables
 
     const operationObj: any = {
       [operationType]: document,
@@ -138,33 +135,19 @@ export class MerchantApiClient {
     return operationObj;
   }
 
-  async runQuery<
-    TData = any,
-    TVariables extends OperationVariables = OperationVariables,
-  >(options: GraphQLQueryOptions): Promise<ApolloQueryResult<TData>> {
+  async runQuery<TData = any, TVariables extends OperationVariables = OperationVariables>(
+    options: GraphQLQueryOptions,
+  ): Promise<ApolloQueryResult<TData>> {
     const { query, variables, requestOptions } = options;
-    //console.log('*** query options', options);
-    const q = this.getOperationObject(
-      OperationType.QUERY,
-      query,
-      variables,
-      requestOptions,
-    );
-
+    const q = this.getOperationObject(OperationType.QUERY, query, variables, requestOptions);
     return this._apolloClient.query<TData, TVariables>(q);
   }
 
-  async runMutation<
-    TData = any,
-    TVariables extends OperationVariables = OperationVariables,
-  >(options: GraphQLQueryOptions): Promise<FetchResult<TData>> {
+  async runMutation<TData = any, TVariables extends OperationVariables = OperationVariables>(
+    options: GraphQLQueryOptions,
+  ): Promise<FetchResult<TData>> {
     const { query, variables, requestOptions } = options;
-    const q = this.getOperationObject(
-      OperationType.MUTATION,
-      query,
-      variables,
-      requestOptions,
-    );
+    const q = this.getOperationObject(OperationType.MUTATION, query, variables, requestOptions);
     return this._apolloClient.mutate<TData, TVariables>(q);
   }
 }

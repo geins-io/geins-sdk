@@ -1,9 +1,4 @@
-import type {
-  GeinsSettings,
-  GeinsChannelTypeType,
-  GeinsEndpoints,
-  Environment,
-} from '@geins/types';
+import type { GeinsSettings, GeinsChannelTypeType, GeinsEndpoints, Environment } from '@geins/types';
 import { GeinsChannelInterface } from '@geins/types';
 import { MerchantApiClient } from './api-client';
 import { ChannelsService } from './services/channelsService';
@@ -87,10 +82,7 @@ export class GeinsCore {
   }
 
   private initGraphQLService(): void {
-    this._graphQLService = new GraphQLService(
-      this._apiClient,
-      this._geinsSettings,
-    );
+    this._graphQLService = new GraphQLService(() => this.client, this._geinsSettings);
   }
 
   /**
@@ -118,10 +110,7 @@ export class GeinsCore {
 
   private async channelsGet(): Promise<GeinsChannelTypeType[] | undefined> {
     if (!this._accountChannels) {
-      this._accountChannels = new ChannelsService(
-        this.client,
-        this._geinsSettings,
-      );
+      this._accountChannels = new ChannelsService(() => this.client, this._geinsSettings);
     }
     return this._accountChannels.get() ?? undefined;
   }
@@ -174,12 +163,8 @@ export class GeinsCore {
    * Use to query Geins using GraphQL.
    */
   get graphql(): GraphQLService {
-    if (!this._graphQLService && this._apiClient) {
-      if (this._geinsSettings.apiKey && this._geinsSettings.accountName) {
-        this.initGraphQLService();
-      } else {
-        throw new Error('API Key and Account Name are required');
-      }
+    if (!this._graphQLService) {
+      this.initGraphQLService();
     }
     return this._graphQLService;
   }
