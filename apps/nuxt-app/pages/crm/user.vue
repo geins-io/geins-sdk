@@ -24,8 +24,8 @@ const userObject = ref<any>(null);
 const authObject = ref<any>(null);
 const userOrderObject = ref<any>(null);
 
-const checkUserLoggedIn = () => {
-  const result = geinsCRM.user.authorized();
+const checkUserLoggedIn = async () => {
+  const result = await geinsCRM.auth.authorized();
   if (result === true) {
     isLoggedIn.value = true;
     return true;
@@ -142,10 +142,7 @@ const handleRefresh = async () => {
                 <button :disabled="userLoggedIn === false" @click="getUser">
                   Get User
                 </button>
-                <button
-                  :disabled="userLoggedIn === false"
-                  @click="handleRefresh"
-                >
+                <button :disabled="userLoggedIn === false" @click="handleRefresh">
                   Refresh
                 </button>
                 <button @click="logOut">Logout</button>
@@ -158,11 +155,9 @@ const handleRefresh = async () => {
           </div>
         </td>
         <td style="vertical-align: top; padding-left: 50px">
-          <b>User is logged in: {{ userLoggedIn }}</b
-          ><br /><br />
+          <b>User is logged in: {{ userLoggedIn }}</b><br /><br />
           <div v-if="userLoggedIn">
-            <b>Time to logout: {{ timeToLoggout }}</b
-            ><br /><br />
+            <b>Time to logout: {{ timeToLoggout }}</b><br /><br />
           </div>
           <div v-if="userOrderObject" style="width: 500px; overflow-x: scroll">
             <b>User Order Object:</b>

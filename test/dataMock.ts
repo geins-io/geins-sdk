@@ -1,9 +1,5 @@
-import {
-  GeinsUserInputTypeType,
-  GeinsAddressTypeType,
-  GeinsCustomerType,
-  GeinsGender,
-} from '@geins/types';
+// test/dataMock.ts
+import { GeinsUserInputTypeType, GeinsAddressTypeType, GeinsCustomerType, GeinsGender } from '@geins/types';
 
 export function randomString(length: number): string {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -101,9 +97,7 @@ export function randomAddress(): GeinsAddressTypeType {
   };
 }
 function randomCustomerType(): GeinsCustomerType {
-  return randomBool()
-    ? GeinsCustomerType.PersonType
-    : GeinsCustomerType.OrganizationType;
+  return randomBool() ? GeinsCustomerType.PersonType : GeinsCustomerType.OrganizationType;
 }
 
 function randomGender(): GeinsGender {

@@ -1,4 +1,4 @@
-// test-utils/globalSettings.ts
+// test/globalSettings.ts
 import 'node-fetch';
 import { AUTH_COOKIES, buildEndpoints } from '@geins/core';
 import { AuthService } from '@geins/crm';
