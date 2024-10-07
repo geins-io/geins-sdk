@@ -44,17 +44,13 @@ const checkUserLoggedIn = async () => {
   const isLoggedIn = await geinsCRM.auth.authorized();
   if (isLoggedIn === true) {
     userLoggedIn.value = true;
+    return true;
   } else {
     userLoggedIn.value = false;
+    return false;
   }
 };
 
-onMounted(() => {
-  checkUserLoggedIn();
-  if (userLoggedIn.value) {
-    handleUpdate();
-  }
-});
 
 const handleLogin = async (validCredentials = true) => {
   user.value = null;
@@ -128,16 +124,6 @@ const handleChangePassword = async () => {
 };
 
 
-const checkUserLoggedIn = async () => {
-  const isLoggedIn = await geinsCRM.auth.authorized();
-  if (isLoggedIn === true) {
-    userLoggedIn.value = true;
-    return true;
-  } else {
-    userLoggedIn.value = false;
-    return false;
-  }
-};
 if (await checkUserLoggedIn()) {
   handleUpdate();
 }

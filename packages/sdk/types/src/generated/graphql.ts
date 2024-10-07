@@ -2430,10 +2430,10 @@ export type GeinsAddressType = {
 export type GeinsUserType = {
   id: number,
   email: string,
+  personalId?: string | null,
   customerType?: GeinsCustomerType | null,
   gender?: GeinsGender | null,
   metaData?: string | null,
-  entityId?: string | null,
   address?: {
     firstName: string,
     lastName: string,
@@ -2832,10 +2832,10 @@ export type GeinsUserGetType = {
   getUser?: {
     id: number,
     email: string,
+    personalId?: string | null,
     customerType?: GeinsCustomerType | null,
     gender?: GeinsGender | null,
     metaData?: string | null,
-    entityId?: string | null,
     address?: {
       firstName: string,
       lastName: string,
@@ -2885,10 +2885,10 @@ export type GeinsUserUpdateType = {
   updateUser?: {
     id: number,
     email: string,
+    personalId?: string | null,
     customerType?: GeinsCustomerType | null,
     gender?: GeinsGender | null,
     metaData?: string | null,
-    entityId?: string | null,
     address?: {
       firstName: string,
       lastName: string,
