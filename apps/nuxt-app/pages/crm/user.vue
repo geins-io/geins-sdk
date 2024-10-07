@@ -6,7 +6,7 @@ import {
   AuthClientConnectionModes,
   GeinsEventType,
 } from '@geins/core';
-import type { GeinsSettings, AuthSettings } from '@geins/types';
+import type { GeinsSettings, AuthSettings, GeinsUserType, GeinsUserInputTypeType } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 import CookieDump from '~/components/CookieDump.vue';
 
@@ -20,7 +20,7 @@ const geinsCore = new GeinsCore(geinsSettings);
 const geinsCRM = new GeinsCRM(geinsCore, authSettings);
 const timeToLoggout = ref<number>(900);
 const isLoggedIn = ref<boolean>(false);
-const userObject = ref<any>(null);
+const userObject = ref<GeinsUserType>();
 const authObject = ref<any>(null);
 const userOrderObject = ref<any>(null);
 
@@ -55,6 +55,7 @@ const getAuthObject = async () => {
 
 const setUserObject = async () => {
   const user = await geinsCRM.user.get();
+  logWrite('user', user);
   if (user) {
     userObject.value = user;
   }
@@ -73,7 +74,7 @@ const getUserOrdersObject = async () => {
 
 const logOut = async () => {
   await geinsCRM.auth.logout();
-  userObject.value = null;
+  userObject.value = undefined;
 };
 
 const getUserOrderObject = async (id: number) => {
@@ -114,6 +115,25 @@ const handleRefresh = async () => {
     setAuthObject(response);
   });
 };
+async function handleSubmit() {
+  // Add your form submission logic here
+  console.log('Form submitted');
+  const userSave: any = {
+    address: {
+      firstName: userObject.value?.address?.firstName,
+      lastName: userObject.value?.address?.lastName,
+      phone: userObject.value?.address?.phone,
+      addressLine1: userObject.value?.address?.addressLine1,
+      addressLine2: userObject.value?.address?.addressLine2,
+      zip: userObject.value?.address?.zip,
+      city: userObject.value?.address?.city,
+      country: userObject.value?.address?.country,
+    }
+  }
+
+  const user = await geinsCRM.user.update(userSave);
+  logWrite('user', user);
+}
 </script>
 
 <template>
@@ -135,7 +155,7 @@ const handleRefresh = async () => {
         <td style="vertical-align: top">
           <table>
             <tr>
-              <td>2. Actions:</td>
+              <td>1. Actions:</td>
             </tr>
             <tr>
               <td>
@@ -148,6 +168,48 @@ const handleRefresh = async () => {
                 <button @click="logOut">Logout</button>
               </td>
             </tr>
+            <tr v-if="userObject && userObject.address">
+              <td>
+
+                <form>
+                  <div>
+                    <label for="firstName">First Name:</label>
+                    <input id="firstName" v-model="userObject.address.firstName" type="text" />
+                  </div>
+                  <div>
+                    <label for="lastName">Last Name:</label>
+                    <input id="lastName" v-model="userObject.address.lastName" type="text" />
+                  </div>
+                  <div>
+                    <label for="phone">Phone:</label>
+                    <input id="phone" v-model="userObject.address.phone" type="tel" />
+                  </div>
+                  <div>
+                    <label for="address1">Address 1:</label>
+                    <input id="address1" v-model="userObject.address.addressLine1" type="text" />
+                  </div>
+                  <div>
+                    <label for="address2">Address 2:</label>
+                    <input id="address2" v-model="userObject.address.addressLine2" type="text" />
+                  </div>
+                  <div>
+                    <label for="zipCode">Zip Code:</label>
+                    <input id="zipCode" v-model="userObject.address.zip" type="text" />
+                  </div>
+                  <div>
+                    <label for="city">City:</label>
+                    <input id="city" v-model="userObject.address.city" type="text" />
+                  </div>
+                  <div>
+                    <label for="country">Country:</label>
+                    <input id="country" v-model="userObject.address.country" type="text" />
+                  </div>
+                  <button type="submit" @click.prevent="handleSubmit">Save</button>
+                </form>
+              </td>
+            </tr>
+
+
           </table>
           <hr />
           <div>

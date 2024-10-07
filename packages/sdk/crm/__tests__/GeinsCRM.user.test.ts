@@ -68,7 +68,7 @@ function testGeinsCRM(options: TestSetupOptions) {
 
       // get user information
       const user = await geinsCRM.user.get();
-      //console.log('user', user);
+      // console.log('user', user);
       expect(user).toBeDefined();
       expect(user).toHaveProperty('email');
       expect(user).toHaveProperty('customerType');

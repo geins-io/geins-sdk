@@ -49,7 +49,8 @@ onMounted(() => {
     items.value.push({ header: data.subject, data: data });
     logWrite(data.subject, data);
   };
-  geinsCore.events.listnerAdd(myEventHandlerLogin, GeinsEventType.USER_LOGIN);
+  //geinsCore.events.listnerAdd(myEventHandlerLogin, GeinsEventType.USER_LOGIN);
+  geinsCore.events.listnerAdd(myEventHandlerLogin, GeinsEventType.USER);
 });
 
 const clear = async () => {

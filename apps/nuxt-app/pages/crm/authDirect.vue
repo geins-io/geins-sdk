@@ -117,13 +117,13 @@ const handleChangePassword = async () => {
     newPassword: newPassword.value,
   };
   logWrite(`New Password:`, newPassword.value);
-
-  const result = await geinsCRM.auth.changePassword(newPasswordCredentials);
-  logWrite(`change password result`, result);
-  if (!result) {
-    logWrite(`change password failed`, result);
-    return;
-  }
+  /*
+    const result = await geinsCRM.auth.changePassword(newPasswordCredentials);
+    logWrite(`change password result`, result);
+    if (!result) {
+      logWrite(`change password failed`, result);
+      return;
+    } */
   password.value = newPassword.value;
 };
 </script>
