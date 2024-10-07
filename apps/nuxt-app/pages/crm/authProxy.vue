@@ -40,31 +40,19 @@ const newPassword = computed(
     Math.random().toString(36).substring(2, 15),
 );
 
-const checkUserLoggedIn = () => {
-  const isLoggedIn = geinsCRM.user.authorized();
-  if (isLoggedIn === true) {
-    userLoggedIn.value = true;
-  } else {
-    userLoggedIn.value = false;
-  }
-};
 
-onMounted(() => {
-  checkUserLoggedIn();
-  if (userLoggedIn.value) {
-    handleUpdate();
-  }
-});
+
+
 
 const handleLogin = async (validCredentials = true) => {
   user.value = null;
   const loginCredentials = validCredentials
     ? credentials.value
     : {
-        username: 'error',
-        password: 'error',
-        rememberUser: true,
-      };
+      username: 'error',
+      password: 'error',
+      rememberUser: true,
+    };
   try {
     // Create credentials object
     const credentials: AuthCredentials = {
@@ -112,20 +100,36 @@ const handleRefresh = async () => {
 };
 
 const handleChangePassword = async () => {
-  const newPasswordCredentials = {
-    ...credentials.value,
-    newPassword: newPassword.value,
-  };
-  logWrite(`New Password:`, newPassword.value);
+  /*   const newPasswordCredentials = {
+      ...credentials.value,
+      newPassword: newPassword.value,
+    };
+    logWrite(`New Password:`, newPassword.value);
 
-  const result = await geinsCRM.auth.changePassword(newPasswordCredentials);
-  logWrite(`change password result`, result);
-  if (!result) {
-    logWrite(`change password failed`, result);
-    return;
-  }
+    const result = await geinsCRM.auth.changePassword(newPasswordCredentials);
+    logWrite(`change password result`, result);
+    if (!result) {
+      logWrite(`change password failed`, result);
+      return;
+    } */
   password.value = newPassword.value;
 };
+
+
+const checkUserLoggedIn = async () => {
+  const isLoggedIn = await geinsCRM.auth.authorized();
+  if (isLoggedIn === true) {
+    userLoggedIn.value = true;
+    return true;
+  } else {
+    userLoggedIn.value = false;
+    return false;
+  }
+};
+if (await checkUserLoggedIn()) {
+  handleUpdate();
+}
+
 </script>
 
 <template>
@@ -190,16 +194,10 @@ const handleChangePassword = async () => {
             </tr>
             <tr>
               <td>
-                <button
-                  :disabled="userLoggedIn === true"
-                  @click="handleLogin(true)"
-                >
+                <button :disabled="userLoggedIn === true" @click="handleLogin(true)">
                   Login Good
                 </button>
-                <button
-                  :disabled="userLoggedIn === true"
-                  @click="handleLogin(false)"
-                >
+                <button :disabled="userLoggedIn === true" @click="handleLogin(false)">
                   Login Bad
                 </button>
               </td>
@@ -214,28 +212,16 @@ const handleChangePassword = async () => {
             </tr>
             <tr>
               <td>
-                <button
-                  :disabled="userLoggedIn === false"
-                  @click="handleUpdate"
-                >
+                <button :disabled="userLoggedIn === false" @click="handleUpdate">
                   Get User
                 </button>
-                <button
-                  :disabled="userLoggedIn === false"
-                  @click="handleRefresh"
-                >
+                <button :disabled="userLoggedIn === false" @click="handleRefresh">
                   Refresh
                 </button>
-                <button
-                  :disabled="userLoggedIn === false"
-                  @click="handleChangePassword"
-                >
+                <button :disabled="userLoggedIn === false" @click="handleChangePassword">
                   Change Password
                 </button>
-                <button
-                  :disabled="userLoggedIn === false"
-                  @click="handleLogout"
-                >
+                <button :disabled="userLoggedIn === false" @click="handleLogout">
                   Logout
                 </button>
               </td>

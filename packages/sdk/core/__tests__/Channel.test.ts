@@ -1,9 +1,7 @@
 // packages/sdk/core/__tests__/GeinsCore.test.ts
 
 import { Channel } from '../src/logic/channel';
-import { GeinsSettings } from '@geins/types';
 import { validSettings } from '../../../../test/globalSettings';
-import exp from 'constants';
 
 describe('Channel', () => {
   let channel: Channel;
@@ -25,9 +23,7 @@ describe('Channel', () => {
     expect(currentChannel).toHaveProperty('defaultMarketId');
     expect(currentChannel).toHaveProperty('defaultLanguageId');
     if (currentChannel) {
-      expect(currentChannel.id).toEqual(
-        `${validSettings.channel}|${validSettings.tld}`,
-      );
+      expect(currentChannel.id).toEqual(`${validSettings.channel}|${validSettings.tld}`);
     }
   });
 

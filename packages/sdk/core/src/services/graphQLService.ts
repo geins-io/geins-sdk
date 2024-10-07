@@ -1,10 +1,3 @@
-import {
-  DocumentNode,
-  FetchPolicy,
-  FetchResult,
-  ApolloQueryResult,
-  OperationVariables,
-} from '@apollo/client';
 import type { GeinsSettings } from '@geins/types';
 import { BaseApiService } from '../base/baseApiService';
 import { GraphQLQueryOptions } from '../api-client/merchantApiClient';
@@ -21,9 +14,9 @@ export class GraphQLService extends BaseApiService {
    * @param options - Optional options like fetchPolicy, pollInterval, etc.
    * @returns The result data of the query or null
    */
-  async runQuery<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
+  async query<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
     try {
-      const result = await this.runQuery(options);
+      const result = this.cleanObject(await this.runQuery(options));
       const parsedResult = this.parseResult(result);
       return parsedResult as T;
     } catch (error) {
@@ -40,7 +33,7 @@ export class GraphQLService extends BaseApiService {
    * @param options - Optional options like fetchPolicy, etc.
    * @returns The result data of the mutation or null
    */
-  async runMutation<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
+  async mutation<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
     try {
       const result = await this.runMutation(options);
       const parsedResult = this.parseResult(result);
