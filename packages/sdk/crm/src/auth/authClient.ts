@@ -41,12 +41,8 @@ export abstract class AuthClient {
   async refresh(refreshToken?: string): Promise<AuthResponse | undefined> {
     this._refreshToken = refreshToken || this.getCookieRefreshToken();
 
-    if (!refreshToken) {
-      this.clearAuthCookies();
-      return undefined;
-    }
-
     if (!this._refreshToken) {
+      this.clearAuthCookies();
       return undefined;
     }
 
@@ -58,7 +54,7 @@ export abstract class AuthClient {
     }
 
     if (result.tokens) {
-      this.refreshLoginCookies(result.tokens);
+      this.refreshLoginCookies(result);
     }
 
     return result;
@@ -146,7 +142,7 @@ export abstract class AuthClient {
 
     if (authResponse.tokens) {
       this._refreshToken = tokens.refreshToken;
-      this.refreshLoginCookies(authResponse.tokens);
+      this.refreshLoginCookies(authResponse);
     }
 
     return authResponse;
@@ -162,7 +158,7 @@ export abstract class AuthClient {
 
     if (authResponse.tokens) {
       this._refreshToken = refreshToken;
-      this.refreshLoginCookies(authResponse.tokens);
+      this.refreshLoginCookies(authResponse);
     }
 
     return authResponse;
@@ -228,25 +224,26 @@ export abstract class AuthClient {
     };
   }
 
-  protected refreshLoginCookies(authResponse: AuthTokens): void {
-    this.setCookiesTokens(authResponse);
+  protected refreshLoginCookies(authResponse: AuthResponse): void {
+    this.setOtherAuthCookies(authResponse);
+    this.setCookiesTokens(authResponse.tokens);
   }
 
-  protected setCookiesLogin(authResponse: AuthResponse, rememberUser: boolean): void {
-    const maxAge = rememberUser ? AUTH_COOKIES_MAX_AGE.REMEMBER_USER : AUTH_COOKIES_MAX_AGE.DEFAULT;
-    const { user, tokens } = authResponse;
+  protected setOtherAuthCookies(authResponse: AuthResponse, maxAge?: number): void {
+    const { user } = authResponse;
+    const setMaxAge = maxAge || this.getCookieMaxAge() || AUTH_COOKIES_MAX_AGE.DEFAULT;
 
     this._cookieService.set({
       name: AUTH_COOKIES.USER_MAX_AGE,
-      payload: maxAge.toString(),
-      maxAge,
+      payload: setMaxAge.toString(),
+      maxAge: setMaxAge,
     });
 
     if (user?.username) {
       this._cookieService.set({
         name: AUTH_COOKIES.USER,
         payload: user.username,
-        maxAge,
+        maxAge: setMaxAge,
       });
     }
 
@@ -254,10 +251,16 @@ export abstract class AuthClient {
       this._cookieService.set({
         name: AUTH_COOKIES.USER_TYPE,
         payload: user.customerType,
-        maxAge,
+        maxAge: setMaxAge,
       });
     }
+  }
 
+  protected setCookiesLogin(authResponse: AuthResponse, rememberUser: boolean): void {
+    const maxAge = rememberUser ? AUTH_COOKIES_MAX_AGE.REMEMBER_USER : AUTH_COOKIES_MAX_AGE.DEFAULT;
+    const { tokens } = authResponse;
+
+    this.setOtherAuthCookies(authResponse, maxAge);
     this.setCookiesTokens(tokens, maxAge);
   }
 
@@ -270,7 +273,7 @@ export abstract class AuthClient {
       this.setCookieRefreshToken(tokens.refreshToken, setMaxAge);
     }
     if (tokens?.token) {
-      this.setCookieUserToken(tokens.token, setMaxAge);
+      this.setCookieUserToken(tokens.token, tokens.expiresIn || 900);
     }
   }
 
