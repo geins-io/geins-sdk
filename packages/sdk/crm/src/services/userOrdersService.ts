@@ -1,7 +1,10 @@
-import type { GeinsUserOrdersType } from '@geins/types';
+import type { GeinsSettings, GeinsUserOrdersType } from '@geins/types';
 import { BaseApiService, logWrite } from '@geins/core';
 import { queries } from '../graphql';
 export class UserOrdersService extends BaseApiService {
+  constructor(apiClient: any, geinsSettings: GeinsSettings) {
+    super(apiClient, geinsSettings);
+  }
   private async generateVars(variables: any) {
     return this.createVariables(variables);
   }
