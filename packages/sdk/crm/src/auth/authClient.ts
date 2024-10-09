@@ -1,5 +1,5 @@
 import { CookieService, AUTH_COOKIES, AUTH_COOKIES_MAX_AGE } from '@geins/core';
-import type { AuthResponse, AuthCredentials, AuthTokens } from '@geins/types';
+import type { AuthResponse, AuthCredentials, AuthTokens, AuthUser } from '@geins/types';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 import { AuthService } from './authService';
 
@@ -224,59 +224,6 @@ export abstract class AuthClient {
     };
   }
 
-  protected refreshLoginCookies(authResponse: AuthResponse): void {
-    this.setOtherAuthCookies(authResponse);
-    this.setCookiesTokens(authResponse.tokens);
-  }
-
-  protected setOtherAuthCookies(authResponse: AuthResponse, maxAge?: number): void {
-    const { user } = authResponse;
-    const setMaxAge = maxAge || this.getCookieMaxAge() || AUTH_COOKIES_MAX_AGE.DEFAULT;
-
-    this._cookieService.set({
-      name: AUTH_COOKIES.USER_MAX_AGE,
-      payload: setMaxAge.toString(),
-      maxAge: setMaxAge,
-    });
-
-    if (user?.username) {
-      this._cookieService.set({
-        name: AUTH_COOKIES.USER,
-        payload: user.username,
-        maxAge: setMaxAge,
-      });
-    }
-
-    if (user?.customerType) {
-      this._cookieService.set({
-        name: AUTH_COOKIES.USER_TYPE,
-        payload: user.customerType,
-        maxAge: setMaxAge,
-      });
-    }
-  }
-
-  protected setCookiesLogin(authResponse: AuthResponse, rememberUser: boolean): void {
-    const maxAge = rememberUser ? AUTH_COOKIES_MAX_AGE.REMEMBER_USER : AUTH_COOKIES_MAX_AGE.DEFAULT;
-    const { tokens } = authResponse;
-
-    this.setOtherAuthCookies(authResponse, maxAge);
-    this.setCookiesTokens(tokens, maxAge);
-  }
-
-  protected setCookiesTokens(tokens?: AuthTokens, maxAge?: number): void {
-    if (!tokens) {
-      return;
-    }
-    const setMaxAge = maxAge || this.getCookieMaxAge() || AUTH_COOKIES_MAX_AGE.DEFAULT;
-    if (tokens?.refreshToken) {
-      this.setCookieRefreshToken(tokens.refreshToken, setMaxAge);
-    }
-    if (tokens?.token) {
-      this.setCookieUserToken(tokens.token, tokens.expiresIn || 900);
-    }
-  }
-
   protected setCookieRefreshToken(token: string, maxAge?: number): void {
     const setMaxAge = maxAge || this.getCookieMaxAge() || AUTH_COOKIES_MAX_AGE.DEFAULT;
     this._cookieService.set({
@@ -293,6 +240,62 @@ export abstract class AuthClient {
       payload: token,
       maxAge: setMaxAge,
     });
+  }
+
+  protected setCookiesTokens(tokens?: AuthTokens, maxAge?: number): void {
+    if (!tokens) {
+      return;
+    }
+    const setMaxAge = maxAge || this.getCookieMaxAge() || AUTH_COOKIES_MAX_AGE.DEFAULT;
+    if (tokens?.refreshToken) {
+      this.setCookieRefreshToken(tokens.refreshToken, setMaxAge);
+    }
+    if (tokens?.token) {
+      this.setCookieUserToken(tokens.token, tokens.expiresIn || 900);
+    }
+  }
+
+  protected setCookiesUser(authUser?: AuthUser, maxAge?: number): void {
+    if (!authUser) {
+      return;
+    }
+    const setMaxAge = maxAge || this.getCookieMaxAge() || AUTH_COOKIES_MAX_AGE.DEFAULT;
+
+    this._cookieService.set({
+      name: AUTH_COOKIES.USER_MAX_AGE,
+      payload: setMaxAge.toString(),
+      maxAge: setMaxAge,
+    });
+
+    if (authUser?.username) {
+      this._cookieService.set({
+        name: AUTH_COOKIES.USER,
+        payload: authUser.username,
+        maxAge: setMaxAge,
+      });
+    }
+
+    if (authUser?.customerType) {
+      this._cookieService.set({
+        name: AUTH_COOKIES.USER_TYPE,
+        payload: authUser.customerType,
+        maxAge: setMaxAge,
+      });
+    }
+  }
+
+  protected setCookiesLogin(authResponse: AuthResponse, rememberUser: boolean): void {
+    const maxAge = rememberUser ? AUTH_COOKIES_MAX_AGE.REMEMBER_USER : AUTH_COOKIES_MAX_AGE.DEFAULT;
+    const { tokens, user } = authResponse;
+
+    this.setCookiesUser(user, maxAge);
+    this.setCookiesTokens(tokens, maxAge);
+  }
+
+  protected refreshLoginCookies(authResponse: AuthResponse): void {
+    const { tokens, user } = authResponse;
+    this.setCookiesUser(user);
+    this.setCookiesTokens(tokens);
   }
 
   public clearAuth(): void {
