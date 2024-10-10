@@ -60,7 +60,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       };
 
       // create random user data
-      //const changedUserInfo = randomUserData();
+      const changedUserInfo = randomUserData();
 
       const loginResult = await geinsCRM.auth.login(credentials);
       expect(loginResult).toBeDefined();
@@ -68,13 +68,11 @@ function testGeinsCRM(options: TestSetupOptions) {
 
       // get user information
       const user = await geinsCRM.user.get();
-      // console.log('user', user);
       expect(user).toBeDefined();
       expect(user).toHaveProperty('email');
       expect(user).toHaveProperty('customerType');
       expect(user).toHaveProperty('address');
 
-      /*
       // update user information
       const updateResult = await geinsCRM.user.update(changedUserInfo);
       expect(updateResult).toBeDefined();
@@ -92,7 +90,6 @@ function testGeinsCRM(options: TestSetupOptions) {
       // clean address object and compare
       const cleanUpdateResult = cleanObject(updateResult);
       expect(cleanUpdateResult!.address).toEqual(changedUserInfo.address);
-      */
     });
   });
 }
@@ -103,14 +100,7 @@ const authSettingsVariations: TestSetupOptions[] = [
     authSettings: {
       clientConnectionMode: 'Direct',
     },
-  } /* ,
-  {
-    authSettings: {
-      clientConnectionMode: 'Proxy',
-      proxyUrl: '/api/auth',
-    },
-    useMockFetch: true,
-  }, */,
+  },
 ];
 
 // Use describe.each to run the test suite with different configurations

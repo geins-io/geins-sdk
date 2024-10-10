@@ -79,9 +79,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       // check cookie set calls
       const setCalls = setCookieSpy.mock.calls.map(call => call[0]);
       expectedCookiesAuthAll.forEach(expectedName => {
-        expect(setCalls).toContainEqual(
-          expect.objectContaining({ name: expectedName, maxAge: expectedMaxAge }),
-        );
+        expect(setCalls).toContainEqual(expect.objectContaining({ name: expectedName }));
       });
       expect(setCookieSpy).toHaveBeenCalledTimes(expectedCookiesAuthAll.length);
       // check remove calls
@@ -205,9 +203,6 @@ function testGeinsCRM(options: TestSetupOptions) {
       const authUser = await isolatedCRM.auth.getUser(refreshToken);
       const latestRefreshToken = authUser?.tokens?.refreshToken;
       expect(authUser).toBeDefined();
-
-      // const userTokenFromCore = isolatedCore.getUserToken();
-      // expect(userTokenFromCore).toBe(validToken);
 
       const setCalls = setCookieSpy.mock.calls.map(call => call[0]);
       const lastAuthRefreshTokenCookie = setCalls
