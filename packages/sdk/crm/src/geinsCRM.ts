@@ -153,7 +153,6 @@ class GeinsCRM extends BasePackage {
     if (!this._userService) {
       await this.initUserService();
     }
-    this._userService.deleteUserCache();
     this._apiClient().clearCacheAndRefetchQueries();
   }
 
