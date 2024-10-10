@@ -1,17 +1,9 @@
 import type { GeinsUserType, GeinsSettings } from '@geins/types';
-import {
-  BaseApiService,
-  logWrite,
-  GeinsUserInputTypeType,
-  SimpleCache,
-  MerchantApiClient,
-} from '@geins/core';
+import { BaseApiService, GeinsUserInputTypeType } from '@geins/core';
 import { queries, mutations } from '../graphql';
 export class UserService extends BaseApiService {
-  private cache: SimpleCache<GeinsUserType>;
   constructor(apiClient: any, geinsSettings: GeinsSettings) {
     super(apiClient, geinsSettings);
-    this.cache = new SimpleCache<GeinsUserType>(5 * 60 * 1000); // 5 minutes cache
   }
   private async generateVars(variables: any) {
     return this.createVariables(variables);
@@ -39,27 +31,19 @@ export class UserService extends BaseApiService {
   }
 
   async get(): Promise<GeinsUserType | undefined> {
-    const cacheKey = 'current_user';
-    const cachedUser = this.cache.get(cacheKey);
-    if (cachedUser) {
-      return cachedUser;
-    }
     const options = {
       query: queries.userGet,
       variables: await this.generateVars({}),
     };
     const user = await this.runQueryParsed<GeinsUserType>(options);
-    if (user) {
-      this.cache.set(cacheKey, user);
-    }
+
     return user;
   }
 
-  async create(user: GeinsUserInputTypeType, userToken?: string | undefined): Promise<any> {
+  async create(user: GeinsUserInputTypeType): Promise<any> {
     const options = {
       query: mutations.userRegister,
       variables: await this.generateMutationVars({ user }),
-      userToken,
     };
     const result = this.runMutation(options);
 
@@ -71,7 +55,6 @@ export class UserService extends BaseApiService {
       query: mutations.userUpdate,
       variables: await this.generateMutationVars({ user }),
     };
-    this.cache.delete('current_user');
     const result = await this.runMutation(options);
     return this.parseResult(result) as GeinsUserType;
   }
@@ -81,7 +64,8 @@ export class UserService extends BaseApiService {
       query: mutations.userDelete,
       variables: await this.generateVars({}),
     };
-    return this.runMutation(options);
+    const result = await this.runMutation(options);
+    return result;
   }
 
   protected parseResult(data: any): GeinsUserType | undefined {

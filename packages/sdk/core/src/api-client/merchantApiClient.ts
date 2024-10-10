@@ -85,8 +85,8 @@ export class MerchantApiClient {
     return this._apolloClient;
   }
 
-  clearCache() {
-    this._apolloClient.clearStore();
+  public clearCacheAndRefetchQueries() {
+    this._apolloClient.resetStore();
   }
 
   private getFetchPolicy(operationType: OperationType, selectedFetchPolicy: FetchPolicy | undefined) {
