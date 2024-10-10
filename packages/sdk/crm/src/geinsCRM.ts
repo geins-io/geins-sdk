@@ -147,11 +147,10 @@ class GeinsCRM extends BasePackage {
     return loginResult;
   }
 
-  private async clearAuthAndUser() {
+  private clearAuthAndUser() {
     this.core.setUserToken(undefined);
     this._authClient.clearAuth();
     this._apiClient().clearCacheAndRefetchQueries();
-    console.log('clearAuthAndUser YEAH');
   }
 
   private async authLogout(): Promise<AuthResponse | undefined> {
