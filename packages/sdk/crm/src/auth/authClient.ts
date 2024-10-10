@@ -26,38 +26,37 @@ export abstract class AuthClient {
 
   // base methods
   async login(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
-    const result = await this.handleLogin(credentials);
-    if (!result) {
+    const authResponse = await this.handleLogin(credentials);
+
+    if (!authResponse || !authResponse.succeeded) {
       return undefined;
     }
 
-    if (result.succeeded) {
-      this.setCookiesLogin(result, credentials.rememberUser || false);
+    if (authResponse.succeeded) {
+      this.setCookiesLogin(authResponse, credentials.rememberUser || false);
     }
 
-    return result;
+    return authResponse;
   }
 
   async refresh(refreshToken?: string): Promise<AuthResponse | undefined> {
     this._refreshToken = refreshToken || this.getCookieRefreshToken();
 
     if (!this._refreshToken) {
-      this.clearAuthCookies();
       return undefined;
     }
 
-    const result = await this.handleRefresh(this._refreshToken);
+    const authResponse = await this.handleRefresh(this._refreshToken);
 
-    if (!result || !result.succeeded) {
-      this.clearAuthCookies();
+    if (!authResponse || !authResponse.succeeded) {
       return undefined;
     }
 
-    if (result.tokens) {
-      this.refreshLoginCookies(result);
+    if (authResponse.tokens) {
+      this.refreshLoginCookies(authResponse);
     }
 
-    return result;
+    return authResponse;
   }
 
   async getUser(refreshToken?: string, userToken?: string): Promise<AuthResponse | undefined> {
@@ -65,7 +64,6 @@ export abstract class AuthClient {
     this._refreshToken = tokens.refreshToken;
 
     if (!tokens.refreshToken) {
-      this.clearAuth();
       return undefined;
     }
 
@@ -84,36 +82,35 @@ export abstract class AuthClient {
       return undefined;
     }
 
-    const result = await this.handleChangePassword(credentials, this._refreshToken);
+    const authResponse = await this.handleChangePassword(credentials, this._refreshToken);
 
-    if (result && result.succeeded) {
-      this.setCookiesLogin(result, credentials.rememberUser || false);
+    if (authResponse && authResponse.succeeded) {
+      this.setCookiesLogin(authResponse, credentials.rememberUser || false);
     }
-    return result;
+    return authResponse;
   }
 
   async register(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
-    const result = await this.handleRegister(credentials);
+    const authResponse = await this.handleRegister(credentials);
 
-    if (!result) {
+    if (!authResponse || !authResponse.succeeded) {
       return undefined;
     }
 
-    if (result.succeeded) {
-      this.setCookiesLogin(result, credentials.rememberUser || false);
+    if (authResponse.succeeded) {
+      this.setCookiesLogin(authResponse, credentials.rememberUser || false);
     }
 
-    return result;
+    return authResponse;
   }
 
   private async handleUserTokenScenario(tokens: {
     refreshToken: string;
     userToken: string;
   }): Promise<AuthResponse | undefined> {
-    let authResponse = await AuthService.getUserObjectFromToken(tokens.userToken, tokens.refreshToken);
+    let authResponse = AuthService.getUserObjectFromToken(tokens.userToken, tokens.refreshToken);
 
     if (!authResponse) {
-      this.clearAuth();
       return undefined;
     }
 
@@ -131,7 +128,6 @@ export abstract class AuthClient {
     const authResponse = await this.handleGetUser(tokens.refreshToken, tokens.userToken);
 
     if (!authResponse || !authResponse.succeeded) {
-      this.clearAuth();
       return undefined;
     }
 
@@ -147,7 +143,6 @@ export abstract class AuthClient {
     const authResponse = await this.handleGetUser(refreshToken);
 
     if (!authResponse || !authResponse.succeeded) {
-      this.clearAuth();
       return undefined;
     }
 
@@ -161,7 +156,6 @@ export abstract class AuthClient {
 
   // cookie methods
   public async logout(): Promise<AuthResponse | undefined> {
-    this.clearAuth();
     return { succeeded: true };
   }
 
