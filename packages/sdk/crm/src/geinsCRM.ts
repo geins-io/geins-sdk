@@ -118,7 +118,7 @@ class GeinsCRM extends BasePackage {
     if (user?.succeeded && user.tokens) {
       this.setAuthTokens(user.tokens);
     } else {
-      this._authClient.clearAuth();
+      this.clearAuthAndUser();
     }
     return user?.succeeded ?? false;
   }
@@ -131,7 +131,7 @@ class GeinsCRM extends BasePackage {
     if (loginResult?.succeeded && loginResult.tokens?.token) {
       this.setAuthTokens(loginResult.tokens);
     } else {
-      this._authClient.clearAuth();
+      this.clearAuthAndUser();
     }
     this.pushEvent(
       {
@@ -147,15 +147,21 @@ class GeinsCRM extends BasePackage {
     return loginResult;
   }
 
-  private async authLogout(): Promise<AuthResponse | undefined> {
-    if (!this._authClient) {
-      throw new Error('AuthClient is not initialized');
-    }
+  private async clearAuthAndUser() {
     this.core.setUserToken(undefined);
+    this._authClient.clearAuth();
     if (!this._userService) {
       await this.initUserService();
     }
     this._userService.deleteUserCache();
+    this._apiClient().clearCacheAndRefetchQueries();
+  }
+
+  private async authLogout(): Promise<AuthResponse | undefined> {
+    if (!this._authClient) {
+      throw new Error('AuthClient is not initialized');
+    }
+    this.clearAuthAndUser();
     this.pushEvent({ subject: GeinsEventType.USER_LOGOUT, payload: {} }, GeinsEventType.USER_LOGOUT);
     return this._authClient.logout();
   }
@@ -164,6 +170,8 @@ class GeinsCRM extends BasePackage {
     const result = await this._authClient.refresh(refreshToken);
     if (result && result.succeeded && result.tokens?.token) {
       this.setAuthTokens(result.tokens);
+    } else {
+      this.clearAuthAndUser();
     }
     return result;
   }
@@ -172,6 +180,8 @@ class GeinsCRM extends BasePackage {
     const result = await this._authClient.getUser(refreshToken, userToken);
     if (result && result.succeeded && result.tokens?.token) {
       this.setAuthTokens(result.tokens);
+    } else {
+      this.clearAuthAndUser();
     }
     return result;
   }

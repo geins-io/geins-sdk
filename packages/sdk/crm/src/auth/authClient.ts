@@ -65,7 +65,7 @@ export abstract class AuthClient {
     this._refreshToken = tokens.refreshToken;
 
     if (!tokens.refreshToken) {
-      this.clearAuthAndRefreshToken();
+      this.clearAuth();
       return undefined;
     }
 
@@ -106,11 +106,6 @@ export abstract class AuthClient {
     return result;
   }
 
-  private clearAuthAndRefreshToken(): void {
-    this.clearAuthCookies();
-    this._refreshToken = undefined;
-  }
-
   private async handleUserTokenScenario(tokens: {
     refreshToken: string;
     userToken: string;
@@ -118,7 +113,7 @@ export abstract class AuthClient {
     let authResponse = await AuthService.getUserObjectFromToken(tokens.userToken, tokens.refreshToken);
 
     if (!authResponse) {
-      this.clearAuthAndRefreshToken();
+      this.clearAuth();
       return undefined;
     }
 
@@ -136,7 +131,7 @@ export abstract class AuthClient {
     const authResponse = await this.handleGetUser(tokens.refreshToken, tokens.userToken);
 
     if (!authResponse || !authResponse.succeeded) {
-      this.clearAuthAndRefreshToken();
+      this.clearAuth();
       return undefined;
     }
 
@@ -152,7 +147,7 @@ export abstract class AuthClient {
     const authResponse = await this.handleGetUser(refreshToken);
 
     if (!authResponse || !authResponse.succeeded) {
-      this.clearAuthAndRefreshToken();
+      this.clearAuth();
       return undefined;
     }
 

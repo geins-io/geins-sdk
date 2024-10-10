@@ -6,11 +6,9 @@ import {
   SimpleCache,
   MerchantApiClient,
 } from '@geins/core';
-import { FetchPolicy } from '@apollo/client/core';
 import { queries, mutations } from '../graphql';
 export class UserService extends BaseApiService {
   private cache: SimpleCache<GeinsUserType>;
-  private _fetchPolicy: FetchPolicy = 'no-cache';
 
   constructor(apiClient: any, geinsSettings: GeinsSettings) {
     super(apiClient, geinsSettings);
@@ -37,7 +35,6 @@ export class UserService extends BaseApiService {
     const options = {
       query: queries.userGet,
       variables: vars,
-      requestOptions: { fetchPolicy: this._fetchPolicy },
     };
     return this.runQuery(options);
   }
@@ -51,7 +48,6 @@ export class UserService extends BaseApiService {
     const options = {
       query: queries.userGet,
       variables: await this.generateVars({}),
-      requestOptions: { fetchPolicy: this._fetchPolicy },
     };
     const user = await this.runQueryParsed<GeinsUserType>(options);
     if (user) {
@@ -64,7 +60,6 @@ export class UserService extends BaseApiService {
     const options = {
       query: mutations.userRegister,
       variables: await this.generateMutationVars({ user }),
-      requestOptions: { fetchPolicy: this._fetchPolicy },
     };
     const result = this.runMutation(options);
 
@@ -75,7 +70,6 @@ export class UserService extends BaseApiService {
     const options = {
       query: mutations.userUpdate,
       variables: await this.generateMutationVars({ user }),
-      requestOptions: { fetchPolicy: this._fetchPolicy },
     };
     this.deleteUserCache();
     const result = await this.runMutation(options);
@@ -86,7 +80,6 @@ export class UserService extends BaseApiService {
     const options = {
       query: mutations.userDelete,
       variables: await this.generateVars({}),
-      requestOptions: { fetchPolicy: this._fetchPolicy },
     };
     const result = await this.runMutation(options);
     this.deleteUserCache();
