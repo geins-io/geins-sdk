@@ -28,7 +28,7 @@ export abstract class AuthClient {
   async login(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
     const authResponse = await this.handleLogin(credentials);
 
-    if (!authResponse || !authResponse.succeeded) {
+    if (!authResponse) {
       return undefined;
     }
 
@@ -48,11 +48,11 @@ export abstract class AuthClient {
 
     const authResponse = await this.handleRefresh(this._refreshToken);
 
-    if (!authResponse || !authResponse.succeeded) {
+    if (!authResponse) {
       return undefined;
     }
 
-    if (authResponse.tokens) {
+    if (authResponse.succeeded && authResponse.tokens) {
       this.refreshLoginCookies(authResponse);
     }
 
@@ -93,7 +93,7 @@ export abstract class AuthClient {
   async register(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
     const authResponse = await this.handleRegister(credentials);
 
-    if (!authResponse || !authResponse.succeeded) {
+    if (!authResponse) {
       return undefined;
     }
 
@@ -114,7 +114,7 @@ export abstract class AuthClient {
       return undefined;
     }
 
-    if (authResponse.tokens?.expiresSoon) {
+    if (authResponse.succeeded && authResponse.tokens?.expiresSoon) {
       return this.refreshUserTokens(tokens);
     }
 
@@ -127,11 +127,11 @@ export abstract class AuthClient {
   }): Promise<AuthResponse | undefined> {
     const authResponse = await this.handleGetUser(tokens.refreshToken, tokens.userToken);
 
-    if (!authResponse || !authResponse.succeeded) {
+    if (!authResponse) {
       return undefined;
     }
 
-    if (authResponse.tokens) {
+    if (authResponse.succeeded && authResponse.tokens) {
       this._refreshToken = tokens.refreshToken;
       this.refreshLoginCookies(authResponse);
     }
@@ -146,7 +146,7 @@ export abstract class AuthClient {
       return undefined;
     }
 
-    if (authResponse.tokens) {
+    if (authResponse.succeeded && authResponse.tokens) {
       this._refreshToken = refreshToken;
       this.refreshLoginCookies(authResponse);
     }
