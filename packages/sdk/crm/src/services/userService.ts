@@ -6,9 +6,12 @@ import {
   SimpleCache,
   MerchantApiClient,
 } from '@geins/core';
+import { FetchPolicy } from '@apollo/client/core';
 import { queries, mutations } from '../graphql';
 export class UserService extends BaseApiService {
   private cache: SimpleCache<GeinsUserType>;
+  private _fetchPolicy: FetchPolicy = 'no-cache';
+
   constructor(apiClient: any, geinsSettings: GeinsSettings) {
     super(apiClient, geinsSettings);
     this.cache = new SimpleCache<GeinsUserType>(5 * 60 * 1000); // 5 minutes cache
@@ -34,6 +37,7 @@ export class UserService extends BaseApiService {
     const options = {
       query: queries.userGet,
       variables: vars,
+      requestOptions: { fetchPolicy: this._fetchPolicy },
     };
     return this.runQuery(options);
   }
@@ -47,6 +51,7 @@ export class UserService extends BaseApiService {
     const options = {
       query: queries.userGet,
       variables: await this.generateVars({}),
+      requestOptions: { fetchPolicy: this._fetchPolicy },
     };
     const user = await this.runQueryParsed<GeinsUserType>(options);
     if (user) {
@@ -55,11 +60,11 @@ export class UserService extends BaseApiService {
     return user;
   }
 
-  async create(user: GeinsUserInputTypeType, userToken?: string | undefined): Promise<any> {
+  async create(user: GeinsUserInputTypeType): Promise<any> {
     const options = {
       query: mutations.userRegister,
       variables: await this.generateMutationVars({ user }),
-      userToken,
+      requestOptions: { fetchPolicy: this._fetchPolicy },
     };
     const result = this.runMutation(options);
 
@@ -70,8 +75,9 @@ export class UserService extends BaseApiService {
     const options = {
       query: mutations.userUpdate,
       variables: await this.generateMutationVars({ user }),
+      requestOptions: { fetchPolicy: this._fetchPolicy },
     };
-    this.cache.delete('current_user');
+    this.deleteUserCache();
     const result = await this.runMutation(options);
     return this.parseResult(result) as GeinsUserType;
   }
@@ -80,8 +86,15 @@ export class UserService extends BaseApiService {
     const options = {
       query: mutations.userDelete,
       variables: await this.generateVars({}),
+      requestOptions: { fetchPolicy: this._fetchPolicy },
     };
-    return this.runMutation(options);
+    const result = await this.runMutation(options);
+    this.deleteUserCache();
+    return result;
+  }
+
+  public deleteUserCache(): void {
+    this.cache.delete('current_user');
   }
 
   protected parseResult(data: any): GeinsUserType | undefined {

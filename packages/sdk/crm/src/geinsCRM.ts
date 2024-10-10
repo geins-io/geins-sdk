@@ -147,10 +147,15 @@ class GeinsCRM extends BasePackage {
     return loginResult;
   }
 
-  private authLogout(): Promise<AuthResponse | undefined> {
+  private async authLogout(): Promise<AuthResponse | undefined> {
     if (!this._authClient) {
       throw new Error('AuthClient is not initialized');
     }
+    this.core.setUserToken(undefined);
+    if (!this._userService) {
+      await this.initUserService();
+    }
+    this._userService.deleteUserCache();
     this.pushEvent({ subject: GeinsEventType.USER_LOGOUT, payload: {} }, GeinsEventType.USER_LOGOUT);
     return this._authClient.logout();
   }
@@ -210,7 +215,7 @@ class GeinsCRM extends BasePackage {
         customerType: GeinsCustomerType.PersonType,
       };
 
-      const userResult = await this.userCreate(registerUserAs, userToken);
+      const userResult = await this.userCreate(registerUserAs);
 
       if (!userResult) {
         throw new Error('Failed to create user in MC');
@@ -242,12 +247,12 @@ class GeinsCRM extends BasePackage {
     return this._userService?.get();
   }
 
-  private async userCreate(user: GeinsUserInputTypeType, userToken?: string | undefined): Promise<any> {
+  private async userCreate(user: GeinsUserInputTypeType): Promise<any> {
     if (!this._userService) {
       await this.initUserService();
     }
 
-    return this._userService?.create(user, userToken);
+    return this._userService?.create(user);
   }
 
   private async userUpdate(user: GeinsUserInputTypeType): Promise<any> {
