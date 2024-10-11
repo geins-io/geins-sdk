@@ -169,14 +169,16 @@ function testGeinsCRM(options: TestSetupOptions) {
       expect(cleanUpdateResult!.address).toEqual(changedUserInfo.address);
     });
 
-    it('should return undefined for invalid user-token', async () => {
+    it('should not return user with invalid user-token', async () => {
       const invalidToken = 'invalidToken';
 
       const isolatedCore = new GeinsCore(validSettings);
       const isolatedCRM = new GeinsCRM(isolatedCore, authSettings);
 
       const user = await isolatedCRM.auth.getUser(invalidToken);
-      expect(user).toBeUndefined();
+      expect(user).toBeDefined();
+      expect(user).toHaveProperty('succeeded');
+      expect(user!.succeeded).toBe(false);
 
       const setCalls = setCookieSpy.mock.calls.map(call => call[0]);
       expect(setCalls).toHaveLength(0);
