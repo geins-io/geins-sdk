@@ -45,7 +45,7 @@ export class AuthService {
         credentials.rememberUser,
       );
 
-      return await AuthService.getUserObjectFromToken(result.token, result.refreshToken);
+      return AuthService.getUserObjectFromToken(result.token, result.refreshToken);
     } catch (error) {
       return this.handleError('Login failed', error);
     }
@@ -55,7 +55,7 @@ export class AuthService {
   public async getUser(refreshToken: string, userToken?: string): Promise<AuthResponse> {
     try {
       if (userToken) {
-        const authResponse = await AuthService.getUserObjectFromToken(userToken, refreshToken);
+        const authResponse = AuthService.getUserObjectFromToken(userToken, refreshToken);
         if (!authResponse) {
           return { succeeded: false };
         }
@@ -83,7 +83,7 @@ export class AuthService {
       if (!result.token) {
         return { succeeded: false };
       }
-      const authResponse = await AuthService.getUserObjectFromToken(result.token, result.refreshToken);
+      const authResponse = AuthService.getUserObjectFromToken(result.token, result.refreshToken);
       if (!authResponse) {
         return { succeeded: false };
       }
@@ -105,7 +105,7 @@ export class AuthService {
       if (!result.token) {
         return { succeeded: false };
       }
-      const authResponse = await AuthService.getUserObjectFromToken(result.token, result.refreshToken);
+      const authResponse = AuthService.getUserObjectFromToken(result.token, result.refreshToken);
       if (!authResponse) {
         return { succeeded: false };
       }
@@ -125,7 +125,7 @@ export class AuthService {
         return { succeeded: false };
       }
 
-      return await AuthService.getUserObjectFromToken(result.token, result.refreshToken);
+      return AuthService.getUserObjectFromToken(result.token, result.refreshToken);
     } catch (error) {
       return this.handleError('Register new user failed', error);
     }

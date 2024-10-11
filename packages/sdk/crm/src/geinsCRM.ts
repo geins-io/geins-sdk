@@ -142,6 +142,10 @@ class GeinsCRM extends BasePackage {
     const authResponse = await this._authClient.login(credentials);
     this.handleAuthResponse(authResponse);
 
+    if (authResponse?.succeeded) {
+      this._apiClient()?.clearCacheAndRefetchQueries();
+    }
+
     this.pushEvent(
       {
         subject: GeinsEventType.USER_LOGIN,
@@ -192,6 +196,10 @@ class GeinsCRM extends BasePackage {
     // user will be registered and logged in
     const authResponse = await this._authClient.register(credentials);
     this.handleAuthResponse(authResponse);
+
+    if (!authResponse?.succeeded) {
+      return authResponse;
+    }
 
     if (user) {
       const userResult = await this.userUpdate(user);
