@@ -71,6 +71,12 @@ class GeinsCRM extends BasePackage {
     }
   }
 
+  public clearAuthAndUser(): void {
+    this.core?.setUserToken(undefined);
+    this._authClient?.clearAuth();
+    this._apiClient()?.clearCacheAndRefetchQueries();
+  }
+
   public spoofUser(token: string): string {
     this._authClient.logout();
     return this._authClient.spoofPreviewUser(token);
@@ -104,6 +110,14 @@ class GeinsCRM extends BasePackage {
     };
   }
 
+  private handleAuthResponse(authResponse: AuthResponse | undefined): void {
+    if (authResponse?.succeeded && authResponse.tokens?.token) {
+      this.setAuthTokens(authResponse.tokens);
+    } else {
+      this.clearAuthAndUser();
+    }
+  }
+
   private async authAuthorized(refreshToken?: string): Promise<boolean> {
     if (!this._authClient) {
       throw new Error('AuthClient is not initialized');
@@ -113,44 +127,37 @@ class GeinsCRM extends BasePackage {
     if (refreshToken) {
       this._authClient.setRefreshToken(refreshToken);
     }
+
     // try to to get user with refreshToken
-    const user = await this._authClient.getUser(refreshToken);
-    if (user?.succeeded && user.tokens) {
-      this.setAuthTokens(user.tokens);
-    } else {
-      this.clearAuthAndUser();
-    }
-    return user?.succeeded ?? false;
+    const authResponse = await this._authClient.getUser(refreshToken);
+    this.handleAuthResponse(authResponse);
+
+    return authResponse?.succeeded ?? false;
   }
 
   private async authLogin(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
     if (!this._authClient) {
       throw new Error('AuthClient is not initialized');
     }
-    const loginResult = await this._authClient.login(credentials);
-    if (loginResult?.succeeded && loginResult.tokens?.token) {
-      this.setAuthTokens(loginResult.tokens);
-    } else {
-      this.clearAuthAndUser();
+    const authResponse = await this._authClient.login(credentials);
+    this.handleAuthResponse(authResponse);
+
+    if (authResponse?.succeeded) {
+      this._apiClient()?.clearCacheAndRefetchQueries();
     }
+
     this.pushEvent(
       {
         subject: GeinsEventType.USER_LOGIN,
         payload: {
-          success: loginResult?.succeeded,
-          tokens: loginResult?.tokens,
+          success: authResponse?.succeeded,
           user: credentials.username,
         },
       },
       GeinsEventType.USER_LOGIN,
     );
-    return loginResult;
-  }
 
-  private clearAuthAndUser() {
-    this.core.setUserToken(undefined);
-    this._authClient.clearAuth();
-    this._apiClient().clearCacheAndRefetchQueries();
+    return authResponse;
   }
 
   private async authLogout(): Promise<AuthResponse | undefined> {
@@ -163,23 +170,17 @@ class GeinsCRM extends BasePackage {
   }
 
   private async authRefresh(refreshToken?: string): Promise<AuthResponse | undefined> {
-    const result = await this._authClient.refresh(refreshToken);
-    if (result && result.succeeded && result.tokens?.token) {
-      this.setAuthTokens(result.tokens);
-    } else {
-      this.clearAuthAndUser();
-    }
-    return result;
+    const authResponse = await this._authClient.refresh(refreshToken);
+    this.handleAuthResponse(authResponse);
+
+    return authResponse;
   }
 
   private async authGetUser(refreshToken?: string, userToken?: string): Promise<AuthResponse | undefined> {
-    const result = await this._authClient.getUser(refreshToken, userToken);
-    if (result && result.succeeded && result.tokens?.token) {
-      this.setAuthTokens(result.tokens);
-    } else {
-      this.clearAuthAndUser();
-    }
-    return result;
+    const authResponse = await this._authClient.getUser(refreshToken, userToken);
+    this.handleAuthResponse(authResponse);
+
+    return authResponse;
   }
 
   private async authRegisterNewUser(
@@ -190,26 +191,16 @@ class GeinsCRM extends BasePackage {
       throw new Error('AuthClient is not initialized');
     }
     // logout user if already logged in
-    await this._authClient.logout();
+    await this.authLogout();
 
     // user will be registered and logged in
-    const registerResult = await this._authClient.register(credentials);
+    const authResponse = await this._authClient.register(credentials);
+    this.handleAuthResponse(authResponse);
 
-    // if not successful registerd in auth throw error
-    if (!registerResult?.succeeded) {
-      throw new Error('Failed to register user');
+    if (!authResponse?.succeeded) {
+      return authResponse;
     }
 
-    const userToken = registerResult.tokens?.token;
-    if (!userToken) {
-      throw new Error('Failed to get user token');
-    }
-
-    const refreshToken = registerResult.tokens?.refreshToken;
-    if (!refreshToken) {
-      throw new Error('Failed to get refresh token');
-    }
-    this.core.setUserToken(userToken);
     if (user) {
       const userResult = await this.userUpdate(user);
       if (!userResult) {
@@ -228,7 +219,8 @@ class GeinsCRM extends BasePackage {
       }
     }
 
-    return this._authClient.getUser(refreshToken, userToken);
+    const { refreshToken, token } = authResponse?.tokens || {};
+    return this._authClient.getUser(refreshToken, token);
   }
 
   get user(): UserInterface {
