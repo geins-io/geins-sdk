@@ -12,7 +12,6 @@ export interface AuthInterface {
   logout(): Promise<AuthResponse | undefined>;
   refresh(refreshToken?: string): Promise<AuthResponse | undefined>;
   getUser(refreshToken?: string, userToken?: string): Promise<AuthResponse | undefined>;
-  newUser(credentials: AuthCredentials, user?: GeinsUserInputTypeType): Promise<AuthResponse | undefined>;
   authorized(refreshToken?: string): Promise<boolean>;
 }
 
@@ -23,6 +22,7 @@ export interface AuthInterface {
 export interface UserInterface {
   get(): Promise<GeinsUserType | undefined>;
   update(user: GeinsUserInputTypeType): Promise<any>;
-  orders(): Promise<GeinsUserOrdersType | undefined>;
+  create(credentials: AuthCredentials, user?: GeinsUserInputTypeType): Promise<AuthResponse | undefined>;
   remove(): Promise<any>;
+  getOrders(): Promise<GeinsUserOrdersType | undefined>;
 }

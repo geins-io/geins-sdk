@@ -105,7 +105,6 @@ class GeinsCRM extends BasePackage {
       logout: this.authLogout.bind(this),
       refresh: this.authRefresh.bind(this),
       getUser: this.authGetUser.bind(this),
-      newUser: this.authRegisterNewUser.bind(this),
       authorized: this.authAuthorized.bind(this),
     };
   }
@@ -227,8 +226,14 @@ class GeinsCRM extends BasePackage {
     return {
       get: this.userGet.bind(this),
       update: this.userUpdate.bind(this),
-      orders: this.userOrders.bind(this),
+      create: this.authRegisterNewUser.bind(this),
       remove: this.userRemove.bind(this),
+      password: {
+        change: this.authChangePassword.bind(this),
+        requestReset: this.passwordResetRequest.bind(this),
+        commitReset: this.passwordResetCommit.bind(this),
+      },
+      getOrders: this.userOrders.bind(this),
     };
   }
 
