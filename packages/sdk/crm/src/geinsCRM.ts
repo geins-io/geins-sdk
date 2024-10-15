@@ -101,10 +101,10 @@ class GeinsCRM extends BasePackage {
       throw new Error('AuthClient is not initialized');
     }
     return {
+      get: this.authGetUser.bind(this),
       login: this.authLogin.bind(this),
       logout: this.authLogout.bind(this),
       refresh: this.authRefresh.bind(this),
-      getUser: this.authGetUser.bind(this),
       authorized: this.authAuthorized.bind(this),
     };
   }
@@ -222,6 +222,16 @@ class GeinsCRM extends BasePackage {
     return this._authClient.getUser(refreshToken, token);
   }
 
+  private async authChangePassword(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
+    if (!this._authClient) {
+      throw new Error('AuthClient is not initialized');
+    }
+    const authResponse = await this._authClient.changePassword(credentials);
+    this.handleAuthResponse(authResponse);
+
+    return authResponse;
+  }
+
   get user(): UserInterface {
     return {
       get: this.userGet.bind(this),
@@ -233,7 +243,9 @@ class GeinsCRM extends BasePackage {
         requestReset: this.passwordResetRequest.bind(this),
         commitReset: this.passwordResetCommit.bind(this),
       },
-      getOrders: this.userOrders.bind(this),
+      orders: {
+        get: this.userOrders.bind(this),
+      },
     };
   }
 
