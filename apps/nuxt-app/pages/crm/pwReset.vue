@@ -2,12 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { logWrite, GeinsCore, AuthClientConnectionModes } from '@geins/core';
-import type {
-  GeinsSettings,
-  AuthSettings,
-  AuthCredentials,
-  AuthResponse,
-} from '@geins/types';
+import type { GeinsSettings, AuthSettings, AuthCredentials, AuthResponse } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 import CookieDump from '~/components/CookieDump.vue';
 
@@ -27,15 +22,12 @@ const password = ref<string>('na0o38y987fnbbxm4a7oi');
 const resetToken = ref<string>('');
 const router = useRouter();
 const requestReset = async () => {
-  const result = await geinsCRM.passwordResetRequest(email.value);
+  const result = await geinsCRM.user.password.requestReset(email.value);
   resultObject.value = result;
 };
 
 const commitReset = async () => {
-  const result = await geinsCRM.passwordResetCommit(
-    resetToken.value,
-    password.value,
-  );
+  const result = await geinsCRM.user.password.commitReset(resetToken.value, password.value);
   resultObject.value = result;
 
   loginUser();
@@ -50,8 +42,7 @@ const loginUser = async () => {
     };
 
     // Use GeinsCRM to authenticate the user
-    const response: AuthResponse | undefined =
-      await geinsCRM.auth.login(credentials);
+    const response: AuthResponse | undefined = await geinsCRM.auth.login(credentials);
 
     logWrite('Login response', response);
 
@@ -71,10 +62,7 @@ onMounted(async () => {});
 <template>
   <div>
     <h2>Nuxt @geins/crm password reset</h2>
-    <p>
-      This page is used to test the password reset functionality of the
-      @geins/crm package.
-    </p>
+    <p>This page is used to test the password reset functionality of the @geins/crm package.</p>
     <p>
       <b>
         <NuxtLink to="/">GO BACK</NuxtLink>
@@ -108,10 +96,7 @@ onMounted(async () => {});
                   <tr>
                     <td>
                       reset token:<br />
-                      <textarea
-                        v-model="resetToken"
-                        style="width: 500px"
-                      ></textarea>
+                      <textarea v-model="resetToken" style="width: 500px"></textarea>
                     </td>
                   </tr>
                   <tr>

@@ -2,12 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { GeinsCore, AuthClientConnectionModes, logWrite } from '@geins/core';
 import { GeinsCRM } from '@geins/crm';
-import type {
-  GeinsSettings,
-  AuthSettings,
-  AuthCredentials,
-  AuthResponse,
-} from '@geins/types';
+import type { GeinsSettings, AuthSettings, AuthCredentials, AuthResponse } from '@geins/types';
 import CookieDump from '~/components/CookieDump.vue';
 
 const config = useRuntimeConfig();
@@ -35,9 +30,7 @@ const credentials = computed(() => ({
 }));
 
 const newPassword = computed(
-  () =>
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15),
+  () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
 );
 
 const checkUserLoggedIn = async () => {
@@ -61,10 +54,10 @@ const handleLogin = async (validCredentials = true) => {
   const loginCredentials = validCredentials
     ? credentials.value
     : {
-      username: 'error',
-      password: 'error',
-      rememberUser: true,
-    };
+        username: 'error',
+        password: 'error',
+        rememberUser: true,
+      };
   try {
     // Create credentials object
     const credentials: AuthCredentials = {
@@ -73,8 +66,7 @@ const handleLogin = async (validCredentials = true) => {
     };
 
     // Use GeinsCRM to authenticate the user
-    const response: AuthResponse | undefined =
-      await geinsCRM.auth.login(loginCredentials);
+    const response: AuthResponse | undefined = await geinsCRM.auth.login(loginCredentials);
 
     logWrite('Login response', response);
 
@@ -98,14 +90,14 @@ const handleLogout = async () => {
 };
 
 const handleUpdate = async () => {
-  geinsCRM.auth.getUser().then((response) => {
+  geinsCRM.auth.get().then(response => {
     user.value = response;
     checkUserLoggedIn();
   });
 };
 
 const handleRefresh = async () => {
-  geinsCRM.auth.refresh().then((response) => {
+  geinsCRM.auth.refresh().then(response => {
     user.value = response;
     checkUserLoggedIn();
   });
@@ -118,7 +110,7 @@ const handleChangePassword = async () => {
   };
   logWrite(`New Password:`, newPassword.value);
   /*
-    const result = await geinsCRM.auth.changePassword(newPasswordCredentials);
+    const result = await geinsCRM.user.password.change(newPasswordCredentials);
     logWrite(`change password result`, result);
     if (!result) {
       logWrite(`change password failed`, result);
@@ -133,8 +125,8 @@ const handleChangePassword = async () => {
     <h2>Nuxt @geins/crm authentication - Direct Mode</h2>
 
     <p>
-      This page demonstrates how to use the <b>@geins/crm</b> package to
-      authenticate a user in with direct mode.
+      This page demonstrates how to use the <b>@geins/crm</b> package to authenticate a user in with direct
+      mode.
     </p>
     <p>
       <b>
@@ -190,12 +182,8 @@ const handleChangePassword = async () => {
             </tr>
             <tr>
               <td>
-                <button :disabled="userLoggedIn === true" @click="handleLogin(true)">
-                  Login Good
-                </button>
-                <button :disabled="userLoggedIn === true" @click="handleLogin(false)">
-                  Login Bad
-                </button>
+                <button :disabled="userLoggedIn === true" @click="handleLogin(true)">Login Good</button>
+                <button :disabled="userLoggedIn === true" @click="handleLogin(false)">Login Bad</button>
               </td>
             </tr>
             <tr>
@@ -208,18 +196,12 @@ const handleChangePassword = async () => {
             </tr>
             <tr>
               <td>
-                <button :disabled="userLoggedIn === false" @click="handleUpdate">
-                  Get User
-                </button>
-                <button :disabled="userLoggedIn === false" @click="handleRefresh">
-                  Refresh
-                </button>
+                <button :disabled="userLoggedIn === false" @click="handleUpdate">Get User</button>
+                <button :disabled="userLoggedIn === false" @click="handleRefresh">Refresh</button>
                 <button :disabled="userLoggedIn === false" @click="handleChangePassword">
                   Change Password
                 </button>
-                <button :disabled="userLoggedIn === false" @click="handleLogout">
-                  Logout
-                </button>
+                <button :disabled="userLoggedIn === false" @click="handleLogout">Logout</button>
               </td>
             </tr>
             <tr>
