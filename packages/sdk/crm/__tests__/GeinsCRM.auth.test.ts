@@ -110,7 +110,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       const randomUsername = `${randomString(10).toLowerCase()}@test-user.com`;
       const randomPassword = randomString(10);
 
-      const result = await geinsCRM.auth.newUser({
+      const result = await geinsCRM.user.create({
         username: randomUsername,
         password: randomPassword,
       });
@@ -175,7 +175,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       const isolatedCore = new GeinsCore(validSettings);
       const isolatedCRM = new GeinsCRM(isolatedCore, authSettings);
 
-      const user = await isolatedCRM.auth.getUser(invalidToken);
+      const user = await isolatedCRM.auth.get(invalidToken);
       expect(user).toBeDefined();
       expect(user).toHaveProperty('succeeded');
       expect(user!.succeeded).toBe(false);
@@ -184,7 +184,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       expect(setCalls).toHaveLength(0);
     });
 
-    it('should return user when use refresh-token to auth.getUser', async () => {
+    it('should return user when use refresh-token to auth.get', async () => {
       const credentials: AuthCredentials = {
         username: validUserCredentials.username,
         password: validUserCredentials.password,
@@ -202,7 +202,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       const isolatedCore = new GeinsCore(validSettings);
       const isolatedCRM = new GeinsCRM(isolatedCore, authSettings);
 
-      const authUser = await isolatedCRM.auth.getUser(refreshToken);
+      const authUser = await isolatedCRM.auth.get(refreshToken);
       const latestRefreshToken = authUser?.tokens?.refreshToken;
       expect(authUser).toBeDefined();
 

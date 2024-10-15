@@ -82,30 +82,15 @@ class GeinsCRM extends BasePackage {
     return this._authClient.spoofPreviewUser(token);
   }
 
-  public async passwordResetRequest(email: string): Promise<any> {
-    if (!this._passwordResetService) {
-      await this.initPasswordService();
-    }
-    return this._passwordResetService?.request(email);
-  }
-
-  public async passwordResetCommit(resetKey: string, password: string): Promise<any> {
-    if (!this._passwordResetService) {
-      await this.initPasswordService();
-    }
-    return this._passwordResetService?.commit(resetKey, password);
-  }
-
   get auth(): AuthInterface {
     if (!this._authClient) {
       throw new Error('AuthClient is not initialized');
     }
     return {
+      get: this.authGetUser.bind(this),
       login: this.authLogin.bind(this),
       logout: this.authLogout.bind(this),
       refresh: this.authRefresh.bind(this),
-      getUser: this.authGetUser.bind(this),
-      newUser: this.authRegisterNewUser.bind(this),
       authorized: this.authAuthorized.bind(this),
     };
   }
@@ -119,10 +104,6 @@ class GeinsCRM extends BasePackage {
   }
 
   private async authAuthorized(refreshToken?: string): Promise<boolean> {
-    if (!this._authClient) {
-      throw new Error('AuthClient is not initialized');
-    }
-
     // check if refreshToken is argument
     if (refreshToken) {
       this._authClient.setRefreshToken(refreshToken);
@@ -136,9 +117,6 @@ class GeinsCRM extends BasePackage {
   }
 
   private async authLogin(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
-    if (!this._authClient) {
-      throw new Error('AuthClient is not initialized');
-    }
     const authResponse = await this._authClient.login(credentials);
     this.handleAuthResponse(authResponse);
 
@@ -161,9 +139,6 @@ class GeinsCRM extends BasePackage {
   }
 
   private async authLogout(): Promise<AuthResponse | undefined> {
-    if (!this._authClient) {
-      throw new Error('AuthClient is not initialized');
-    }
     this.clearAuthAndUser();
     this.pushEvent({ subject: GeinsEventType.USER_LOGOUT, payload: {} }, GeinsEventType.USER_LOGOUT);
     return this._authClient.logout();
@@ -183,13 +158,51 @@ class GeinsCRM extends BasePackage {
     return authResponse;
   }
 
-  private async authRegisterNewUser(
-    credentials: AuthCredentials,
-    user?: GeinsUserInputTypeType,
-  ): Promise<AuthResponse | undefined> {
+  get user(): UserInterface {
     if (!this._authClient) {
       throw new Error('AuthClient is not initialized');
     }
+    return {
+      get: this.userGet.bind(this),
+      update: this.userUpdate.bind(this),
+      create: this.userRegisterAndCreate.bind(this),
+      remove: this.userRemove.bind(this),
+      password: {
+        change: this.userChangePassword.bind(this),
+        requestReset: this.userPasswordResetRequest.bind(this),
+        commitReset: this.userPasswordResetCommit.bind(this),
+      },
+      orders: {
+        get: this.userOrders.bind(this),
+      },
+    };
+  }
+
+  private async userGet(): Promise<GeinsUserType | undefined> {
+    if (!this._userService) {
+      await this.initUserService();
+    }
+
+    // check if core has token
+    const userTokenFromCore = this.getCore().getUserToken();
+    if (!userTokenFromCore) {
+      return undefined;
+    }
+    return this._userService?.get();
+  }
+
+  private async userUpdate(user: GeinsUserInputTypeType): Promise<any> {
+    if (!this._userService) {
+      await this.initUserService();
+    }
+    this.pushEvent({ subject: GeinsEventType.USER_UPDATE, payload: user }, GeinsEventType.USER_UPDATE);
+    return this._userService?.update(user);
+  }
+
+  private async userRegisterAndCreate(
+    credentials: AuthCredentials,
+    user?: GeinsUserInputTypeType,
+  ): Promise<AuthResponse | undefined> {
     // logout user if already logged in
     await this.authLogout();
 
@@ -223,28 +236,6 @@ class GeinsCRM extends BasePackage {
     return this._authClient.getUser(refreshToken, token);
   }
 
-  get user(): UserInterface {
-    return {
-      get: this.userGet.bind(this),
-      update: this.userUpdate.bind(this),
-      orders: this.userOrders.bind(this),
-      remove: this.userRemove.bind(this),
-    };
-  }
-
-  private async userGet(): Promise<GeinsUserType | undefined> {
-    if (!this._userService) {
-      await this.initUserService();
-    }
-
-    // check if core has token
-    const userTokenFromCore = this.getCore().getUserToken();
-    if (!userTokenFromCore) {
-      return undefined;
-    }
-    return this._userService?.get();
-  }
-
   private async userCreate(user: GeinsUserInputTypeType): Promise<any> {
     if (!this._userService) {
       await this.initUserService();
@@ -253,12 +244,13 @@ class GeinsCRM extends BasePackage {
     return this._userService?.create(user);
   }
 
-  private async userUpdate(user: GeinsUserInputTypeType): Promise<any> {
+  private async userRemove(): Promise<any> {
+    this.pushEvent({ subject: GeinsEventType.USER_DELETE, payload: {} }, GeinsEventType.USER_DELETE);
     if (!this._userService) {
       await this.initUserService();
     }
-    this.pushEvent({ subject: GeinsEventType.USER_UPDATE, payload: user }, GeinsEventType.USER_UPDATE);
-    return this._userService?.update(user);
+
+    return this._userService?.delete();
   }
 
   private async userOrders(): Promise<GeinsUserOrdersType | undefined> {
@@ -268,9 +260,25 @@ class GeinsCRM extends BasePackage {
     return this._userOrdersService?.get();
   }
 
-  private async userRemove(): Promise<any> {
-    this.pushEvent({ subject: GeinsEventType.USER_DELETE, payload: {} }, GeinsEventType.USER_DELETE);
-    throw new Error('Method not implemented.');
+  private async userChangePassword(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
+    const authResponse = await this._authClient.changePassword(credentials);
+    this.handleAuthResponse(authResponse);
+
+    return authResponse;
+  }
+
+  private async userPasswordResetRequest(email: string): Promise<any> {
+    if (!this._passwordResetService) {
+      await this.initPasswordService();
+    }
+    return this._passwordResetService?.request(email);
+  }
+
+  private async userPasswordResetCommit(resetKey: string, password: string): Promise<any> {
+    if (!this._passwordResetService) {
+      await this.initPasswordService();
+    }
+    return this._passwordResetService?.commit(resetKey, password);
   }
 }
 

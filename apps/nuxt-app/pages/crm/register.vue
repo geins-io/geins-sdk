@@ -9,12 +9,7 @@ import {
   GeinsCustomerType,
   GeinsGender,
 } from '@geins/core';
-import type {
-  AuthSettings,
-  GeinsSettings,
-  GeinsUserInputTypeType,
-
-} from '@geins/types';
+import type { AuthSettings, GeinsSettings, GeinsUserInputTypeType } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 
 import Select from '~/components/controls/Select.vue';
@@ -88,7 +83,7 @@ const username = ref<string>('');
 const password = ref<string>('dZgFCZi66mnPr9D');
 
 const register = async () => {
-  const result = await geinsCRM.auth.newUser({
+  const result = await geinsCRM.user.create({
     username: username.value,
     password: password.value,
   });
@@ -99,11 +94,7 @@ const register = async () => {
   updateCookiesDisplay();
   items.value.push({
     header: username.value,
-    data: JSON.stringify(
-      { username: username.value, password: password.value },
-      null,
-      2,
-    ),
+    data: JSON.stringify({ username: username.value, password: password.value }, null, 2),
   });
   items.value.unshift({
     header: username.value + ':: ' + password.value,
@@ -115,7 +106,7 @@ const registerWithInfo = async () => {
   // copy the userRegister object to avoid changing the original object
   const userObject = JSON.parse(JSON.stringify(userRegister.value));
 
-  const result = await geinsCRM.auth.newUser(
+  const result = await geinsCRM.user.create(
     {
       username: username.value,
       password: password.value,
@@ -127,11 +118,7 @@ const registerWithInfo = async () => {
   updateCookiesDisplay();
   items.value.push({
     header: username.value,
-    data: JSON.stringify(
-      { username: username.value, password: password.value },
-      null,
-      2,
-    ),
+    data: JSON.stringify({ username: username.value, password: password.value }, null, 2),
   });
   items.value.unshift({
     header: username.value + ':: ' + password.value,
@@ -170,8 +157,7 @@ onMounted(() => {
     <h2>Nuxt @geins/crm register user</h2>
 
     <p>
-      This page sets a spoofed user in the browser cookies. The user can then be
-      used to get preview cms data.
+      This page sets a spoofed user in the browser cookies. The user can then be used to get preview cms data.
     </p>
     <p>
       <b>
@@ -221,7 +207,10 @@ onMounted(() => {
                 <Select v-model="userRegister.customerType" :options="customerTypeOptions" />
                 <br />
                 <label>entityId:</label><br /><input v-model="userRegister.entityId" /><br />
-                <label>gender:</label><br /><Select v-model="userRegister.gender" :options="genderTypeOptions" /><br />
+                <label>gender:</label><br /><Select
+                  v-model="userRegister.gender"
+                  :options="genderTypeOptions"
+                /><br />
                 <label>newsletter:</label><br /><Select :options="newsletterOptions" /><br />
                 <label>firstname:</label><br /><input v-model="userRegister.address.firstName" /><br />
                 <label>lastName:</label><br /><input v-model="userRegister.address.lastName" /><br />
@@ -241,9 +230,7 @@ onMounted(() => {
             </tr>
             <tr>
               <td>
-                <button @click="registerWithInfo">
-                  Register with more info
-                </button>
+                <button @click="registerWithInfo">Register with more info</button>
               </td>
             </tr>
             <tr>
@@ -257,15 +244,16 @@ onMounted(() => {
             Added Users:
             <div v-for="(item, index) in items" v-if="items.length > 0" :key="index">
               <p>
-                <b>{{ item.header }}</b><br />
-                <textarea :style="{
-                  border: 0,
-                  width: '400px',
-                  height:
-                    item.data.length > 100
-                      ? Math.min(500, item.data.length * 10) + 'px'
-                      : '70px',
-                }">{{ item.data }}</textarea>
+                <b>{{ item.header }}</b
+                ><br />
+                <textarea
+                  :style="{
+                    border: 0,
+                    width: '400px',
+                    height: item.data.length > 100 ? Math.min(500, item.data.length * 10) + 'px' : '70px',
+                  }"
+                  >{{ item.data }}</textarea
+                >
               </p>
             </div>
             <i v-else> ... no users added </i>

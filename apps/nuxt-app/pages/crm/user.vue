@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import {
-  logWrite,
-  GeinsCore,
-  AuthClientConnectionModes,
-  GeinsEventType,
-} from '@geins/core';
+import { logWrite, GeinsCore, AuthClientConnectionModes, GeinsEventType } from '@geins/core';
 import type { GeinsSettings, AuthSettings, GeinsUserType, GeinsUserInputTypeType } from '@geins/types';
 import { GeinsCRM } from '@geins/crm';
 import CookieDump from '~/components/CookieDump.vue';
@@ -42,13 +37,11 @@ const userLoggedIn = computed(() => {
 
 const setAuthObject = async (response: any) => {
   authObject.value = response;
-  response?.tokens?.expiresIn
-    ? (timeToLoggout.value = response.tokens.expiresIn)
-    : null;
+  response?.tokens?.expiresIn ? (timeToLoggout.value = response.tokens.expiresIn) : null;
 };
 
 const getAuthObject = async () => {
-  await geinsCRM.auth.getUser().then((response) => {
+  await geinsCRM.auth.get().then(response => {
     setAuthObject(response);
   });
 };
@@ -62,9 +55,9 @@ const setUserObject = async () => {
 };
 
 const getUserOrdersObject = async () => {
-  const orders = await geinsCRM.user.orders();
+  const orders = await geinsCRM.user.orders.get();
 
-  await geinsCRM.user.orders().then((response) => {
+  await geinsCRM.user.orders.get().then(response => {
     userOrderObject.value = response;
     if (userOrderObject.value.length > 0) {
       getUserOrderObject(userOrderObject.value[0].id);
@@ -89,7 +82,7 @@ onMounted(async () => {
   setInterval(() => {
     timeToLoggout.value -= 1;
     if (timeToLoggout.value <= 100) {
-      geinsCRM.auth.refresh().then((response) => {
+      geinsCRM.auth.refresh().then(response => {
         setAuthObject(response);
       });
     }
@@ -110,7 +103,7 @@ const getUser = async () => {
  * Handles token refresh based on the current connection type.
  */
 const handleRefresh = async () => {
-  geinsCRM.auth.refresh().then((response) => {
+  geinsCRM.auth.refresh().then(response => {
     authObject.value = response;
     setAuthObject(response);
   });
@@ -128,8 +121,8 @@ async function handleSubmit() {
       zip: userObject.value?.address?.zip,
       city: userObject.value?.address?.city,
       country: userObject.value?.address?.country,
-    }
-  }
+    },
+  };
 
   const user = await geinsCRM.user.update(userSave);
   logWrite('user', user);
@@ -140,10 +133,7 @@ async function handleSubmit() {
   <div>
     <h2>Nuxt @geins/crm current user</h2>
 
-    <p>
-      This page demonstrates how to use the <b>@geins/crm</b> package to get the
-      current user.
-    </p>
+    <p>This page demonstrates how to use the <b>@geins/crm</b> package to get the current user.</p>
     <p>
       <b>
         <NuxtLink to="/">GO BACK</NuxtLink>
@@ -159,18 +149,13 @@ async function handleSubmit() {
             </tr>
             <tr>
               <td>
-                <button :disabled="userLoggedIn === false" @click="getUser">
-                  Get User
-                </button>
-                <button :disabled="userLoggedIn === false" @click="handleRefresh">
-                  Refresh
-                </button>
+                <button :disabled="userLoggedIn === false" @click="getUser">Get User</button>
+                <button :disabled="userLoggedIn === false" @click="handleRefresh">Refresh</button>
                 <button @click="logOut">Logout</button>
               </td>
             </tr>
             <tr v-if="userObject && userObject.address">
               <td>
-
                 <form>
                   <div>
                     <label for="firstName">First Name:</label>
@@ -208,8 +193,6 @@ async function handleSubmit() {
                 </form>
               </td>
             </tr>
-
-
           </table>
           <hr />
           <div>
@@ -217,9 +200,11 @@ async function handleSubmit() {
           </div>
         </td>
         <td style="vertical-align: top; padding-left: 50px">
-          <b>User is logged in: {{ userLoggedIn }}</b><br /><br />
+          <b>User is logged in: {{ userLoggedIn }}</b
+          ><br /><br />
           <div v-if="userLoggedIn">
-            <b>Time to logout: {{ timeToLoggout }}</b><br /><br />
+            <b>Time to logout: {{ timeToLoggout }}</b
+            ><br /><br />
           </div>
           <div v-if="userOrderObject" style="width: 500px; overflow-x: scroll">
             <b>User Order Object:</b>
