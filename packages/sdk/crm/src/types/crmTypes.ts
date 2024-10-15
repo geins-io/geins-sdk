@@ -2,7 +2,6 @@ import {
   AuthCredentials,
   AuthResponse,
   GeinsUserInputTypeType,
-  GeinsUserGetType,
   GeinsUserType,
   GeinsUserOrdersType,
 } from '@geins/types';
