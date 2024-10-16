@@ -66,6 +66,7 @@ export class AuthClientProxy extends AuthClient {
     credentials: AuthCredentials,
     refreshToken: string,
   ): Promise<AuthResponse | undefined> {
+    this._refreshToken = refreshToken;
     return this.request('/change-password', {
       method: 'POST',
       body: JSON.stringify(credentials),

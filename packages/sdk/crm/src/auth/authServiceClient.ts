@@ -54,9 +54,7 @@ export class AuthServiceClient {
     return retval.sign;
   }
 
-  private async verifyAuthChallenge(
-    signatureToken: string,
-  ): Promise<AuthSignature> {
+  private async verifyAuthChallenge(signatureToken: string): Promise<AuthSignature> {
     const url = this.getSignEndpointUrl(signatureToken);
     const response = await fetch(url, {
       method: 'GET',
@@ -82,8 +80,7 @@ export class AuthServiceClient {
     const url = this.getAuthEndpointUrl('login');
 
     const challangeToken = await this.requestAuthChallenge(username);
-    const authenticationSignature =
-      await this.verifyAuthChallenge(challangeToken);
+    const authenticationSignature = await this.verifyAuthChallenge(challangeToken);
     const requestBody: Record<string, any> = {
       username,
       signature: authenticationSignature,
@@ -120,9 +117,7 @@ export class AuthServiceClient {
     };
   }
 
-  private async fetchRefreshToken(
-    refreshToken: string,
-  ): Promise<AuthUserToken> {
+  private async fetchRefreshToken(refreshToken: string): Promise<AuthUserToken> {
     const url = this.getAuthEndpointUrl('login');
     const requestOptions: RequestInit = {
       method: 'GET',
@@ -161,8 +156,7 @@ export class AuthServiceClient {
     const url = this.getAuthEndpointUrl('password');
 
     const challangeToken = await this.requestAuthChallenge(username);
-    const authenticationSignature =
-      await this.verifyAuthChallenge(challangeToken);
+    const authenticationSignature = await this.verifyAuthChallenge(challangeToken);
 
     const requestBody: Record<string, any> = {
       username,
@@ -201,15 +195,11 @@ export class AuthServiceClient {
     };
   }
 
-  private async performUserRegister(
-    username: string,
-    password: string,
-  ): Promise<AuthUserToken> {
+  private async performUserRegister(username: string, password: string): Promise<AuthUserToken> {
     const url = this.getAuthEndpointUrl('register');
 
     const challangeToken = await this.requestAuthChallenge(username);
-    const authenticationSignature =
-      await this.verifyAuthChallenge(challangeToken);
+    const authenticationSignature = await this.verifyAuthChallenge(challangeToken);
 
     const requestBody: Record<string, any> = {
       username,
@@ -246,18 +236,11 @@ export class AuthServiceClient {
     };
   }
 
-  public async register(
-    username: string,
-    password: string,
-  ): Promise<AuthUserToken> {
+  public async register(username: string, password: string): Promise<AuthUserToken> {
     return this.performUserRegister(username, password);
   }
 
-  public async login(
-    username: string,
-    password: string,
-    rememberUser?: boolean,
-  ): Promise<AuthUserToken> {
+  public async login(username: string, password: string, rememberUser?: boolean): Promise<AuthUserToken> {
     return this.fetchUserToken(username, password, rememberUser!);
   }
 
@@ -265,10 +248,7 @@ export class AuthServiceClient {
     return this.fetchRefreshToken(refreshToken);
   }
 
-  public async changePassword(
-    credentials: AuthCredentials,
-    refreshToken: string,
-  ): Promise<AuthUserToken> {
+  public async changePassword(credentials: AuthCredentials, refreshToken: string): Promise<AuthUserToken> {
     if (!credentials.newPassword) {
       throw new Error('New password is required');
     }

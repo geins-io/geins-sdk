@@ -69,7 +69,12 @@ export abstract class AuthClient {
     return this.handleRefreshTokenOnlyScenario(tokens.refreshToken);
   }
 
-  async changePassword(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
+  async changePassword(
+    credentials: AuthCredentials,
+    refreshToken?: string,
+  ): Promise<AuthResponse | undefined> {
+    this._refreshToken = refreshToken || this.getCookieRefreshToken();
+
     if (!this._refreshToken) {
       return undefined;
     }
