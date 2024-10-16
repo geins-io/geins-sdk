@@ -34,7 +34,7 @@ export interface UserInterface {
 export interface UserPasswordInterface {
   change(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
   requestReset(email: string): Promise<any>;
-  commitReset(token: string, password: string): Promise<any>;
+  commitReset(resetKey: string, password: string): Promise<any>;
 }
 
 /**

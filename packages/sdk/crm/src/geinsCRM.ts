@@ -124,23 +124,32 @@ class GeinsCRM extends BasePackage {
       this._apiClient()?.clearCacheAndRefetchQueries();
     }
 
-    this.pushEvent(
-      {
-        subject: GeinsEventType.USER_LOGIN,
-        payload: {
-          success: authResponse?.succeeded,
-          user: credentials.username,
+    try {
+      this.pushEvent(
+        {
+          subject: GeinsEventType.USER_LOGIN,
+          payload: {
+            success: authResponse?.succeeded,
+            user: credentials.username,
+          },
         },
-      },
-      GeinsEventType.USER_LOGIN,
-    );
+        GeinsEventType.USER_LOGIN,
+      );
+    } catch (error) {
+      console.warn('Failed to push USER_LOGIN event:', error);
+    }
 
     return authResponse;
   }
 
   private async authLogout(): Promise<AuthResponse | undefined> {
     this.clearAuthAndUser();
-    this.pushEvent({ subject: GeinsEventType.USER_LOGOUT, payload: {} }, GeinsEventType.USER_LOGOUT);
+    try {
+      this.pushEvent({ subject: GeinsEventType.USER_LOGOUT, payload: {} }, GeinsEventType.USER_LOGOUT);
+    } catch (error) {
+      console.warn('Failed to push USER_LOGOUT event:', error);
+    }
+
     return this._authClient.logout();
   }
 
@@ -195,7 +204,19 @@ class GeinsCRM extends BasePackage {
     if (!this._userService) {
       await this.initUserService();
     }
-    this.pushEvent({ subject: GeinsEventType.USER_UPDATE, payload: user }, GeinsEventType.USER_UPDATE);
+
+    // Unwrap the Proxy
+    const unwrappedUser: GeinsUserInputTypeType = JSON.parse(JSON.stringify(user));
+
+    try {
+      this.pushEvent(
+        { subject: GeinsEventType.USER_UPDATE, payload: unwrappedUser },
+        GeinsEventType.USER_UPDATE,
+      );
+    } catch (error) {
+      console.warn('Failed to push USER_UPDATE event:', error);
+    }
+
     return this._userService?.update(user);
   }
 
