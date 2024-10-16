@@ -95,10 +95,10 @@ class GeinsCRM extends BasePackage {
     };
   }
 
-  private handleAuthResponse(authResponse: AuthResponse | undefined): void {
+  private handleAuthResponse(authResponse: AuthResponse | undefined, clearAuthOnFail: boolean = true): void {
     if (authResponse?.succeeded && authResponse.tokens?.token) {
       this.setAuthTokens(authResponse.tokens);
-    } else {
+    } else if (clearAuthOnFail) {
       this.clearAuthAndUser();
     }
   }
@@ -262,7 +262,7 @@ class GeinsCRM extends BasePackage {
 
   private async userChangePassword(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
     const authResponse = await this._authClient.changePassword(credentials);
-    this.handleAuthResponse(authResponse);
+    this.handleAuthResponse(authResponse, false);
 
     return authResponse;
   }
