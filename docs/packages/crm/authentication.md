@@ -1,32 +1,6 @@
 # Authentication
 
-This document outlines how to authenticate users using the GeinsCRM class.
-
-## Auth service
-
-The GeinsCRM class provides methods for user authentication, including login, logout, token refresh, and user retrieval.
-
-### Initializing GeinsCRM
-
-First, you need to initialize the GeinsCRM class:
-
-```typescript
-import { GeinsCore } from '@geins/core';
-import { GeinsCRM } from '@geins/crm';
-import { AuthSettings, AuthClientConnectionModes } from '@geins/types';
-
-const geinsCore = new GeinsCore({
-  apiKey: 'your-api-key',
-  accountName: 'your-account-name',
-  environment: 'production', // or 'QA'
-});
-
-const authSettings: AuthSettings = {
-  clientConnectionMode: AuthClientConnectionModes.Direct, // or AuthClientConnectionModes.Proxy
-};
-
-const geinsCRM = new GeinsCRM(geinsCore, authSettings);
-```
+Once a user is authenticated, the `@geins/crm` package provides a JWT token that attaches to the request headers for API calls. This tokens validation depends on the remeber me option. If the user selects the remember me option, the token will be valid for 30 days. Otherwise, the token will be valid for 1 hour.
 
 ### User Login
 
@@ -203,3 +177,14 @@ try {
 Remember to handle authentication failures gracefully in your application, such as redirecting to a login page or showing appropriate error messages to the user.
 
 ## Spoofing
+
+## Cookie Overview
+
+The `@geins/crm` package uses cookies to store the JWT token. The package uses the `js-cookie` package to manage cookies. The following cookies are used:
+| Name | Value |
+|------------|-------------|
+| geins-user | username |
+| geins-auth | jwt token to use with the merchant api |
+| geins-user-type | type of user |
+| geins-auth-refresh-token | refresh-token used by auth api |
+| geins-user-maxage | max age of cookies |

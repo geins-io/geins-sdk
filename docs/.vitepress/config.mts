@@ -112,9 +112,7 @@ export default withMermaid({
       copyright: 'Copyright © 2024-present Geins',
     },
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/geins-io/geins' },
-    ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/geins-io/geins' }],
     outline: {
       level: [2, 4],
     },

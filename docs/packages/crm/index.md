@@ -2,24 +2,27 @@
 
 ## Introduction
 
-The `@geins/crm` package provides functionalities related to the Customer Relationship Management (CRM) system. This package allows developers to authenticate users, manage user profiles, handle password resets, and perform other customer-related operations. It is designed to work seamlessly with the `@geins/core` package to interact with the Geins API.
+The `@geins/crm` package provides functionalities for a logged-in user experience. It includes features such as authentication, user registration, forgot password, user profile management, and order status and history.
+
+The package also allows users to get specific content from the `@geins/cms` and get special promotions or pricelists fron the `@geins/pim` package.
 
 ## Overview
 
-The `@geins/crm` package includes the following primary features:
+The `@geins/crm` package allows you to add logged-in user functionalities to your application. It includes the following features:
 
 - [Authentication](./authentication)
-- User Registration
-- Forgot Password
-- User Profile Management
-- Order History
+- [Registration / Sign Up](./registration)
+- [Profile](./user)
+- [Balance](./user-balance)
+- [Order history](./user-order-history)
+- [Password management](./password)
+- [JWT token that attaches to the request headers for API calls](./jwt)
 
 ## Setting Up @geins/crm
 
 ### Prerequisites
 
 - `@geins/core` package linked in the workspace.
-- Other dependencies installed as listed in the `package.json`.
 
 ### Installation
 
@@ -27,14 +30,24 @@ The `@geins/crm` package includes the following primary features:
 yarn add @geins/crm
 ```
 
-### Basic Usage
+### Quick Start
 
 ```ts
 import { GeinsCore } from '@geins/core';
 import { GeinsCRM } from '@geins/crm';
+import { AuthSettings, AuthClientConnectionModes } from '@geins/types';
 
-const core = new GeinsCore({ apiKey: 'YOUR_API_KEY', accountName: 'YOUR_ACCOUNT_NAME' });
-const crm = new GeinsCRM(core);
+const geinsCore = new GeinsCore({
+  apiKey: 'your-api-key',
+  accountName: 'your-account-name',
+  environment: 'production', // or 'QA'
+});
+
+const authSettings: AuthSettings = {
+  clientConnectionMode: AuthClientConnectionModes.Direct, // or AuthClientConnectionModes.Proxy
+};
+
+const geinsCRM = new GeinsCRM(geinsCore, authSettings);
 
 // Example: Authenticating a user
 crm.auth
@@ -42,13 +55,3 @@ crm.auth
   .then(user => console.log('Logged in user:', user))
   .catch(error => console.error('Login failed:', error));
 ```
-
-## Authentication
-
-### Overview
-
-The Authentication feature of `@geins/crm` allows you to log in users, handle logout, and manage sessions. It provides helper methods to integrate with the Geins API seamlessly.
-
-### Usage
-
-For more detailed usage and examples, please refer to the [Authentication Feature](./authentication.md).
