@@ -12,11 +12,12 @@ The `@geins/crm` package allows you to add logged-in user functionalities to you
 
 - [Authentication](./authentication)
 - [Registration / Sign Up](./registration)
-- [Profile](./user)
-- [Balance](./user-balance)
-- [Order history](./user-order-history)
 - [Password management](./password)
-- [JWT token that attaches to the request headers for API calls](./jwt)
+- [User management](./user)
+  - [Profile](./user-profile)
+  - [Balance](./user-balance)
+  - [Order history](./user-transactions)
+- [JWT token that attaches to the request headers for API calls](./jwt-token)
 
 ## Setting Up @geins/crm
 

@@ -1,31 +1,27 @@
 # User
 
-## Types of Users
+When a user is logged in, the user object is available in the CRM package. The user object provides methods for managing user profiles, groups, balances, transactions, and orders.
 
-## Information of Users
+## Profile
 
-## Change information of Users
+The information on the user profile can be updated using the `update` method. The method takes an object with the fields to update. The fields that can be updated are `name`, `email`, `phone`, `address`, `city`, `state`, `zip`, and `country`.
 
-## User Balance
+Read more about the user profile [here](/docs/packages/crm/user-profile.md).
 
-## User Transactions
+## Groups
 
-## User Orders
+Groups are used to manage the permissions of the user. The user can be assigned to multiple groups. The groups can be used to control access to different parts of the system.
 
-### Get Current User
+Read more about groups [here](/docs/packages/crm/user-group.md).
 
-To retrieve the current user's information:
+## Balance
 
-```typescript
-const userResult = await geinsCRM.auth.getUser();
+Balance is a powerfull tool to build functionality on top of. The balance of a user is the amount of money that the user has in their account. The balance can be increased by adding funds to the account or by receiving refunds. The balance can be decreased by making purchases or by paying fees.
 
-if (userResult?.succeeded) {
-  console.log('User:', userResult.user);
-} else {
-  console.error('Failed to retrieve user');
-}
-```
+Read more about the user balance [here](/docs/packages/crm/user-balance.md).
 
-### Update User Profile
+## Transactions
 
-### User Orders
+Transactions are the core of the CRM package. They are used to track all the user's interactions with the system. Transactions can be created by the system or by the user. They can be used to track user's balance changes, orders, and other interactions.
+
+Read more about user transactions [here](/docs/packages/crm/user-transactions.md).

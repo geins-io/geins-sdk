@@ -1,4 +1,4 @@
-### Register New User
+# Register New User
 
 To register a new user:
 
