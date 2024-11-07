@@ -8,6 +8,8 @@ Main package for interacting with the Geins API. All other packages depend on th
 
 ## @geins/cms <Badge type="info" text="0.1.0" />
 
+Package for managing content, including pages, menus.
+
 ## @geins/crm <Badge type="info" text="0.1.0" />
 
-## @geins/types <Badge type="info" text="0.1.0" />
+Package for managing customer relationship management (CRM) functionalities, such as user authentication, registration, and order history.

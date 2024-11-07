@@ -1,10 +1,11 @@
+
 # Installation
 
 The Geins SDK is modular, allowing you to install only the packages you need. Each package in the SDK serves a specific purpose, such as managing customers, products, or content.
 
 ## Prerequisites
 
-- **Node.js**: Ensure you have Node.js version 20 or higher.
+- **Node.js**: Ensure you have Node.js version 14 or higher.
 - **Package Manager**: Use either `npm`, `yarn`, `pnpm`, or `bun` to install the SDK packages.
 
 ## Installing Core and Types
@@ -86,14 +87,11 @@ This instance will serve as the entry point for all other Geins SDK modules, ena
 After setting up `GeinsCore`, verify the installation by making a test API call:
 
 ```typescript
-geinsCore.channel
-  .current()
-  .then(channel => {
-    console.log('Current channel:', channel);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
+geinsCore.channel.current().then(channel => {
+  console.log("Current channel:", channel);
+}).catch(error => {
+  console.error("Error:", error);
+});
 ```
 
 This example retrieves the current channel settings and logs them, confirming that the core instance and API settings are correct.

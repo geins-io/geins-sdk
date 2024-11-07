@@ -43,16 +43,16 @@ export default withMermaid({
           text: 'Examples',
           items: [
             {
-              text: 'Setting up a new project',
-              link: '/guide/what-is-geins',
+              text: 'Routing',
+              link: '/guide/examples/routing',
             },
             {
               text: 'Using custom queries',
-              link: '/guide/installation',
+              link: '/guide/examples/graphql-client',
             },
             {
               text: 'Subscibing to events',
-              link: '/guide/quickstart',
+              link: '/guide/examples/events',
             },
           ],
         },
@@ -95,13 +95,19 @@ export default withMermaid({
                   text: 'Authentication',
                   link: '/packages/crm/authentication',
                 },
-                { text: 'User Information', link: '/packages/crm/user' },
                 { text: 'Password reset', link: '/packages/crm/password' },
+                { text: 'Registration', link: '/packages/crm/registration' },
+                {
+                  text: 'User',
+                  link: '/packages/crm/user',
+                  items: [
+                    { text: 'Profile', link: '/packages/crm/user-profile' },
+                    { text: 'Group', link: '/packages/crm/user-group' },
+                    { text: 'Balance', link: '/packages/crm/user-balance' },
+                    { text: 'Transactions', link: '/packages/crm/user-transactions' },
+                  ],
+                },
               ],
-            },
-            {
-              text: '@geins/types',
-              link: '/packages/types',
             },
           ],
         },
@@ -112,9 +118,7 @@ export default withMermaid({
       copyright: 'Copyright © 2024-present Geins',
     },
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/geins-io/geins' },
-    ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/geins-io/geins' }],
     outline: {
       level: [2, 4],
     },
