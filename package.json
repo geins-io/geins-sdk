@@ -29,11 +29,7 @@
     "docs:preview": "vitepress preview docs",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "version": "changeset version && yarn install --no-immutable",
-    "release": "changeset version && changeset publish",
-    "version:dev": "changeset version --snapshot dev",
-    "release:dev": "changeset publish --tag dev"
+    "test:coverage": "jest --coverage"
   },
   "lint-staged": {
     "*.{ts,md,vue,js}": [
