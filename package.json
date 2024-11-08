@@ -31,7 +31,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "version": "changeset version && yarn install --no-immutable",
-    "release": "changeset publish --tag dev",
+    "release": "changeset version && changeset publish",
     "version:dev": "changeset version --snapshot dev",
     "release:dev": "changeset publish --tag dev"
   },
