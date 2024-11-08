@@ -11,12 +11,12 @@ const excludePatterns = ['.temp', '.env'];
 const repoRoot = path.resolve(__dirname, '..');
 
 // Function to ensure a path is within the repository root
-const isWithinRepo = (itemPath) => {
+const isWithinRepo = itemPath => {
   return itemPath.startsWith(repoRoot);
 };
 
 // Function to delete a file or directory
-const deleteItem = (itemPath) => {
+const deleteItem = itemPath => {
   if (fs.existsSync(itemPath) && isWithinRepo(itemPath)) {
     try {
       if (fs.lstatSync(itemPath).isDirectory()) {
@@ -35,13 +35,13 @@ const deleteItem = (itemPath) => {
 };
 
 // Function to read .gitignore and build delete patterns
-const buildDeletePatterns = (gitignorePath) => {
+const buildDeletePatterns = gitignorePath => {
   const deletePatterns = [...baseDeletePatterns];
   if (fs.existsSync(gitignorePath)) {
     const gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8');
     const patterns = gitignoreContent.split('\n').filter(Boolean);
 
-    patterns.forEach((pattern) => {
+    patterns.forEach(pattern => {
       pattern = pattern.trim();
       if (!pattern.startsWith('#') && pattern !== '') {
         // Exclude specific patterns
@@ -55,7 +55,7 @@ const buildDeletePatterns = (gitignorePath) => {
 };
 
 // Function to recursively find and delete patterns based on local .gitignore
-const processDirectory = (dir) => {
+const processDirectory = dir => {
   // check if the directory is root
   if (dir === repoRoot) {
     const gitignorePath = path.join(dir, '.gitignore');
@@ -76,19 +76,15 @@ const processDirectory = (dir) => {
   const deletePatterns = buildDeletePatterns(gitignorePath);
 
   // Recursively process subdirectories first to ensure we clean from the bottom up
-  fs.readdirSync(dir).forEach((file) => {
+  fs.readdirSync(dir).forEach(file => {
     const subDir = path.join(dir, file);
-    if (
-      fs.existsSync(subDir) &&
-      fs.lstatSync(subDir).isDirectory() &&
-      !excludePatterns.includes(file)
-    ) {
+    if (fs.existsSync(subDir) && fs.lstatSync(subDir).isDirectory() && !excludePatterns.includes(file)) {
       processDirectory(subDir);
     }
   });
 
   // Delete items that match the deletePatterns for this directory
-  deletePatterns.forEach((pattern) => {
+  deletePatterns.forEach(pattern => {
     const fullPattern = path.join(dir, pattern);
     if (fs.existsSync(fullPattern)) {
       deleteItem(fullPattern);
@@ -119,7 +115,7 @@ const yarnInstall = () => {
 // run yarn build with the following command: yarn build
 const yarnBuild = () => {
   try {
-    execSync('yarn build', { stdio: 'inherit' });
+    execSync('yarn build:sdk', { stdio: 'inherit' });
     console.log('Yarn build complete!');
   } catch (err) {
     console.error(`Error during Yarn build: ${err.message}`);
