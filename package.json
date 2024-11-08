@@ -1,6 +1,6 @@
 {
   "name": "geins-sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Geins",
   "private": true,
   "license": "MIT",
@@ -30,7 +30,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "version": "changeset version --snapshot dev",
+    "version": "changeset version && yarn install --no-immutable",
     "release": "changeset publish --tag dev",
     "version:dev": "changeset version --snapshot dev",
     "release:dev": "changeset publish --tag dev"
