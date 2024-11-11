@@ -5,6 +5,12 @@ import onlyWarn from 'eslint-plugin-only-warn';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import { createConfigForNuxt } from '@nuxt/eslint-config/flat';
 
+/** Workaround - https://github.com/sindresorhus/globals/issues/239 */
+const GLOBALS_BROWSER_FIX = Object.assign({}, globals.browser, {
+  AudioWorkletGlobalScope: globals.browser['AudioWorkletGlobalScope '],
+});
+delete GLOBALS_BROWSER_FIX['AudioWorkletGlobalScope '];
+
 /** @type {import('eslint-config')} */
 export const geinsSharedConfig = [
   js.configs.recommended,
@@ -13,8 +19,9 @@ export const geinsSharedConfig = [
       ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
-        ...globals.browser,
+        //...globals.browser,
         ...globals.node,
+        ...GLOBALS_BROWSER_FIX,
       },
     },
   },
