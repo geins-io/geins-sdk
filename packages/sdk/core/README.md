@@ -1,1 +1,1 @@
-# CORE
+# @geins/core
