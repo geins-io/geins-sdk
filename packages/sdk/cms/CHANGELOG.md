@@ -1,5 +1,13 @@
 # @geins/cms
 
+## 0.3.2
+
+### Patch Changes
+
+- 218c69f: first
+- Updated dependencies [218c69f]
+  - @geins/core@0.3.2
+
 ## 0.3.1
 
 ### Patch Changes
