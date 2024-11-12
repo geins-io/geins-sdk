@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "module": "./eslint-config.js",
+  "license": "MIT",
   "scripts": {
     "link": "yarn link"
   },
