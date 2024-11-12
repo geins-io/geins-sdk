@@ -4,10 +4,10 @@
   "commit": false,
   "fixed": [
     [
+      "@geins/types",
       "@geins/core",
       "@geins/cms",
-      "@geins/crm",
-      "@geins/types"
+      "@geins/crm"
     ]
   ],
   "linked": [],

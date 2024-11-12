@@ -1,6 +1,6 @@
 {
   "name": "@geins/core",
-  "version": "0.1.0",
+  "version": "0.3.0-canary",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,7 @@
     "broadcast-channel": "^7.0.0"
   },
   "devDependencies": {
-    "@geins/types": "*",
+    "@geins/types": "0.3.0-canary",
     "@geins/eslint-config": "*",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-graphql": "^2.0.5",
