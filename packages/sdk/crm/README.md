@@ -1,1 +1,1 @@
-# CRM
+# @geins/crm
