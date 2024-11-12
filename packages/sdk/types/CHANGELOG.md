@@ -1,5 +1,11 @@
 # @geins/types
 
+## 0.3.2
+
+### Patch Changes
+
+- 218c69f: first
+
 ## 0.3.1
 
 ### Patch Changes
