@@ -1,15 +1,11 @@
 import { GeinsCMS } from '../src/geinsCMS';
 import { GeinsCore } from '@geins/core';
-import {
-  MenuService,
-  ContentPageService,
-  ContentAreaService,
-} from '../src/services';
+import { MenuService, ContentPageService, ContentAreaService } from '../src/services';
 
 // Mock the services
-jest.mock('../src/services/MenuService');
-jest.mock('../src/services/ContentPageService');
-jest.mock('../src/services/ContentAreaService');
+jest.mock('../src/services/menuService');
+jest.mock('../src/services/contentPageService');
+jest.mock('../src/services/contentAreaService');
 
 // Mock the GeinsCore class
 jest.mock('@geins/core');
