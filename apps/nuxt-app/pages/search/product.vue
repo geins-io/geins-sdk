@@ -6,7 +6,7 @@ import {
   ProductListSortType,
   ProductFilterModeType,
 } from '@geins/core';
-import { GeinsSearch } from '@geins/search';
+
 
 const config = useRuntimeConfig();
 const geinsSettings = config.public.geins.settings as GeinsSettings;
@@ -84,7 +84,7 @@ const clear = async () => {
   items.value = [];
 };
 
-onMounted(() => {});
+onMounted(() => { });
 </script>
 <template>
   <div>
@@ -108,11 +108,7 @@ onMounted(() => {});
               <td>Sort:</td>
               <td>
                 <select v-model="filterSort">
-                  <option
-                    v-for="(value, key) in sortOptions"
-                    :key="key"
-                    :value="value"
-                  >
+                  <option v-for="(value, key) in sortOptions" :key="key" :value="value">
                     {{ key }}
                   </option>
                 </select>
@@ -123,11 +119,7 @@ onMounted(() => {});
               <td>Mode:</td>
               <td>
                 <select v-model="filterMode">
-                  <option
-                    v-for="(value, key) in filterModeOptions"
-                    :key="key"
-                    :value="value"
-                  >
+                  <option v-for="(value, key) in filterModeOptions" :key="key" :value="value">
                     {{ key }}
                   </option>
                 </select>
@@ -137,10 +129,7 @@ onMounted(() => {});
             <tr>
               <td>Facets:</td>
               <td>
-                <textarea
-                  v-model="filterFacets"
-                  style="width: 300px; height: 100px"
-                ></textarea>
+                <textarea v-model="filterFacets" style="width: 300px; height: 100px"></textarea>
               </td>
               <td></td>
             </tr>
@@ -194,12 +183,8 @@ onMounted(() => {});
           <h3>Filter Facets:</h3>
           <div v-for="(item, index) in items" :key="index">
             <p>
-              <b>{{ item.header }}</b
-              ><br />
-              <textarea
-                v-model="item.data"
-                style="border: 0; width: 600px; height: 100px"
-              ></textarea>
+              <b>{{ item.header }}</b><br />
+              <textarea v-model="item.data" style="border: 0; width: 600px; height: 100px"></textarea>
             </p>
           </div>
         </td>
@@ -226,9 +211,7 @@ onMounted(() => {});
               <tr v-for="(product, index) in products" :key="index">
                 <td>{{ product.productId }}</td>
                 <td>
-                  <img
-                    :src="`${imageUrl}/product/40x40/${product?.productImages[0]?.fileName}`"
-                  />
+                  <img :src="`${imageUrl}/product/40x40/${product?.productImages[0]?.fileName}`" />
                 </td>
 
                 <td>{{ product.name }}</td>
