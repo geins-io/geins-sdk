@@ -31,9 +31,9 @@
     "test:coverage": "jest --coverage",
     "changeset-add": "changeset add",
     "version:next": "changeset version --no-git-tag --snapshot canary",
-    "release:next": "yarn test && yarn build:sdk && changeset version --no-git-tag --snapshot canary && changeset publish --no-git-tag --tag canary",
+    "release:next": "yarn build:sdk && yarn test && changeset version --no-git-tag --snapshot canary && changeset publish --no-git-tag --tag canary",
     "version": "changeset version",
-    "release": "yarn test && yarn build:sdk && changeset version && changeset publish"
+    "release": "yarn build:sdk && yarn test && changeset version && changeset publish"
   },
   "lint-staged": {
     "*.{ts,md,vue,js}": [
