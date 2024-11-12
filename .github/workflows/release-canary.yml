@@ -36,7 +36,7 @@ jobs:
 
       - name: Release snapshot
         run: |
-          npx changeset version --snapshot canary --no-git-tag
-          npx changeset publish --tag canary --no-git-tag
+          yarn changeset version --snapshot canary --no-git-tag
+          yarn changeset publish --tag canary --no-git-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

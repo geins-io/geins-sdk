@@ -1,6 +1,6 @@
 {
-  "name": "geins-sdk",
-  "version": "0.0.5",
+  "name": "geins-typescript-sdk",
+  "version": "0.3.0",
   "author": "Geins",
   "private": true,
   "license": "MIT",
@@ -31,9 +31,9 @@
     "test:coverage": "jest --coverage",
     "changeset-add": "changeset add",
     "version:next": "changeset version --no-git-tag --snapshot canary",
-    "release:next": "changeset version --no-git-tag --snapshot canary && changeset publish --no-git-tag --tag canary",
+    "release:next": "yarn test && yarn build:sdk && changeset version --no-git-tag --snapshot canary && changeset publish --no-git-tag --tag canary",
     "version": "changeset version",
-    "release": "changeset version && changeset publish"
+    "release": "build:sdk && changeset version && changeset publish"
   },
   "lint-staged": {
     "*.{ts,md,vue,js}": [
