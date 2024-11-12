@@ -1,5 +1,11 @@
 # @geins/eslint-config
 
+## 0.1.4
+
+### Patch Changes
+
+- 7ea4eb4: ci fixes
+
 ## 0.1.3
 
 ### Patch Changes
