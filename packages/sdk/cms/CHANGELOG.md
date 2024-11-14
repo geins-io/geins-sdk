@@ -1,5 +1,13 @@
 # @geins/cms
 
+## 0.3.3
+
+### Patch Changes
+
+- 7ea4eb4: ci fixes
+- Updated dependencies [7ea4eb4]
+  - @geins/core@0.3.3
+
 ## 0.3.2
 
 ### Patch Changes

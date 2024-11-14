@@ -1,5 +1,11 @@
 # @geins/core
 
+## 0.3.3
+
+### Patch Changes
+
+- 7ea4eb4: ci fixes
+
 ## 0.3.2
 
 ### Patch Changes
