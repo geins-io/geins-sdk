@@ -15,16 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GEINS_API_KEY: ${{ secrets.GEINS_API_KEY }}
-      GEINS_ACCOUNT_NAME: ${{ secrets.GEINS_ACCOUNT_NAME }}
-      GEINS_CHANNEL: ${{ secrets.GEINS_CHANNEL }}
-      GEINS_TLD: ${{ secrets.GEINS_TLD }}
-      GEINS_LOCALE: ${{ secrets.GEINS_LOCALE }}
-      GEINS_MARKET: ${{ secrets.GEINS_MARKET }}
-      GEINS_ENVIRONMENT: ${{ secrets.GEINS_ENVIRONMENT }}
+      GEINS_ACCOUNT_NAME: ${{ vars.GEINS_ACCOUNT_NAME }}
+      GEINS_CHANNEL: ${{ vars.GEINS_CHANNEL }}
+      GEINS_TLD: ${{ vars.GEINS_TLD }}
+      GEINS_LOCALE: ${{ vars.GEINS_LOCALE }}
+      GEINS_MARKET: ${{ vars.GEINS_MARKET }}
+      GEINS_ENVIRONMENT: ${{ vars.GEINS_ENVIRONMENT }}
       GEINS_USERNAME: ${{ secrets.GEINS_USERNAME }}
       GEINS_PASSWORD: ${{ secrets.GEINS_PASSWORD }}
-      GEINS_CMS_FAMILY: ${{ secrets.GEINS_CMS_FAMILY }}
-      GEINS_CMS_AREA: ${{ secrets.GEINS_CMS_AREA }}
+      GEINS_CMS_FAMILY: ${{ vars.GEINS_CMS_FAMILY }}
+      GEINS_CMS_AREA: ${{ vars.GEINS_CMS_AREA }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
