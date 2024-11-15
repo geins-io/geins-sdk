@@ -1,5 +1,12 @@
 # @geins/eslint-config
 
+## 0.1.5
+
+### Patch Changes
+
+- 3cf633e: added settingvars to GraphQLService
+- 3cf633e: ci fixes
+
 ## 0.1.4
 
 ### Patch Changes

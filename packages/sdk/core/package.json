@@ -1,6 +1,6 @@
 {
   "name": "@geins/core",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,7 @@
     "broadcast-channel": "^7.0.0"
   },
   "devDependencies": {
-    "@geins/types": "0.3.3",
+    "@geins/types": "0.3.4",
     "@geins/eslint-config": "*",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-graphql": "^2.0.5",
