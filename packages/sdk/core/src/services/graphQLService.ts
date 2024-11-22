@@ -1,7 +1,7 @@
 import type { GeinsSettings } from '@geins/types';
 import { BaseApiService } from '../base/baseApiService';
 import { GraphQLQueryOptions } from '../api-client/merchantApiClient';
-import { OperationDefinitionNode } from 'graphql';
+import { DocumentNode, OperationDefinitionNode } from 'graphql';
 import { gql } from '@apollo/client/core';
 
 /**
@@ -17,7 +17,9 @@ export class GraphQLService extends BaseApiService {
     if (!options.query && !options.queryAsString) {
       throw new Error('Query or queryAsString is required');
     }
-    returnOptions.query = returnOptions.query || gql(returnOptions.queryAsString || '');
+    // check if query is a string and convert it to a gql object
+    typeof returnOptions.query === 'string' && (returnOptions.query = gql(options.queryAsString || ''));
+
     const definition = returnOptions.query?.definitions?.[0] as OperationDefinitionNode;
     if (
       !definition ||
@@ -28,10 +30,10 @@ export class GraphQLService extends BaseApiService {
     }
 
     const queryOptions = { ...returnOptions };
+    const queryDocument = queryOptions.query as DocumentNode;
     queryOptions.variables = this.createVariables(queryOptions.variables);
-
     const queryVars =
-      (queryOptions.query?.definitions[0] as OperationDefinitionNode).variableDefinitions?.map(
+      (queryDocument.definitions[0] as OperationDefinitionNode).variableDefinitions?.map(
         (v: any) => v.variable.name.value,
       ) || [];
 

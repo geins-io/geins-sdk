@@ -40,7 +40,7 @@ export interface MerchantApiClientOptions {
 }
 
 export interface GraphQLQueryOptions {
-  query?: DocumentNode | undefined;
+  query?: DocumentNode | string | undefined;
   queryAsString?: string | undefined;
   variables?: any;
   requestOptions?: RequestOptions;
