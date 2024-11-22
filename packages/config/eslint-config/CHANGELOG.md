@@ -1,5 +1,13 @@
 # @geins/eslint-config
 
+## 0.1.6-canary
+
+### Patch Changes
+
+- d666708: added settingvars to GraphQLService
+- 2158dcd: Possiblity to use string as query for the merchantAPI
+- 5f86eeb: ci fixes
+
 ## 0.1.5
 
 ### Patch Changes

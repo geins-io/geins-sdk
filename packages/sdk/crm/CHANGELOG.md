@@ -1,5 +1,33 @@
 # @geins/crm
 
+## 0.3.5-canary
+
+### Patch Changes
+
+- canary bump
+- Updated dependencies
+  - @geins/core@0.3.5-canary
+
+## 0.3.5-canary
+
+### Patch Changes
+
+- update canary
+- Updated dependencies
+  - @geins/core@0.3.5-canary
+
+## 0.3.5-canary
+
+### Patch Changes
+
+- d666708: added settingvars to GraphQLService
+- 2158dcd: Possiblity to use string as query for the merchantAPI
+- 5f86eeb: ci fixes
+- Updated dependencies [d666708]
+- Updated dependencies [2158dcd]
+- Updated dependencies [5f86eeb]
+  - @geins/core@0.3.5-canary
+
 ## 0.3.4
 
 ### Patch Changes

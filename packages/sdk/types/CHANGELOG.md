@@ -1,5 +1,24 @@
 # @geins/types
 
+## 0.3.5-canary
+
+### Patch Changes
+
+- canary bump
+
+## 0.3.5-canary
+
+### Patch Changes
+
+- update canary
+
+## 0.3.5-canary
+
+### Patch Changes
+
+- d666708: added settingvars to GraphQLService
+- 2158dcd: Possiblity to use string as query for the merchantAPI
+
 ## 0.3.4
 
 ### Patch Changes
