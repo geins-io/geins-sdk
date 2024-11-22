@@ -1,5 +1,12 @@
 # @geins/core
 
+## 0.3.4
+
+### Patch Changes
+
+- 3cf633e: added settingvars to GraphQLService
+- 3cf633e: ci fixes
+
 ## 0.3.3
 
 ### Patch Changes

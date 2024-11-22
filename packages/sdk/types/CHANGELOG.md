@@ -1,5 +1,11 @@
 # @geins/types
 
+## 0.3.4
+
+### Patch Changes
+
+- 3cf633e: added settingvars to GraphQLService
+
 ## 0.3.3
 
 ## 0.3.2
