@@ -40,4 +40,30 @@ describe('GeinsCMS', () => {
     expect(result!.channels).toBeDefined();
     expect(result!.channels.length).toBeGreaterThan(0);
   });
+
+  it('should get result from custom string query', async () => {
+    const MY_QUERY = `
+      query getChannels {
+        channels {
+          name
+          url
+        }
+      }
+    `;
+
+    interface Channels {
+      channels: {
+        name: string;
+        url: string;
+      }[];
+    }
+
+    const result = await graphqlClient.query<Channels>({
+      queryAsString: MY_QUERY,
+    });
+
+    expect(result).toBeDefined();
+    expect(result!.channels).toBeDefined();
+    expect(result!.channels.length).toBeGreaterThan(0);
+  });
 });

@@ -93,7 +93,7 @@ export function randomAddress(): GeinsAddressTypeType {
     zip: randomNumber(5),
     city: randomString(randomInt(5, 10)),
     state: '',
-    country: 'USA',
+    country: 'Sweden',
   };
 }
 function randomCustomerType(): GeinsCustomerType {

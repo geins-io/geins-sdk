@@ -10,6 +10,7 @@ import {
   FetchResult,
   OperationVariables,
 } from '@apollo/client/core';
+import { gql } from '@apollo/client/core';
 
 export enum FetchPolicyOptions {
   CACHE_FIRST = 'cache-first',
@@ -39,7 +40,8 @@ export interface MerchantApiClientOptions {
 }
 
 export interface GraphQLQueryOptions {
-  query?: any;
+  query?: DocumentNode | undefined;
+  queryAsString?: string | undefined;
   variables?: any;
   requestOptions?: RequestOptions;
 }
@@ -108,17 +110,18 @@ export class MerchantApiClient {
     return FetchPolicyOptions.NETWORK_ONLY;
   }
 
-  private getOperationObject(
-    operationType: OperationType,
-    document: DocumentNode,
-    variables: OperationVariables = {},
-    options: RequestOptions = {},
-  ) {
+  private getOperationObject(operationType: OperationType, operationOptions: GraphQLQueryOptions) {
+    const { query, queryAsString, variables, requestOptions } = operationOptions;
+    const queryDocument = query || gql(queryAsString || '');
+    const options = requestOptions || {};
     const token = this._userToken || this._cookieService?.get(AUTH_COOKIES.USER_AUTH);
-    // remove typename from variables
+
+    if (!queryDocument) {
+      throw new Error('Query is required');
+    }
 
     const operationObj: any = {
-      [operationType]: document,
+      [operationType]: queryDocument,
       variables,
       fetchPolicy: this.getFetchPolicy(operationType, options.fetchPolicy),
       pollInterval: options.pollInterval || this.pollInterval,
@@ -138,16 +141,14 @@ export class MerchantApiClient {
   async runQuery<TData = any, TVariables extends OperationVariables = OperationVariables>(
     options: GraphQLQueryOptions,
   ): Promise<ApolloQueryResult<TData>> {
-    const { query, variables, requestOptions } = options;
-    const q = this.getOperationObject(OperationType.QUERY, query, variables, requestOptions);
+    const q = this.getOperationObject(OperationType.QUERY, options);
     return this._apolloClient.query<TData, TVariables>(q);
   }
 
   async runMutation<TData = any, TVariables extends OperationVariables = OperationVariables>(
     options: GraphQLQueryOptions,
   ): Promise<FetchResult<TData>> {
-    const { query, variables, requestOptions } = options;
-    const q = this.getOperationObject(OperationType.MUTATION, query, variables, requestOptions);
+    const q = this.getOperationObject(OperationType.MUTATION, options);
     return this._apolloClient.mutate<TData, TVariables>(q);
   }
 }

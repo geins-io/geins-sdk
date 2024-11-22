@@ -8,4 +8,8 @@
 
 ## How to contribute?
 
+### Releases
+
+Create a branch from the `next` branch and create a pull request to the `next` branch.
+
 ## License
