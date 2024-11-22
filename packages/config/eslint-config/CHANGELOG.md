@@ -1,5 +1,17 @@
 # @geins/eslint-config
 
+## 0.1.6-canary-848c93a8f7473b2be21671e5c82eb3dca0788613
+
+### Patch Changes
+
+- wip
+
+## 0.1.6-canary-rc.{version}
+
+### Patch Changes
+
+- wip
+
 ## 0.1.6-canary
 
 ### Patch Changes

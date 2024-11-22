@@ -12,15 +12,26 @@ export class GraphQLService extends BaseApiService {
   constructor(client: any, geinsSettings: GeinsSettings) {
     super(client, geinsSettings);
   }
+  // set property for development logging
+  public log_to_console = false;
+
   protected verifyQueryOptions(options: GraphQLQueryOptions): GraphQLQueryOptions {
     const returnOptions = { ...options };
     if (!options.query && !options.queryAsString) {
       throw new Error('Query or queryAsString is required');
     }
-    // check if query is a string and convert it to a gql object
-    typeof returnOptions.query === 'string' && (returnOptions.query = gql(options.queryAsString || ''));
 
-    const definition = returnOptions.query?.definitions?.[0] as OperationDefinitionNode;
+    try {
+      if (options.queryAsString && !options.query) {
+        returnOptions.query = gql(options.queryAsString);
+      }
+    } catch (error) {
+      throw new Error('Error parsing string to query');
+    }
+
+    const queryDocument = returnOptions.query as DocumentNode;
+    const definition = queryDocument.definitions[0] as OperationDefinitionNode;
+
     if (
       !definition ||
       definition.kind !== 'OperationDefinition' ||
@@ -29,22 +40,20 @@ export class GraphQLService extends BaseApiService {
       return returnOptions;
     }
 
-    const queryOptions = { ...returnOptions };
-    const queryDocument = queryOptions.query as DocumentNode;
-    queryOptions.variables = this.createVariables(queryOptions.variables);
+    returnOptions.variables = this.createVariables(returnOptions.variables);
     const queryVars =
       (queryDocument.definitions[0] as OperationDefinitionNode).variableDefinitions?.map(
         (v: any) => v.variable.name.value,
       ) || [];
 
-    const providedVars = Object.keys(queryOptions.variables);
+    const providedVars = Object.keys(returnOptions.variables);
     providedVars.forEach(v => {
       if (queryVars && !queryVars.includes(v)) {
-        delete queryOptions.variables[v];
+        delete returnOptions.variables[v];
       }
     });
 
-    return queryOptions;
+    return returnOptions;
   }
   /**
    * Executes a GraphQL query with the provided options.
@@ -54,6 +63,10 @@ export class GraphQLService extends BaseApiService {
   async query<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
     try {
       const queryOptions = await this.verifyQueryOptions(options);
+
+      if (this.log_to_console && this._geinsSettings.environment !== 'prod') {
+        console.log('[Geins] queryOptions:', queryOptions);
+      }
       const result = this.cleanObject(await this.runQuery(queryOptions));
       const parsedResult = this.parseResult(result);
       return parsedResult as T;
@@ -70,6 +83,10 @@ export class GraphQLService extends BaseApiService {
    */
   async mutation<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
     try {
+      if (this.log_to_console && this._geinsSettings.environment !== 'prod') {
+        console.log('[Geins] queryOptions:', options);
+      }
+
       const result = await this.runMutation(options);
       const parsedResult = this.parseResult(result);
       return parsedResult as T;

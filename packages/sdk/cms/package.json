@@ -1,6 +1,6 @@
 {
   "name": "@geins/cms",
-  "version": "0.3.5-canary",
+  "version": "0.3.5-canary-848c93a8f7473b2be21671e5c82eb3dca0788613",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -15,13 +15,13 @@
   "dependencies": {
     "@apollo/client": "^3.11.8",
     "graphql": "^16.9.0",
-    "@geins/core": "0.3.5-canary"
+    "@geins/core": "0.3.5-canary-848c93a8f7473b2be21671e5c82eb3dca0788613"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.0",
-    "@geins/eslint-config": "0.1.6-canary",
+    "@geins/eslint-config": "0.1.6-canary-848c93a8f7473b2be21671e5c82eb3dca0788613",
     "typescript": "^5.6.2",
     "eslint": "^9.11.1"
   }

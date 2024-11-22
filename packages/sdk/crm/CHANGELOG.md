@@ -1,5 +1,45 @@
 # @geins/crm
 
+## 0.3.5-canary-848c93a8f7473b2be21671e5c82eb3dca0788613
+
+### Patch Changes
+
+- wip
+- Updated dependencies
+  - @geins/core@0.3.5-canary-848c93a8f7473b2be21671e5c82eb3dca0788613
+
+## 0.3.5-canary-rc.{version}
+
+### Patch Changes
+
+- wip
+- Updated dependencies
+  - @geins/core@0.3.5-canary-rc.{version}
+
+## 0.3.5-canary-DATETIMESTAMP
+
+### Patch Changes
+
+- wip
+- Updated dependencies
+  - @geins/core@0.3.5-canary-DATETIMESTAMP
+
+## 0.3.5-canary
+
+### Patch Changes
+
+- wip
+- Updated dependencies
+  - @geins/core@0.3.5-canary
+
+## 0.3.5-canary
+
+### Patch Changes
+
+- wip
+- Updated dependencies
+  - @geins/core@0.3.5-canary
+
 ## 0.3.5-canary
 
 ### Patch Changes
