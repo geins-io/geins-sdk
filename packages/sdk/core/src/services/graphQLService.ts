@@ -84,7 +84,7 @@ export class GraphQLService extends BaseApiService {
   async mutation<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
     try {
       if (this.log_to_console && this._geinsSettings.environment !== 'prod') {
-        console.log('[Geins] queryOptions:', options);
+        console.log('[Geins] mutation options:', options);
       }
 
       const result = await this.runMutation(options);
