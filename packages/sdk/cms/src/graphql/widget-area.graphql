@@ -1,4 +1,4 @@
-#import "./meta.graphql"
+#import "./fragments/meta.graphql"
 
 query widgetArea(
   $family: String = null
@@ -26,10 +26,19 @@ query widgetArea(
     url: $url
     marketId: $marketId
   ) {
+    id
+    name
+    title
+    familyName
+    tags
     meta {
       ...Meta
     }
-    tags
+    pageArea {
+      id
+      name
+      index
+    }
     containers {
       id
       name
