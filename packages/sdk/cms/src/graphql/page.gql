@@ -1,0 +1,47 @@
+#import "./fragments/meta.gql"
+#import "./fragments/page-widget-container.gql"
+
+query widgetArea(
+  $family: String = null
+  $areaName: String = null
+  $alias: String = null
+  $displaySetting: String = null
+  $filters: [PageWidgetCollectionFilterInputType] = null
+  $preview: Boolean = null
+  $customerType: CustomerType
+  $channelId: String
+  $languageId: String
+  $url: String
+  $marketId: String
+) {
+  widgetArea(
+    family: $family
+    areaName: $areaName
+    alias: $alias
+    displaySetting: $displaySetting
+    filters: $filters
+    preview: $preview
+    customerType: $customerType
+    channelId: $channelId
+    languageId: $languageId
+    url: $url
+    marketId: $marketId
+  ) {
+    id
+    name
+    title
+    familyName
+    tags
+    meta {
+      ...Meta
+    }
+    pageArea {
+      id
+      name
+      index
+    }
+    containers {
+      ...PageWidgetContainer
+    }
+  }
+}

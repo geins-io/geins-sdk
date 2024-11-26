@@ -48,8 +48,30 @@ export interface ContentContainerType {
   content: ContentType[];
 }
 
+export interface ContentPageAreaType {
+  id?: string;
+  name?: string;
+  index?: number;
+}
+
+export interface ContentMetaType {
+  title?: string;
+  description?: string;
+}
+
+export interface ContentPageType {
+  id?: string;
+  name?: string;
+  title?: string;
+  pageArea?: ContentPageAreaType;
+  familyName?: string;
+  meta: ContentMetaType;
+  tags: string[];
+  containers: ContentContainerType[];
+}
+
 export interface ContentAreaType {
-  meta: any; // Adjust based on real meta type if available
+  meta: ContentMetaType; // Adjust based on real meta type if available
   tags: string[];
   containers: ContentContainerType[];
 }

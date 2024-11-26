@@ -39,4 +39,7 @@ export const cmsSettings = {
     family: process.env.GEINS_CMS_FAMILY!,
     areaName: process.env.GEINS_CMS_AREA!,
   },
+  page: {
+    alias: process.env.GEINS_CMS_PAGE_ALIAS!,
+  },
 };

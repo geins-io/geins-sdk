@@ -1,5 +1,4 @@
-import { ContentAreaType, ContentContainerType } from '@geins/core';
-import type { GeinsMenuItemTypeType } from '@geins/types';
+import { ContentAreaType, ContentPageType, GeinsMenuItemTypeType, ContentContainerType } from '@geins/core';
 
 export function parseMenuItem(item: any): GeinsMenuItemTypeType {
   return {
@@ -12,9 +11,7 @@ export function parseMenuItem(item: any): GeinsMenuItemTypeType {
     open: item.open,
     hidden: item.hidden,
     targetBlank: item.targetBlank,
-    children: item.children
-      ? item.children.map((child: any) => parseMenuItem(child))
-      : [],
+    children: item.children ? item.children.map((child: any) => parseMenuItem(child)) : [],
   };
 }
 
@@ -40,6 +37,40 @@ export function parseContentArea(result: any): ContentAreaType {
   };
 
   return parsedResult as ContentAreaType;
+}
+
+export function parseContentPage(result: any): ContentPageType {
+  if (!result || !result.data) {
+    throw new Error('Invalid result structure for content page');
+  }
+
+  const parsedResult: ContentPageType = {
+    id: '',
+    name: '',
+    title: '',
+    pageArea: {},
+    familyName: '',
+    meta: {},
+    tags: [],
+    containers: [],
+  };
+
+  const page = result.data.widgetArea;
+  if (!page) {
+    console.warn('No page found');
+    return parsedResult;
+  }
+
+  parsedResult.id = page.id;
+  parsedResult.name = page.name;
+  parsedResult.title = page.title;
+  parsedResult.pageArea = page.pageArea;
+  parsedResult.familyName = page.familyName;
+  parsedResult.meta = page.meta ? parseMetaData(page.meta) : {};
+  parsedResult.tags = page.tags;
+  parsedResult.containers = page.containers.map((item: any) => parseContainer(item));
+
+  return parsedResult as ContentPageType;
 }
 
 export function parseContainer(container: any): ContentContainerType {

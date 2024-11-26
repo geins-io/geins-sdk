@@ -1,4 +1,5 @@
-#import "./meta.graphql"
+#import "./fragments/meta.gql"
+#import "./fragments/page-widget-container.gql"
 
 query widgetArea(
   $family: String = null
@@ -26,33 +27,17 @@ query widgetArea(
     url: $url
     marketId: $marketId
   ) {
+    tags
     meta {
       ...Meta
     }
-    tags
-    containers {
+    pageArea {
       id
       name
-      sortOrder
-      layout
-      responsiveMode
-      design
-
-      widgets {
-        id
-        name
-        sortOrder
-        type
-        size
-        configuration
-        images {
-          fileName
-          largestSize {
-            imageWidth
-            imageHeight
-          }
-        }
-      }
+      index
+    }
+    containers {
+      ...PageWidgetContainer
     }
   }
 }
