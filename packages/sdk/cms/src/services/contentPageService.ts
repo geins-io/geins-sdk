@@ -1,4 +1,4 @@
-import { ContentPageVariables, ContentAreaType } from '@geins/core';
+import { ContentPageVariables, ContentPageType } from '@geins/core';
 import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 import * as contentParsers from '../parsers/contentParsers';
@@ -13,21 +13,23 @@ export class ContentPageService extends BaseApiService {
 
   async getRaw(variables: ContentPageVariables) {
     const options = {
-      query: queries.contentArea,
+      query: queries.page,
       variables: await this.generateVars(variables),
     };
+    const data = await this.runQuery(options);
+    console.log(data);
     return await this.runQuery(options);
   }
 
   async get(variables: ContentPageVariables) {
     const options = {
-      query: queries.contentArea,
+      query: queries.page,
       variables: await this.generateVars(variables),
     };
     return await this.runQueryParsed(options);
   }
 
-  protected parseResult(result: any): ContentAreaType {
-    return contentParsers.parseContentArea(result);
+  protected parseResult(result: any): ContentPageType {
+    return contentParsers.parseContentPage(result);
   }
 }
