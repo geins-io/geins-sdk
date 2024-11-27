@@ -1,5 +1,11 @@
 # @geins/eslint-config
 
+## 0.1.6
+
+### Patch Changes
+
+- c081d36: Added value of a menu item to cms package
+
 ## 0.1.6-canary-848c93a8f7473b2be21671e5c82eb3dca0788613
 
 ### Patch Changes

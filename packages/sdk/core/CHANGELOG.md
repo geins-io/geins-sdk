@@ -1,5 +1,11 @@
 # @geins/core
 
+## 0.3.6
+
+### Patch Changes
+
+- c081d36: Added value of a menu item to cms package
+
 ## 0.3.5
 
 ### Patch Changes
