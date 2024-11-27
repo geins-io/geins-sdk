@@ -1,48 +1,72 @@
 import type { GeinsSettings } from '@geins/types';
 import { BaseApiService } from '../base/baseApiService';
 import { GraphQLQueryOptions } from '../api-client/merchantApiClient';
+import { DocumentNode, OperationDefinitionNode } from 'graphql';
+import { gql } from '@apollo/client/core';
 
+/**
+ * GraphQLService class provides methods to interact with a GraphQL API.
+ * It extends the BaseApiService and includes methods for querying and mutating data.
+ */
 export class GraphQLService extends BaseApiService {
   constructor(client: any, geinsSettings: GeinsSettings) {
     super(client, geinsSettings);
   }
+  // set property for development logging
+  public log_to_console = false;
+
   protected verifyQueryOptions(options: GraphQLQueryOptions): GraphQLQueryOptions {
-    if (!options.query) {
-      throw new Error('Query is required');
-    }
-    if (!(options.query?.definitions?.[0]?.variableDefinitions?.length > 0)) {
-      console.log('NO VARS');
-      return options;
+    const returnOptions = { ...options };
+    if (!options.query && !options.queryAsString) {
+      throw new Error('Query or queryAsString is required');
     }
 
-    const queryOptions = { ...options };
-    queryOptions.variables = this.createVariables(queryOptions.variables);
+    try {
+      if (options.queryAsString && !options.query) {
+        returnOptions.query = gql(options.queryAsString);
+      }
+    } catch (error) {
+      throw new Error('Error parsing string to query');
+    }
 
-    const queryVars = queryOptions.query.definitions[0].variableDefinitions.map(
-      (v: any) => v.variable.name.value,
-    );
+    const queryDocument = returnOptions.query as DocumentNode;
+    const definition = queryDocument.definitions[0] as OperationDefinitionNode;
 
-    const providedVars = Object.keys(queryOptions.variables);
+    if (
+      !definition ||
+      definition.kind !== 'OperationDefinition' ||
+      !((definition.variableDefinitions?.length ?? 0) > 0)
+    ) {
+      return returnOptions;
+    }
+
+    returnOptions.variables = this.createVariables(returnOptions.variables);
+    const queryVars =
+      (queryDocument.definitions[0] as OperationDefinitionNode).variableDefinitions?.map(
+        (v: any) => v.variable.name.value,
+      ) || [];
+
+    const providedVars = Object.keys(returnOptions.variables);
     providedVars.forEach(v => {
-      if (!queryVars.includes(v)) {
-        delete queryOptions.variables[v];
+      if (queryVars && !queryVars.includes(v)) {
+        delete returnOptions.variables[v];
       }
     });
 
-    return queryOptions;
+    return returnOptions;
   }
-
   /**
-   * Generic method to run any GraphQL query
-   * @param query - The GraphQL query DocumentNode or gql query object
-   * @param variables - Variables to pass to the query
-   * @param options - Optional options like fetchPolicy, pollInterval, etc.
-   * @returns The result data of the query or null
+   * Executes a GraphQL query with the provided options.
+   * @param options - The options for the GraphQL query.
+   * @returns A promise that resolves to the query result or null if an error occurs.
    */
   async query<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
     try {
       const queryOptions = await this.verifyQueryOptions(options);
 
+      if (this.log_to_console && this._geinsSettings.environment !== 'prod') {
+        console.log('[Geins] queryOptions:', queryOptions);
+      }
       const result = this.cleanObject(await this.runQuery(queryOptions));
       const parsedResult = this.parseResult(result);
       return parsedResult as T;
@@ -50,18 +74,19 @@ export class GraphQLService extends BaseApiService {
       console.error('Query error:', error);
       return null;
     }
-    return null;
   }
 
   /**
-   * Generic method to run any GraphQL mutation
-   * @param mutation - The GraphQL mutation DocumentNode or gql mutation object
-   * @param variables - Variables to pass to the mutation
-   * @param options - Optional options like fetchPolicy, etc.
-   * @returns The result data of the mutation or null
+   * Executes a GraphQL mutation with the provided options.
+   * @param options - The options for the GraphQL mutation.
+   * @returns A promise that resolves to the mutation result or null if an error occurs.
    */
   async mutation<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
     try {
+      if (this.log_to_console && this._geinsSettings.environment !== 'prod') {
+        console.log('[Geins] mutation options:', options);
+      }
+
       const result = await this.runMutation(options);
       const parsedResult = this.parseResult(result);
       return parsedResult as T;

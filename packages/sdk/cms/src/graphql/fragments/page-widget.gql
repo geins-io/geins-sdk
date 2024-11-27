@@ -1,0 +1,15 @@
+fragment PageWidget on PageWidgetType {
+  id
+  name
+  sortOrder
+  type
+  size
+  configuration
+  images {
+    fileName
+    largestSize {
+      imageWidth
+      imageHeight
+    }
+  }
+}

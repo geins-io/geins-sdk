@@ -24,6 +24,7 @@ jobs:
       GEINS_PASSWORD: ${{ secrets.GEINS_PASSWORD }}
       GEINS_CMS_FAMILY: ${{ vars.GEINS_CMS_FAMILY }}
       GEINS_CMS_AREA: ${{ vars.GEINS_CMS_AREA }}
+      GEINS_CMS_PAGE_ALIAS: ${{ vars.GEINS_CMS_PAGE_ALIAS }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@master

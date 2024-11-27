@@ -1,0 +1,12 @@
+#import "./page-widget.gql"
+fragment PageWidgetContainer on PageWidgetContainerType {
+  id
+  name
+  sortOrder
+  layout
+  responsiveMode
+  design
+  widgets {
+    ...PageWidget
+  }
+}

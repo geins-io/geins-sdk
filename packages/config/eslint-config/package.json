@@ -1,6 +1,6 @@
 {
   "name": "@geins/eslint-config",
-  "version": "0.1.5",
+  "version": "0.1.6-canary-848c93a8f7473b2be21671e5c82eb3dca0788613",
   "private": true,
   "type": "module",
   "module": "./eslint-config.js",
