@@ -3,13 +3,12 @@ import { GeinsCMS } from '../src/geinsCMS';
 
 import { validSettings, cmsSettings } from '../../../../test/globalSettings';
 
-describe('GeinsCMS', () => {
+describe('GeinsCMS area', () => {
   let geinsCMS: GeinsCMS;
 
   beforeEach(() => {
     const geinsCore = new GeinsCore(validSettings);
     geinsCMS = new GeinsCMS(geinsCore);
-
     // Reset mocks before each test
     jest.clearAllMocks();
   });
@@ -33,6 +32,7 @@ describe('GeinsCMS', () => {
     const page: any = await geinsCMS.page.get({
       alias: cmsSettings.page.alias,
     });
+
     expect(page).toBeDefined();
     expect(page.id).toBeDefined();
     expect(page.name).toBeDefined();

@@ -8,4 +8,5 @@ fragment MenuItem on MenuItemType {
   order
   title
   canonicalUrl
+  value
 }
