@@ -10,7 +10,7 @@ jest.mock('../src/services/contentAreaService');
 // Mock the GeinsCore class
 jest.mock('@geins/core');
 
-describe('GeinsCMS', () => {
+describe('GeinsCMS Class Spec', () => {
   let mockCore: GeinsCore;
 
   beforeEach(() => {
