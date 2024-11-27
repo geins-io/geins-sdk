@@ -10,6 +10,8 @@
 
 ### Releases
 
-Create a branch from the `next` branch and create a pull request to the `next` branch.
+1. Create a branch from the `next` branch
+2. Develop your feature or fix
+3. Create a pull request to the `next` branch
 
 ## License
