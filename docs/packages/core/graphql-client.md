@@ -66,36 +66,62 @@ First, install the `@geins/types` package. Refer to the [installation guide](../
 
 ### Importing Types
 
-You can import the necessary types directly from `@geins/types`:
+You can import the pre defined types and enums directly from `@geins/types`:
 
 ```typescript
-import { GeinsProductTypeType, GeinsProductsResultTypeType } from '@geins/types';
+import {
+  GeinsProductTypeType,
+  GeinsProductsResultTypeType,
+  ProductListFilterType,
+  ProductListSortType,
+} from '@geins/types';
 ```
 
 - **`GeinsProductTypeType`**: Represents the product data structure.
 - **`GeinsProductsResultTypeType`**: Represents the result type of the products query.
+
+> **Note**: The `TypeType` suffix is abit of a misnomer, but it's used to avoid naming conflicts with existing types.
+
+## Options for `query` and `mutation` Methods
+
+The option interfaces and types for the `query` and `mutation` methods is as follows:
+
+```typescript
+interface GraphQLQueryOptions {
+  query?: DocumentNode | undefined;
+  queryAsString?: string | undefined;
+  variables?: any;
+  requestOptions?: RequestOptions;
+}
+
+interface RequestOptions {
+  fetchPolicy?: FetchPolicyOptions;
+  pollInterval?: number;
+  context?: any;
+  [key: string]: any;
+}
+
+enum FetchPolicyOptions {
+  CACHE_FIRST = 'cache-first',
+  NETWORK_ONLY = 'network-only',
+  CACHE_ONLY = 'cache-only',
+  NO_CACHE = 'no-cache',
+  STANDBY = 'standby',
+}
+```
+
+All exposed through `@geins/core`.
 
 ## Running GraphQL Queries
 
 ### Method Signature
 
 ```typescript
-
-    runQuery<TData, TVariables>(
-          query: DocumentNode,
-          variables?: TVariables,
-          options?: {
-            fetchPolicy?: FetchPolicy;
-            [key: string]: any;
-          }
-        ): Promise<TData | null>;
+  async query<T = any>(options: GraphQLQueryOptions): Promise<T | null>
 ```
 
-- **`TData`**: The expected shape of the response data.
-- **`TVariables`**: The shape of the variables object for the query.
-- **`query`**: The GraphQL query, written using `gql`.
-- **`variables`**: An optional object containing variables for the query.
-- **`options`**: Optional settings, such as `fetchPolicy`.
+- **`T`**: The expected shape of the response data.
+- **`options`**: options for the query, including the query itself, variables, and additional settings.
 
 ### Example: Fetching Products
 
@@ -111,7 +137,7 @@ import { GeinsProductTypeType, GeinsProductsResultTypeType } from '@geins/types'
 #### Define the GraphQL Query
 
 ```typescript
-const GET_PRODUCTS = gql`
+const GET_PRODUCTS_QUERY = gql`
   query GetProducts($skip: Int, $take: Int) {
     products(skip: $skip, take: $take) {
       count
@@ -138,11 +164,11 @@ const GET_PRODUCTS = gql`
 ```typescript
 async function fetchProducts() {
   try {
-    const data = await geinsCore.graphql.runQuery<
-      { products: GeinsProductsResultTypeType },
-      { skip: number; take: number }
-    >(GET_PRODUCTS, { skip: 0, take: 10 });
-
+    const options = {
+      query: GET_PRODUCTS_QUERY,
+      variables: { skip: 0, take: 10 },
+    };
+    const data = await geinsCore.graphql.query<GeinsProductsResultTypeType>(options);
     if (data) {
       console.log('Total Products:', data.products.count);
       data.products.products?.forEach((product: GeinsProductTypeType) => {
@@ -164,9 +190,11 @@ In this example:
 
 - We import types from `@geins/types` to ensure type safety.
 - We use `GeinsProductsResultTypeType` for the response data type.
-- We specify the variables type inline `{ skip: number; take: number }`.
+- We specify the variables type inline `{ skip: number; take: number }` if we want we can define it as a type.
 
 ## Running GraphQL Mutations
+
+Running mutations is similar to running queries but involves modifying data in Geins.
 
 ### Method Signature
 
@@ -201,7 +229,7 @@ import { GeinsCartTypeType, GeinsCartItemInputTypeType } from '@geins/types';
 #### Define the GraphQL Mutation
 
 ```typescript
-const ADD_TO_CART = gql`
+const ADD_TO_CART_MUTATION = gql`
   mutation AddToCart($cartId: String!, $item: CartItemInputType!) {
     addToCart(id: $cartId, item: $item) {
       id
@@ -237,7 +265,7 @@ async function addToCart() {
     const data = await geinsCore.graphql.runMutation<
       { addToCart: GeinsCartTypeType },
       { cartId: string; item: GeinsCartItemInputTypeType }
-    >(ADD_TO_CART, { cartId, item });
+    >(ADD_TO_CART_MUTATION, { cartId, item });
 
     if (data && data.addToCart) {
       console.log('Cart ID:', data.addToCart.id);
@@ -262,6 +290,8 @@ In this example:
 - We use `GeinsCartTypeType` for the response data type.
 - We use `GeinsCartItemInputTypeType` from `@geins/types` for the variables type.
 
+> **Note**: The `TypeType` suffix is abit of a misnomer, but it's used to avoid naming conflicts with existing types.
+
 ## Handling Responses and Errors
 
 - **Successful Response**: The `data` variable contains the result of the query or mutation.
@@ -279,6 +309,26 @@ try {
 ## Setting Fetch Policies
 
 Fetch policies determine how the cache interacts with your GraphQL operations. You can set a global default when initializing `GeinsCore` or override it per request.
+
+You can get the available fetch policies by importing the enum `FetchPolicyOptions` from `@geins/core`.
+
+```typescript
+export enum FetchPolicyOptions {
+  CACHE_FIRST = 'cache-first',
+  NETWORK_ONLY = 'network-only',
+  CACHE_ONLY = 'cache-only',
+  NO_CACHE = 'no-cache',
+  STANDBY = 'standby',
+}
+```
+
+FetchPolicyOptions are:
+
+- **`cache-first`**: Fetch from the cache first, then the network if the cache is empty.
+- **`network-only`**: Fetch from the network only.
+- **`cache-only`**: Fetch from the cache only.
+- **`no-cache`**: Bypass the cache and fetch from the network.
+- **`standby`**: Do not fetch from the cache or network.
 
 ### Per Request Fetch Policy
 
@@ -370,9 +420,3 @@ In this example:
 
 - We import `GeinsBrandListTypeType` from `@geins/types`.
 - We use the type in the response data to ensure type safety.
-
-## Final Notes
-
-- **Custom Operations**: You can use the `GraphQLClient` to execute any custom GraphQL operation supported by the Geins API.
-- **Extensibility**: The flexibility of the `GraphQLClient` allows you to build complex data-fetching logic tailored to your application's needs.
-- **TypeScript Types**: Utilize the types exported by `@geins/types` to enhance type safety and reduce boilerplate code.

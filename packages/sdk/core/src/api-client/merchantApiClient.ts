@@ -26,7 +26,7 @@ export enum OperationType {
 }
 
 export interface RequestOptions {
-  fetchPolicy?: FetchPolicy;
+  fetchPolicy?: FetchPolicyOptions;
   pollInterval?: number;
   context?: any;
   [key: string]: any;
