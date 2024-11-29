@@ -1,6 +1,14 @@
 # What is Geins?
 
-Geins is a robust, API-first e-commerce platform designed to simplify the development of online storefronts and digital commerce solutions. By providing a modular SDK and several specialized packages, Geins enables developers to build scalable, feature-rich applications with ease.
+As a developer, you know the frustration of working with clunky e-commerce platforms that limit your creativity. You deserve tools that empower you to build amazing digital experiences.
+
+Geins is your ally in this mission. Our hybrid platform gives you the flexibility to create truly custom solutions, while also providing a stable foundation to build upon. Say goodbye to technical constraints and hello to a platform that unleashes your full potential.
+
+<div class="tip custom-block" style="padding-top: 8px">
+
+Just want to get to developing? Skip to the [Quickstart](./quickstart).
+
+</div>
 
 ## Core Features
 
@@ -24,9 +32,17 @@ The CMS package allows developers to manage and render content such as pages, me
 
 This package focuses on customer management, providing tools for handling authentication, registration, user profiles, and transaction histories. It’s vital for applications where user interaction and customer data management are primary concerns.
 
-### @geins/pim
+### @geins/pim  <Badge type="info" text="TBA" />
 
 The PIM (Product Information Management) package is designed for managing product data, including product listings, details, and search functionality. This is especially useful for e-commerce sites requiring complex product management and search capabilities.
+
+### @geins/search  <Badge type="info" text="TBA" />
+
+The Search package provides tools for implementing search functionality within your application. It includes features like faceted search, autocomplete, and search result rendering, making it easy to integrate powerful search capabilities.
+
+### @geins/oms  <Badge type="info" text="TBA" />
+
+Cart and order management are handled by the OMS (Order Management System) package. It provides tools for managing shopping carts, processing orders, and handling order fulfillment, making it essential for e-commerce applications.
 
 ### @geins/types
 

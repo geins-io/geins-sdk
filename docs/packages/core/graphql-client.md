@@ -29,11 +29,11 @@ const MY_PLP_QUERY = gql`
     }
   }
 `;
-
-const myProductList = await graphqlClient.runQuery<
-  { products: GeinsProductsResultTypeType },
-  { skip: number; take: number }
->(MY_PLP_QUERY, { skip: 0, take: 80 });
+const options = {
+  query: MY_PLP_QUERY,
+  variables: { skip: 0, take: 10 },
+};
+const myProductList = await graphqlClient.Query<MyProductListType>(options);
 ```
 
 ## Overview
@@ -53,8 +53,8 @@ Once you have an instance of `GeinsCore` (refer to the [initialization guide](#)
 
 The `GraphQLClient` provides two primary methods:
 
-- `runQuery<TData, TVariables>(query, variables?, options?)`
-- `runMutation<TData, TVariables>(mutation, variables?, options?)`
+- `query<T>(options)`
+- `mutation<T>(options)`
 
 ## Using TypeScript Types from `@geins/types`
 
@@ -110,7 +110,48 @@ enum FetchPolicyOptions {
 }
 ```
 
+### `GraphQLQueryOptions`
+
+- **`query`**: The GraphQL query document node.
+- **`queryAsString`**: The GraphQL query as a string.
+- **`variables`**: An object containing variables for the query or mutation.
+- **`requestOptions`**: Additional settings for the request.
+
+Use `query` or `queryAsString` to specify the GraphQL query. You can pass variables as an object to the `variables` property. Variables set in `GeinsSettings` will be automatically added to the query (see below). Additional settings can be passed in the `requestOptions` object.
+
 All exposed through `@geins/core`.
+
+## Benefits of Using the `GraphQLClient`
+
+### Automatic Adding of Headers
+
+The `GraphQLClient` automatically adds the necessary headers for user authentication and spoofing, simplifying the process of interacting with the Geins API.
+
+### Automatic Adding variables to the query
+
+The `GraphQLClient` automatically adds the variables that are set in GeinsSettings to the query.
+
+```typescript
+const geinsSettings: GeinsSettings = {
+  apiKey: process.env.GEINS_API_KEY || '',
+  accountName: process.env.GEINS_ACCOUNT_NAME || '',
+  channel: process.env.GEINS_CHANNEL || '',
+  tld: process.env.GEINS_TLD || '',
+  locale: process.env.GEINS_LOCALE || '',
+  market: process.env.GEINS_MARKET || '',
+  environment: 'qa',
+};
+const geinsCore = new GeinsCore(geinsSettings);
+```
+
+Ofcourse you can override these variables by setting them in the options object like so:
+
+```typescript
+const options = {
+  query: MY_QUERY,
+  variables: { market: 'us', locale: 'en-US' },
+};
+```
 
 ## Running GraphQL Queries
 
@@ -257,18 +298,18 @@ const ADD_TO_CART_MUTATION = gql`
 async function addToCart() {
   try {
     const cartId = 'your-cart-id';
-    const item: GeinsCartItemInputTypeType = {
+    const itemToAdd: GeinsCartItemInputTypeType = {
       skuId: 12345,
       quantity: 1,
     };
+    const options: GraphQLQueryOptions = {
+      mutation: ADD_TO_CART_MUTATION,
+      variables: { cartId, item: itemToAdd },
+    };
 
-    const data = await geinsCore.graphql.runMutation<
-      { addToCart: GeinsCartTypeType },
-      { cartId: string; item: GeinsCartItemInputTypeType }
-    >(ADD_TO_CART_MUTATION, { cartId, item });
-
+    const data = await geinsCore.graphql.mutation<GeinsCartTypeType>(options);
     if (data && data.addToCart) {
-      console.log('Cart ID:', data.addToCart.id);
+      console.log('Cart Id:', data.addToCart.id);
       data.addToCart.items?.forEach(cartItem => {
         console.log('Product:', cartItem.product?.name);
         console.log('Quantity:', cartItem.quantity);
@@ -306,6 +347,25 @@ try {
 }
 ```
 
+### Debugging Requests
+
+If the enviroment **is not** set to production (`prod`) you can set the property `log_to_console` to `true` to log the full options object to the console. This can be done globally on the `GeinsCore` object or per request.
+
+```typescript
+// setting globally
+const geinsCore = new GeinsCore(geinsSettings);
+geinsCore.graphql.log_to_console = true;
+
+// setting for one request
+const options: GraphQLQueryOptions = {
+  query: MY_QUERY,
+  variables: { skip: 0, take: 10 },
+  requestOptions: {
+    log_to_console: true,
+  },
+};
+```
+
 ## Setting Fetch Policies
 
 Fetch policies determine how the cache interacts with your GraphQL operations. You can set a global default when initializing `GeinsCore` or override it per request.
@@ -333,14 +393,14 @@ FetchPolicyOptions are:
 ### Per Request Fetch Policy
 
 ```typescript
-const data = await geinsCore.graphql.runQuery<
-  { products: GeinsProductsResultTypeType },
-  { skip: number; take: number }
->(
-  GET_PRODUCTS,
-  { skip: 0, take: 10 },
-  { fetchPolicy: 'cache-and-network' }, // Overrides the global fetchPolicy
-);
+const options: GraphQLQueryOptions = {
+  query: MY_QUERY,
+  variables: { skip: 0, take: 10 },
+  requestOptions: {
+    fetchPolicy: FetchPolicyOptions.NETWORK_ONLY,
+  },
+};
+const data = await geinsCore.graphql.query<MyType>(options);
 ```
 
 ## Additional Tips
@@ -357,66 +417,4 @@ const data = await geinsCore.graphql.runQuery<
 
 The `GraphQLClient` exposed through `GeinsCore` empowers you to execute custom GraphQL queries and mutations against the Geins API with ease. By leveraging TypeScript and GraphQL, along with the types from `@geins/types`, you can build robust applications with precise control over the data you fetch and manipulate.
 
-Remember to handle possible `null` responses and errors appropriately, and consider setting `fetchPolicy` options based on your caching and data-fetching needs.
-
 For more information on available queries and mutations, refer to the [Geins API Documentation](https://docs.geins.io/).
-
-## Complete Example: Fetching Brands
-
-As an additional example, here's how you can fetch brands using the `GraphQLClient` and types from `@geins/types`.
-
-### Import Necessary Modules
-
-```typescript
-import { gql } from '@geins/core';
-import { GeinsBrandListTypeType } from '@geins/types';
-```
-
-### Define the GraphQL Query
-
-```typescript
-const BRANDS_QUERY = gql`
-  query Brands {
-    brands {
-      brandId
-      name
-      description
-      logo
-      canonicalUrl
-    }
-  }
-`;
-```
-
-### Execute the Query
-
-```typescript
-async function fetchBrands() {
-  try {
-    const data = await geinsCore.graphql.runQuery<{
-      brands: GeinsBrandListTypeType[];
-    }>(BRANDS_QUERY);
-
-    if (data) {
-      data.brands.forEach(brand => {
-        console.log('Brand ID:', brand.brandId);
-        console.log('Name:', brand.name);
-        console.log('Description:', brand.description);
-        console.log('Logo URL:', brand.logo);
-        console.log('Canonical URL:', brand.canonicalUrl);
-      });
-    } else {
-      console.error('No data returned from query.');
-    }
-  } catch (error) {
-    console.error('Error fetching brands:', error);
-  }
-}
-
-fetchBrands();
-```
-
-In this example:
-
-- We import `GeinsBrandListTypeType` from `@geins/types`.
-- We use the type in the response data to ensure type safety.

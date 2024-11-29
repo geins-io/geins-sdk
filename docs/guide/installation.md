@@ -37,7 +37,7 @@ Depending on your application’s needs, you can add the following packages:
 
 - `@geins/cms`: For content management (pages, menus, and widgets).
 - `@geins/crm`: For customer relationship management (user profiles, authentication, and transactions).
-- `@geins/pim`: For product information management (product listings, details, and searches).
+
 
 To install additional packages:
 
@@ -72,6 +72,7 @@ const geinsSettings = {
   apiKey: 'your-api-key',
   accountName: 'your-account-name',
   channel: 'your-channel-id',
+  tld: 'your-top-level-domain',
   locale: 'your-locale',
   market: 'your-market',
 };

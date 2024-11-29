@@ -15,9 +15,8 @@ export default withMermaid({
     },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Quickstart', link: '/guide/quickstart' },
-      { text: 'Package Refrence', link: '/packages/' },
+      { text: 'Guide', link: '/guide/what-is-geins' },
+      { text: 'Package Refrence', link: '/packages' },
     ],
 
     sidebar: {
@@ -43,17 +42,17 @@ export default withMermaid({
           text: 'Examples',
           items: [
             {
+              text: 'Using custom queries',
+              link: '/guide/examples/graphql-client',
+            },
+            /* {
               text: 'Routing',
               link: '/guide/examples/routing',
             },
             {
-              text: 'Using custom queries',
-              link: '/guide/examples/graphql-client',
-            },
-            {
               text: 'Subscibing to events',
               link: '/guide/examples/events',
-            },
+            }, */
           ],
         },
       ],
@@ -95,7 +94,7 @@ export default withMermaid({
                   text: 'Authentication',
                   link: '/packages/crm/authentication',
                 },
-                { text: 'Password reset', link: '/packages/crm/password' },
+                { text: 'Password mgmt', link: '/packages/crm/password' },
                 { text: 'Registration', link: '/packages/crm/registration' },
                 {
                   text: 'User',

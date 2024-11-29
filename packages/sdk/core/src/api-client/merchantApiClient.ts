@@ -44,6 +44,7 @@ export interface GraphQLQueryOptions {
   queryAsString?: string | undefined;
   variables?: any;
   requestOptions?: RequestOptions;
+  log_to_console?: boolean;
 }
 
 export class MerchantApiClient {
