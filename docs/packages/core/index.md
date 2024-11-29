@@ -1,4 +1,4 @@
-# Package: @geins/core
+# @geins/core
 
 The `@geins/core` package serves as the foundation of the Geins SDK, providing essential functionalities such as event handling, cookie management, and API communication. It is the central piece that all other packages, like `@geins/cms`, depend upon to function correctly.
 
@@ -70,7 +70,7 @@ The `EventService` allows you to manage custom events within your application. F
 const eventService = geinsCore.events;
 
 // Adding an event listener
-eventService.listnerAdd((data) => {
+eventService.listnerAdd(data => {
   console.log('Event received:', data);
 });
 
@@ -116,7 +116,7 @@ const graphQLClient = geinsCore.graphql;
 
 // Making a GraphQL query
 const query = `{ user(id: "user-123") { name email } }`;
-graphQLClient.query(query).then((response) => {
+graphQLClient.query(query).then(response => {
   console.log('GraphQL response:', response);
 });
 ```
@@ -127,12 +127,12 @@ You can access information about the current channel and all available channels.
 
 ```typescript
 // Getting the current channel
-geinsCore.channel.current().then((channel) => {
+geinsCore.channel.current().then(channel => {
   console.log('Current channel:', channel);
 });
 
 // Getting all channels
-geinsCore.channel.all().then((channels) => {
+geinsCore.channel.all().then(channels => {
   console.log('All channels:', channels);
 });
 ```
@@ -147,7 +147,7 @@ import { GeinsCMS } from '@geins/cms';
 const geinsCMS = new GeinsCMS(geinsCore);
 
 // Using the CMS package
-geinsCMS.getContent('homepage').then((content) => {
+geinsCMS.getContent('homepage').then(content => {
   console.log('Homepage content:', content);
 });
 ```

@@ -64,7 +64,7 @@ export class GraphQLService extends BaseApiService {
     try {
       const queryOptions = await this.verifyQueryOptions(options);
 
-      if (this.log_to_console && this._geinsSettings.environment !== 'prod') {
+      if ((this.log_to_console || options.log_to_console) && this._geinsSettings.environment !== 'prod') {
         console.log('[Geins] queryOptions:', queryOptions);
       }
       const result = this.cleanObject(await this.runQuery(queryOptions));
@@ -83,7 +83,7 @@ export class GraphQLService extends BaseApiService {
    */
   async mutation<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
     try {
-      if (this.log_to_console && this._geinsSettings.environment !== 'prod') {
+      if ((this.log_to_console || options.log_to_console) && this._geinsSettings.environment !== 'prod') {
         console.log('[Geins] mutation options:', options);
       }
 

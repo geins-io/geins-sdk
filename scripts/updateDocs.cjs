@@ -12,12 +12,12 @@ const getPackageVersion = packagePath => {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
     return packageJson.version || 'Unknown';
   }
-  return 'Not found';
+  return 'TBA';
 };
 
 // Main function to update the index.md file
 const updateDocsIndex = () => {
-  const badgeRegex = /<Badge type="info" text=".*?" \/>/g;
+  const badgeRegex = /## @geins\/[\w\-]+ <Badge type="info" text=".*?" \/>/g;
 
   // Read the current index.md content
   const indexContent = fs.readFileSync(docsIndexPath, 'utf-8');
@@ -28,16 +28,18 @@ const updateDocsIndex = () => {
     .filter(pkg => fs.statSync(path.join(packagesDir, pkg)).isDirectory());
 
   // Build the updated content
-  const updatedContent = indexContent.replace(badgeRegex, (match, offset, string) => {
+  const updatedContent = indexContent.replace(badgeRegex, (match, offset, content) => {
+    console.log('match', match);
+
     // Find the package name from the surrounding text
-    const beforeBadge = string.slice(0, offset);
+    const beforeBadge = match;
     const packageMatch = /## ([\w\-@/]+)/.exec(beforeBadge);
 
     if (packageMatch) {
       const packageName = packageMatch[1].replace('@geins/', '');
       const packagePath = path.join(packagesDir, packageName);
       const version = getPackageVersion(packagePath);
-      return `<Badge type="info" text="${version}" />`;
+      return `## ${packageMatch[1]} <Badge type="info" text="${version}" />`;
     }
     return match;
   });

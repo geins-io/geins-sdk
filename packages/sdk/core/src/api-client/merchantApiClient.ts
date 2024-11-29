@@ -26,7 +26,7 @@ export enum OperationType {
 }
 
 export interface RequestOptions {
-  fetchPolicy?: FetchPolicy;
+  fetchPolicy?: FetchPolicyOptions;
   pollInterval?: number;
   context?: any;
   [key: string]: any;
@@ -44,6 +44,7 @@ export interface GraphQLQueryOptions {
   queryAsString?: string | undefined;
   variables?: any;
   requestOptions?: RequestOptions;
+  log_to_console?: boolean;
 }
 
 export class MerchantApiClient {

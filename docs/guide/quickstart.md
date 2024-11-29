@@ -39,7 +39,7 @@ const geinsSettings = {
   tld: 'your-tld',
   locale: 'your-locale',
   market: 'your-market',
-  environment: 'production', // or 'staging', 'development'
+  environment: 'prod', // or 'dev', 'qa'
 };
 
 const geinsCore = new GeinsCore(geinsSettings);
@@ -50,25 +50,26 @@ const geinsCore = new GeinsCore(geinsSettings);
 Now that you have an instance of `GeinsCore`, you can access its core functionalities. Let's start getting some data from the API:
 
 ```typescript
+interface BrandList {
+  brands: {
+    brandId: number;
+    name: string;
+  }[];
+}
+
 const BRANDS_QUERY = gql`
   query Brands {
     brands {
       brandId
       name
-      description
     }
   }
 `;
 
-const data = await geinsCore.graphql.runQuery<{
-  brands: GeinsBrandListTypeType[];
-}>(BRANDS_QUERY);
-
+const data = await geinsCore.graphql.query<BrandList>({ query: BRANDS_QUERY });
 if (data) {
-  data.brands.forEach((brand) => {
-    console.log('Brand ID:', brand.brandId);
-    console.log('Name:', brand.name);
-    console.log('Description:', brand.description);
+  data.brands.forEach(brand => {
+    console.log(brand);
   });
 }
 ```

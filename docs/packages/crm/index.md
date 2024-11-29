@@ -1,4 +1,4 @@
-# @geins/crm Documentation
+# @geins/crm
 
 ## Introduction
 
