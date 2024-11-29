@@ -1,0 +1,13 @@
+src/
+__tests__/
+*.test.js
+*.spec.js
+coverage/
+jest.config.js
+eslint.config.js
+.eslintrc*
+.prettierrc*
+tsconfig.json
+rollup.config.js
+webpack.config.js
+.babelrc

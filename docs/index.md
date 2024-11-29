@@ -8,7 +8,7 @@ titleTemplate: Geins SDK
 hero:
   name: Geins SDK
   text: A perfect developer experience
-  tagline: Create immersive web experiences. Take advantage of the hybrid model that Geins offers it is open-source and built for the modern web.
+  tagline: Create immersive commerce experiences. Quick and simple setup process without sacrificing the ability to create truly unique and personalized shopping experiences.
   actions:
     - theme: brand
       text: Quickstart

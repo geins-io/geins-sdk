@@ -2,6 +2,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import graphql from '@rollup/plugin-graphql';
+import terser from '@rollup/plugin-terser';
 
 export default {
   input: 'src/index.ts',
@@ -22,5 +23,8 @@ export default {
     commonjs(),
     typescript(),
     graphql(),
+    terser(),
   ],
+  external: ['@geins/core'],
+  treeshake: true,
 };
