@@ -1,5 +1,5 @@
 import { ContentAreaVariables, ContentAreaType } from '@geins/core';
-import { BaseApiService, GraphQLQueryOptions } from '@geins/core';
+import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 import * as contentParsers from '../parsers/contentParsers';
 export class ContentAreaService extends BaseApiService {
