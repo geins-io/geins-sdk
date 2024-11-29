@@ -1,5 +1,15 @@
 # @geins/cms
 
+## 0.3.8
+
+### Patch Changes
+
+- 2f4edb2: optimizing size of package
+- 39ea998: fixed size of tarball
+- Updated dependencies [2f4edb2]
+- Updated dependencies [39ea998]
+  - @geins/core@0.3.8
+
 ## 0.3.7
 
 ### Patch Changes
