@@ -1,5 +1,12 @@
 # @geins/types
 
+## 0.3.8
+
+### Patch Changes
+
+- 2f4edb2: optimizing size of package
+- 39ea998: fixed size of tarball
+
 ## 0.3.7
 
 ### Patch Changes
