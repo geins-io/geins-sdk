@@ -14,7 +14,7 @@ Main package for interacting with the Geins API. All other packages depend on th
 
 [![core-badge-version-canary]][core-npm-url-canary]
 
-Read the [documentation](/packages/core) for more information.
+Read the [documentation](./core/) for more information.
 
 ## @geins/cms <Badge type="info" text="0.3.6" />
 
@@ -28,7 +28,7 @@ Package for managing content, including pages, menus.
 
 [![cms-badge-version-canary]][cms-npm-url-canary]
 
-Read the [documentation](/packages/cms) for more information.
+Read the [documentation](./cms/) for more information.
 
 ## @geins/crm <Badge type="info" text="0.3.6" />
 
@@ -42,7 +42,7 @@ Package for managing customer relationship management (CRM) functionalities, suc
 
 [![crm-badge-version-canary]][crm-npm-url-canary]
 
-Read the [documentation](/packages/crm) for more information.
+Read the [documentation](./crm/) for more information.
 
 ## @geins/pim <Badge type="info" text="TBA" />
 
