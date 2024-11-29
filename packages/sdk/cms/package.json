@@ -6,6 +6,9 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "yarn build",
