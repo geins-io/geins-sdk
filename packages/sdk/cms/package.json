@@ -16,14 +16,13 @@
     "link": "yarn link"
   },
   "dependencies": {
-    "@apollo/client": "^3.11.8",
-    "graphql": "^16.9.0",
     "@geins/core": "*"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "@geins/eslint-config": "0.1.7",
     "typescript": "^5.6.2",
     "eslint": "^9.11.1"

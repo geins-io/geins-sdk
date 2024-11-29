@@ -1,5 +1,5 @@
 import type { MenuVariables } from '@geins/types';
-import { BaseApiService, logWrite } from '@geins/core';
+import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 
 export class MenuService extends BaseApiService {
