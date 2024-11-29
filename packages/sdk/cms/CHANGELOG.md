@@ -1,5 +1,13 @@
 # @geins/cms
 
+## 0.3.7
+
+### Patch Changes
+
+- 3109e0f: Added value of a menu item to cms package
+- Updated dependencies [3109e0f]
+  - @geins/core@0.3.7
+
 ## 0.3.6
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @geins/eslint-config
 
+## 0.1.7
+
+### Patch Changes
+
+- 3109e0f: Added value of a menu item to cms package
+
 ## 0.1.6
 
 ### Patch Changes
