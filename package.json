@@ -78,5 +78,8 @@
   "engines": {
     "node": ">=20"
   },
+  "resolutions": {
+    "@algolia/client-search": "^4.24.0"
+  },
   "dependencies": {}
 }
