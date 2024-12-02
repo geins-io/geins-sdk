@@ -14,11 +14,7 @@ export default {
     ],
     '^.+\\.(gql|graphql)$': '@graphql-tools/jest-transform',
   },
-  moduleNameMapper: {
-    // '\\.(gql|graphql)$': '@graphql-tools/jest-transform',
-  },
   setupFiles: ['<rootDir>/jest.setup.cjs'],
-
   globals: {
     graphql: {
       noDescription: true,

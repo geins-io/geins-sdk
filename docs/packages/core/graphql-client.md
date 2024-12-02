@@ -341,7 +341,7 @@ In this example:
 
 ```typescript
 try {
-  // ... runQuery or runMutation
+  // ... Query or Mutation
 } catch (error) {
   console.error('An error occurred:', error);
 }

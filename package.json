@@ -43,7 +43,6 @@
     ]
   },
   "devDependencies": {
-    "@algolia/client-search": "^5.13.0",
     "@babel/core": "^7.26.0",
     "@changesets/cli": "^2.27.9",
     "@commitlint/cli": "^19.5.0",
@@ -79,8 +78,8 @@
   "engines": {
     "node": ">=20"
   },
-  "dependencies": {
-    "cross-fetch": "^4.0.0",
-    "jest-environment-jsdom-fourteen": "^1.0.1"
-  }
+  "resolutions": {
+    "@algolia/client-search": "^4.24.0"
+  },
+  "dependencies": {}
 }
