@@ -20,9 +20,9 @@ The Geins SDK is organized as a monorepo, which means that multiple packages are
 
 ### Packages
 
-This repository is a monorepo managed with [Turborepo](https://turborepo.dev/). The main directories are:
+This repository is a monorepo. The main directories are:
 
-**packages/**: The packages, including:
+**packages/sdk/**: The packages, including:
   - `@geins/core`: Core functionality like channel management and GraphQL client.
   - `@geins/cms`: CMS-specific features, including menus and content areas.
   - `@geins/crm`: CRM features like user authentication and profile management.  
