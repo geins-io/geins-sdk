@@ -1,11 +1,39 @@
 // import { defineConfig } from 'vitepress'
+import { HeadConfig, loadEnv } from 'vitepress';
 import { withMermaid } from 'vitepress-plugin-mermaid';
+const env = loadEnv('', process.cwd());
+const scripts: HeadConfig[] = [];
+if (env.VITE_GA_ID) {
+  scripts.push(
+    [
+      'script',
+      {},
+      `window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${env.VITE_GA_ID}');`,
+    ],
+    ['script', { async: '', src: `https://www.googletagmanager.com/gtag/js?id=${env.VITE_GA_ID}` }],
+  );
+}
+if (env.VITE_CALARIFY_ID) {
+  scripts.push([
+    'script',
+    {},
+    `(function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "${env.VITE_CALARIFY_ID}");`,
+  ]);
+}
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
   title: 'Geins SDK',
-  description: 'A perfect developer experience for node.js devlopment',
-  head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
+  description: 'A perfect developer experience',
+  lang: 'en-US',
+  head: [['link', { rel: 'icon', href: '/favicon.ico' }], ...scripts],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: {
