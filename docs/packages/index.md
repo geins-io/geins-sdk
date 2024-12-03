@@ -1,6 +1,8 @@
 # Packages
 
-Geins is a modular platform that consists of several packages. Each package provides a specific set of functionality that you can use to build your application. The following packages are available:
+Geins is a modular platform and the SDK is also modular. The SDK consists of several packages so you don't bloat your application. Each package provides a specific set of functionality that you can use to build your application. 
+
+The following packages are available:
 
 ## @geins/core <Badge type="info" text="0.3.6" />
 

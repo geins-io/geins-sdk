@@ -70,7 +70,7 @@ The `EventService` allows you to manage custom events within your application. F
 const eventService = geinsCore.events;
 
 // Adding an event listener
-eventService.listnerAdd(data => {
+eventService.listenerAdd(data => {
   console.log('Event received:', data);
 });
 

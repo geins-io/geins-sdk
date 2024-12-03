@@ -41,12 +41,15 @@ export default withMermaid({
       dark: '/logo/geins-g-white.svg',
       alt: 'Geins SDK',
     },
+    banner: {
+      message: '🚀 Welcome to the Geins SDK documentation! Check out the latest updates.',
+      link: '/updates',
+    },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Guide', link: '/guide/what-is-geins' },
-      { text: 'Package Refrence', link: '/packages' },
+      { text: 'Package Reference', link: '/packages' },
     ],
-
     sidebar: {
       '/guide/': [
         {
@@ -70,6 +73,10 @@ export default withMermaid({
           text: 'Examples',
           items: [
             {
+              text: 'Starters using the SDK',
+              link: '/guide/examples/starters',
+            },
+            {
               text: 'Using custom queries',
               link: '/guide/examples/graphql-client',
             },
@@ -78,7 +85,7 @@ export default withMermaid({
               link: '/guide/examples/routing',
             },
             {
-              text: 'Subscibing to events',
+              text: 'Subscribing to events',
               link: '/guide/examples/events',
             }, */
           ],
@@ -144,7 +151,6 @@ export default withMermaid({
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2024-present Geins',
     },
-
     socialLinks: [{ icon: 'github', link: 'https://github.com/geins-io/geins' }],
     outline: {
       level: [2, 4],

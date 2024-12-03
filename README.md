@@ -38,4 +38,4 @@ We welcome contributions! Please follow our [contribution guidelines](CONTRIBUTI
 
 ## License
 
-This project is licensed under the MIT License.
+Licensed under the MIT License. Check the [LICENSE](LICENSE.md) file for details.

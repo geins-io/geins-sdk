@@ -26,11 +26,11 @@ features:
       dark: /logo/geins-g-icon-white.svg
     title: Integrated with Geins
     details: Fully integrated with Geins and easy to make your own.
-    link: https://www.geins.io
+    link: https://www.geins.io    
   - icon:
       src: /img/nodejs-icon.svg
-    title: Native node.js
-    details: Fully native node.js support.
+    title: Native Node.js
+    details: Fully native Node.js support.
   - icon:
       src: /img/typescript-icon.svg
     title: TypeScript support
@@ -39,6 +39,7 @@ features:
       src: /img/opensource-icon.svg
     title: Open Source
     details: MIT licensed and open source.
+
 ---
 <Confetti />
 <style>

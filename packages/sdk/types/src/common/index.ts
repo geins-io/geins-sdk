@@ -25,3 +25,20 @@ export interface GeinsChannelInterface {
   current: () => Promise<GeinsChannelTypeType | undefined>;
   all: () => Promise<GeinsChannelTypeType[] | undefined>;
 }
+
+export enum LinkAttributeRelEnum {
+  follow = 'follow',
+  noopener = 'noopener',
+  noreferrer = 'noreferrer',
+  alternate = 'alternate',
+  author = 'author',
+  bookmark = 'bookmark',
+  external = 'external',
+  help = 'help',
+  license = 'license',
+  next = 'next',
+  nofollow = 'nofollow',
+  prev = 'prev',
+  search = 'search',
+  tag = 'tag',
+}

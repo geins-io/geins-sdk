@@ -1,4 +1,4 @@
-import type { MenuVariables } from '@geins/types';
+import type { MenuVariables, MenuItemType, MenuType } from '@geins/types';
 import { BaseApiService } from '@geins/core';
 import { queries } from '../graphql';
 
@@ -27,7 +27,7 @@ export class MenuService extends BaseApiService {
     return await this.runQueryParsed(options);
   }
 
-  protected parseResult(result: any): any {
+  protected parseResult(result: any): MenuType {
     if (!result || !result.data || !result.data.getMenuAtLocation) {
       throw new Error('Invalid result structure');
     }
@@ -41,7 +41,7 @@ export class MenuService extends BaseApiService {
     return parsedResult;
   }
 
-  protected parseMenuItem(item: any): any {
+  protected parseMenuItem(item: any): MenuItemType {
     return {
       id: item.id,
       label: item.label,

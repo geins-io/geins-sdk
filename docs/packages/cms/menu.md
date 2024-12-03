@@ -29,23 +29,22 @@ const geinsCore = new GeinsCore({
 });
 
 const geinsCMS = new GeinsCMS(geinsCore);
-const menuService = geinsCMS.menu;
 ```
 
 ### Retrieving a Menu
 
-To fetch a menu by its name, use the `getMenu` method. This retrieves the menu structure with its associated items, each containing details like the name, link, and possible sub-items.
+To fetch a menu by its name, use the `get` method. This retrieves the menu structure with its associated items, each containing details like the name, link, and possible sub-items.
 
 #### Example Usage
 
 ```typescript
-const menu = await menuService.getMenu('main-menu');
+const menu = await geinsCMS.menu.get('main-menu');
 console.log(menu);
 ```
 
 ### Example Structure of Menu Response
 
-The response from `getMenu` provides structured data for rendering menus and their nested items:
+The response from `get` provides structured data for rendering menus and their nested items:
 
 ```typescript
 {
@@ -58,7 +57,7 @@ The response from `getMenu` provides structured data for rendering menus and the
       link: "/",
       children: [],
       target: "_self",
-      rel: "noopener"
+      rel: "follow"
     },
     {
       id: "about",
@@ -71,7 +70,7 @@ The response from `getMenu` provides structured data for rendering menus and the
           link: "/about/team",
           children: [],
           target: "_self",
-          rel: "noopener"
+          rel: "follow"
         }
       ]
     }
@@ -97,8 +96,8 @@ When fetching a menu, handle cases where a menu or its items might not exist. Th
 
 ```typescript
 try {
-  const menuData = await menuService.getMenu('main-menu');
-  if (!menuData) {
+  const menu = await geinsCMS.menu.get('main-menu');
+  if (!menu) {
     console.warn('Menu not found');
   }
 } catch (error) {
