@@ -5,6 +5,7 @@ const env = loadEnv('', process.cwd());
 const scripts: HeadConfig[] = [];
 if (env.VITE_GA_ID) {
   scripts.push(
+    ['script', { async: '', src: `https://www.googletagmanager.com/gtag/js?id=${env.VITE_GA_ID}` }],
     [
       'script',
       {},
@@ -13,7 +14,6 @@ if (env.VITE_GA_ID) {
       gtag('js', new Date());
       gtag('config', '${env.VITE_GA_ID}');`,
     ],
-    ['script', { async: '', src: `https://www.googletagmanager.com/gtag/js?id=${env.VITE_GA_ID}` }],
   );
 }
 if (env.VITE_CALARIFY_ID) {
