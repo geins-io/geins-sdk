@@ -50,20 +50,20 @@ Read the [documentation](./crm/) for more information.
 
 _This package is not yet available since it is still under development._
 
-Mean while you can use the [`graphql client`](../../../packages/core/graphql-client) in [`@geins/core`](../../../packages/core/) package. Checkout some example queries in [here](../guide/examples/gql/).
+Mean while you can use the [`graphql client`](./core/graphql-client) in [`@geins/core`](./core/) package. Checkout some example queries in [here](./../guide/examples/gql/).
 
 
 ## @geins/search <Badge type="warning" text="TBA" />
 
 _This package is not yet available since it is still under development._
 
-Mean while you can use the [`graphql client`](../../../packages/core/graphql-client) in [`@geins/core`](../../../packages/core/) package. Checkout some example queries in [here](../guide/examples/gql/).
+Mean while you can use the [`graphql client`](./core/graphql-client) in [`@geins/core`](./core/) package. Checkout some example queries in [here](./../guide/examples/gql/).
 
 ## @geins/oms <Badge type="warning" text="TBA" />
 
 _This package is not yet available since it is still under development._
 
-Mean while you can use the [`graphql client`](../../../packages/core/graphql-client) in [`@geins/core`](../../../packages/core/) package. Checkout some example queries in [here](../guide/examples/gql/).
+Mean while you can use the [`graphql client`](./core/graphql-client) in [`@geins/core`](./core/) package. Checkout some example queries in [here](./../guide/examples/gql/).
 
 [core-npm-url]: https://www.npmjs.com/package/@geins/core
 [core-npm-url-canary]: https://www.npmjs.com/package/@geins/core/v/canary
