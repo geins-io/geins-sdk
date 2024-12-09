@@ -1,3 +1,6 @@
+
+![Geins logo](./docs/public/logo/geins.svg){width="250px"}
+
 # Geins SDK
 
 Welcome to the Geins SDK Repository, a collection of tools and libraries designed to provide a seamless developer experience for Node.js applications.
@@ -39,3 +42,4 @@ We welcome contributions! Please follow our [contribution guidelines](CONTRIBUTI
 ## License
 
 Licensed under the MIT License. Check the [LICENSE](LICENSE.md) file for details.
+

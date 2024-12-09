@@ -7,8 +7,12 @@ const { Layout } = DefaultTheme
 
 <template>
   <Layout>
-    <template #layout-top>
-      <TopBanner v-if="false" />
+    <template #layout-top v-if="false">
+      <TopBanner />
+    </template>
+    <template #layout-bottom v-if="false">
+      <h1>Bottom</h1>
     </template>
   </Layout>
+
 </template>
