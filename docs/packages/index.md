@@ -1,6 +1,8 @@
 # Packages
 
-Geins is a modular platform that consists of several packages. Each package provides a specific set of functionality that you can use to build your application. The following packages are available:
+Geins is a modular platform and the SDK is also modular. The SDK consists of several packages so you don't bloat your application. Each package provides a specific set of functionality that you can use to build your application. 
+
+The following packages are available:
 
 ## @geins/core <Badge type="info" text="0.3.6" />
 
@@ -44,17 +46,24 @@ Package for managing customer relationship management (CRM) functionalities, suc
 
 Read the [documentation](./crm/) for more information.
 
-## @geins/pim <Badge type="info" text="TBA" />
+## @geins/pim <Badge type="warning" text="TBA" />
 
 _This package is not yet available since it is still under development._
 
-## @geins/search <Badge type="info" text="TBA" />
+Mean while you can use the [`graphql client`](../../../packages/core/graphql-client) in [`@geins/core`](../../../packages/core/) package. Checkout some example queries in [here](../guide/examples/gql/).
+
+
+## @geins/search <Badge type="warning" text="TBA" />
 
 _This package is not yet available since it is still under development._
 
-## @geins/oms <Badge type="info" text="TBA" />
+Mean while you can use the [`graphql client`](../../../packages/core/graphql-client) in [`@geins/core`](../../../packages/core/) package. Checkout some example queries in [here](../guide/examples/gql/).
+
+## @geins/oms <Badge type="warning" text="TBA" />
 
 _This package is not yet available since it is still under development._
+
+Mean while you can use the [`graphql client`](../../../packages/core/graphql-client) in [`@geins/core`](../../../packages/core/) package. Checkout some example queries in [here](../guide/examples/gql/).
 
 [core-npm-url]: https://www.npmjs.com/package/@geins/core
 [core-npm-url-canary]: https://www.npmjs.com/package/@geins/core/v/canary

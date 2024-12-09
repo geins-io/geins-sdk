@@ -1,3 +1,12 @@
+
+![Geins logo](./docs/public/logo/geins-logo-black.png)
+
+[![core-badge-version]][core-npm-url] 
+[![cms-badge-version]][cms-npm-url] 
+[![crm-badge-version]][crm-npm-url]
+
+
+
 # Geins SDK
 
 Welcome to the Geins SDK Repository, a collection of tools and libraries designed to provide a seamless developer experience for Node.js applications.
@@ -38,4 +47,17 @@ We welcome contributions! Please follow our [contribution guidelines](CONTRIBUTI
 
 ## License
 
-This project is licensed under the MIT License.
+Licensed under the MIT License. Check the [LICENSE](LICENSE.md) file for details.
+
+[core-npm-url]: https://www.npmjs.com/package/@geins/core
+[core-badge-version]: https://img.shields.io/npm/v/%40geins%2Fcore?style=for-the-badge&label=@geins/core
+
+
+[cms-npm-url]: https://www.npmjs.com/package/@geins/cms
+[cms-badge-version]: https://img.shields.io/npm/v/%40geins%2Fcms?style=for-the-badge&label=@geins/cms
+
+
+[crm-npm-url]: https://www.npmjs.com/package/@geins/crm
+[crm-badge-version]: https://img.shields.io/npm/v/%40geins%2Fcrm?style=for-the-badge&label=@geins/crm
+
+

@@ -80,7 +80,7 @@ const geinsSettings = {
 const geinsCore = new GeinsCore(geinsSettings);
 ```
 
-This instance will serve as the entry point for all other Geins SDK modules, enabling them to communicate seamlessly.
+This instance is the entry point for other Geins SDK modules, enabling seamless communication.
 
 ## Verifying Your Setup
 
