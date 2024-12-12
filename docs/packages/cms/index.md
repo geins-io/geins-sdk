@@ -79,3 +79,4 @@ The Geins CMS is ideal for applications that require flexible, dynamic content m
 - **Multi-language Sites**: The CMS supports localized content, making it suitable for applications targeting multiple regions.
 
 The preview functionality is particularly useful for content managers who need to see unpublished changes before they go live, reducing the risk of errors in production.
+

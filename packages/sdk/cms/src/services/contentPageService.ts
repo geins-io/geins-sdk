@@ -16,8 +16,6 @@ export class ContentPageService extends BaseApiService {
       query: queries.page,
       variables: await this.generateVars(variables),
     };
-    const data = await this.runQuery(options);
-    console.log(data);
     return await this.runQuery(options);
   }
 
