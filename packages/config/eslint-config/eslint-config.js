@@ -38,6 +38,7 @@ export const geinsSharedConfig = [
       'max-len': ['error', { code: 110, ignoreUrls: true }], // Set maximum line length to 100 characters
       'function-paren-newline': ['error', 'consistent'], // Ensure function parameters are consistently on a single line
       'function-call-argument-newline': ['error', 'consistent'], // Ensure function call arguments are consistently on a single line
+      'no-console': ['error', { allow: ['warn', 'error'] }], // Allow only console.warn and console.error
       'prettier/prettier': [
         'error',
         {
@@ -53,9 +54,3 @@ export const geinsSharedConfig = [
   },
   prettierRecommended,
 ];
-
-const nuxtConfig = createConfigForNuxt();
-geinsSharedConfig.forEach(config => {
-  nuxtConfig.append(config);
-});
-export const geinsSharedConfigNuxt = nuxtConfig;

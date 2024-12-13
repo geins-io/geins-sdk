@@ -5,6 +5,7 @@ const config: CodegenConfig = {
     '../core/src/graphql/**/*.gql',
     '../cms/src/graphql/**/*.gql',
     '../crm/src/graphql/**/*.gql',
+    '../oms/src/graphql/**/*.gql',
   ],
   generates: {
     'src/generated/graphql.ts': {

@@ -143,6 +143,16 @@ export default withMermaid({
                 },
               ],
             },
+            {
+              text: '@geins/oms',
+              link: '/packages/cms',
+              items: [
+                { text: 'Cart', link: '/packages/oms/cart' },
+                { text: 'Merchant data', link: '/packages/oms/merchant-data' },
+                { text: 'Checkout', link: '/packages/oms/checkout' },
+                { text: 'Order', link: '/packages/oms/order' },
+              ],
+            },
           ],
         },
       ],
