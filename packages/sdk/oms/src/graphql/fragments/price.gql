@@ -1,0 +1,13 @@
+fragment Price on PriceType {
+  isDiscounted
+  sellingPriceIncVat
+  sellingPriceExVat
+  regularPriceIncVat
+  regularPriceExVat
+  vat
+  discountPercentage
+  regularPriceIncVatFormatted
+  sellingPriceIncVatFormatted
+  regularPriceExVatFormatted
+  sellingPriceExVatFormatted
+}
