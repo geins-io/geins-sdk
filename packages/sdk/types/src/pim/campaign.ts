@@ -1,4 +1,4 @@
-import type { PriceType } from '../pim/product';
+import type { PriceType } from '../shared';
 
 export type CampaignType = {
   appliedCampaigns: CampaignRuleType[];

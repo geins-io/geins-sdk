@@ -30,10 +30,27 @@ export function buildEndpoints(
 ): GeinsEndpoints {
   return {
     main: ENDPOINTS.main,
-    auth: ENDPOINTS.auth
-      .replace('{ACCOUNT}', accountName)
-      .replace('{ENV}', environment),
+    auth: ENDPOINTS.auth.replace('{ACCOUNT}', accountName).replace('{ENV}', environment),
     authSign: ENDPOINTS.auth_sign.replace('{API-KEY}', apiKey),
     image: ENDPOINTS.image.replace('{ACCOUNT}', accountName),
   };
+}
+
+export function findObjectWithProperty(obj: any, propertyName: string): any | undefined {
+  if (!obj || typeof obj !== 'object') {
+    return undefined;
+  }
+
+  if (propertyName in obj) {
+    return obj;
+  }
+
+  for (const key of Object.keys(obj)) {
+    const result = findObjectWithProperty(obj[key], propertyName);
+    if (result) {
+      return result;
+    }
+  }
+
+  return undefined;
 }

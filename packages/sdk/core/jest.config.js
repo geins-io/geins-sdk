@@ -4,5 +4,5 @@ import baseConfig from '../../../jest.config.js';
 export default {
   ...baseConfig,
   displayName: '@geins/cms',
-  roots: ['<rootDir>'],
+  roots: ['<rootDir>']
 };

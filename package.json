@@ -37,7 +37,7 @@
     "release": "yarn build:sdk && changeset version && changeset publish"
   },
   "lint-staged": {
-    "*.{ts,md,vue,js}": [
+    "*.{ts,md,js}": [
       "yarn format",
       "yarn lint"
     ]

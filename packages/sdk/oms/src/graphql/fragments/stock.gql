@@ -3,5 +3,4 @@ fragment Stock on StockType {
   oversellable
   totalStock
   static
-  incoming
 }

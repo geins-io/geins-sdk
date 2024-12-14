@@ -3,7 +3,6 @@ import globals from 'globals';
 import turbo from 'eslint-plugin-turbo';
 import onlyWarn from 'eslint-plugin-only-warn';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
-import { createConfigForNuxt } from '@nuxt/eslint-config/flat';
 
 /** Workaround - https://github.com/sindresorhus/globals/issues/239 */
 const GLOBALS_BROWSER_FIX = Object.assign({}, globals.browser, {
@@ -45,7 +44,7 @@ export const geinsSharedConfig = [
           printWidth: 110,
           singleQuote: true,
           trailingComma: 'none',
-          arrowParens: 'avoid',
+          arrowParens: 'always',
           bracketSpacing: true,
           endOfLine: 'lf',
         },

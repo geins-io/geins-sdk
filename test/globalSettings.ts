@@ -43,3 +43,11 @@ export const cmsSettings = {
     alias: process.env.GEINS_CMS_PAGE_ALIAS!,
   },
 };
+
+export const omsSettings = {
+  skus: {
+    skuId1: process.env.GEINS_OMS_SKUID1!,
+    skuId2: process.env.GEINS_OMS_SKUID2!,
+    skuId3: process.env.GEINS_OMS_SKUID3!,
+  },
+};

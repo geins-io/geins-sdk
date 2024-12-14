@@ -6,3 +6,4 @@ export * from './crm';
 export * from './pim';
 export * from './search';
 export * from './generated';
+export * from './shared';
