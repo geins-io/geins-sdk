@@ -61,3 +61,19 @@ Licensed under the MIT License. Check the [LICENSE](LICENSE.md) file for details
 [crm-badge-version]: https://img.shields.io/npm/v/%40geins%2Fcrm?style=for-the-badge&label=@geins/crm
 
 
+
+
+
+    if (args.item) {
+      vars.item = {
+        skuId: args.item.skuId ? parseInt(args.item.skuId.toString(), 10) : 0,
+        quantity: args.item.quantity,
+        ...(args.item.message && { message: args.item.message }),
+      };
+
+
+    const variables = await this.generateVars(vars);
+    const options: any = {
+      query: queries.cartAddItem,
+      variables,
+    };

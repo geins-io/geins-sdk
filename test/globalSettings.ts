@@ -46,8 +46,8 @@ export const cmsSettings = {
 
 export const omsSettings = {
   skus: {
-    skuId1: process.env.GEINS_OMS_SKUID1!,
-    skuId2: process.env.GEINS_OMS_SKUID2!,
-    skuId3: process.env.GEINS_OMS_SKUID3!,
+    skuId1: parseInt(process.env.GEINS_OMS_SKUID1!.toString(), 10),
+    skuId2: parseInt(process.env.GEINS_OMS_SKUID2!.toString(), 10),
+    skuId3: parseInt(process.env.GEINS_OMS_SKUID3!.toString(), 10),
   },
 };

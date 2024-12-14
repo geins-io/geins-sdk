@@ -55,9 +55,15 @@ type VatGroupType {
 
 ### Add Item to Cart
 
-### Update Item in Cart
+- Id of the cartRow
+- SKU id
+- Quantity  
 
 ### Remove Item from Cart
+
+### Update Item in Cart
+
+
 
 ## Shipping
 

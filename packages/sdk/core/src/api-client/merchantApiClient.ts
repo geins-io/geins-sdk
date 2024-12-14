@@ -99,6 +99,8 @@ export class MerchantApiClient {
       } else {
         return this.fetchPolicy;
       }
+    } else if (operationType === OperationType.MUTATION) {
+      return FetchPolicyOptions.NETWORK_ONLY;
     }
 
     if (
@@ -150,6 +152,13 @@ export class MerchantApiClient {
     options: GraphQLQueryOptions,
   ): Promise<FetchResult<TData>> {
     const q = this.getOperationObject(OperationType.MUTATION, options);
-    return this._apolloClient.mutate<TData, TVariables>(q);
+
+    console.log('****m--- q', q);
+    try {
+      return this._apolloClient.mutate<TData, TVariables>(q);
+    } catch (error) {
+      console.log('--- error', error);
+    }
+    return {} as FetchResult<TData>;
   }
 }
