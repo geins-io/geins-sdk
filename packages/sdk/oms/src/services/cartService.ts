@@ -76,6 +76,7 @@ export class CartService extends BaseApiService {
   }
 
   get items(): Promise<CartItemType[] | undefined> {
+    // should have methods like CRM
     return (async () => {
       if (!this._cart) {
         this._cart = await this.get();
@@ -137,7 +138,7 @@ export class CartService extends BaseApiService {
 
     if (args.item) {
       vars.item = {
-        skuId: args.item.skuId ? parseInt(args.item.skuId.toString()) : 0,
+        skuId: args.item.skuId ? parseInt(args.item.skuId.toString(), 10) : 0,
         quantity: args.item.quantity,
         ...(args.item.message && { message: args.item.message }),
       };
@@ -173,16 +174,69 @@ export class CartService extends BaseApiService {
     if (!args.item.id && !args.item.skuId) {
       throw new Error('Item id or skuId must be set');
     }
-    const vars: { id: string; item?: CartItemInputType; packageId?: any; selections?: any } = {
+    const vars: { id: string; item?: CartItemInputType } = {
       id: this._id,
     };
 
-    vars.item = {
-      ...(args.item.id && { id: args.item.id }),
-      ...(args.item.skuId && { skuId: parseInt(args.item.skuId.toString()) }),
-      quantity: args.item.quantity,
-      ...(args.item.message && { message: args.item.message }),
+    if (args.item.id) {
+      vars.item = {
+        id: args.item.id,
+        quantity: args.item.quantity,
+      };
+    } else if (args.item.skuId) {
+      vars.item = {
+        skuId: parseInt(args.item.skuId.toString(), 10),
+        quantity: args.item.quantity,
+      };
+    } else {
+      throw new Error('Item id or skuId must be set');
+    }
+    console.log('-- vars', vars);
+
+    const variables = await this.generateVars(vars);
+    const options: any = {
+      query: queries.cartUpdateItem,
+      variables,
     };
+    console.log('-- options', options);
+
+    try {
+      const data = await this.runMutation(options);
+      this.loadCartFromData(data);
+    } catch (e) {
+      console.error('Error updating item in cart', e);
+    }
+
+    return this._cart;
+  }
+
+  async remove(args: { item: CartItemType }): Promise<any> {
+    if (!this._id) {
+      await this.create();
+    }
+
+    if (!this._id) {
+      throw new Error('Could not update item, cart not created');
+    }
+
+    const vars: { id: string; item?: CartItemInputType } = {
+      id: this._id,
+    };
+
+    // fix cart id and sku cant be set at same time, prefer id
+    if (args.item.id) {
+      vars.item = {
+        id: args.item.id,
+        quantity: args.item.quantity,
+      };
+    } else if (args.item.skuId) {
+      vars.item = {
+        skuId: parseInt(args.item.skuId.toString(), 10),
+        quantity: args.item.quantity,
+      };
+    } else {
+      throw new Error('Item id or skuId must be set');
+    }
 
     const variables = await this.generateVars(vars);
     const options: any = {
@@ -200,7 +254,23 @@ export class CartService extends BaseApiService {
     return this._cart;
   }
 
-  async remove(item: any): Promise<any> {
+  async setMerchantData(item: any): Promise<any> {
+    //setCartMerchantData
+    throw new Error('Method not implemented.');
+  }
+
+  async setCartPromoCode(item: any): Promise<any> {
+    //setCartPromoCode
+    throw new Error('Method not implemented.');
+  }
+
+  async setCartShippingFee(item: any): Promise<any> {
+    //setCartShippingFee
+    throw new Error('Method not implemented.');
+  }
+
+  async setComplete(): Promise<any> {
+    //completeCart
     throw new Error('Method not implemented.');
   }
 
