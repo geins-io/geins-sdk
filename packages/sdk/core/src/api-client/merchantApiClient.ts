@@ -152,13 +152,11 @@ export class MerchantApiClient {
     options: GraphQLQueryOptions,
   ): Promise<FetchResult<TData>> {
     const q = this.getOperationObject(OperationType.MUTATION, options);
+    console.log('--- q', q);
 
-    console.log('****m--- q', q);
     try {
       return this._apolloClient.mutate<TData, TVariables>(q);
-    } catch (error) {
-      console.log('--- error', error);
-    }
+    } catch (error) {}
     return {} as FetchResult<TData>;
   }
 }

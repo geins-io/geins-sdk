@@ -5,6 +5,9 @@ import {
   isServerContext,
   CART_COOKIES,
   CART_COOKIES_MAX_AGE,
+  GraphQLQueryOptions,
+  FetchPolicyOptions,
+  logWrite,
 } from '@geins/core';
 
 import { parseCart } from '../parsers';
@@ -16,6 +19,7 @@ export interface CartItemsInterface {
   clear(): Promise<boolean>;
   add(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean>;
   remove(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean>;
+  delete(args: { id?: string; skuId?: number }): Promise<boolean>;
   update(args: { item: CartItemType }): Promise<boolean>;
 }
 
@@ -23,14 +27,20 @@ export interface CartItemsInterface {
 // requestOptions: { fetchPolicy: 'no-cache' }
 
 export class CartService extends BaseApiService {
+  private _loaded: boolean = false;
   private _id!: string | undefined;
-  private _cart!: CartType;
+  private _cart!: CartType | undefined;
   private _cookieService!: CookieService;
 
   constructor(apiClient: any, geinsSettings: GeinsSettings) {
     super(apiClient, geinsSettings);
     if (!isServerContext()) {
       this._cookieService = new CookieService();
+      const cookieId = this.cookieGet();
+      logWrite('--- cookieId', cookieId);
+      if (cookieId) {
+        this._id = cookieId;
+      }
     }
   }
 
@@ -46,8 +56,13 @@ export class CartService extends BaseApiService {
     return this._cookieService.get(CART_COOKIES.CART_ID);
   }
 
-  private cookieSet(cartId: string) {
+  private cookieSet(cartId?: string) {
     if (isServerContext()) {
+      return;
+    }
+
+    if (!cartId) {
+      this._cookieService.remove(CART_COOKIES.CART_ID);
       return;
     }
 
@@ -57,6 +72,14 @@ export class CartService extends BaseApiService {
       maxAge: CART_COOKIES_MAX_AGE.DEFAULT,
     };
     this._cookieService.set(variables);
+  }
+
+  private cookieRemove() {
+    if (isServerContext()) {
+      return;
+    }
+
+    this._cookieService.remove(CART_COOKIES.CART_ID);
   }
 
   private loadCartFromData(data: any) {
@@ -73,43 +96,52 @@ export class CartService extends BaseApiService {
     }
     this._id = cart.id;
     this._cart = cart;
+    this._loaded = true;
     this.cookieSet(cart.id);
   }
 
-  async create(): Promise<CartType> {
-    if (this._id) {
-      return this.get(this._id);
-    }
+  async create(): Promise<CartType | undefined> {
+    this._cart = undefined;
+    this._id = undefined;
 
     const options: any = {
       query: queries.cartCreate,
       variables: this.generateVars({}),
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
     try {
       const data = await this.runQuery(options);
       this.loadCartFromData(data);
     } catch (e) {
-      console.error('Error creating cart', e);
+      throw new Error('Error creating cart');
     }
     return this._cart;
   }
 
-  async get(id?: string): Promise<any> {
-    if (!this._id && !id) {
+  async get(id?: string): Promise<CartType | undefined> {
+    this._cart = undefined;
+    this._id = undefined;
+
+    if (!this.id && !id) {
       return this.create();
     }
 
     const options: any = {
       query: queries.cartGet,
-      variables: this.generateVars({ id: id || this._id }),
+      variables: this.generateVars({ id: id || this.id }),
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
     try {
       const data = await this.runQuery(options);
       this.loadCartFromData(data);
-    } catch (e) {
-      console.error('Error creating cart', e);
+    } catch (e: any) {
+      if (e.message.includes("Variable '$id' is invalid")) {
+        return this.create();
+      } else {
+        throw new Error('Error getting cart');
+      }
     }
     return this._cart;
   }
@@ -135,7 +167,9 @@ export class CartService extends BaseApiService {
   }
 
   async clear(): Promise<void> {
-    throw new Error('Method not implemented.');
+    this._cart = undefined;
+    this._id = undefined;
+    this.cookieRemove();
   }
 
   get id(): string | undefined {
@@ -146,12 +180,9 @@ export class CartService extends BaseApiService {
   }
 
   private createCartItemInput(args: { id?: string; skuId?: number; quantity: number }): CartItemInputType {
-    console.log('--- createCartItemInput ARGS', args);
     const item: CartItemInputType = {
       quantity: args.quantity,
     };
-
-    console.log('--- createCartItemInput item 1', item);
 
     if (args.id) {
       item.id = args.id;
@@ -160,29 +191,32 @@ export class CartService extends BaseApiService {
     } else {
       throw new Error('Sku or id is required');
     }
-    console.log('--- createCartItemInput item 2', item);
 
     return item;
   }
 
   private async itemsGet(): Promise<CartItemType[] | undefined> {
-    return this._cart.items;
+    if (!this._cart && this.id) {
+      await this.get(this.id);
+    }
+    return this._cart?.items ?? [];
   }
 
   private async itemUpdate(args: { item: CartItemInputType }): Promise<boolean> {
-    if (!this._id) {
+    if (!this.id) {
       await this.create();
     }
 
-    if (!this._id) {
+    if (!this.id) {
       throw new Error('Could not update item, cart not created');
     }
 
     if (!args.item.id && !args.item.skuId) {
       throw new Error('Item id or skuId must be set');
     }
+
     const vars: { id: string; item?: CartItemInputType } = {
-      id: this._id,
+      id: this.id,
     };
 
     if (args.item.id) {
@@ -200,49 +234,51 @@ export class CartService extends BaseApiService {
     }
 
     const variables = await this.generateVars(vars);
-    const options: any = {
+
+    const options: GraphQLQueryOptions = {
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
       query: queries.cartUpdateItem,
       variables,
     };
 
-    // check if item exists in cart
-    const exists = this._cart.items.find((item) => {
+    const exists = this._cart?.items?.find((item) => {
       return item.id === args.item.id || item.skuId === args.item.skuId;
     });
 
-    let go = true;
     if (!exists) {
       options.query = queries.cartAddItem;
-      console.log('--- itemUpdate +++ add item');
-    } else {
-      console.log('--- itemUpdate  oooo update item', options.variables);
-      go = false;
     }
-    // console.log('--- itemUpdate exists', exists);
-    // console.log('--- itemUpdate options', options);
 
     try {
       const data = await this.runMutation(options);
-
+      console.log('--- updating item data', data);
       this.loadCartFromData(data);
     } catch (e) {
-      console.error('Error updating item in cart', e);
-      return false;
+      throw new Error('Error updating item');
     }
-
     return true;
   }
 
   private async itemAdd(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean> {
     const resolvedArgs = { ...args, quantity: args.quantity ?? 1 };
+
+    const cartItem = this._cart?.items?.find((item) => {
+      return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
+    });
+
+    if (cartItem) {
+      resolvedArgs.quantity += cartItem.quantity;
+    }
+
     const item = this.createCartItemInput(resolvedArgs);
     return this.itemUpdate({ item });
   }
 
   private async itemRemove(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean> {
     const resolvedArgs = { ...args, quantity: args.quantity ?? 1 };
-    const cartItem = this._cart.items.find((i) => {
-      return i.skuId === resolvedArgs.skuId;
+
+    const cartItem = this._cart?.items?.find((item) => {
+      return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
     });
 
     if (!cartItem) {
@@ -254,9 +290,27 @@ export class CartService extends BaseApiService {
     const updateitem = this.createCartItemInput({
       id: resolvedArgs.id,
       skuId: resolvedArgs.skuId,
-      quantity: -1, //newQuantity,
+      quantity: newQuantity,
     });
-    console.log('--++ updateitem', updateitem);
+    return this.itemUpdate({ item: updateitem });
+  }
+
+  private async itemDelete(args: { id?: string; skuId?: number }): Promise<boolean> {
+    const resolvedArgs = { ...args, quantity: 0 };
+
+    const cartItem = this._cart?.items?.find((item) => {
+      return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
+    });
+
+    if (!cartItem) {
+      return false;
+    }
+
+    const updateitem = this.createCartItemInput({
+      id: resolvedArgs.id,
+      skuId: resolvedArgs.skuId,
+      quantity: 0,
+    });
     return this.itemUpdate({ item: updateitem });
   }
 
@@ -270,6 +324,7 @@ export class CartService extends BaseApiService {
       add: this.itemAdd.bind(this),
       update: this.itemUpdate.bind(this),
       remove: this.itemRemove.bind(this),
+      delete: this.itemDelete.bind(this),
       clear: this.itemsClear.bind(this),
     };
   }

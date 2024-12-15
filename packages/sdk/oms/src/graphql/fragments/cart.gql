@@ -7,6 +7,7 @@ fragment Cart on CartType {
   appliedCampaigns {
     name
     hideTitle
+    __typename
   }
   items {
     id
@@ -14,48 +15,62 @@ fragment Cart on CartType {
       appliedCampaigns {
         name
         hideTitle
+        __typename
       }
       prices {
         price {
           ...Price
+          __typename
         }
         quantity
+        __typename
       }
+      __typename
     }
     unitPrice {
       ...Price
+      __typename
     }
     product {
       productId
       articleNumber
       brand {
         name
+        __typename
       }
       name
       productImages {
         fileName
+        __typename
       }
       alias
       canonicalUrl
       primaryCategory {
         name
+        __typename
       }
       skus {
         skuId
         name
         stock {
           ...Stock
+          __typename
         }
+        __typename
       }
       unitPrice {
         ...Price
+        __typename
       }
+      __typename
     }
     quantity
     skuId
     totalPrice {
       ...Price
+      __typename
     }
+    __typename
   }
   summary {
     fixedAmountDiscountIncVat
@@ -66,6 +81,7 @@ fragment Cart on CartType {
       totalSellingPriceExBalanceExVat
       totalSellingPriceExBalanceIncVat
       totalSellingPriceExBalanceIncVatFormatted
+      __typename
     }
     subTotal {
       regularPriceIncVatFormatted
@@ -75,6 +91,7 @@ fragment Cart on CartType {
       sellingPriceExVat
       sellingPriceIncVat
       vat
+      __typename
     }
     shipping {
       amountLeftToFreeShipping
@@ -84,6 +101,7 @@ fragment Cart on CartType {
       feeIncVat
       feeExVat
       isDefault
+      __typename
     }
     total {
       isDiscounted
@@ -97,6 +115,9 @@ fragment Cart on CartType {
       discountIncVat
       vatFormatted
       vat
+      __typename
     }
+    __typename
   }
+  __typename
 }

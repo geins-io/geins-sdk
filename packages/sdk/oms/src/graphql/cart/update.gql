@@ -8,5 +8,6 @@ mutation updateCartItem(
 ) {
   updateCartItem(id: $id, item: $item, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
     ...Cart
+    __typename
   }
 }

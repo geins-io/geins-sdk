@@ -3,7 +3,6 @@ import { GeinsCore } from '@geins/core';
 import type { CartItemInputType } from '@geins/types';
 
 import { validSettings, cmsSettings, omsSettings } from '../../../../test/globalSettings';
-import exp from 'constants';
 
 describe('GeinsOMS cart', () => {
   let geinsOMS: GeinsOMS;
