@@ -199,6 +199,7 @@ export class CartService extends BaseApiService {
     if (!this._cart && this.id) {
       await this.get(this.id);
     }
+    console.log('--- itemsGet', this._cart?.items);
     return this._cart?.items ?? [];
   }
 

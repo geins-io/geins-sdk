@@ -50,7 +50,7 @@ const addItemToCart = async (item?: any) => {
   let result = await geinsOMS.cart.items.add(args);
   cartItems.value = await geinsOMS.cart.items.get();
   //logWrite('Items', cartItems.value);
-  let cart = await geinsOMS.cart.get();
+  //let cart = await geinsOMS.cart.get();
   //logWrite('Cart after add', cart);
 };
 
@@ -58,7 +58,7 @@ const add5ItemToCart = async (item?: any) => {
   let result = await geinsOMS.cart.items.add({ skuId, quantity: 5 });
   cartItems.value = await geinsOMS.cart.items.get();
   //logWrite('Items', cartItems.value);
-  let cart = await geinsOMS.cart.get();
+  // let cart = await geinsOMS.cart.get();
   //logWrite('Cart after add', cart);
 };
 
@@ -72,7 +72,7 @@ const removeItemFromCart = async (item?: any) => {
   let result = await geinsOMS.cart.items.remove(args);
   cartItems.value = await geinsOMS.cart.items.get();
   //logWrite('Items', cartItems.value);
-  let cart = await geinsOMS.cart.get();
+  //let cart = await geinsOMS.cart.get();
   //logWrite('Cart after remove', cart);
 };
 
@@ -80,7 +80,7 @@ const remove5ItemFromCart = async (item?: any) => {
   let result = await geinsOMS.cart.items.remove({ skuId, quantity: 5 });
   cartItems.value = await geinsOMS.cart.items.get();
   //logWrite('Items', cartItems.value);
-  let cart = await geinsOMS.cart.get();
+  //let cart = await geinsOMS.cart.get();
   //logWrite('Cart after remove', cart);
 };
 
@@ -94,7 +94,7 @@ const removeWholeItemFromCart = async (item?: any) => {
   let result = await geinsOMS.cart.items.delete(args);
   cartItems.value = await geinsOMS.cart.items.get();
   //logWrite('Items', cartItems.value);
-  let cart = await geinsOMS.cart.get();
+  //let cart = await geinsOMS.cart.get();
   //logWrite('Cart after remove', cart);
 };
 
