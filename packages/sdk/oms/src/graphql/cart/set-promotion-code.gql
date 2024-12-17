@@ -1,14 +1,14 @@
 #import "../fragments/cart.gql"
-query getCart(
-  $id: String
-  $forceRefresh: Boolean
+mutation setCartPromoCode(
+  $id: String!
+  $promoCode: String!
   $channelId: String
   $languageId: String
   $marketId: String
 ) {
-  getCart(
+  setCartPromoCode(
     id: $id
-    forceRefresh: $forceRefresh
+    promoCode: $promoCode
     channelId: $channelId
     languageId: $languageId
     marketId: $marketId

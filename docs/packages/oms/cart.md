@@ -6,6 +6,10 @@
 
 Cart is created when a user adds an item to the cart. The cart is stored in Geins under a unique identifier. A cart is stored in Geins for 30 days from the last update.
 
+
+await geinsOMS.cart.clear(); <--- REMOVES CART and starts new Cart
+
+
 ### Type 
   
 ```typescript
@@ -52,12 +56,22 @@ type VatGroupType {
 }
 ```
 
+## Merchant Data
+
+Template data warnings
+free mode. 
+
+
 
 ### Add Item to Cart
 
 - Id of the cartRow
 - SKU id
 - Quantity  
+
+Returns bool and updates the cart
+
+Handles sku or id of row
 
 ### Remove Item from Cart
 

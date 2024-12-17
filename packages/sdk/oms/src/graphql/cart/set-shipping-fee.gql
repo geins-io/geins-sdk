@@ -1,19 +1,21 @@
 #import "../fragments/cart.gql"
-query getCart(
-  $id: String
-  $forceRefresh: Boolean
+mutation setCartShippingFee(
+  $id: String!
+  $shippingFee: Decimal!
   $channelId: String
   $languageId: String
   $marketId: String
 ) {
-  getCart(
-    id: $id
-    forceRefresh: $forceRefresh
+  setCartShippingFee(
+    cartId: $id
+    shippingFee: $shippingFee
     channelId: $channelId
     languageId: $languageId
     marketId: $marketId
   ) {
-    ...Cart
-    __typename
+    cart {
+      ...Cart
+      __typename
+    }
   }
 }

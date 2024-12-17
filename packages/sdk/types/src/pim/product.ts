@@ -1,4 +1,4 @@
-import type { PriceType } from './../shared';
+import type { PriceType, CampaignRuleType, DiscountType } from './../shared';
 
 export type AlternativeUrlType = {
   url: string;
@@ -115,22 +115,10 @@ export type BreadcrumbType = {
   url: string;
 };
 
-export type CampaignRuleType = {
-  ruleId: number;
-  description: string;
-  discountType: DiscountType;
-  discountValue: number;
-};
-
 export type PriceLogItemType = {
   date: string;
   price: PriceType;
 };
-
-enum DiscountType {
-  PERCENTAGE,
-  FIXED_AMOUNT,
-}
 
 export type ProductPackageType = {
   packageId: number;

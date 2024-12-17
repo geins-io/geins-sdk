@@ -10,4 +10,12 @@ fragment Price on PriceType {
   sellingPriceIncVatFormatted
   regularPriceExVatFormatted
   sellingPriceExVatFormatted
+  currency {
+    code
+    symbol
+    rate
+    name
+    __typename
+  }
+  __typename
 }

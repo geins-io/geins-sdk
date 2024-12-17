@@ -5,12 +5,12 @@ import type { CampaignType } from '../pim/campaign';
 export type CartType = {
   id: string;
   items: CartItemType[];
-  promoCode?: string;
   freeShipping: boolean;
-  fixedDiscount: number;
-  merchantData?: string;
-  appliedCampaigns: any[];
-  summary: any;
+  readonly merchantData?: any;
+  readonly promoCode?: string;
+  readonly fixedDiscount: number;
+  readonly appliedCampaigns: any[];
+  readonly summary: any;
 };
 
 export type CartItemInputType = {

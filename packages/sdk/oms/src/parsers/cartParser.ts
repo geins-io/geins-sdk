@@ -7,24 +7,53 @@ import type {
   PriceType,
   BalanceType,
   ShippingOptionType,
+  CurrencyType,
+  CampaignRuleType,
 } from '@geins/types';
 
 export function parseCart(data: any): CartType | undefined {
-  const cart = findObjectWithProperty(data, '__typename');
+  const cart = findObjectWithProperty(data, '__typename', 'CartType');
   if (!cart) {
     return undefined;
   }
-
   return {
     id: cart.id,
     items: parseCartItems(cart.items),
     promoCode: cart.promoCode,
     freeShipping: cart.freeShipping,
     fixedDiscount: cart.fixedDiscount,
-    merchantData: cart.merchantData,
-    appliedCampaigns: cart.appliedCampaigns,
+    merchantData: parseMerchantData(cart.merchantData),
+    appliedCampaigns: parseCampaigns(cart.appliedCampaigns),
     summary: parseCartSummary(cart.summary),
   };
+}
+function parseCampaigns(data: any): CampaignRuleType[] {
+  if (!data) {
+    return [];
+  }
+  return data.map((item: any) => {
+    return {
+      campaignId: item.campaignId || '',
+      name: item.name || '',
+      hideTitle: item.hideTitle || false,
+      ruleType: item.ruleType || '',
+      category: item.category || '',
+      action: item.action || '',
+      actionValue: item.actionValue || '',
+      canonicalUrl: item.canonicalUrl || '',
+    };
+  });
+}
+
+function parseMerchantData(data: any): any {
+  if (!data) {
+    return;
+  }
+  try {
+    return JSON.parse(data);
+  } catch (error) {
+    return data;
+  }
 }
 
 function parseCartItems(data: any): CartItemType[] {
@@ -82,11 +111,10 @@ function parseCartItemProduct(data: any): CartItemProductType {
       skuId: sku.skuId || '',
       name: sku.name || '',
       stock: {
-        inStock: sku.stock?.inStock || false,
-        oversellable: sku.stock?.oversellable || false,
+        inStock: sku.stock?.inStock || 0,
+        oversellable: sku.stock?.oversellable || 0,
         totalStock: sku.stock?.totalStock || 0,
-        static: sku.stock?.static || false,
-        incoming: sku.stock?.incoming || 0,
+        static: sku.stock?.static || 0,
       },
     })),
     unitPrice: parsePrice(data.unitPrice),
@@ -120,6 +148,8 @@ function parseCartSummary(data: any): CartSummaryType {
         amountLeftToFreeShippingFormatted: '',
         feeIncVat: 0,
         feeExVat: 0,
+        feeExVatFormatted: '',
+        feeIncVatFormatted: '',
         isDefault: false,
         isSelected: false,
       },
@@ -163,6 +193,8 @@ function parseCartSummary(data: any): CartSummaryType {
       amountLeftToFreeShippingFormatted: data.shipping?.amountLeftToFreeShippingFormatted || '',
       feeIncVat: data.shipping?.feeIncVat || 0,
       feeExVat: data.shipping?.feeExVat || 0,
+      feeExVatFormatted: data.shipping?.feeExVatFormatted || '',
+      feeIncVatFormatted: data.shipping?.feeIncVatFormatted || '',
       isDefault: data.shipping?.isDefault || false,
       isSelected: data.shipping?.isSelected || false,
     },
@@ -194,5 +226,15 @@ function parsePrice(data: any): PriceType {
     discountIncVatFormatted: data?.discountIncVatFormatted || '',
     discountExVatFormatted: data?.discountExVatFormatted || '',
     vatFormatted: data?.vatFormatted || '',
+    currency: parseCurrency(data.currency),
+  };
+}
+
+function parseCurrency(data: any): CurrencyType {
+  return {
+    name: data?.name || '',
+    symbol: data?.symbol || '',
+    code: data?.code || '',
+    rate: data?.rate || 0,
   };
 }

@@ -36,17 +36,22 @@ export function buildEndpoints(
   };
 }
 
-export function findObjectWithProperty(obj: any, propertyName: string): any | undefined {
+export function findObjectWithProperty(obj: any, propertyName: string, propertyValue?: any): any | undefined {
   if (!obj || typeof obj !== 'object') {
     return undefined;
   }
 
   if (propertyName in obj) {
-    return obj;
+    if (propertyValue === undefined) {
+      return obj;
+    }
+    if (obj[propertyName] === propertyValue) {
+      return obj;
+    }
   }
 
   for (const key of Object.keys(obj)) {
-    const result = findObjectWithProperty(obj[key], propertyName);
+    const result = findObjectWithProperty(obj[key], propertyName, propertyValue);
     if (result) {
       return result;
     }

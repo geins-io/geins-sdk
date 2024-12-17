@@ -1,0 +1,12 @@
+mutation updateSilentCartItem(
+  $id: String!
+  $item: CartItemInputType!
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
+  updateCartItem(id: $id, item: $item, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+    id
+    __typename
+  }
+}

@@ -1,12 +1,13 @@
 #import "./price.gql"
 #import "./stock.gql"
+#import "./campaign-rule.gql"
 
 fragment Cart on CartType {
   id
+  merchantData
   promoCode
   appliedCampaigns {
-    name
-    hideTitle
+    ...CampaignRule
     __typename
   }
   items {

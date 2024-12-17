@@ -5,6 +5,11 @@ export * from './event';
 /* export type GeinsCustomerTypeType = 'PERSON' | 'ORGANIZATION'; */
 
 export type Environment = 'prod' | 'qa' | 'dev';
+export enum RuntimeContext {
+  SERVER = 'server',
+  CLIENT = 'client',
+  HYBRID = 'hybrid',
+}
 
 export interface KeyValue {
   key: string;

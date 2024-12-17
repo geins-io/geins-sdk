@@ -9,6 +9,7 @@ import {
   ApolloQueryResult,
   FetchResult,
   OperationVariables,
+  FieldPolicy,
 } from '@apollo/client/core';
 import { gql } from '@apollo/client/core';
 
@@ -74,9 +75,28 @@ export class MerchantApiClient {
   }
 
   createClient(apiUrl: string, apiKey: string) {
+    const cache = new InMemoryCache({
+      typePolicies: {
+        CartType: {
+          fields: {
+            items: {
+              merge(existing, incoming) {
+                return incoming;
+              },
+            },
+            appliedCampaigns: {
+              merge(existing, incoming) {
+                return incoming;
+              },
+            },
+          },
+        },
+      },
+    });
+
     return new ApolloClient({
       uri: apiUrl,
-      cache: new InMemoryCache(),
+      cache: cache,
       headers: {
         Accept: 'application/json',
         'x-apikey': apiKey,
@@ -152,7 +172,6 @@ export class MerchantApiClient {
     options: GraphQLQueryOptions,
   ): Promise<FetchResult<TData>> {
     const q = this.getOperationObject(OperationType.MUTATION, options);
-    console.log('--- q', q);
 
     try {
       return this._apolloClient.mutate<TData, TVariables>(q);

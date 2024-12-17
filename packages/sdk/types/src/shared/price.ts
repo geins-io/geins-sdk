@@ -1,3 +1,10 @@
+export type CurrencyType = {
+  name?: string;
+  symbol?: string;
+  code?: string;
+  rate?: number;
+};
+
 export type PriceType = {
   sellingPriceIncVat?: number;
   sellingPriceExVat?: number;
@@ -15,4 +22,5 @@ export type PriceType = {
   discountIncVatFormatted?: string;
   discountExVatFormatted?: string;
   vatFormatted?: string;
+  currency?: CurrencyType;
 };
