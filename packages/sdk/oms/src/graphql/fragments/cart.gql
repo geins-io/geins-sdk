@@ -1,3 +1,4 @@
+#import "./package.gql"
 #import "./price.gql"
 #import "./stock.gql"
 #import "./campaign-rule.gql"
@@ -12,6 +13,14 @@ fragment Cart on CartType {
   }
   items {
     id
+    groupKey
+    skuId
+    quantity
+    message
+    productPackage {
+      ...ProductPackageCartItem
+      __typename
+    }
     campaign {
       appliedCampaigns {
         name
@@ -28,10 +37,6 @@ fragment Cart on CartType {
       }
       __typename
     }
-    unitPrice {
-      ...Price
-      __typename
-    }
     product {
       productId
       articleNumber
@@ -39,6 +44,7 @@ fragment Cart on CartType {
         name
         __typename
       }
+
       name
       productImages {
         fileName
@@ -47,7 +53,15 @@ fragment Cart on CartType {
       alias
       canonicalUrl
       primaryCategory {
+        categoryId
         name
+        order
+        __typename
+      }
+      categories {
+        categoryId
+        name
+        order
         __typename
       }
       skus {
@@ -65,8 +79,10 @@ fragment Cart on CartType {
       }
       __typename
     }
-    quantity
-    skuId
+    unitPrice {
+      ...Price
+      __typename
+    }
     totalPrice {
       ...Price
       __typename
@@ -85,13 +101,7 @@ fragment Cart on CartType {
       __typename
     }
     subTotal {
-      regularPriceIncVatFormatted
-      regularPriceExVatFormatted
-      sellingPriceIncVatFormatted
-      sellingPriceExVatFormatted
-      sellingPriceExVat
-      sellingPriceIncVat
-      vat
+      ...Price
       __typename
     }
     shipping {
@@ -105,17 +115,7 @@ fragment Cart on CartType {
       __typename
     }
     total {
-      isDiscounted
-      sellingPriceIncVatFormatted
-      sellingPriceExVatFormatted
-      sellingPriceIncVat
-      sellingPriceExVat
-      discountIncVatFormatted
-      discountExVatFormatted
-      discountExVat
-      discountIncVat
-      vatFormatted
-      vat
+      ...Price
       __typename
     }
     __typename

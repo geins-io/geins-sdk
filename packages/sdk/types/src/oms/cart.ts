@@ -44,17 +44,30 @@ export type CartItemProductType = {
   unitPrice: PriceType;
 };
 
+export enum ItemType {
+  PRODUCT = 'PRODUCT',
+  PACKAGE = 'PACKAGE',
+}
+
 export type CartItemType = {
-  product: ProductType;
-  skuId: number;
   id: string;
-  totalPrice: PriceType;
-  unitPrice: PriceType;
-  quantity: number;
-  campaign: CampaignType;
   groupKey?: string;
+  type: ItemType;
+  title: string;
+  product?: ProductType;
+  skuId?: number;
+  quantity: number;
+  campaign?: CampaignType;
   productPackage?: ProductPackageCartItemType;
+  productPackageCartItems?: CartItemType[];
   message?: string;
+  totalPrice?: PriceType;
+  unitPrice?: PriceType;
+};
+
+export type CartGroupInputType = {
+  groupKey: string;
+  quantity: number;
 };
 
 export type ProductPackageCartItemType = {
@@ -62,6 +75,12 @@ export type ProductPackageCartItemType = {
   packageName: string;
   groupId: number;
   optionId: number;
+};
+
+export type ProductPackageSelectionType = {
+  groupId: number;
+  optionId: number;
+  skuId: number;
 };
 
 export type CartSummaryType = {

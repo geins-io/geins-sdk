@@ -1,0 +1,7 @@
+fragment ProductPackageCartItem on ProductPackageCartItemType {
+  packageId
+  packageName
+  groupId
+  optionId
+  __typename
+}

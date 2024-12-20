@@ -7,11 +7,20 @@ import {
   CART_COOKIES_MAX_AGE,
   GraphQLQueryOptions,
   FetchPolicyOptions,
+  ItemType,
 } from '@geins/core';
 import { MerchantData } from '../logic';
-import { parseCart } from '../parsers';
+import { parseCart, groupCartItems } from '../parsers';
 import { queries } from '../graphql';
-import type { CartType, CartItemType, CartItemInputType, GeinsSettings, OMSSettings } from '@geins/types';
+import type {
+  CartType,
+  CartItemType,
+  CartItemInputType,
+  GeinsSettings,
+  OMSSettings,
+  ProductPackageSelectionType,
+  CartGroupInputType,
+} from '@geins/types';
 
 /**
  * Shipping fee handling.
@@ -28,27 +37,61 @@ export interface PromotionCodeInterface {
   remove(): Promise<boolean>;
 }
 
+/**
+ * Interface representing the operations that can be performed on cart items.
+ */
 export interface CartItemsInterface {
+  /**
+   * Retrieves the list of cart items.
+   * @returns {Promise<CartItemType[] | undefined>} A promise that resolves to an array of cart items or undefined.
+   */
   get(): Promise<CartItemType[] | undefined>;
+
+  /**
+   * Clears all items from the cart.
+   * @returns {Promise<boolean>} A promise that resolves to true if the cart was successfully cleared, otherwise false.
+   */
   clear(): Promise<boolean>;
+
+  /**
+   * Adds an item to the cart.
+   * @param {Object} args - The arguments for adding an item to the cart.
+   * @param {string} [args.id] - The ID of the item.
+   * @param {number} [args.skuId] - The SKU ID of the item.
+   * @param {number} [args.quantity] - The quantity of the item to add.
+   * @returns {Promise<boolean>} A promise that resolves to true if the item was successfully added, otherwise false.
+   */
   add(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean>;
+
+  /**
+   * Removes an item from the cart.
+   * @param {Object} args - The arguments for removing an item from the cart.
+   * @param {string} [args.id] - The ID of the item.
+   * @param {number} [args.skuId] - The SKU ID of the item.
+   * @param {number} [args.quantity] - The quantity of the item to remove.
+   * @returns {Promise<boolean>} A promise that resolves to true if the item was successfully removed, otherwise false.
+   */
   remove(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean>;
+
+  /**
+   * Deletes an item from the cart.
+   * @param {Object} args - The arguments for deleting an item from the cart.
+   * @param {string} [args.id] - The ID of the item.
+   * @param {number} [args.skuId] - The SKU ID of the item.
+   * @returns {Promise<boolean>} A promise that resolves to true if the item was successfully deleted, otherwise false.
+   */
   delete(args: { id?: string; skuId?: number }): Promise<boolean>;
+
+  /**
+   * Updates an item in the cart.
+   * @param {Object} args - The arguments for updating an item in the cart.
+   * @param {CartItemType} args.item - The item to update.
+   * @returns {Promise<boolean>} A promise that resolves to true if the item was successfully updated, otherwise false.
+   */
   update(args: { item: CartItemType }): Promise<boolean>;
 }
 
-// save()???
-/// verb first?
-// 9c19f2da-03fe-4306-b36f-f0f60109e612 exists???
-// JS DOC
-// addToCart.allowExternalShippingFee ● Boolean scalar
-// requestOptions: { fetchPolicy: 'no-cache' }
-// options on how to run this in constructor and defaults for shipping etd
-// merchantdata template??
-// Apollo " Cache data may be lost when replacing the items field of a CartType object." - https://go.apollo.dev/c/generating-unique-identifiers - https://go.apollo.dev/c/merging-non-normalized-objects
-
 export class CartService extends BaseApiService {
-  private _loaded: boolean = false;
   private _id!: string | undefined;
   private _cart!: CartType | undefined;
   private _cookieService!: CookieService;
@@ -342,6 +385,21 @@ export class CartService extends BaseApiService {
   }
 
   /**
+   * Completes the cart by and removes the cart and ID properties.
+   *
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the cart was successfully removed, or `false` if an error occurred.
+   */
+  async complete(): Promise<boolean> {
+    try {
+      this.remove();
+    } catch (error) {
+      console.error('Error removing cart:', error);
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Removes the current cart by clearing the cart and ID properties and removing the associated cookie.
    *
    * @returns {Promise<boolean>} A promise that resolves to `true` if the cart was successfully removed, or `false` if an error occurred.
@@ -381,16 +439,28 @@ export class CartService extends BaseApiService {
     };
   }
 
-  // private item methods
+  // private cart item methods
   private async itemsGet(): Promise<CartItemType[] | undefined> {
     if (!this._cart && this.id) {
       await this.get(this.id);
     }
+    if (!this._cart?.items) {
+      return [];
+    }
 
-    return this._cart?.items ?? [];
+    const hasPackages = this._cart?.items?.some((item) => {
+      return item.productPackage || null !== null;
+    });
+
+    if (!hasPackages) {
+      return this._cart?.items;
+    }
+
+    return groupCartItems(this._cart.items, this._geinsSettings.locale);
   }
 
   private async itemUpdate(args: { item: CartItemInputType; updateCart?: boolean }): Promise<boolean> {
+    console.log('sdk itemUpdate', args);
     if (!this.id) {
       await this.create();
     }
@@ -411,11 +481,13 @@ export class CartService extends BaseApiService {
       vars.item = {
         id: args.item.id,
         quantity: args.item.quantity,
+        message: args.item.message,
       };
     } else if (args.item.skuId) {
       vars.item = {
         skuId: parseInt(args.item.skuId.toString(), 10),
         quantity: args.item.quantity,
+        message: args.item.message,
       };
     } else {
       throw new Error('Item id or skuId must be set');
@@ -424,6 +496,7 @@ export class CartService extends BaseApiService {
     const updateCart = args.updateCart ?? true;
 
     const variables = await this.generateVars(vars);
+    console.log('variables', variables);
 
     const options: GraphQLQueryOptions = {
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
@@ -455,64 +528,180 @@ export class CartService extends BaseApiService {
     return true;
   }
 
-  private async itemAdd(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean> {
-    const resolvedArgs = { ...args, quantity: args.quantity ?? 1 };
-
-    const cartItem = this._cart?.items?.find((item) => {
-      return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
-    });
-
-    if (cartItem) {
-      resolvedArgs.quantity += cartItem.quantity;
-      const avalibleStock = cartItem.product?.skus?.[0]?.stock?.totalStock ?? 0;
-      if (resolvedArgs.quantity > avalibleStock) {
-        return false;
-      }
+  private async itemPackageUpdate(args: {
+    packageId?: number;
+    selections?: ProductPackageSelectionType[];
+    item?: CartItemType;
+    quantity?: number;
+    updateCart?: boolean;
+  }): Promise<boolean> {
+    if (!this.id) {
+      await this.create();
     }
-    const item = this.createCartItemInput(resolvedArgs);
-    return this.itemUpdate({ item });
+
+    if (!this.id) {
+      throw new Error('Could not update item, cart not created');
+    }
+
+    const vars: {
+      id: string;
+      packageId?: number;
+      selections?: ProductPackageSelectionType[];
+      item?: CartGroupInputType;
+    } = {
+      id: this.id,
+    };
+
+    const options: GraphQLQueryOptions = {
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+    };
+
+    if (args.packageId && args.selections) {
+      // set query
+      options.query = queries.cartAddPackageItem;
+
+      // set package selections
+      vars.packageId = args.packageId;
+      vars.selections = args.selections;
+    } else if (args.item) {
+      // set query
+      options.query = queries.cartUpdatePackageItem;
+
+      // set vars
+      vars.item = this.createCartGroupInput({
+        item: args.item,
+        quantity: args.quantity ?? 1,
+      });
+    }
+    // set variables
+    const variables = await this.generateVars(vars);
+    options.variables = variables;
+
+    const updateCart = args.updateCart ?? true;
+    try {
+      const data = await this.runMutation(options);
+      if (updateCart) {
+        this.loadCartFromData(data);
+      }
+    } catch (e) {
+      console.error('Error updating package', e);
+      throw new Error('Error updating package');
+    }
+    return true;
   }
 
-  private async itemRemove(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean> {
+  private async itemAdd(args: {
+    id?: string;
+    skuId?: number;
+    quantity?: number;
+    packageId?: number;
+    selections?: ProductPackageSelectionType[];
+    item?: CartItemType;
+    message?: string;
+  }): Promise<boolean> {
     const resolvedArgs = { ...args, quantity: args.quantity ?? 1 };
 
-    const cartItem = this._cart?.items?.find((item) => {
-      return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
-    });
+    if (!args.item) {
+      resolvedArgs.item = this._cart?.items?.find((item) => {
+        return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
+      });
+    }
+    if (resolvedArgs.item) {
+      resolvedArgs.quantity += resolvedArgs.item.quantity;
+    }
 
-    if (!cartItem) {
+    if ((resolvedArgs.packageId && resolvedArgs.selections) || resolvedArgs.item?.type === ItemType.PACKAGE) {
+      // PACKAGE
+      let quantity = resolvedArgs.quantity ?? 1;
+      if (resolvedArgs.item) {
+        quantity += resolvedArgs.item.quantity;
+      }
+
+      return this.itemPackageUpdate({
+        packageId: resolvedArgs.packageId,
+        selections: resolvedArgs.selections,
+        item: resolvedArgs.item,
+        quantity: resolvedArgs.quantity,
+      });
+    } else {
+      // NO PACKAGE
+      const item = this.createCartItemInput(resolvedArgs);
+      console.log('item before update', item);
+      return this.itemUpdate({ item });
+    }
+  }
+
+  private async itemRemove(args: {
+    id?: string;
+    skuId?: number;
+    quantity?: number;
+    item?: CartItemType;
+  }): Promise<boolean> {
+    const resolvedArgs = { ...args, quantity: args.quantity ?? 1 };
+
+    if (!args.item) {
+      resolvedArgs.item = this._cart?.items?.find((item) => {
+        return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
+      });
+    }
+
+    if (!resolvedArgs.item) {
       return false;
     }
 
-    const newQuantity = cartItem.quantity - resolvedArgs.quantity!;
+    const newQuantity = resolvedArgs.item.quantity - resolvedArgs.quantity!;
 
-    const updateitem = this.createCartItemInput({
-      id: resolvedArgs.id,
-      skuId: resolvedArgs.skuId,
-      quantity: newQuantity,
-    });
-    return this.itemUpdate({ item: updateitem });
+    if (resolvedArgs.item?.type === ItemType.PACKAGE) {
+      return this.itemPackageUpdate({
+        item: resolvedArgs.item,
+        quantity: newQuantity,
+        updateCart: true,
+      });
+    } else {
+      const updateitem = this.createCartItemInput({
+        id: resolvedArgs.id,
+        skuId: resolvedArgs.skuId,
+        quantity: newQuantity,
+      });
+
+      return this.itemUpdate({ item: updateitem });
+    }
   }
 
-  private async itemDelete(args: { id?: string; skuId?: number; updateCart?: boolean }): Promise<boolean> {
+  private async itemDelete(args: {
+    id?: string;
+    skuId?: number;
+    item?: CartItemType;
+    updateCart?: boolean;
+  }): Promise<boolean> {
     const resolvedArgs = { ...args, quantity: 0 };
 
-    const cartItem = this._cart?.items?.find((item) => {
-      return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
-    });
-
-    if (!cartItem) {
-      return false;
+    if (!args.item) {
+      resolvedArgs.item = this._cart?.items?.find((item) => {
+        return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
+      });
     }
 
-    const updateitem = this.createCartItemInput({
-      id: resolvedArgs.id,
-      skuId: resolvedArgs.skuId,
-      quantity: 0,
-    });
-
+    if (!resolvedArgs.item) {
+      return false;
+    }
     const updateCart = resolvedArgs.updateCart ?? true;
-    return this.itemUpdate({ item: updateitem, updateCart });
+
+    if (resolvedArgs.item?.type === ItemType.PACKAGE) {
+      return this.itemPackageUpdate({
+        item: resolvedArgs.item,
+        quantity: 0,
+        updateCart: true,
+      });
+    } else {
+      const updateitem = this.createCartItemInput({
+        id: resolvedArgs.id,
+        skuId: resolvedArgs.skuId,
+        quantity: 0,
+      });
+
+      return this.itemUpdate({ item: updateitem, updateCart });
+    }
   }
 
   private async itemsClear(): Promise<boolean> {
@@ -537,19 +726,49 @@ export class CartService extends BaseApiService {
   }
 
   // private util methods
-  private createCartItemInput(args: { id?: string; skuId?: number; quantity: number }): CartItemInputType {
-    const item: CartItemInputType = {
+  private createCartGroupInput(args: {
+    groupKey?: string;
+    item?: CartItemType;
+    quantity: number;
+  }): CartGroupInputType {
+    const item: CartGroupInputType = {
+      groupKey: args.groupKey ?? args.item?.groupKey ?? '',
       quantity: args.quantity,
     };
 
-    if (args.id) {
+    if (args.groupKey) {
+      item.groupKey = args.groupKey;
+    } else if (args.item && args.item.groupKey) {
+      item.groupKey = args.item.groupKey;
+    } else {
+      throw new Error('groupKey or item with groupkey is required');
+    }
+
+    return item;
+  }
+
+  private createCartItemInput(args: {
+    id?: string;
+    skuId?: number;
+    item?: CartItemType;
+    quantity: number;
+    message?: string;
+  }): CartItemInputType {
+    const item: CartItemInputType = {
+      quantity: args.quantity,
+      message: args.message,
+    };
+
+    if (args.item) {
+      item.id = args.item.id;
+      item.skuId = args.item.skuId;
+    } else if (args.id) {
       item.id = args.id;
     } else if (args.skuId) {
       item.skuId = parseInt(args.skuId.toString(), 10);
     } else {
       throw new Error('Sku or id is required');
     }
-
     return item;
   }
 
@@ -558,7 +777,7 @@ export class CartService extends BaseApiService {
   }
 
   private loadCartFromData(data: any) {
-    const cart = parseCart(data);
+    const cart = parseCart(data, this._geinsSettings.locale);
     if (!cart) {
       return;
     }
@@ -571,7 +790,6 @@ export class CartService extends BaseApiService {
     }
     this._id = cart.id;
     this._cart = cart;
-    this._loaded = true;
     // get merchant data
     this._merchantData.replaceData(cart.merchantData);
     this.cookieSet(cart.id);
