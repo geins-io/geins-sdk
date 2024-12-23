@@ -50,10 +50,10 @@ export enum ItemType {
 }
 
 export type CartItemType = {
-  id: string;
+  id?: string;
   groupKey?: string;
-  type: ItemType;
-  title: string;
+  type?: ItemType;
+  title?: string;
   product?: ProductType;
   skuId?: number;
   quantity: number;

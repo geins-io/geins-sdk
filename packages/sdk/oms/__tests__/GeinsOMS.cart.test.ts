@@ -1,8 +1,8 @@
 import { GeinsOMS } from '../src/geinsOMS';
-import { GeinsCore } from '@geins/core';
-import type { CartItemInputType } from '@geins/types';
+import { GeinsCore, RuntimeContext, GeinsLogLevel } from '@geins/core';
+import type { CartItemInputType, CartItemType, OMSSettings } from '@geins/types';
 
-import { validSettings, cmsSettings, omsSettings } from '../../../../test/globalSettings';
+import { validSettings, omsSettings } from '../../../../test/globalSettings';
 
 describe('GeinsOMS cart', () => {
   let geinsOMS: GeinsOMS;
@@ -26,18 +26,18 @@ describe('GeinsOMS cart', () => {
     expect(geinsOMS.cart.id).toBeDefined();
   });
 
-  /*   it('should have item when item added', async () => {
+  it('should have item when item added', async () => {
     await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId1, quantity: 1 });
     expect(geinsOMS.cart.id).toBeDefined();
     const items = await geinsOMS.cart.items.get();
-    expect(items.length).toBe(1);
-  }); */
+    expect(items?.length).toBe(1);
+  });
 
   it('should have the correct quantity when items is added and removed', async () => {
     const skuId = omsSettings.skus.skuId2;
-
     let result = await geinsOMS.cart.items.add({ skuId });
     expect(result).toBe(true);
+
     expect(geinsOMS.cart.id).toBeDefined();
 
     const items = await geinsOMS.cart.items.get();
@@ -45,15 +45,7 @@ describe('GeinsOMS cart', () => {
 
     result = await geinsOMS.cart.items.remove({ skuId });
     expect(result).toBe(true);
-
-    /*
-    // expect cart item with skue to have quantity 5
-    const items4 = await geinsOMS.cart.items.get();
-    console.log('--- items4', items4);
-    expect(items4).toEqual(expect.arrayContaining([!expect.objectContaining({ skuId })])); */
   });
-
-  /*
 
   it('should have the correct quantity when items is added and removed', async () => {
     const skuId = omsSettings.skus.skuId2;
@@ -85,49 +77,111 @@ describe('GeinsOMS cart', () => {
 
     // remove one item with same sku
     result = await geinsOMS.cart.items.remove({ skuId });
-    console.log('--- remove result', result);
     expect(result).toBe(true);
     // expect cart item with skue to have quantity 5
     const items4 = await geinsOMS.cart.items.get();
     expect(items4).toEqual(expect.arrayContaining([expect.objectContaining({ skuId, quantity: 5 })]));
   });
 
-  /*
-  it('should have set itemes when updated', async () => {
-    await geinsOMS.cart.items.add({ item: { skuId: omsSettings.skus.skuId1, quantity: 1 } });
+  it('should have set items when updated', async () => {
+    const skuId = omsSettings.skus.skuId1;
+    await geinsOMS.cart.items.add({ skuId: skuId, quantity: 1 });
     expect(geinsOMS.cart.id).toBeDefined();
 
-    const items = await geinsOMS.cart.items.get();
-    expect(items.length).toBe(1);
+    let items = await geinsOMS.cart.items.get();
+    expect(items?.length).toBe(1);
+    const item: CartItemType = {
+      skuId: skuId,
+      quantity: 3,
+    };
+    const result = await geinsOMS.cart.items.update({ item });
+    expect(result).toBe(true);
 
-    await geinsOMS.cart.items.update({ item: { skuId: omsSettings.skus.skuId1, quantity: 5 } });
-    const updatedItems = await geinsOMS.cart.items.get();
-    expect(updatedItems.length).toBe(1);
-    expect(updatedItems[0].quantity).toBe(5);
-
-    //update item with new quantity using id
-    const id = updatedItems[0].id;
-    await geinsOMS.cart.items.update({ item: { id, quantity: 10 } });
-    const updatedItems2 = await geinsOMS.cart.items.get();
-    expect(updatedItems2.length).toBe(1);
-    expect(updatedItems2[0].quantity).toBe(10);
+    items = await geinsOMS.cart.items.get();
+    expect(items).toEqual(expect.arrayContaining([expect.objectContaining({ skuId, quantity: 3 })]));
   });
 
   it('should remove item when item removed', async () => {
-    await geinsOMS.cart.add({ item: { skuId: omsSettings.skus.skuId1, quantity: 2 } });
+    const skuId = omsSettings.skus.skuId2;
+    await geinsOMS.cart.items.add({ skuId: skuId, quantity: 2 });
+
     expect(geinsOMS.cart.id).toBeDefined();
-    let items = await geinsOMS.cart.items;
-    expect(items.length).toBe(1);
+    let items = await geinsOMS.cart.items.get();
+    expect(items?.length).toBe(1);
 
-    let item = items[0];
-    expect(item.quantity).toBe(2);
-    // set item quantity to 1 to remove item
-    // item.quantity = 1;
-    await geinsOMS.cart.add({ item });
-
-    items = await geinsOMS.cart.items;
-    item = items[0];
-    expect(items.length).toBe(1);
+    await geinsOMS.cart.items.remove({ skuId });
+    await geinsOMS.cart.items.remove({ skuId });
+    items = await geinsOMS.cart.items.get();
+    expect(items?.length).toBe(0);
   });
-  */
+
+  it('should update item', async () => {
+    const skuId = omsSettings.skus.skuId1;
+    await geinsOMS.cart.items.add({ skuId: skuId, quantity: 1 });
+
+    expect(geinsOMS.cart.id).toBeDefined();
+    let items = await geinsOMS.cart.items.get();
+    expect(items?.length).toBe(1);
+
+    // get item from cart
+    const item = items?.find((item) => item.skuId === skuId);
+
+    expect(item).toBeDefined();
+    if (!item) return;
+    // set new quantity
+    item.quantity = 3;
+    item.message = 'test message';
+    geinsOMS.cart.items.update({ item: item });
+    items = await geinsOMS.cart.items.get();
+    expect(items).toEqual(
+      expect.arrayContaining([expect.objectContaining({ skuId, quantity: 3, message: 'test message' })]),
+    );
+  });
+
+  it('should have merchant data when set', async () => {
+    type MerchantDataTemplate = {
+      extraData: string;
+      extraNumber?: number;
+    };
+    const myTemplate: MerchantDataTemplate = {
+      extraData: '',
+      extraNumber: 0,
+    };
+
+    const geinsCore_local = new GeinsCore(validSettings);
+    const geinsOMS_local = new GeinsOMS(geinsCore_local, {
+      omsSettings: { context: RuntimeContext.HYBRID, merchantDataTemplate: myTemplate },
+    });
+
+    geinsOMS_local.cart.merchantData.extraData = 'test';
+    geinsOMS_local.cart.merchantData.extraNumber = 123;
+
+    const result = await geinsOMS_local.cart.merchantData.save();
+    expect(result).toBe(true);
+
+    let merchantData = await geinsOMS_local.cart.merchantData;
+    expect(merchantData).toEqual(expect.objectContaining({ extraData: 'test', extraNumber: 123 }));
+  });
+
+  it('should have honor template of merchant data when set', async () => {
+    type MerchantDataTemplate = {
+      extraData: string;
+      extraNumber?: number;
+    };
+    const myTemplate: MerchantDataTemplate = {
+      extraData: '',
+      extraNumber: 0,
+    };
+    validSettings.logLevel = GeinsLogLevel.DEBUG;
+
+    const geinsCore_local = new GeinsCore(validSettings);
+    const geinsOMS_local = new GeinsOMS(geinsCore_local, {
+      omsSettings: { context: RuntimeContext.HYBRID, merchantDataTemplate: myTemplate },
+    });
+    try {
+      geinsOMS_local.cart.merchantData.otherData = 'otherData';
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+    }
+  });
 });

@@ -112,7 +112,6 @@ export class CartService extends BaseApiService {
     if (!isServerContext() && _settings.context !== 'server') {
       this._cookieService = new CookieService();
       const cookieId = this.cookieGet();
-      // logWrite('--- cookieId', cookieId);
       if (cookieId) {
         this._id = cookieId;
       }
@@ -157,7 +156,7 @@ export class CartService extends BaseApiService {
           target[prop as keyof typeof target] = value;
           return true;
         } else {
-          console.warn(`Key "${String(prop)}" is not in the original template and will be ignored.`);
+          //this._logger.warn(`Key "${String(prop)}" is not in the original template and will be ignored.`);
           return false;
         }
       },
@@ -176,11 +175,9 @@ export class CartService extends BaseApiService {
 
   private async saveMerchantData(): Promise<boolean> {
     if (!this.id) {
-      return false;
+      await this.create();
     }
-
     const merchantDataString = JSON.stringify(this.merchantData);
-
     const vars: { id: string; merchantData: string } = {
       id: this.id!,
       merchantData: merchantDataString,
@@ -339,7 +336,6 @@ export class CartService extends BaseApiService {
     }
 
     if (!this.id && !id) {
-      // logWrite('--- no id or cookie - creating cart');
       return this.create();
     }
 
@@ -357,7 +353,7 @@ export class CartService extends BaseApiService {
    */
   async refresh(): Promise<CartType | undefined> {
     if (!this._cart || !this.id) {
-      return this.create();
+      return await this.create();
     }
     return this.cartGet(this.id!, true);
   }
@@ -375,7 +371,7 @@ export class CartService extends BaseApiService {
       this.loadCartFromData(data);
     } catch (e: any) {
       if (e.message.includes("Variable '$id' is invalid")) {
-        return this.create();
+        return await this.create();
       } else {
         throw new Error('Error getting cart');
       }
@@ -459,8 +455,7 @@ export class CartService extends BaseApiService {
     return groupCartItems(this._cart.items, this._geinsSettings.locale);
   }
 
-  private async itemUpdate(args: { item: CartItemInputType; updateCart?: boolean }): Promise<boolean> {
-    console.log('sdk itemUpdate', args);
+  private async itemUpdate(args: { item: CartItemType; updateCart?: boolean }): Promise<boolean> {
     if (!this.id) {
       await this.create();
     }
@@ -496,7 +491,6 @@ export class CartService extends BaseApiService {
     const updateCart = args.updateCart ?? true;
 
     const variables = await this.generateVars(vars);
-    console.log('variables', variables);
 
     const options: GraphQLQueryOptions = {
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
@@ -626,7 +620,6 @@ export class CartService extends BaseApiService {
     } else {
       // NO PACKAGE
       const item = this.createCartItemInput(resolvedArgs);
-      console.log('item before update', item);
       return this.itemUpdate({ item });
     }
   }
@@ -790,7 +783,6 @@ export class CartService extends BaseApiService {
     }
     this._id = cart.id;
     this._cart = cart;
-    // get merchant data
     this._merchantData.replaceData(cart.merchantData);
     this.cookieSet(cart.id);
   }
