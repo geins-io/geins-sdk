@@ -2,7 +2,6 @@
 
 ## Overview
 
-The `CartService` manages all operations related to the shopping cart in the Geins SDK. It provides methods for creating, retrieving, modifying, and finalizing carts, as well as managing cart items, merchant data, promotions, and shipping information.
 
 ## Cart
 
@@ -13,6 +12,7 @@ The cart represents the collection of items selected by a user along with metada
 ### Create
 
 Creates a new cart instance. This method initializes a cart and returns its identifier.
+
 
 ### Get
 
