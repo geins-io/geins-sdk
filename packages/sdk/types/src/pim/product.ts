@@ -1,3 +1,5 @@
+import type { PriceType, CampaignRuleType, DiscountType } from './../shared';
+
 export type AlternativeUrlType = {
   url: string;
   type: string;
@@ -38,12 +40,6 @@ export type CategoryType = {
   googleTaxonomy?: GoogleTaxonomyType;
   primaryImage?: string;
   backgroundImage?: string;
-};
-
-export type PriceType = {
-  amount: number;
-  currency: string;
-  formatted: string;
 };
 
 export type LowestPriceType = {
@@ -96,8 +92,10 @@ export type RatingType = {
 };
 
 export type StockType = {
-  quantity: number;
-  isInStock: boolean;
+  inStock: boolean;
+  oversellable: boolean;
+  totalStock: number;
+  static: boolean;
 };
 
 export type MetadataType = {
@@ -117,22 +115,10 @@ export type BreadcrumbType = {
   url: string;
 };
 
-export type CampaignRuleType = {
-  ruleId: number;
-  description: string;
-  discountType: DiscountType;
-  discountValue: number;
-};
-
 export type PriceLogItemType = {
   date: string;
   price: PriceType;
 };
-
-enum DiscountType {
-  PERCENTAGE,
-  FIXED_AMOUNT,
-}
 
 export type ProductPackageType = {
   packageId: number;

@@ -1,13 +1,26 @@
 fragment Price on PriceType {
-  isDiscounted
   sellingPriceIncVat
   sellingPriceExVat
   regularPriceIncVat
   regularPriceExVat
-  vat
+  discountIncVat
+  discountExVat
   discountPercentage
-  regularPriceIncVatFormatted
+  vat
+  isDiscounted
   sellingPriceIncVatFormatted
-  regularPriceExVatFormatted
   sellingPriceExVatFormatted
+  regularPriceIncVatFormatted
+  regularPriceExVatFormatted
+  discountIncVatFormatted
+  discountExVatFormatted
+  vatFormatted
+  currency {
+    code
+    symbol
+    rate
+    name
+    __typename
+  }
+  __typename
 }

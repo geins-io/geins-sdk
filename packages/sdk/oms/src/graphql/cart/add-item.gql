@@ -1,12 +1,12 @@
 #import "../fragments/cart.gql"
-mutation updateCartItem(
+mutation addToCart(
   $id: String!
   $item: CartItemInputType!
   $channelId: String
   $languageId: String
   $marketId: String
 ) {
-  updateCartItem(id: $id, item: $item, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+  addToCart(id: $id, item: $item, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
     ...Cart
     __typename
   }

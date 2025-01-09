@@ -113,18 +113,13 @@ export class CookieService {
     return maxAge;
   }
 
-  private configToCookieOptions(
-    config: CookieServiceConfig,
-  ): CookieSerializeOptions {
+  private configToCookieOptions(config: CookieServiceConfig): CookieSerializeOptions {
     return {
       path: config.path,
       domain: config.domain,
       secure: config.secure,
       httpOnly: config.httpOnly,
-      maxAge:
-        config.maxAge !== undefined
-          ? this.parseMaxAge(config.maxAge)
-          : undefined,
+      maxAge: config.maxAge !== undefined ? this.parseMaxAge(config.maxAge) : undefined,
     };
   }
 

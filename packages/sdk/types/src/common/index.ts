@@ -3,8 +3,20 @@ export * from './channel';
 export * from './event';
 
 /* export type GeinsCustomerTypeType = 'PERSON' | 'ORGANIZATION'; */
+export enum GeinsLogLevel {
+  NONE = 'NONE',
+  DEBUG = 'DEBUG',
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+}
 
 export type Environment = 'prod' | 'qa' | 'dev';
+export enum RuntimeContext {
+  SERVER = 'server',
+  CLIENT = 'client',
+  HYBRID = 'hybrid',
+}
 
 export interface KeyValue {
   key: string;
@@ -19,6 +31,7 @@ export type GeinsSettings = {
   locale: string;
   market: string;
   environment?: Environment;
+  logLevel?: GeinsLogLevel;
 };
 
 export interface GeinsChannelInterface {

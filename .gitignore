@@ -5,6 +5,9 @@
 .DS_Store
 .temp
 
+# apps
+apps/
+
 
 # node / nuxt / vite / rollup
 .bin

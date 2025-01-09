@@ -1,0 +1,13 @@
+#import "../fragments/cart.gql"
+mutation updateCartGroup(
+  $id: String!
+  $item: CartGroupInputType!
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
+  updateCartGroup(id: $id, item: $item, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+    ...Cart
+    __typename
+  }
+}

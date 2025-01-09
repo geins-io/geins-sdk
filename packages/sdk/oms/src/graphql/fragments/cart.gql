@@ -1,60 +1,93 @@
+#import "./package.gql"
 #import "./price.gql"
 #import "./stock.gql"
+#import "./campaign-rule.gql"
 
 fragment Cart on CartType {
   id
+  merchantData
   promoCode
   appliedCampaigns {
-    name
-    hideTitle
+    ...CampaignRule
+    __typename
   }
   items {
+    id
+    groupKey
+    skuId
+    quantity
+    message
+    productPackage {
+      ...ProductPackageCartItem
+      __typename
+    }
     campaign {
       appliedCampaigns {
         name
         hideTitle
+        __typename
       }
       prices {
         price {
           ...Price
+          __typename
         }
         quantity
+        __typename
       }
-    }
-    unitPrice {
-      ...Price
+      __typename
     }
     product {
       productId
       articleNumber
       brand {
         name
+        __typename
       }
+
       name
       productImages {
         fileName
+        __typename
       }
       alias
       canonicalUrl
       primaryCategory {
+        categoryId
         name
+        order
+        __typename
+      }
+      categories {
+        categoryId
+        name
+        order
+        __typename
       }
       skus {
         skuId
         name
         stock {
           ...Stock
+          __typename
         }
+        __typename
       }
       unitPrice {
         ...Price
+        __typename
       }
+      __typename
     }
-    quantity
-    skuId
+    unitPrice {
+      ...Price
+      __typename
+    }
     totalPrice {
       ...Price
+      __typename
     }
+    __typename
   }
   summary {
     fixedAmountDiscountIncVat
@@ -65,15 +98,11 @@ fragment Cart on CartType {
       totalSellingPriceExBalanceExVat
       totalSellingPriceExBalanceIncVat
       totalSellingPriceExBalanceIncVatFormatted
+      __typename
     }
     subTotal {
-      regularPriceIncVatFormatted
-      regularPriceExVatFormatted
-      sellingPriceIncVatFormatted
-      sellingPriceExVatFormatted
-      sellingPriceExVat
-      sellingPriceIncVat
-      vat
+      ...Price
+      __typename
     }
     shipping {
       amountLeftToFreeShipping
@@ -83,19 +112,13 @@ fragment Cart on CartType {
       feeIncVat
       feeExVat
       isDefault
+      __typename
     }
     total {
-      isDiscounted
-      sellingPriceIncVatFormatted
-      sellingPriceExVatFormatted
-      sellingPriceIncVat
-      sellingPriceExVat
-      discountIncVatFormatted
-      discountExVatFormatted
-      discountExVat
-      discountIncVat
-      vatFormatted
-      vat
+      ...Price
+      __typename
     }
+    __typename
   }
+  __typename
 }

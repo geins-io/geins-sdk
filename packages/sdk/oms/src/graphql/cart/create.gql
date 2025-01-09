@@ -1,0 +1,7 @@
+#import "../fragments/cart.gql"
+query createCart($channelId: String, $languageId: String, $marketId: String) {
+  getCart(channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+    ...Cart
+    __typename
+  }
+}
