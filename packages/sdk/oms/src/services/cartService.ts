@@ -59,9 +59,21 @@ export interface CartItemsInterface {
    * @param {string} [args.id] - The ID of the item.
    * @param {number} [args.skuId] - The SKU ID of the item.
    * @param {number} [args.quantity] - The quantity of the item to add.
+   * @param {number} [args.packageId] - The package ID of the item.
+   * @param {ProductPackageSelectionType[]} [args.selections] - The selections for the package.
+   * @param {CartItemType} [args.item] - The item to add.
+   * @param {string} [args.message] - The message for the item.
    * @returns {Promise<boolean>} A promise that resolves to true if the item was successfully added, otherwise false.
    */
-  add(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean>;
+  add(args: {
+    id?: string;
+    skuId?: number;
+    quantity?: number;
+    packageId?: number;
+    selections?: ProductPackageSelectionType[];
+    item?: CartItemType;
+    message?: string;
+  }): Promise<boolean>;
 
   /**
    * Removes an item from the cart.
