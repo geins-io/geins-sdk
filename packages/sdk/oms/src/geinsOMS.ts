@@ -1,11 +1,11 @@
-import { GeinsCore, BasePackage, RuntimeContext } from '@geins/core';
+import { GeinsCore, BasePackage, RuntimeContext, OMSSettings } from '@geins/core';
 import { CartService } from './services/cartService';
 
 class GeinsOMS extends BasePackage {
   private _cart!: CartService;
-  private _omsSettings: any;
+  private _omsSettings: OMSSettings;
 
-  constructor(core: GeinsCore, options?: any) {
+  constructor(core: GeinsCore, options?: { omsSettings?: OMSSettings }) {
     super(core);
     const { client, geinsSettings } = core;
     this._omsSettings = options?.omsSettings ?? { context: RuntimeContext.HYBRID };

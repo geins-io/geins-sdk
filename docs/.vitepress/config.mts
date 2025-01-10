@@ -1,6 +1,7 @@
 // import { defineConfig } from 'vitepress'
 import { HeadConfig, loadEnv } from 'vitepress';
 import { withMermaid } from 'vitepress-plugin-mermaid';
+import { groupIconMdPlugin, groupIconVitePlugin, localIconLoader } from 'vitepress-plugin-group-icons';
 const env = loadEnv('', process.cwd());
 const scripts: HeadConfig[] = [];
 if (env.VITE_GA_ID) {
@@ -145,12 +146,23 @@ export default withMermaid({
             },
             {
               text: '@geins/oms',
-              link: '/packages/cms',
+              link: '/packages/oms',
               items: [
-                { text: 'Cart', link: '/packages/oms/cart' },
-                { text: 'Merchant data', link: '/packages/oms/merchant-data' },
+                {
+                  text: 'Cart',
+                  link: '/packages/oms/cart',
+                  items: [
+                    { text: 'Items', link: '/packages/oms/cart-items' },
+                    { text: 'Promotions', link: '/packages/oms/cart-promotions' },
+                    { text: 'Campaigns', link: '/packages/oms/cart-campaigns' },
+
+                    { text: 'Shipping', link: '/packages/oms/cart-shipping' },
+                  ],
+                },
+
                 { text: 'Checkout', link: '/packages/oms/checkout' },
                 { text: 'Order', link: '/packages/oms/order' },
+                { text: 'Merchant data', link: '/packages/oms/merchant-data' },
               ],
             },
           ],
@@ -169,6 +181,14 @@ export default withMermaid({
     search: {
       provider: 'local',
     },
+  },
+  markdown: {
+    config(md) {
+      md.use(groupIconMdPlugin);
+    },
+  },
+  vite: {
+    plugins: [groupIconVitePlugin()],
   },
   mermaid: {},
 });

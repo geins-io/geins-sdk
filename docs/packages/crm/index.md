@@ -27,10 +27,24 @@ The `@geins/crm` package allows you to add logged-in user functionalities to you
 
 ### Installation
 
-```bash
-yarn add @geins/crm
+::: code-group
+
+```sh [npm]
+$ npm add -D @geins/crm
 ```
 
+```sh [pnpm]
+$ pnpm add -D @geins/crm
+```
+
+```sh [yarn]
+$ yarn add -D @geins/crm
+```
+
+```sh [bun]
+$ bun add -D @geins/crm
+```
+:::
 ### Quick Start
 
 ```ts

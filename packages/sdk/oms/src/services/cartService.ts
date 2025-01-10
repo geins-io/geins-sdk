@@ -103,7 +103,21 @@ export interface CartItemsInterface {
   update(args: { item: CartItemType }): Promise<boolean>;
 }
 
-export class CartService extends BaseApiService {
+export interface CartServiceInterface {
+  id: string | undefined;
+  merchantData: any;
+  promotionCode: PromotionCodeInterface;
+  shippingFee: ShippingFeeInterface;
+  items: CartItemsInterface;
+
+  create(): Promise<CartType | undefined>;
+  get(id?: string): Promise<CartType | undefined>;
+  refresh(): Promise<CartType | undefined>;
+  complete(): Promise<boolean>;
+  remove(): Promise<boolean>;
+}
+
+export class CartService extends BaseApiService implements CartServiceInterface {
   private _id!: string | undefined;
   private _cart!: CartType | undefined;
   private _cookieService!: CookieService;
@@ -168,7 +182,6 @@ export class CartService extends BaseApiService {
           target[prop as keyof typeof target] = value;
           return true;
         } else {
-          //this._logger.warn(`Key "${String(prop)}" is not in the original template and will be ignored.`);
           return false;
         }
       },
