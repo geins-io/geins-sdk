@@ -6,7 +6,7 @@
   "license": "MIT",
   "type": "module",
   "workspaces": [
-    "apps/nuxt-app",
+    "apps/*",
     "packages/config/*",
     "packages/sdk/*"
   ],

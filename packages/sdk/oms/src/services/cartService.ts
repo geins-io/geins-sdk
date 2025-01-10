@@ -21,6 +21,7 @@ import type {
   ProductPackageSelectionType,
   CartGroupInputType,
 } from '@geins/types';
+import { cpSync } from 'fs';
 
 /**
  * Shipping fee handling.
@@ -497,6 +498,13 @@ export class CartService extends BaseApiService implements CartServiceInterface 
       id: this.id,
     };
 
+    const exists = this._cart?.items?.find((item) => {
+      return (
+        item.id === args.item.id ||
+        (item.skuId === args.item.skuId && (item.message ?? '') === (args.item.message ?? ''))
+      );
+    });
+
     if (args.item.id) {
       vars.item = {
         id: args.item.id,
@@ -527,10 +535,6 @@ export class CartService extends BaseApiService implements CartServiceInterface 
     } else {
       options.query = queries.cartUpdateItemSilent;
     }
-
-    const exists = this._cart?.items?.find((item) => {
-      return item.id === args.item.id || item.skuId === args.item.skuId;
-    });
 
     if (!exists) {
       options.query = queries.cartAddItem;
@@ -622,9 +626,13 @@ export class CartService extends BaseApiService implements CartServiceInterface 
 
     if (!args.item) {
       resolvedArgs.item = this._cart?.items?.find((item) => {
-        return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
+        return (
+          item.id === resolvedArgs.id ||
+          (item.skuId === resolvedArgs.skuId && (item.message ?? '') === (resolvedArgs.message ?? ''))
+        );
       });
     }
+
     if (resolvedArgs.item) {
       resolvedArgs.quantity += resolvedArgs.item.quantity;
     }
@@ -688,7 +696,6 @@ export class CartService extends BaseApiService implements CartServiceInterface 
 
   private async itemDelete(args: {
     id?: string;
-    skuId?: number;
     item?: CartItemType;
     updateCart?: boolean;
   }): Promise<boolean> {
@@ -696,7 +703,7 @@ export class CartService extends BaseApiService implements CartServiceInterface 
 
     if (!args.item) {
       resolvedArgs.item = this._cart?.items?.find((item) => {
-        return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
+        return item.id === resolvedArgs.id;
       });
     }
 
@@ -714,7 +721,6 @@ export class CartService extends BaseApiService implements CartServiceInterface 
     } else {
       const updateitem = this.createCartItemInput({
         id: resolvedArgs.id,
-        skuId: resolvedArgs.skuId,
         quantity: 0,
       });
 
