@@ -86,7 +86,7 @@ The template for the merchant data. It is an object that can be used to store ad
 
 Read more about `merchantData` [here](./merchant-data.md).
 
-::: tip Tip
+::: tip :bulb: Tip
 To get some type safety on the merchant data, you can create your own type and use it to define the `merchantDataTemplate` property.
 :::
 

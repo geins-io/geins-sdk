@@ -135,6 +135,7 @@ export function parseCart(data: any, locale: string): CartType | undefined {
   return {
     id: cart.id,
     items: parseCartItems(cart.items, locale),
+    completed: cart.isCompleted,
     promoCode: cart.promoCode,
     freeShipping: cart.freeShipping,
     fixedDiscount: cart.fixedDiscount,

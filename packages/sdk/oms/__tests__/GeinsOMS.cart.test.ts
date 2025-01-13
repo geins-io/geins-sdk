@@ -3,6 +3,7 @@ import { GeinsCore, RuntimeContext, GeinsLogLevel } from '@geins/core';
 import type { CartItemInputType, CartItemType, OMSSettings } from '@geins/types';
 
 import { validSettings, omsSettings } from '../../../../test/globalSettings';
+import exp from 'constants';
 
 describe('GeinsOMS cart', () => {
   let geinsOMS: GeinsOMS;
@@ -183,5 +184,61 @@ describe('GeinsOMS cart', () => {
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
     }
+  });
+
+  it('should be able to complete cart', async () => {
+    await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId1, quantity: 1 });
+    expect(geinsOMS.cart.id).toBeDefined();
+
+    const result = await geinsOMS.cart.complete();
+    expect(result).toBe(true);
+
+    const cart = await geinsOMS.cart.get();
+    expect(cart?.completed).toBe(true);
+    expect(geinsOMS.cart.isReadOnly).toBe(true);
+  });
+
+  it('should be not be able to add itemes to complete cart', async () => {
+    await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId1, quantity: 1 });
+    expect(geinsOMS.cart.id).toBeDefined();
+
+    const result = await geinsOMS.cart.complete();
+    expect(result).toBe(true);
+
+    const cart = await geinsOMS.cart.get();
+    expect(cart?.completed).toBe(true);
+    expect(geinsOMS.cart.isReadOnly).toBe(true);
+
+    const addResult = await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId1, quantity: 1 });
+    expect(addResult).toBe(false);
+
+    const items = await geinsOMS.cart.items.get();
+    expect(items?.length).toBe(1);
+  });
+
+  it('should copy cart but not load it', async () => {
+    await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId1, quantity: 1 });
+    expect(geinsOMS.cart.id).toBeDefined();
+    const orginalId = geinsOMS.cart.id;
+
+    const result = await geinsOMS.cart.copy();
+    expect(result).toBeDefined();
+
+    const copyId = geinsOMS.cart.id;
+    expect(orginalId).toBe(copyId);
+  });
+
+  it('should copy cart and load it', async () => {
+    await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId1, quantity: 1 });
+    expect(geinsOMS.cart.id).toBeDefined();
+    const orginalId = geinsOMS.cart.id;
+
+    const c = await geinsOMS.cart.items.get();
+
+    const result = await geinsOMS.cart.copy({ loadCopy: true });
+    expect(result).toBeDefined();
+
+    const copyId = geinsOMS.cart.id;
+    expect(orginalId).not.toBe(copyId);
   });
 });

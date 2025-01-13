@@ -103,10 +103,6 @@ Adding a product package to the cart is similar to adding a product. You can add
 
 A product package is a group of products that are sold together. Each product package has a unique `packageId` and can have multiple selections. Each selection is a combination of a `groupId`, `optionId`, and `skuId`.
 
-::: tip Note
-When adding a product package to the cart the add method will throw an error if the selections are not valid. So make sure to error handle the response.
-:::
-
 Example:
 ```typescript
 
@@ -129,11 +125,12 @@ try {
 
 ```
 
-
+::: warning :warning: Warning
+When adding a product package to the cart the `add` method will throw an error if the selections are not valid. So make sure to error handle the response.
+:::
 
 
 ## Updating Items
-
 
 ## Removing Items
 

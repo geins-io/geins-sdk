@@ -5,6 +5,7 @@
 
 fragment Cart on CartType {
   id
+  isCompleted
   merchantData
   promoCode
   appliedCampaigns {

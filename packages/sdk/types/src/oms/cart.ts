@@ -6,6 +6,7 @@ export type CartType = {
   id: string;
   items: CartItemType[];
   freeShipping: boolean;
+  readonly completed: boolean;
   readonly merchantData?: any;
   readonly promoCode?: string;
   readonly fixedDiscount: number;
