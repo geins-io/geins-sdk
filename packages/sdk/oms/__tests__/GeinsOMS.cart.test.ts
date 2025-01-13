@@ -4,6 +4,7 @@ import type { CartItemInputType, CartItemType, OMSSettings } from '@geins/types'
 
 import { validSettings, omsSettings } from '../../../../test/globalSettings';
 import exp from 'constants';
+import { c } from 'vite/dist/node/types.d-aGj9QkWt';
 
 describe('GeinsOMS cart', () => {
   let geinsOMS: GeinsOMS;
@@ -164,6 +165,25 @@ describe('GeinsOMS cart', () => {
     expect(merchantData).toEqual(expect.objectContaining({ extraData: 'test', extraNumber: 123 }));
   });
 
+  it('should have merchant data when set without template', async () => {
+    const geinsCore_local = new GeinsCore(validSettings);
+    const geinsOMS_local = new GeinsOMS(geinsCore_local, {
+      omsSettings: { context: RuntimeContext.HYBRID },
+    });
+
+    //    geinsOMS_local.cart.merchantData.extraData = 'test';
+    //  geinsOMS_local.cart.merchantData.testdata = 'testdata';
+
+    geinsOMS_local.cart.merchantData = { extraData: 'test', testdata: 'testdata' };
+
+    const result = await geinsOMS_local.cart.merchantData.save();
+    expect(result).toBe(true);
+
+    let merchantData = await geinsOMS_local.cart.merchantData;
+
+    expect(merchantData).toEqual(expect.objectContaining({ extraData: 'test', testdata: 'testdata' }));
+  });
+
   it('should have honor template of merchant data when set', async () => {
     type MerchantDataTemplate = {
       extraData: string;
@@ -179,6 +199,7 @@ describe('GeinsOMS cart', () => {
     const geinsOMS_local = new GeinsOMS(geinsCore_local, {
       omsSettings: { context: RuntimeContext.HYBRID, merchantDataTemplate: myTemplate },
     });
+
     try {
       geinsOMS_local.cart.merchantData.otherData = 'otherData';
     } catch (error) {
@@ -198,7 +219,7 @@ describe('GeinsOMS cart', () => {
     expect(geinsOMS.cart.isReadOnly).toBe(true);
   });
 
-  it('should be not be able to add itemes to complete cart', async () => {
+  it('should be not be able to add items to complete cart', async () => {
     await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId1, quantity: 1 });
     expect(geinsOMS.cart.id).toBeDefined();
 
@@ -240,5 +261,40 @@ describe('GeinsOMS cart', () => {
 
     const copyId = geinsOMS.cart.id;
     expect(orginalId).not.toBe(copyId);
+  });
+
+  it('should accept promotion code and then remove promotion code', async () => {
+    await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId2, quantity: 1 });
+    expect(geinsOMS.cart.id).toBeDefined();
+
+    let cart = await geinsOMS.cart.get();
+
+    const promoCode = omsSettings.promotionCodes.percentOff;
+    const prompCodeApplyResult = await geinsOMS.cart.promotionCode.apply(promoCode);
+    expect(prompCodeApplyResult).toBe(true);
+
+    cart = await geinsOMS.cart.get();
+    expect(cart?.appliedCampaigns[0]?.name).toBe(promoCode);
+
+    let discountTotal = cart?.summary?.total?.discountIncVat;
+    expect(discountTotal).toBeGreaterThan(0);
+
+    await geinsOMS.cart.promotionCode.remove();
+    cart = await geinsOMS.cart.get();
+
+    expect(cart?.appliedCampaigns).toHaveLength(0);
+
+    discountTotal = cart?.summary?.total?.discountIncVat;
+    expect(discountTotal).toBe(0);
+  });
+
+  it('should show applied campaign', async () => {
+    await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId1, quantity: 1 });
+    await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId2, quantity: 1 });
+    await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId3, quantity: 1 });
+
+    expect(geinsOMS.cart.id).toBeDefined();
+    let cart = await geinsOMS.cart.get();
+    expect(cart?.appliedCampaigns?.length ?? 0).toBeGreaterThan(0);
   });
 });

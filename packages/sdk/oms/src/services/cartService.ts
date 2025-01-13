@@ -77,7 +77,11 @@ export interface CartItemsInterface {
   }): Promise<boolean>;
 
   /**
-   * Removes an item from the cart.
+   * Removes one of the quantity of an item from the cart.
+   *
+   * - If the quantity is greater than 1, it decrements the quantity.
+   * - If the quantity is 1, it removes the item from the cart.
+   *
    * @param {Object} args - The arguments for removing an item from the cart.
    * @param {string} [args.id] - The ID of the item.
    * @param {number} [args.skuId] - The SKU ID of the item.

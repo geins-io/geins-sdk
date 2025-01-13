@@ -73,6 +73,7 @@ const geinsSettings = {
   locale: 'your-locale',
   market: 'your-market',
   environment: 'production', // or 'staging', 'development'
+  loglevel: 'info', // or 'debug', 'warn', 'error'
 };
 
 const geinsCore = new GeinsCore(geinsSettings);

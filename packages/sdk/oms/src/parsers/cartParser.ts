@@ -12,6 +12,8 @@ import type {
   ProductPackageCartItemType,
 } from '@geins/types';
 import { ItemType } from '@geins/types';
+import { checkPrimeSync } from 'crypto';
+import { cp } from 'fs';
 
 export function groupCartItems(data: CartItemType[], locale: string): CartItemType[] {
   const items: CartItemType[] = [];
@@ -154,11 +156,11 @@ function parseCampaigns(data: any): CampaignRuleType[] {
       campaignId: item.campaignId || '',
       name: item.name || '',
       hideTitle: item.hideTitle || false,
-      ruleType: item.ruleType || '',
+      /* ruleType: item.ruleType || '',
       category: item.category || '',
       action: item.action || '',
       actionValue: item.actionValue || '',
-      canonicalUrl: item.canonicalUrl || '',
+      canonicalUrl: item.canonicalUrl || '', */
     };
   });
 }
@@ -297,7 +299,7 @@ function parseCartSummary(data: any, locale: string): CartSummaryType {
   }
 
   return {
-    total: parsePrice(data.tota, locale),
+    total: parsePrice(data.total, locale),
     subTotal: parsePrice(data.subTotal, locale),
     vats:
       data.vats?.map((vat: any) => ({

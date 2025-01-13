@@ -1,22 +1,55 @@
 # Cart
 
-The `CartService` in the Geins SDK Order Management System (OMS) package provides developers with tools to manage shopping carts efficiently. It allows for adding, updating, and removing items, setting promotional codes, and managing other cart-related data.
+The `CartService` in the Geins SDK Order Management System (OMS) package provides developers with tools to manage shopping carts efficiently. It supports adding, updating, and removing items, managing promotional codes, and configuring shipping details.
 
-The `cart` represents the collection of items selected by a user along with metadata like applied campaigns, promotion codes, and shipping details.
-
+The `Cart` is a singleton object created during the initialization of the `@geins/oms` package. It represents a collection of user-selected items, along with metadata like applied campaigns, promotion codes, and shipping details.
 
 ## Overview
 
-The `CartService` handles the following functionalities:
+The `CartService` is a comprehensive utility within the Geins SDK OMS package for managing shopping carts. Its key responsibilities include:
 
-- **Cart Creation**: Initialize a new shopping cart.
-- **Item Management**: Add, update, or remove items from the cart.
-- **Campaigns**: Campaigns that user is eligible for and have been activated.
-- **Promotion Codes**: Apply and manage promotion codes.
-- **Shipping Fees**: Configure shipping-related details.
-- **Merchant Data**: Add custom merchant-specific data.
+- **Cart Lifecycle Management**: 
+  - **Creation**: Create a new cart when required.
+  - **Fetching**: Retrieve an existing cart using its unique `cartId`.
+  - **Refreshing**: Update the cart with the latest data from the backend.
+  - **Removal**: Clear the cart and remove its `cartId` from storage.
 
-This service integrates seamlessly with other OMS modules, providing a robust solution for managing customer carts in e-commerce applications.
+- **Item Management**:
+  - Add, update, remove, or delete items from the cart.
+  - Group and manage item packages within the cart.
+  - Support for adjusting item quantities.
+
+- **Promotion Codes**:
+  - Apply promotional codes to the cart.
+  - Remove existing promotional codes.
+  - Handle recalculations for discounts.
+
+- **Campaign Management**:
+  - Integrate eligible and activated campaigns for the cart.
+  - Display applied campaigns and related metadata.
+
+- **Shipping Fees**:
+  - Configure and manage shipping-related charges.
+  - Validate and recalculate cart totals based on shipping fees.
+
+- **Merchant Data**:
+  - Add and modify custom merchant-specific data stored within the cart.
+  - Provide flexibility for client-specific requirements.
+
+- **Context Awareness**:
+  - Operate seamlessly in both server and client environments.
+  - Automatically handle `cartId` storage via cookies (on the client).
+
+- **Cart Copying**:
+  - Create a new cart based on an existing one.
+  - Optionally reset promotions or load the copied cart.
+
+- **Cart Completion**:
+  - Mark a cart as completed to make it read-only, ensuring immutability post-checkout.
+
+This holistic approach makes the `CartService` a powerful tool for managing carts across various e-commerce scenarios.
+
+
 ```typescript
 const geinsOMS = new GeinsOMS(geinsCore);
 const cart = geinsOMS.cart;

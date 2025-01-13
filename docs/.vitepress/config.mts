@@ -155,13 +155,12 @@ export default withMermaid({
                     { text: 'Items', link: '/packages/oms/cart-items' },
                     { text: 'Promotions', link: '/packages/oms/cart-promotions' },
                     { text: 'Campaigns', link: '/packages/oms/cart-campaigns' },
-
                     { text: 'Shipping', link: '/packages/oms/cart-shipping' },
                   ],
                 },
 
-                { text: 'Checkout', link: '/packages/oms/checkout' },
-                { text: 'Order', link: '/packages/oms/order' },
+                /*                 { text: 'Checkout', link: '/packages/oms/checkout' },
+                { text: 'Order', link: '/packages/oms/order' }, */
                 { text: 'Merchant data', link: '/packages/oms/merchant-data' },
               ],
             },
