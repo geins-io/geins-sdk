@@ -38,7 +38,7 @@ export class EventService {
    * @param handler A callback function that handles the event data.
    * @param eventName (optional): The name of the event to listen for. If omitted, it defaults to 'geins-event'.
    */
-  listnerAdd(handler: any, eventName: string = this.eventName): void {
+  listenerAdd(handler: any, eventName: string = this.eventName): void {
     this.emitter.on(eventName, handler);
   }
 
@@ -47,21 +47,21 @@ export class EventService {
    * @param handler A callback function that handles the event data.
    * @param eventName (optional): The name of the event to listen for. If omitted, it defaults to 'geins-event'.
    */
-  listnerOnce(handler: any, eventName: string = this.eventName): void {
+  listenerOnce(handler: any, eventName: string = this.eventName): void {
     this.emitter.once(eventName, handler);
   }
   /**
    * Removes the specified event listener from the event emitter.   *
    * @param eventName (optional): The name of the event to listen for. If omitted, it defaults to 'geins-event'.
    */
-  listnerRemove(eventName: string = this.eventName): void {
+  listenerRemove(eventName: string = this.eventName): void {
     this.emitter.removeAllListeners(eventName);
   }
   /**
    * Returns the number of listeners for the specified event.
    * @param eventName (optional): The name of the event to listen for. If omitted, it defaults to 'geins-event'.
    */
-  listnerCount(eventName: string = this.eventName): number {
+  listenerCount(eventName: string = this.eventName): number {
     return this.emitter.listenerCount(eventName);
   }
   /**
@@ -69,7 +69,7 @@ export class EventService {
    * @param eventName
    * @returns An array of listeners for the specified event.
    */
-  listnersGet(eventName: string = this.eventName): any[] {
+  listenersGet(eventName: string = this.eventName): any[] {
     return this.emitter.listeners(eventName);
   }
   /**
@@ -77,10 +77,7 @@ export class EventService {
    * @param eventMessage - The event message to push.
    * @param eventName - The name of the event to push the message to. If omitted, it defaults to 'geins-event'.
    */
-  push(
-    eventMessage: GeinsEventMessage,
-    eventName: string = this.eventName,
-  ): void {
+  push(eventMessage: GeinsEventMessage, eventName: string = this.eventName): void {
     this.emitter.emit(eventName, eventMessage);
     if ((eventMessage.broadcast ?? true) && this.broadcast) {
       this.broadcast?.postMessage({ eventMessage, eventName });

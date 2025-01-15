@@ -47,6 +47,10 @@ export class AuthServiceClient {
     };
     const response = await fetch(url, options);
     const text = await response.text();
+    if (!text) {
+      throw new Error('Failed to request challenge: Empty response');
+    }
+
     const retval = JSON.parse(text);
     if (!retval?.sign) {
       throw new Error('Failed to fetch sign');

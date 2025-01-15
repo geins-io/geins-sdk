@@ -43,3 +43,14 @@ export const cmsSettings = {
     alias: process.env.GEINS_CMS_PAGE_ALIAS!,
   },
 };
+
+export const omsSettings = {
+  skus: {
+    skuId1: parseInt(process.env.GEINS_OMS_SKUID1!.toString(), 10),
+    skuId2: parseInt(process.env.GEINS_OMS_SKUID2!.toString(), 10),
+    skuId3: parseInt(process.env.GEINS_OMS_SKUID3!.toString(), 10),
+  },
+  promotionCodes: {
+    percentOff: process.env.GEINS_PROMO_CODE!.toString(),
+  },
+};

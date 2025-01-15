@@ -1,0 +1,124 @@
+#import "./package.gql"
+#import "./price.gql"
+#import "./stock.gql"
+#import "./campaign-rule.gql"
+
+fragment Cart on CartType {
+  id
+  isCompleted
+  merchantData
+  promoCode
+  appliedCampaigns {
+    ...CampaignRule
+    __typename
+  }
+  items {
+    id
+    groupKey
+    skuId
+    quantity
+    message
+    productPackage {
+      ...ProductPackageCartItem
+      __typename
+    }
+    campaign {
+      appliedCampaigns {
+        ...CampaignRule
+        __typename
+      }
+      prices {
+        price {
+          ...Price
+          __typename
+        }
+        quantity
+        __typename
+      }
+      __typename
+    }
+    product {
+      productId
+      articleNumber
+      brand {
+        name
+        __typename
+      }
+
+      name
+      productImages {
+        fileName
+        __typename
+      }
+      alias
+      canonicalUrl
+      primaryCategory {
+        categoryId
+        name
+        order
+        __typename
+      }
+      categories {
+        categoryId
+        name
+        order
+        __typename
+      }
+      skus {
+        skuId
+        name
+        stock {
+          ...Stock
+          __typename
+        }
+        __typename
+      }
+      unitPrice {
+        ...Price
+        __typename
+      }
+      __typename
+    }
+    unitPrice {
+      ...Price
+      __typename
+    }
+    totalPrice {
+      ...Price
+      __typename
+    }
+    __typename
+  }
+  summary {
+    fixedAmountDiscountIncVat
+    fixedAmountDiscountExVat
+    balance {
+      pending
+      pendingFormatted
+      totalSellingPriceExBalanceExVat
+      totalSellingPriceExBalanceIncVat
+      totalSellingPriceExBalanceIncVatFormatted
+      __typename
+    }
+    subTotal {
+      ...Price
+      __typename
+    }
+    shipping {
+      amountLeftToFreeShipping
+      amountLeftToFreeShippingFormatted
+      feeExVatFormatted
+      feeIncVatFormatted
+      feeIncVat
+      feeExVat
+      isDefault
+      __typename
+    }
+    total {
+      ...Price
+      __typename
+    }
+    __typename
+  }
+  __typename
+}

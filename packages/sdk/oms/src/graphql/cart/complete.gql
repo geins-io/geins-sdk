@@ -1,0 +1,7 @@
+#import "../fragments/cart.gql"
+mutation completeCart($id: String!, $channelId: String, $languageId: String, $marketId: String) {
+  completeCart(id: $id, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+    ...Cart
+    __typename
+  }
+}

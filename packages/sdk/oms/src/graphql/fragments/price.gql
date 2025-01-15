@@ -1,0 +1,26 @@
+fragment Price on PriceType {
+  sellingPriceIncVat
+  sellingPriceExVat
+  regularPriceIncVat
+  regularPriceExVat
+  discountIncVat
+  discountExVat
+  discountPercentage
+  vat
+  isDiscounted
+  sellingPriceIncVatFormatted
+  sellingPriceExVatFormatted
+  regularPriceIncVatFormatted
+  regularPriceExVatFormatted
+  discountIncVatFormatted
+  discountExVatFormatted
+  vatFormatted
+  currency {
+    code
+    symbol
+    rate
+    name
+    __typename
+  }
+  __typename
+}

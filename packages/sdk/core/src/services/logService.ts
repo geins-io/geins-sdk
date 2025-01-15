@@ -230,18 +230,9 @@ export class LogService {
   }
 
   private static log(logLevel: LogLevel, args: any[]): void {
-    const { methodName, fileName, className, framework, fileType } =
-      LogService.getCallerInfoExtended();
+    const { methodName, fileName, className, framework, fileType } = LogService.getCallerInfoExtended();
 
-    LogService.output(
-      logLevel,
-      methodName,
-      fileName,
-      className,
-      framework,
-      fileType,
-      args,
-    );
+    LogService.output(logLevel, methodName, fileName, className, framework, fileType, args);
   }
 
   private static output(
@@ -260,9 +251,7 @@ export class LogService {
     const classInfo = className ? `${className}.` : '';
 
     const boxColor = fileType ? fileType.color : typeMeta.color;
-    const boxtColorServer = fileType
-      ? fileType.colorServer
-      : logColorServer.bgWhite;
+    const boxtColorServer = fileType ? fileType.colorServer : logColorServer.bgWhite;
     const icon = fileType ? fileType.icon : typeMeta.icon;
 
     if (LogService.isServer()) {
@@ -270,13 +259,10 @@ export class LogService {
         `${boxtColorServer}${logColorServer.fgBlack}${icon} ${fileName} ${logColorServer.reset}${logColorServer.bgWhite}${logColorServer.fgBlack} ${classInfo}${methodInfo}${logColorServer.reset} `,
       );
 
-      args.forEach((arg) => {
+      args.forEach(arg => {
         // check type of arg
         if (typeof arg === 'object') {
-          console.log(
-            `${logColorServer.dim}>> ${logColorServer.reset}`,
-            `${JSON.stringify(arg)}`,
-          );
+          console.log(`${logColorServer.dim}>> ${logColorServer.reset}`, `${JSON.stringify(arg)}`);
           return;
         } else if (typeof arg === 'string') {
           console.log(
@@ -292,12 +278,8 @@ export class LogService {
         'background: #D3D3D3; color: #000; padding: 2px 8px; border-radius: 0 2px 2px 0;',
       );
 
-      args.forEach((arg) => {
-        console.log(
-          `%c>>`,
-          `color: ${typeMeta.color}; margin-left: 5px; font-weight: bold;`,
-          arg,
-        );
+      args.forEach(arg => {
+        console.log(`%c>>`, `color: ${typeMeta.color}; margin-left: 5px; font-weight: bold;`, arg);
       });
     }
   }
@@ -331,22 +313,17 @@ export class LogService {
     let framework: string | null = null;
 
     if (LogService.isServer()) {
-      framework = 'node.js';
+      framework = 'Node.js';
       // logic for server server side
       for (let i = 1; i < stack.length; i++) {
         const line = stack[i];
         // Skip internal lines related to LogService and node_modules
-        if (
-          line.includes('LogService') ||
-          line.includes('node_modules') ||
-          line.includes('logService.ts')
-        ) {
+        if (line.includes('LogService') || line.includes('node_modules') || line.includes('logService.ts')) {
           continue;
         }
         // Extract class name (optional) and method name (mandatory)
         const methodNameMatch = line.match(/at (?:([\w$]+)\.)?(\w+)\s*\(/); // Optional className, methodName
-        const filePathMatch =
-          line.match(/(http.*\.\w+)/) || line.match(/at (.*):\d+:\d+/);
+        const filePathMatch = line.match(/(http.*\.\w+)/) || line.match(/at (.*):\d+:\d+/);
 
         const className = methodNameMatch ? methodNameMatch[1] || '' : ''; // Return an empty string if class name is not found
         const methodName = methodNameMatch ? methodNameMatch[2] : 'anonymous';
@@ -388,8 +365,7 @@ export class LogService {
 
         // Extract class name (optional) and method name (mandatory)
         const methodNameMatch = line.match(/at (?:([\w$]+)\.)?(\w+)\s*\(/); // Optional className, methodName
-        const filePathMatch =
-          line.match(/(http.*\.\w+)/) || line.match(/at (.*):\d+:\d+/);
+        const filePathMatch = line.match(/(http.*\.\w+)/) || line.match(/at (.*):\d+:\d+/);
 
         const className = methodNameMatch ? methodNameMatch[1] || '' : ''; // Return an empty string if class name is not found
         const methodName = methodNameMatch ? methodNameMatch[2] : 'anonymous';
@@ -419,12 +395,10 @@ export class LogService {
   }
 
   // Helper method to get file type from extension
-  private static getFileTypeFromExtension(
-    fileName: string,
-  ): LogFileMeta | null {
+  private static getFileTypeFromExtension(fileName: string): LogFileMeta | null {
     for (const key in logTypeFiles) {
       const fileType = logTypeFiles[key as keyof LogTypeFiles];
-      if (fileType.fileExtensions.some((ext) => fileName.endsWith(ext))) {
+      if (fileType.fileExtensions.some(ext => fileName.endsWith(ext))) {
         return fileType;
       }
     }

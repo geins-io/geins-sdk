@@ -1,0 +1,21 @@
+#import "../fragments/cart.gql"
+mutation setCartShippingFee(
+  $id: String!
+  $shippingFee: Decimal!
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
+  setCartShippingFee(
+    cartId: $id
+    shippingFee: $shippingFee
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $marketId
+  ) {
+    cart {
+      ...Cart
+      __typename
+    }
+  }
+}

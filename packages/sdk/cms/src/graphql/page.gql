@@ -1,7 +1,7 @@
 #import "./fragments/meta.gql"
 #import "./fragments/page-widget-container.gql"
 
-query widgetArea(
+query widgetAreaPageAlias(
   $family: String = null
   $areaName: String = null
   $alias: String = null

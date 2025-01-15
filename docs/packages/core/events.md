@@ -113,38 +113,38 @@ To respond to events emitted by the SDK, you need to add event listeners. The `E
 ### Adding Event Listeners
 
 ```typescript
-geinsCore.events.listnerAdd(handler: (data: GeinsEventMessage) => void, eventName?: GeinsEventType | string);
-geinsCore.events.listnerOnce(handler: (data: GeinsEventMessage) => void, eventName?: GeinsEventType | string);
+geinsCore.events.listenerAdd(handler: (data: GeinsEventMessage) => void, eventName?: GeinsEventType | string);
+geinsCore.events.listenerOnce(handler: (data: GeinsEventMessage) => void, eventName?: GeinsEventType | string);
 
 ```
 
-\- `listnerAdd`: Adds a persistent event listener for the specified event.
+\- `listenerAdd`: Adds a persistent event listener for the specified event.
 
-\- `listnerOnce`: Adds a one-time event listener that is removed after it is triggered once.
+\- `listenerOnce`: Adds a one-time event listener that is removed after it is triggered once.
 
 ### Removing Event Listeners
 
 ```typescript
-geinsCore.events.listnerRemove(eventName?: GeinsEventType | string);
-geinsCore.events.listnerRemoveAll(eventName?: GeinsEventType | string);
+geinsCore.events.listenerRemove(eventName?: GeinsEventType | string);
+geinsCore.events.listenerRemoveAll(eventName?: GeinsEventType | string);
 
 ```
 
-\- `listnerRemove`: Removes all listeners for the specified event.
+\- `listenerRemove`: Removes all listeners for the specified event.
 
-\- `listnerRemoveAll`: Removes all listeners for the specified event.
+\- `listenerRemoveAll`: Removes all listeners for the specified event.
 
 ### Counting and Retrieving Listeners
 
 ```typescript
-geinsCore.events.listnerCount(eventName?: GeinsEventType | string);
-geinsCore.events.listnersGet(eventName?: GeinsEventType | string);
+geinsCore.events.listenerCount(eventName?: GeinsEventType | string);
+geinsCore.events.listenersGet(eventName?: GeinsEventType | string);
 
 ```
 
-\- `listnerCount`: Returns the number of listeners for the specified event.
+\- `listenerCount`: Returns the number of listeners for the specified event.
 
-\- `listnersGet`: Retrieves all listeners for the specified event.
+\- `listenersGet`: Retrieves all listeners for the specified event.
 
 ## Managing Event Listeners
 
@@ -154,12 +154,12 @@ Managing event listeners effectively is crucial for ensuring that your applicati
 
 The `EventService` class includes the following methods to manage event listeners:
 
-#### listnerAdd
+#### listenerAdd
 
 Adds a persistent event listener for the specified event. This listener will be invoked every time the event is emitted.
 
 ```typescript
-listnerAdd(handler: (data: GeinsEventMessage) => void, eventName?: GeinsEventType | string);
+listenerAdd(handler: (data: GeinsEventMessage) => void, eventName?: GeinsEventType | string);
 
 ```
 
@@ -171,17 +171,17 @@ listnerAdd(handler: (data: GeinsEventMessage) => void, eventName?: GeinsEventTyp
 **Example:**
 
 ```typescript
-geinsCore.events.listnerAdd((data: GeinsEventMessage) => {
+geinsCore.events.listenerAdd((data: GeinsEventMessage) => {
   console.log('Received event:', data.subject, data.payload);
 }, GeinsEventType.USER_LOGIN);
 ```
 
-#### listnerOnce
+#### listenerOnce
 
 Adds a one-time event listener for the specified event. This listener will be invoked only the first time the event is emitted and then automatically removed.
 
 ```typescript
-listnerOnce(handler: (data: GeinsEventMessage) => void, eventName?: GeinsEventType | string);
+listenerOnce(handler: (data: GeinsEventMessage) => void, eventName?: GeinsEventType | string);
 
 ```
 
@@ -193,17 +193,17 @@ listnerOnce(handler: (data: GeinsEventMessage) => void, eventName?: GeinsEventTy
 **Example:**
 
 ```typescript
-geinsCore.events.listnerOnce((data: GeinsEventMessage) => {
+geinsCore.events.listenerOnce((data: GeinsEventMessage) => {
   console.log('This will log only once:', data.subject, data.payload);
 }, GeinsEventType.USER_LOGOUT);
 ```
 
-#### listnerRemove
+#### listenerRemove
 
 Removes all listeners for the specified event.
 
 ```typescript
-listnerRemove(eventName?: GeinsEventType | string);
+listenerRemove(eventName?: GeinsEventType | string);
 
 ```
 
@@ -214,15 +214,15 @@ listnerRemove(eventName?: GeinsEventType | string);
 **Example:**
 
 ```typescript
-geinsCore.events.listnerRemove(GeinsEventType.CART_ADD);
+geinsCore.events.listenerRemove(GeinsEventType.CART_ADD);
 ```
 
-#### listnerRemoveAll
+#### listenerRemoveAll
 
-Removes all listeners for the specified event. This is functionally identical to `listnerRemove`.
+Removes all listeners for the specified event. This is functionally identical to `listenerRemove`.
 
 ```typescript
-listnerRemoveAll(eventName?: GeinsEventType | string);
+listenerRemoveAll(eventName?: GeinsEventType | string);
 
 ```
 
@@ -233,15 +233,15 @@ listnerRemoveAll(eventName?: GeinsEventType | string);
 **Example:**
 
 ```typescript
-geinsCore.events.listnerRemoveAll(GeinsEventType.CART_REMOVE);
+geinsCore.events.listenerRemoveAll(GeinsEventType.CART_REMOVE);
 ```
 
-#### listnerCount
+#### listenerCount
 
 Returns the number of listeners currently registered for the specified event.
 
 ```typescript
-listnerCount(eventName?: GeinsEventType | string): number;
+listenerCount(eventName?: GeinsEventType | string): number;
 
 ```
 
@@ -254,18 +254,18 @@ listnerCount(eventName?: GeinsEventType | string): number;
 **Example:**
 
 ```typescript
-const loginListenerCount = geinsCore.events.listnerCount(
+const loginListenerCount = geinsCore.events.listenerCount(
   GeinsEventType.USER_LOGIN,
 );
 console.log('Number of USER_LOGIN listeners:', loginListenerCount);
 ```
 
-#### listnersGet
+#### listenersGet
 
 Retrieves all listeners for the specified event.
 
 ```typescript
-listnersGet(eventName?: GeinsEventType | string): Function[];
+listenersGet(eventName?: GeinsEventType | string): Function[];
 
 ```
 
@@ -278,7 +278,7 @@ listnersGet(eventName?: GeinsEventType | string): Function[];
 **Example:**
 
 ```typescript
-const cartAddListeners = geinsCore.events.listnersGet(GeinsEventType.CART_ADD);
+const cartAddListeners = geinsCore.events.listenersGet(GeinsEventType.CART_ADD);
 cartAddListeners.forEach((listener, index) => {
   console.log(`Listener ${index + 1}:`, listener);
 });
@@ -382,7 +382,7 @@ const handleUserLogin = async (eventMessage: GeinsEventMessage) => {
 };
 
 // Add the event listener
-geinsCore.events.listnerAdd(handleUserLogin, GeinsEventType.USER_LOGIN);
+geinsCore.events.listenerAdd(handleUserLogin, GeinsEventType.USER_LOGIN);
 
 // Emit a USER_LOGIN event (this would typically be triggered elsewhere in your application)
 const loginEventMessage: GeinsEventMessage = {
@@ -412,7 +412,7 @@ Below are examples of how to use the `EventService` methods within your TypeScri
 ### Adding a Persistent Event Listener
 
 ```typescript
-geinsCore.events.listnerAdd((data: GeinsEventMessage) => {
+geinsCore.events.listenerAdd((data: GeinsEventMessage) => {
   console.log('Received event:', data.subject, data.payload);
 }, GeinsEventType.USER_LOGIN);
 ```
@@ -422,7 +422,7 @@ This listener will log the event data every time a `USER_LOGIN` event is emitted
 ### Adding a One-Time Event Listener
 
 ```typescript
-geinsCore.events.listnerOnce((data: GeinsEventMessage) => {
+geinsCore.events.listenerOnce((data: GeinsEventMessage) => {
   console.log('This will log only once:', data.subject, data.payload);
 }, GeinsEventType.USER_LOGOUT);
 ```
@@ -432,7 +432,7 @@ This listener will log the event data only the first time a `USER_LOGOUT` event 
 ### Removing Event Listeners
 
 ```typescript
-geinsCore.events.listnerRemove(GeinsEventType.CART_ADD);
+geinsCore.events.listenerRemove(GeinsEventType.CART_ADD);
 ```
 
 Removes all listeners associated with the `CART_ADD` event.
@@ -440,7 +440,7 @@ Removes all listeners associated with the `CART_ADD` event.
 ### Removing All Event Listeners
 
 ```typescript
-geinsCore.events.listnerRemoveAll(GeinsEventType.CART_REMOVE);
+geinsCore.events.listenerRemoveAll(GeinsEventType.CART_REMOVE);
 ```
 
 Removes all listeners associated with the `CART_REMOVE` event.
@@ -448,7 +448,7 @@ Removes all listeners associated with the `CART_REMOVE` event.
 ### Counting Event Listeners
 
 ```typescript
-const loginListenerCount = geinsCore.events.listnerCount(
+const loginListenerCount = geinsCore.events.listenerCount(
   GeinsEventType.USER_LOGIN,
 );
 console.log('Number of USER_LOGIN listeners:', loginListenerCount);
@@ -459,7 +459,7 @@ Logs the number of listeners currently registered for the `USER_LOGIN` event.
 ### Retrieving Event Listeners
 
 ```typescript
-const cartAddListeners = geinsCore.events.listnersGet(GeinsEventType.CART_ADD);
+const cartAddListeners = geinsCore.events.listenersGet(GeinsEventType.CART_ADD);
 cartAddListeners.forEach((listener, index) => {
   console.log(`Listener ${index + 1}:`, listener);
 });
@@ -490,7 +490,7 @@ Below are examples of how to use the `EventService` methods within your TypeScri
 ### Adding a Persistent Event Listener
 
 ```typescript
-geinsCore.events.listnerAdd((data: GeinsEventMessage) => {
+geinsCore.events.listenerAdd((data: GeinsEventMessage) => {
   console.log('Received event:', data.subject, data.payload);
 }, GeinsEventType.USER_LOGIN);
 ```
@@ -500,7 +500,7 @@ This listener will log the event data every time a `USER_LOGIN` event is emitted
 ### Adding a One-Time Event Listener
 
 ```typescript
-geinsCore.events.listnerOnce((data: GeinsEventMessage) => {
+geinsCore.events.listenerOnce((data: GeinsEventMessage) => {
   console.log('This will log only once:', data.subject, data.payload);
 }, GeinsEventType.USER_LOGOUT);
 ```
@@ -510,7 +510,7 @@ This listener will log the event data only the first time a `USER_LOGOUT` event 
 ### Removing Event Listeners
 
 ```typescript
-geinsCore.events.listnerRemove(GeinsEventType.CART_ADD);
+geinsCore.events.listenerRemove(GeinsEventType.CART_ADD);
 ```
 
 Removes all listeners associated with the `CART_ADD` event.
@@ -518,7 +518,7 @@ Removes all listeners associated with the `CART_ADD` event.
 ### Counting Event Listeners
 
 ```typescript
-const loginListenerCount = geinsCore.events.listnerCount(
+const loginListenerCount = geinsCore.events.listenerCount(
   GeinsEventType.USER_LOGIN,
 );
 console.log('Number of USER_LOGIN listeners:', loginListenerCount);
@@ -529,7 +529,7 @@ Logs the number of listeners currently registered for the `USER_LOGIN` event.
 ### Retrieving Event Listeners
 
 ```typescript
-const cartAddListeners = geinsCore.events.listnersGet(GeinsEventType.CART_ADD);
+const cartAddListeners = geinsCore.events.listenersGet(GeinsEventType.CART_ADD);
 cartAddListeners.forEach((listener, index) => {
   console.log(`Listener ${index + 1}:`, listener);
 });

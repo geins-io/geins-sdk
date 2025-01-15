@@ -6,16 +6,39 @@ The `@geins/core` package serves as the foundation of the Geins SDK, providing e
 
 The `GeinsCore` class encapsulates core services that are crucial for building applications with the Geins SDK. By initializing an instance of `GeinsCore`, you gain access to:
 
-- **Event Handling:** Manage and respond to events within your application.
-- **Cookie Management:** Simplify cookie operations across client and server environments.
-- **API Clients:** Interact with Geins APIs using provided clients for REST and GraphQL.
-- **Channel Information:** Access current and available channels for your application.
+- [Channel Information](./channel): Access current and available channels for your application.
+- [Event Handling](./events): Manage and respond to events within your application.
+- [Cookie Management](./cookies): Simplify cookie operations across client and server environments.
+- [Routing](./routing): Manage routing and navigation within your application.
+- [GraphQL Client](./graphql-client): Interact with Geins Merchant APIs using a GraphQL client.
 
 All other Geins packages require an instance of `GeinsCore` to function, making it an indispensable part of your application setup.
 
 ## Setting Up GeinsCore
 
 To get started, you need to create an instance of `GeinsCore` by providing necessary configuration settings.
+
+### Installation
+
+::: code-group
+
+```sh [npm]
+$ npm add -D @geins/core
+```
+
+```sh [pnpm]
+$ pnpm add -D @geins/core
+```
+
+```sh [yarn]
+$ yarn add -D @geins/core
+```
+
+```sh [bun]
+$ bun add -D @geins/core
+```
+:::
+
 
 ### GeinsSettings Type
 
@@ -50,6 +73,7 @@ const geinsSettings = {
   locale: 'your-locale',
   market: 'your-market',
   environment: 'production', // or 'staging', 'development'
+  loglevel: 'info', // or 'debug', 'warn', 'error'
 };
 
 const geinsCore = new GeinsCore(geinsSettings);
@@ -70,7 +94,7 @@ The `EventService` allows you to manage custom events within your application. F
 const eventService = geinsCore.events;
 
 // Adding an event listener
-eventService.listnerAdd(data => {
+eventService.listenerAdd(data => {
   console.log('Event received:', data);
 });
 

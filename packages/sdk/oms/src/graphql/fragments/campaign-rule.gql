@@ -1,0 +1,6 @@
+fragment CampaignRule on CampaignRuleType {
+  campaignId
+  name
+  hideTitle
+  __typename
+}

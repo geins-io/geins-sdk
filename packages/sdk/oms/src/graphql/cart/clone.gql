@@ -1,0 +1,19 @@
+#import "../fragments/cart.gql"
+mutation cloneCart(
+  $id: String!
+  $resetPromotions: Boolean
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
+  cloneCart(
+    id: $id
+    resetPromotions: $resetPromotions
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $marketId
+  ) {
+    ...Cart
+    __typename
+  }
+}

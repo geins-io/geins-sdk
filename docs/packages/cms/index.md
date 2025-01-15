@@ -2,6 +2,35 @@
 
 The `@geins/cms` package provides a comprehensive content management system that enables developers to create, manage, and preview dynamic content in their applications. This package includes tools for handling content areas, menus, pages, and previewing unpublished content.
 
+
+## Setting up @geins/cms
+
+### Prerequisites
+
+- `@geins/core` package linked in the workspace.
+
+### Installation
+
+::: code-group
+
+```sh [npm]
+$ npm add -D @geins/cms
+```
+
+```sh [pnpm]
+$ pnpm add -D @geins/cms
+```
+
+```sh [yarn]
+$ yarn add -D @geins/cms
+```
+
+```sh [bun]
+$ bun add -D @geins/cms
+```
+:::
+
+
 ## Quick Start
 
 To get started with `@geins/cms`, initialize `GeinsCore` and `GeinsCMS` as follows:
@@ -79,3 +108,4 @@ The Geins CMS is ideal for applications that require flexible, dynamic content m
 - **Multi-language Sites**: The CMS supports localized content, making it suitable for applications targeting multiple regions.
 
 The preview functionality is particularly useful for content managers who need to see unpublished changes before they go live, reducing the risk of errors in production.
+

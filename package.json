@@ -6,12 +6,14 @@
   "license": "MIT",
   "type": "module",
   "workspaces": [
+    "apps/*",
     "packages/config/*",
     "packages/sdk/*"
   ],
   "scripts": {
     "build": "yarn codegen &&  turbo build",
     "dev": "turbo dev",
+    "dev:test": "turbo dev --filter=test-app",
     "dev:nuxt": "turbo dev --filter=nuxt-app",
     "start:nuxt": "turbo start --filter=nuxt-app",
     "build:nuxt": "turbo build --filter=nuxt-app",
@@ -37,7 +39,7 @@
     "release": "yarn build:sdk && changeset version && changeset publish"
   },
   "lint-staged": {
-    "*.{ts,md,vue,js}": [
+    "*.{ts,md,js}": [
       "yarn format",
       "yarn lint"
     ]
@@ -71,7 +73,7 @@
     "turbo": "^2.1.3",
     "typescript": "^5.6.2",
     "vite": "^5.4.11",
-    "vitepress": "^1.3.4",
+    "vitepress": "^1.5.0",
     "vitepress-plugin-mermaid": "^2.0.17"
   },
   "packageManager": "yarn@1.22.22",
@@ -81,5 +83,7 @@
   "resolutions": {
     "@algolia/client-search": "^4.24.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "vitepress-plugin-group-icons": "^1.3.3"
+  }
 }

@@ -1,0 +1,19 @@
+#import "../fragments/cart.gql"
+mutation setCartMerchantData(
+  $id: String!
+  $merchantData: String!
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
+  setCartMerchantData(
+    id: $id
+    merchantData: $merchantData
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $marketId
+  ) {
+    ...Cart
+    __typename
+  }
+}

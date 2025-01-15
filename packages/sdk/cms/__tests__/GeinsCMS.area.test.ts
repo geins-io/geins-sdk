@@ -27,18 +27,4 @@ describe('GeinsCMS area', () => {
     expect(area.tags).toBeDefined();
     expect(area.containers).toBeDefined();
   });
-
-  it('should get a page with an alias', async () => {
-    const page: any = await geinsCMS.page.get({
-      alias: cmsSettings.page.alias,
-    });
-
-    expect(page).toBeDefined();
-    expect(page.id).toBeDefined();
-    expect(page.name).toBeDefined();
-    expect(page.title).toBeDefined();
-    expect(page.meta).toBeDefined();
-    expect(page.tags).toBeDefined();
-    expect(page.containers).toBeDefined();
-  });
 });

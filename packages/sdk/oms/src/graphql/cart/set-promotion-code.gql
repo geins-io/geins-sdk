@@ -1,0 +1,19 @@
+#import "../fragments/cart.gql"
+mutation setCartPromoCode(
+  $id: String!
+  $promoCode: String!
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
+  setCartPromoCode(
+    id: $id
+    promoCode: $promoCode
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $marketId
+  ) {
+    ...Cart
+    __typename
+  }
+}

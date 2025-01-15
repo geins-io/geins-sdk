@@ -1,0 +1,20 @@
+#import "../fragments/cart.gql"
+query getCart(
+  $id: String
+  $forceRefresh: Boolean
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
+  getCart(
+    id: $id
+    forceRefresh: $forceRefresh
+    includeCompleted: true
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $marketId
+  ) {
+    ...Cart
+    __typename
+  }
+}

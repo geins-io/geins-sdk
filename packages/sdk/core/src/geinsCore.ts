@@ -181,7 +181,7 @@ export class GeinsCore {
    * @returns EventService
    * @example
    * const eventService = core.events;
-   * eventService.listnerAdd((data) => {
+   * eventService.listenerAdd((data) => {
    *  console.log(data);
    * });
    * eventService.push({

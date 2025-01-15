@@ -1,11 +1,40 @@
 // import { defineConfig } from 'vitepress'
+import { HeadConfig, loadEnv } from 'vitepress';
 import { withMermaid } from 'vitepress-plugin-mermaid';
+import { groupIconMdPlugin, groupIconVitePlugin, localIconLoader } from 'vitepress-plugin-group-icons';
+const env = loadEnv('', process.cwd());
+const scripts: HeadConfig[] = [];
+if (env.VITE_GA_ID) {
+  scripts.push(
+    ['script', { async: '', src: `https://www.googletagmanager.com/gtag/js?id=${env.VITE_GA_ID}` }],
+    [
+      'script',
+      {},
+      `window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${env.VITE_GA_ID}');`,
+    ],
+  );
+}
+if (env.VITE_CALARIFY_ID) {
+  scripts.push([
+    'script',
+    {},
+    `(function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "${env.VITE_CALARIFY_ID}");`,
+  ]);
+}
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
   title: 'Geins SDK',
-  description: 'A perfect developer experience for node.js devlopment',
-  head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
+  description: 'A perfect developer experience',
+  lang: 'en-US',
+  head: [['link', { rel: 'icon', href: '/favicon.ico' }], ...scripts],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: {
@@ -13,12 +42,15 @@ export default withMermaid({
       dark: '/logo/geins-g-white.svg',
       alt: 'Geins SDK',
     },
+    banner: {
+      message: '🚀 Welcome to the Geins SDK documentation! Check out the latest updates.',
+      link: '/updates',
+    },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Guide', link: '/guide/what-is-geins' },
-      { text: 'Package Refrence', link: '/packages' },
+      { text: 'Package Reference', link: '/packages' },
     ],
-
     sidebar: {
       '/guide/': [
         {
@@ -42,6 +74,10 @@ export default withMermaid({
           text: 'Examples',
           items: [
             {
+              text: 'Starters using the SDK',
+              link: '/guide/examples/starters',
+            },
+            {
               text: 'Using custom queries',
               link: '/guide/examples/graphql-client',
             },
@@ -50,7 +86,7 @@ export default withMermaid({
               link: '/guide/examples/routing',
             },
             {
-              text: 'Subscibing to events',
+              text: 'Subscribing to events',
               link: '/guide/examples/events',
             }, */
           ],
@@ -108,6 +144,26 @@ export default withMermaid({
                 },
               ],
             },
+            {
+              text: '@geins/oms',
+              link: '/packages/oms',
+              items: [
+                {
+                  text: 'Cart',
+                  link: '/packages/oms/cart',
+                  items: [
+                    { text: 'Items', link: '/packages/oms/cart-items' },
+                    { text: 'Promotions', link: '/packages/oms/cart-promotions' },
+                    { text: 'Campaigns', link: '/packages/oms/cart-campaigns' },
+                    { text: 'Shipping', link: '/packages/oms/cart-shipping' },
+                  ],
+                },
+
+                /*                 { text: 'Checkout', link: '/packages/oms/checkout' },
+                { text: 'Order', link: '/packages/oms/order' }, */
+                { text: 'Merchant data', link: '/packages/oms/merchant-data' },
+              ],
+            },
           ],
         },
       ],
@@ -116,7 +172,6 @@ export default withMermaid({
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2024-present Geins',
     },
-
     socialLinks: [{ icon: 'github', link: 'https://github.com/geins-io/geins' }],
     outline: {
       level: [2, 4],
@@ -125,6 +180,14 @@ export default withMermaid({
     search: {
       provider: 'local',
     },
+  },
+  markdown: {
+    config(md) {
+      md.use(groupIconMdPlugin);
+    },
+  },
+  vite: {
+    plugins: [groupIconVitePlugin()],
   },
   mermaid: {},
 });

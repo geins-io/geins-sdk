@@ -2128,6 +2128,7 @@ export type GeinsMenuType = {
     order: number,
     title?: string | null,
     canonicalUrl?: string | null,
+    value?: string | null,
     children?: Array<{
       id: string,
       label?: string | null,
@@ -2138,6 +2139,7 @@ export type GeinsMenuType = {
       order: number,
       title?: string | null,
       canonicalUrl?: string | null,
+      value?: string | null,
       children?: Array<{
         id: string,
         label?: string | null,
@@ -2147,7 +2149,8 @@ export type GeinsMenuType = {
         type: string,
         order: number,
         title?: string | null,
-        canonicalUrl?: string | null
+        canonicalUrl?: string | null,
+        value?: string | null
       } | null> | null
     } | null> | null
   } | null> | null
@@ -2163,6 +2166,7 @@ export type GeinsMenuItemBaseType = {
   order: number,
   title?: string | null,
   canonicalUrl?: string | null,
+  value?: string | null,
   children?: Array<{
     id: string,
     label?: string | null,
@@ -2173,6 +2177,7 @@ export type GeinsMenuItemBaseType = {
     order: number,
     title?: string | null,
     canonicalUrl?: string | null,
+    value?: string | null,
     children?: Array<{
       id: string,
       label?: string | null,
@@ -2182,7 +2187,8 @@ export type GeinsMenuItemBaseType = {
       type: string,
       order: number,
       title?: string | null,
-      canonicalUrl?: string | null
+      canonicalUrl?: string | null,
+      value?: string | null
     } | null> | null
   } | null> | null
 };
@@ -2196,7 +2202,53 @@ export type GeinsMenuItemType = {
   type: string,
   order: number,
   title?: string | null,
-  canonicalUrl?: string | null
+  canonicalUrl?: string | null,
+  value?: string | null
+};
+
+export type GeinsMetaType = {
+  title?: string | null,
+  description?: string | null
+};
+
+export type GeinsPageWidgetContainerType = {
+  id: number,
+  name: string,
+  sortOrder: number,
+  layout: string,
+  responsiveMode: string,
+  design: string,
+  widgets?: Array<{
+    id: string,
+    name: string,
+    sortOrder: number,
+    type: string,
+    size: string,
+    configuration: string,
+    images?: Array<{
+      fileName: string,
+      largestSize?: {
+        imageWidth: number,
+        imageHeight: number
+      } | null
+    } | null> | null
+  } | null> | null
+};
+
+export type GeinsPageWidgetType = {
+  id: string,
+  name: string,
+  sortOrder: number,
+  type: string,
+  size: string,
+  configuration: string,
+  images?: Array<{
+    fileName: string,
+    largestSize?: {
+      imageWidth: number,
+      imageHeight: number
+    } | null
+  } | null> | null
 };
 
 export type GeinsChannelFieldsType = {
@@ -2483,6 +2535,7 @@ export type GeinsMenuAtLocationType = {
       order: number,
       title?: string | null,
       canonicalUrl?: string | null,
+      value?: string | null,
       children?: Array<{
         id: string,
         label?: string | null,
@@ -2493,6 +2546,7 @@ export type GeinsMenuAtLocationType = {
         order: number,
         title?: string | null,
         canonicalUrl?: string | null,
+        value?: string | null,
         children?: Array<{
           id: string,
           label?: string | null,
@@ -2502,7 +2556,118 @@ export type GeinsMenuAtLocationType = {
           type: string,
           order: number,
           title?: string | null,
-          canonicalUrl?: string | null
+          canonicalUrl?: string | null,
+          value?: string | null
+        } | null> | null
+      } | null> | null
+    } | null> | null
+  } | null
+};
+
+export type GeinsWidgetAreaPageAliasVariablesType = Exact<{
+  family?: InputMaybe<Scalars['String']['input']>;
+  areaName?: InputMaybe<Scalars['String']['input']>;
+  alias?: InputMaybe<Scalars['String']['input']>;
+  displaySetting?: InputMaybe<Scalars['String']['input']>;
+  filters?: InputMaybe<Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>> | InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>;
+  preview?: InputMaybe<Scalars['Boolean']['input']>;
+  customerType?: InputMaybe<GeinsCustomerType>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsWidgetAreaPageAliasType = {
+  widgetArea?: {
+    id: number,
+    name: string,
+    title?: string | null,
+    familyName?: string | null,
+    tags?: Array<string | null> | null,
+    meta?: {
+      title?: string | null,
+      description?: string | null
+    } | null,
+    pageArea?: {
+      id: number,
+      name?: string | null,
+      index: number
+    } | null,
+    containers?: Array<{
+      id: number,
+      name: string,
+      sortOrder: number,
+      layout: string,
+      responsiveMode: string,
+      design: string,
+      widgets?: Array<{
+        id: string,
+        name: string,
+        sortOrder: number,
+        type: string,
+        size: string,
+        configuration: string,
+        images?: Array<{
+          fileName: string,
+          largestSize?: {
+            imageWidth: number,
+            imageHeight: number
+          } | null
+        } | null> | null
+      } | null> | null
+    } | null> | null
+  } | null
+};
+
+export type GeinsWidgetAreaVariablesType = Exact<{
+  family?: InputMaybe<Scalars['String']['input']>;
+  areaName?: InputMaybe<Scalars['String']['input']>;
+  alias?: InputMaybe<Scalars['String']['input']>;
+  displaySetting?: InputMaybe<Scalars['String']['input']>;
+  filters?: InputMaybe<Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>> | InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>;
+  preview?: InputMaybe<Scalars['Boolean']['input']>;
+  customerType?: InputMaybe<GeinsCustomerType>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsWidgetAreaType = {
+  widgetArea?: {
+    tags?: Array<string | null> | null,
+    meta?: {
+      title?: string | null,
+      description?: string | null
+    } | null,
+    pageArea?: {
+      id: number,
+      name?: string | null,
+      index: number
+    } | null,
+    containers?: Array<{
+      id: number,
+      name: string,
+      sortOrder: number,
+      layout: string,
+      responsiveMode: string,
+      design: string,
+      widgets?: Array<{
+        id: string,
+        name: string,
+        sortOrder: number,
+        type: string,
+        size: string,
+        configuration: string,
+        images?: Array<{
+          fileName: string,
+          largestSize?: {
+            imageWidth: number,
+            imageHeight: number
+          } | null
         } | null> | null
       } | null> | null
     } | null> | null
@@ -2909,6 +3074,313 @@ export type GeinsUserUpdateType = {
       currency: string,
       amount: number
     } | null> | null
+  } | null
+};
+
+export type GeinsGetCartVariablesType = Exact<{
+  id?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsGetCartType = {
+  getCart?: {
+    id?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      quantity: number,
+      skuId: number,
+      campaign?: {
+        appliedCampaigns?: Array<{
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          quantity: number,
+          price?: {
+            isDiscounted: boolean,
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            vat: number,
+            discountPercentage: number,
+            regularPriceIncVatFormatted?: string | null,
+            sellingPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null
+          } | null
+        } | null> | null
+      } | null,
+      unitPrice?: {
+        isDiscounted: boolean,
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        vat: number,
+        discountPercentage: number,
+        regularPriceIncVatFormatted?: string | null,
+        sellingPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null
+      } | null,
+      product?: {
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          name: string
+        } | null,
+        skus?: Array<{
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null,
+            incoming?: string | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null
+      } | null,
+      totalPrice?: {
+        isDiscounted: boolean,
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        vat: number,
+        discountPercentage: number,
+        regularPriceIncVatFormatted?: string | null,
+        sellingPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null
+      } | null
+    } | null> | null,
+    summary?: {
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        sellingPriceExVat: number,
+        sellingPriceIncVat: number,
+        vat: number
+      } | null,
+      shipping?: {
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        discountExVat: number,
+        discountIncVat: number,
+        vatFormatted?: string | null,
+        vat: number
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsUpdateCartItemVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  item: GeinsCartItemInputTypeType;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsUpdateCartItemType = {
+  updateCartItem?: {
+    id?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      quantity: number,
+      skuId: number,
+      campaign?: {
+        appliedCampaigns?: Array<{
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          quantity: number,
+          price?: {
+            isDiscounted: boolean,
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            vat: number,
+            discountPercentage: number,
+            regularPriceIncVatFormatted?: string | null,
+            sellingPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null
+          } | null
+        } | null> | null
+      } | null,
+      unitPrice?: {
+        isDiscounted: boolean,
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        vat: number,
+        discountPercentage: number,
+        regularPriceIncVatFormatted?: string | null,
+        sellingPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null
+      } | null,
+      product?: {
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          name: string
+        } | null,
+        skus?: Array<{
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null,
+            incoming?: string | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null
+      } | null,
+      totalPrice?: {
+        isDiscounted: boolean,
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        vat: number,
+        discountPercentage: number,
+        regularPriceIncVatFormatted?: string | null,
+        sellingPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null
+      } | null
+    } | null> | null,
+    summary?: {
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        sellingPriceExVat: number,
+        sellingPriceIncVat: number,
+        vat: number
+      } | null,
+      shipping?: {
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        discountExVat: number,
+        discountIncVat: number,
+        vatFormatted?: string | null,
+        vat: number
+      } | null
+    } | null
   } | null
 };
 
