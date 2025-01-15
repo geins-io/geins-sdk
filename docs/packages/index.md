@@ -4,7 +4,7 @@ Geins is a modular platform and the SDK is also modular. The SDK consists of sev
 
 The following packages are available:
 
-## @geins/core <Badge type="info" text="0.3.6" />
+## @geins/core <Badge type="info" text="0.3.9" />
 
 Main package for interacting with the Geins API. All other packages depend on this one.
 
@@ -18,7 +18,7 @@ Main package for interacting with the Geins API. All other packages depend on th
 
 Read the [documentation](./core/) for more information.
 
-## @geins/cms <Badge type="info" text="0.3.6" />
+## @geins/cms <Badge type="info" text="0.3.9" />
 
 Package for managing content, including pages, menus.
 
@@ -32,7 +32,7 @@ Package for managing content, including pages, menus.
 
 Read the [documentation](./cms/) for more information.
 
-## @geins/crm <Badge type="info" text="0.3.6" />
+## @geins/crm <Badge type="info" text="0.3.9" />
 
 Package for managing customer relationship management (CRM) functionalities, such as user authentication, registration, and order history.
 
@@ -46,7 +46,7 @@ Package for managing customer relationship management (CRM) functionalities, suc
 
 Read the [documentation](./crm/) for more information.
 
-## @geins/oms <Badge type="info" text="0.3.6" />
+## @geins/oms <Badge type="info" text="0.3.9" />
 
 _This package is not yet available since it is still under development._
 
