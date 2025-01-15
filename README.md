@@ -4,6 +4,7 @@
 [![core-badge-version]][core-npm-url] 
 [![cms-badge-version]][cms-npm-url] 
 [![crm-badge-version]][crm-npm-url]
+[![oms-badge-version]][oms-npm-url]
 
 
 
@@ -34,7 +35,8 @@ This repository is a monorepo. The main directories are:
 **packages/sdk/**: The packages, including:
   - `@geins/core`: Core functionality like channel management and GraphQL client.
   - `@geins/cms`: CMS-specific features, including menus and content areas.
-  - `@geins/crm`: CRM features like user authentication and profile management.  
+  - `@geins/crm`: CRM features like user authentication and profile management.
+  - `@geins/oms`: Order management features like cart and checkout.
   - `@geins/types`: Type definitions for Geins SDK.
 
 ### Documentation
@@ -61,19 +63,5 @@ Licensed under the MIT License. Check the [LICENSE](LICENSE.md) file for details
 [crm-badge-version]: https://img.shields.io/npm/v/%40geins%2Fcrm?style=for-the-badge&label=@geins/crm
 
 
-
-
-
-    if (args.item) {
-      vars.item = {
-        skuId: args.item.skuId ? parseInt(args.item.skuId.toString(), 10) : 0,
-        quantity: args.item.quantity,
-        ...(args.item.message && { message: args.item.message }),
-      };
-
-
-    const variables = await this.generateVars(vars);
-    const options: any = {
-      query: queries.cartAddItem,
-      variables,
-    };
+[oms-npm-url]: https://www.npmjs.com/package/@geins/oms
+[oms-badge-version]: https://img.shields.io/npm/v/%40geins%2Fcrm?style=for-the-badge&label=@geins/oms

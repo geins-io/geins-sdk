@@ -16,7 +16,7 @@ Use this to show the user the campaigns that have been applied to each item in t
 
 
 
-### Get Applied Campaigns on Cart
+### Cart
 Example:
 ```typescript
 
@@ -29,7 +29,7 @@ for (const campaign of cart?.appliedCampaigns ?? []) {
 ```
 
 
-### Get Applied Campaigns on Cart Item
+### Cart Item
 Example:
 ```typescript
 
