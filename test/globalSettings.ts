@@ -51,6 +51,6 @@ export const omsSettings = {
     skuId3: parseInt(process.env.GEINS_OMS_SKUID3!.toString(), 10),
   },
   promotionCodes: {
-    percentOff: process.env.GEINS_PROMO_CODE!.toString(),
+    percentOff: (process.env.GEINS_PROMO_CODE! ?? '').toString(),
   },
 };

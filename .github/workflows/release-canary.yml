@@ -28,6 +28,7 @@ jobs:
       GEINS_OMS_SKUID1: ${{ vars.GEINS_OMS_SKUID1 }}
       GEINS_OMS_SKUID2: ${{ vars.GEINS_OMS_SKUID2 }}
       GEINS_OMS_SKUID3: ${{ vars.GEINS_OMS_SKUID3 }}
+      GEINS_PROMO_CODE: ${{ vars.GEINS_PROMO_CODE }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@master
