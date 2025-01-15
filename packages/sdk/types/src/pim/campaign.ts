@@ -9,11 +9,6 @@ export type CampaignRuleType = {
   campaignId: string;
   name?: string;
   hideTitle?: boolean;
-  ruleType?: string;
-  category?: string;
-  action?: string;
-  actionValue?: string;
-  canonicalUrl?: string;
 };
 
 export type CampaignPriceType = {

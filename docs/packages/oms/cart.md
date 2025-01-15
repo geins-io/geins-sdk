@@ -195,5 +195,5 @@ const newCartId = await geinsOMS.cart.copy({id: myCartId, resetPromotions: true}
 Read JSdoc for more information on the `copy` method.
 
 ::: tip :bulb: Tip
-Use this method to add features like `share cart as wishlist` or alike.
+Use this method in combination with `merchant data` to add features like `share cart as wishlist` to your application.
 :::

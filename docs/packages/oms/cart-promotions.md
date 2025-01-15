@@ -1,6 +1,6 @@
 # Promotion Code
 
-Promotion codes are a powerful tool for incentivizing customers to make purchases. This is how you can apply and remove promotion codes from the cart.
+When activateting a promotion code on the cart, the prices will be `recalculated` with new prices and discounts. 
 
 ## Apply
 
@@ -12,6 +12,10 @@ if(result === true){
     console.log("Promotion code applied successfully");
 }
 ```
+
+::: info :nerd_face: Take note
+User can only have one promotion code applied at a time. If a new promotion code is applied, the previous one will be removed.
+:::
 
 ## Remove
 
