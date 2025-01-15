@@ -3,15 +3,15 @@ import { h } from 'vue';
 import { useRoute } from 'vitepress';
 import type { Theme } from 'vitepress';
 import Confetti from './components/Confetti.vue';
-import TopBanner from './components/TopBanner.vue'; // Import your banner component
 import DefaultTheme from 'vitepress/theme';
 import Layout from './Layout.vue';
+import 'virtual:group-icons.css';
 import './style.css';
 import './custom.css';
 
 export default {
   extends: DefaultTheme,
-  Layout: props => {
+  Layout: (props) => {
     const route = useRoute();
     return h(route.path === '/' ? Layout : DefaultTheme.Layout, props);
   },
@@ -20,6 +20,5 @@ export default {
     // add global components
     app.component('Confetti', Confetti);
     app.component('Layout', Layout);
-    //app.component('TopBanner', TopBanner);
   },
-} satisfies Theme;
+};

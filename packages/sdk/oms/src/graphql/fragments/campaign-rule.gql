@@ -1,12 +1,6 @@
 fragment CampaignRule on CampaignRuleType {
-  id: campaignId
   campaignId
   name
   hideTitle
-  ruleType
-  category
-  action
-  actionValue
-  canonicalUrl
   __typename
 }

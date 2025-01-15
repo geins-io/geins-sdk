@@ -21,6 +21,7 @@ import type {
   ProductPackageSelectionType,
   CartGroupInputType,
 } from '@geins/types';
+import { cpSync } from 'fs';
 
 /**
  * Shipping fee handling.
@@ -59,12 +60,28 @@ export interface CartItemsInterface {
    * @param {string} [args.id] - The ID of the item.
    * @param {number} [args.skuId] - The SKU ID of the item.
    * @param {number} [args.quantity] - The quantity of the item to add.
+   * @param {number} [args.packageId] - The package ID of the item.
+   * @param {ProductPackageSelectionType[]} [args.selections] - The selections for the package.
+   * @param {CartItemType} [args.item] - The item to add.
+   * @param {string} [args.message] - The message for the item.
    * @returns {Promise<boolean>} A promise that resolves to true if the item was successfully added, otherwise false.
    */
-  add(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean>;
+  add(args: {
+    id?: string;
+    skuId?: number;
+    quantity?: number;
+    packageId?: number;
+    selections?: ProductPackageSelectionType[];
+    item?: CartItemType;
+    message?: string;
+  }): Promise<boolean>;
 
   /**
-   * Removes an item from the cart.
+   * Removes one of the quantity of an item from the cart.
+   *
+   * - If the quantity is greater than 1, it decrements the quantity.
+   * - If the quantity is 1, it removes the item from the cart.
+   *
    * @param {Object} args - The arguments for removing an item from the cart.
    * @param {string} [args.id] - The ID of the item.
    * @param {number} [args.skuId] - The SKU ID of the item.
@@ -74,6 +91,14 @@ export interface CartItemsInterface {
   remove(args: { id?: string; skuId?: number; quantity?: number }): Promise<boolean>;
 
   /**
+   * Updates an item in the cart.
+   * @param {Object} args - The arguments for updating an item in the cart.
+   * @param {CartItemType} args.item - The item to update.
+   * @returns {Promise<boolean>} A promise that resolves to true if the item was successfully updated, otherwise false.
+   */
+  update(args: { item: CartItemType }): Promise<boolean>;
+
+  /**
    * Deletes an item from the cart.
    * @param {Object} args - The arguments for deleting an item from the cart.
    * @param {string} [args.id] - The ID of the item.
@@ -81,21 +106,137 @@ export interface CartItemsInterface {
    * @returns {Promise<boolean>} A promise that resolves to true if the item was successfully deleted, otherwise false.
    */
   delete(args: { id?: string; skuId?: number }): Promise<boolean>;
-
-  /**
-   * Updates an item in the cart.
-   * @param {Object} args - The arguments for updating an item in the cart.
-   * @param {CartItemType} args.item - The item to update.
-   * @returns {Promise<boolean>} A promise that resolves to true if the item was successfully updated, otherwise false.
-   */
-  update(args: { item: CartItemType }): Promise<boolean>;
 }
 
-export class CartService extends BaseApiService {
+export interface CartServiceInterface {
+  /**
+   * Gets the ID of the cart.
+   *
+   * If the code is not running in a server context and the ID is not already set,
+   * it attempts to retrieve the ID from cookies.
+   *
+   * @returns {string | undefined} The ID of the cart, or undefined if not set.
+   */
+  id: string | undefined;
+
+  /**
+   * Gets the read-only status of the cart.
+   *
+   * @returns {boolean} - Returns `true` if the cart is read-only, otherwise `false`.
+   */
+  isReadOnly: boolean;
+
+  /**
+   * Gets the merchant data as a Proxy object.
+   *
+   * The Proxy object allows for controlled access and modification of the merchant data.
+   *
+   * @returns {any} The merchant data wrapped in a Proxy.
+   *
+   * The Proxy handler performs the following:
+   * - Validates the property key before setting a value.
+   * - Allows setting of values for valid keys.
+   * - If the key is not valid but the data is flexible, it allows setting the value.
+   * - Logs a warning and ignores the value if the key is not valid and the data is not flexible.
+   */
+  merchantData: any;
+
+  /**
+   * PromotionCode
+   * Methods:
+   * - apply() Applies a promotion code to the cart and recalculates the cart.
+   * - remove() Removes the promotion code from the cart and recalculates the cart.
+   */
+  promotionCode: PromotionCodeInterface;
+
+  /**
+   * Shipping Fee
+   * Methods:
+   * - set() Set the shipping fee for the cart.
+   */
+  shippingFee: ShippingFeeInterface;
+
+  /**
+   * Provides access to cart items with various operations.
+   *
+   * @returns {CartItemsInterface} An object containing methods to interact with cart items.
+   *
+   * @property {Function} get - Retrieves cart items.
+   * @property {Function} add - Adds an item to the cart.
+   * @property {Function} update - Updates an item in the cart.
+   * @property {Function} remove - Removes an item from the cart.
+   * @property {Function} delete - Deletes an item from the cart.
+   * @property {Function} clear - Clears all items from the cart.
+   */
+  items: CartItemsInterface;
+
+  /**
+   * Creates a new cart by executing a GraphQL mutation.
+   *
+   * This method initializes the cart and its ID to undefined, sets up the options for the GraphQL query,
+   * and attempts to run the query to create the cart. If successful, it loads the cart data. If an error
+   * occurs during the query execution, it throws an error indicating the failure to create the cart.
+   *
+   * @returns {Promise<CartType | undefined>} A promise that resolves to the created cart or undefined if the creation fails.
+   * @throws {Error} If there is an error during the cart creation process.
+   */
+  create(): Promise<CartType | undefined>;
+
+  /**
+   * Retrieves the cart based on the provided ID or the instance's ID.
+   * If the cart is already loaded in the instance, it returns the cached cart.
+   * If no ID is provided and no instance ID is available, it creates a new cart.
+   *
+   * @param {string} [id] - Optional ID of the cart to retrieve.
+   * @returns {Promise<CartType | undefined>} - A promise that resolves to the cart or undefined if no cart is found.
+   * @throws {Error} If there is an error during the cart retrieval process.
+   */
+  get(id?: string): Promise<CartType | undefined>;
+
+  /**
+   * Refreshes the current cart. If the cart or its ID is not available,
+   * it creates a new cart. Otherwise, it retrieves the cart with the given ID.
+   *
+   * @returns {Promise<CartType | undefined>} A promise that resolves to the cart object or undefined.
+   * @throws {Error} If there is an error during the cart retrieval process.
+   */
+  refresh(): Promise<CartType | undefined>;
+
+  /**
+   * Copies the current cart and returns the new cart's ID.
+   *
+   * @param args - An object containing optional parameters:
+   *   @param args.id - The ID of the cart to copy. If not provided, the current cart's ID will be used.
+   *   @param args.resetPromotions - A boolean indicating whether to reset promotions in the copied cart. Defaults to `true`.
+   *   @param args.loadCopy - A boolean indicating whether to load the copied cart. Defaults to `false`.
+   *
+   * @returns A promise that resolves to the new cart's ID, or `undefined` if the operation fails or if the service is in read-only mode.
+   *
+   * @throws Will throw an error if there is an issue copying the cart.
+   */
+  copy(args: { id?: string; resetPromotions?: boolean; loadCopy?: boolean }): Promise<string | undefined>;
+
+  /**
+   * Completes the cart and sets it as completed and read only.
+   *
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the cart was successfully completed, or `false` if an error occurred.
+   */
+  complete(): Promise<boolean>;
+
+  /**
+   * Removes the current cart by clearing the cart and ID properties and removing the associated cookie.
+   *
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the cart was successfully removed, or `false` if an error occurred.
+   */
+  remove(): Promise<boolean>;
+}
+
+export class CartService extends BaseApiService implements CartServiceInterface {
   private _id!: string | undefined;
   private _cart!: CartType | undefined;
   private _cookieService!: CookieService;
   private _settings!: OMSSettings;
+  private _isReadOnly: boolean = false;
 
   private _merchantData!: MerchantData<any> | any;
 
@@ -118,14 +259,6 @@ export class CartService extends BaseApiService {
     }
   }
 
-  /**
-   * Gets the ID of the cart.
-   *
-   * If the code is not running in a server context and the ID is not already set,
-   * it attempts to retrieve the ID from cookies.
-   *
-   * @returns {string | undefined} The ID of the cart, or undefined if not set.
-   */
   get id(): string | undefined {
     if (!isServerContext() && !this._id) {
       this._id = this.cookieGet();
@@ -133,19 +266,10 @@ export class CartService extends BaseApiService {
     return this._id;
   }
 
-  /**
-   * Gets the merchant data as a Proxy object.
-   *
-   * The Proxy object allows for controlled access and modification of the merchant data.
-   *
-   * @returns {any} The merchant data wrapped in a Proxy.
-   *
-   * The Proxy handler performs the following:
-   * - Validates the property key before setting a value.
-   * - Allows setting of values for valid keys.
-   * - If the key is not valid but the data is flexible, it allows setting the value.
-   * - Logs a warning and ignores the value if the key is not valid and the data is not flexible.
-   */
+  get isReadOnly() {
+    return this._isReadOnly;
+  }
+
   get merchantData(): any {
     return new Proxy(this._merchantData.data, {
       set: (target, prop, value) => {
@@ -156,7 +280,6 @@ export class CartService extends BaseApiService {
           target[prop as keyof typeof target] = value;
           return true;
         } else {
-          //this._logger.warn(`Key "${String(prop)}" is not in the original template and will be ignored.`);
           return false;
         }
       },
@@ -198,12 +321,6 @@ export class CartService extends BaseApiService {
     return true;
   }
 
-  /**
-   * PromotionCode
-   * Methods:
-   * - apply() Applies a promotion code to the cart and recalculates the cart.
-   * - remove() Removes the promotion code from the cart and recalculates the cart.
-   */
   get promotionCode(): PromotionCodeInterface {
     return {
       /**
@@ -250,11 +367,6 @@ export class CartService extends BaseApiService {
     return this.promotionCodeApply('');
   }
 
-  /**
-   * Shipping Fee
-   * Methods:
-   * - set() Set the shipping fee for the cart.
-   */
   get shippingFee(): ShippingFeeInterface {
     return {
       /**
@@ -292,19 +404,10 @@ export class CartService extends BaseApiService {
     return true;
   }
 
-  /**
-   * Creates a new cart by executing a GraphQL mutation.
-   *
-   * This method initializes the cart and its ID to undefined, sets up the options for the GraphQL query,
-   * and attempts to run the query to create the cart. If successful, it loads the cart data. If an error
-   * occurs during the query execution, it throws an error indicating the failure to create the cart.
-   *
-   * @returns {Promise<CartType | undefined>} A promise that resolves to the created cart or undefined if the creation fails.
-   * @throws {Error} If there is an error during the cart creation process.
-   */
   async create(): Promise<CartType | undefined> {
     this._cart = undefined;
     this._id = undefined;
+    this._isReadOnly = false;
 
     const options: any = {
       query: queries.cartCreate,
@@ -321,15 +424,6 @@ export class CartService extends BaseApiService {
     return this._cart;
   }
 
-  /**
-   * Retrieves the cart based on the provided ID or the instance's ID.
-   * If the cart is already loaded in the instance, it returns the cached cart.
-   * If no ID is provided and no instance ID is available, it creates a new cart.
-   *
-   * @param {string} [id] - Optional ID of the cart to retrieve.
-   * @returns {Promise<CartType | undefined>} - A promise that resolves to the cart or undefined if no cart is found.
-   * @throws {Error} If there is an error during the cart retrieval process.
-   */
   async get(id?: string): Promise<CartType | undefined> {
     if (this._cart) {
       return this._cart;
@@ -344,18 +438,92 @@ export class CartService extends BaseApiService {
     return this.cartGet(cartId!, false);
   }
 
-  /**
-   * Refreshes the current cart. If the cart or its ID is not available,
-   * it creates a new cart. Otherwise, it retrieves the cart with the given ID.
-   *
-   * @returns {Promise<CartType | undefined>} A promise that resolves to the cart object or undefined.
-   * @throws {Error} If there is an error during the cart retrieval process.
-   */
   async refresh(): Promise<CartType | undefined> {
     if (!this._cart || !this.id) {
       return await this.create();
     }
     return this.cartGet(this.id!, true);
+  }
+
+  async copy(
+    args: { id?: string; resetPromotions?: boolean; loadCopy?: boolean } = {},
+  ): Promise<string | undefined> {
+    if (this._isReadOnly) {
+      return undefined;
+    }
+
+    const resolvedArgs = {
+      ...args,
+      resetPromotions: args.resetPromotions ?? true,
+      loadCopy: args.loadCopy ?? false,
+    };
+
+    if (!resolvedArgs.id && !this.id) {
+      return undefined;
+    }
+
+    if (!resolvedArgs.id) {
+      resolvedArgs.id = this.id;
+    }
+
+    let cartCopy = undefined;
+
+    const options: any = {
+      query: queries.cartCopy,
+      variables: this.generateVars({ id: resolvedArgs.id, resetPromotions: resolvedArgs.resetPromotions }),
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+    };
+
+    try {
+      const data = await this.runMutation(options);
+      cartCopy = parseCart(data, this._geinsSettings.locale);
+      if (!cartCopy) {
+        throw new Error('Error copying cart');
+      }
+    } catch (error) {
+      console.error('Error setting cart as completed:', error);
+      return undefined;
+    }
+
+    if (resolvedArgs.loadCopy) {
+      this.loadCart(cartCopy);
+    }
+
+    return this._id;
+  }
+
+  async complete(): Promise<boolean> {
+    if (!this.id) {
+      return false;
+    }
+
+    const options: any = {
+      query: queries.cartComplete,
+      variables: this.generateVars({ id: this.id }),
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+    };
+
+    try {
+      const data = await this.runQuery(options);
+      this.loadCartFromData(data);
+    } catch (error) {
+      console.error('Error setting cart as completed:', error);
+      return false;
+    }
+    return true;
+  }
+
+  async remove(): Promise<boolean> {
+    try {
+      this._cart = undefined;
+      this._id = undefined;
+      this._isReadOnly = false;
+      this.cookieRemove();
+      return true;
+    } catch (error) {
+      console.error('Error removing cart:', error);
+      return false;
+    }
   }
 
   // private cart methods
@@ -368,6 +536,7 @@ export class CartService extends BaseApiService {
 
     try {
       const data = await this.runQuery(options);
+
       this.loadCartFromData(data);
     } catch (e: any) {
       if (e.message.includes("Variable '$id' is invalid")) {
@@ -380,58 +549,14 @@ export class CartService extends BaseApiService {
     return this._cart;
   }
 
-  /**
-   * Completes the cart by and removes the cart and ID properties.
-   *
-   * @returns {Promise<boolean>} A promise that resolves to `true` if the cart was successfully removed, or `false` if an error occurred.
-   */
-  async complete(): Promise<boolean> {
-    try {
-      this.remove();
-    } catch (error) {
-      console.error('Error removing cart:', error);
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Removes the current cart by clearing the cart and ID properties and removing the associated cookie.
-   *
-   * @returns {Promise<boolean>} A promise that resolves to `true` if the cart was successfully removed, or `false` if an error occurred.
-   */
-  async remove(): Promise<boolean> {
-    try {
-      this._cart = undefined;
-      this._id = undefined;
-      this.cookieRemove();
-      return true;
-    } catch (error) {
-      console.error('Error removing cart:', error);
-      return false;
-    }
-  }
-
-  /**
-   * Provides access to cart items with various operations.
-   *
-   * @returns {CartItemsInterface} An object containing methods to interact with cart items.
-   *
-   * @property {Function} get - Retrieves cart items.
-   * @property {Function} add - Adds an item to the cart.
-   * @property {Function} update - Updates an item in the cart.
-   * @property {Function} remove - Removes an item from the cart.
-   * @property {Function} delete - Deletes an item from the cart.
-   * @property {Function} clear - Clears all items from the cart.
-   */
   get items(): CartItemsInterface {
     return {
       get: this.itemsGet.bind(this),
-      add: this.itemAdd.bind(this),
-      update: this.itemUpdate.bind(this),
-      remove: this.itemRemove.bind(this),
-      delete: this.itemDelete.bind(this),
       clear: this.itemsClear.bind(this),
+      add: this.itemAdd.bind(this),
+      remove: this.itemRemove.bind(this),
+      update: this.itemUpdate.bind(this),
+      delete: this.itemDelete.bind(this),
     };
   }
 
@@ -456,6 +581,10 @@ export class CartService extends BaseApiService {
   }
 
   private async itemUpdate(args: { item: CartItemType; updateCart?: boolean }): Promise<boolean> {
+    if (this._isReadOnly) {
+      return false;
+    }
+
     if (!this.id) {
       await this.create();
     }
@@ -471,6 +600,13 @@ export class CartService extends BaseApiService {
     const vars: { id: string; item?: CartItemInputType } = {
       id: this.id,
     };
+
+    const exists = this._cart?.items?.find((item) => {
+      return (
+        item.id === args.item.id ||
+        (item.skuId === args.item.skuId && (item.message ?? '') === (args.item.message ?? ''))
+      );
+    });
 
     if (args.item.id) {
       vars.item = {
@@ -502,10 +638,6 @@ export class CartService extends BaseApiService {
     } else {
       options.query = queries.cartUpdateItemSilent;
     }
-
-    const exists = this._cart?.items?.find((item) => {
-      return item.id === args.item.id || item.skuId === args.item.skuId;
-    });
 
     if (!exists) {
       options.query = queries.cartAddItem;
@@ -595,11 +727,19 @@ export class CartService extends BaseApiService {
   }): Promise<boolean> {
     const resolvedArgs = { ...args, quantity: args.quantity ?? 1 };
 
+    if (this._isReadOnly) {
+      return false;
+    }
+
     if (!args.item) {
       resolvedArgs.item = this._cart?.items?.find((item) => {
-        return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
+        return (
+          item.id === resolvedArgs.id ||
+          (item.skuId === resolvedArgs.skuId && (item.message ?? '') === (resolvedArgs.message ?? ''))
+        );
       });
     }
+
     if (resolvedArgs.item) {
       resolvedArgs.quantity += resolvedArgs.item.quantity;
     }
@@ -632,6 +772,10 @@ export class CartService extends BaseApiService {
   }): Promise<boolean> {
     const resolvedArgs = { ...args, quantity: args.quantity ?? 1 };
 
+    if (this._isReadOnly) {
+      return false;
+    }
+
     if (!args.item) {
       resolvedArgs.item = this._cart?.items?.find((item) => {
         return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
@@ -663,15 +807,18 @@ export class CartService extends BaseApiService {
 
   private async itemDelete(args: {
     id?: string;
-    skuId?: number;
     item?: CartItemType;
     updateCart?: boolean;
   }): Promise<boolean> {
     const resolvedArgs = { ...args, quantity: 0 };
 
+    if (this._isReadOnly) {
+      return false;
+    }
+
     if (!args.item) {
       resolvedArgs.item = this._cart?.items?.find((item) => {
-        return item.id === resolvedArgs.id || item.skuId === resolvedArgs.skuId;
+        return item.id === resolvedArgs.id;
       });
     }
 
@@ -689,7 +836,6 @@ export class CartService extends BaseApiService {
     } else {
       const updateitem = this.createCartItemInput({
         id: resolvedArgs.id,
-        skuId: resolvedArgs.skuId,
         quantity: 0,
       });
 
@@ -698,6 +844,10 @@ export class CartService extends BaseApiService {
   }
 
   private async itemsClear(): Promise<boolean> {
+    if (this._isReadOnly) {
+      return false;
+    }
+
     if (!this._cart) {
       return false;
     }
@@ -769,22 +919,24 @@ export class CartService extends BaseApiService {
     return this.createVariables(variables);
   }
 
-  private loadCartFromData(data: any) {
+  private loadCartFromData(data: any): boolean {
     const cart = parseCart(data, this._geinsSettings.locale);
     if (!cart) {
-      return;
+      return false;
     }
-    this.loadCart(cart);
+    return this.loadCart(cart);
   }
 
-  private loadCart(cart: CartType) {
+  private loadCart(cart: CartType): boolean {
     if (!cart) {
-      return;
+      return false;
     }
     this._id = cart.id;
     this._cart = cart;
+    this._isReadOnly = cart.completed;
     this._merchantData.replaceData(cart.merchantData);
     this.cookieSet(cart.id);
+    return true;
   }
 
   private cookieGet(): string | undefined {

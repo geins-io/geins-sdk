@@ -37,19 +37,19 @@ export default {
 **Input**
 
 ```md
-::: info
+::: info :nerd_face: Take note
 This is an info box.
 :::
 
-::: tip
+::: tip :bulb: Tip
 This is a tip.
 :::
 
-::: warning
+::: warning :warning: Warning
 This is a warning.
 :::
 
-::: danger
+::: danger :fire: Danger
 This is a dangerous warning.
 :::
 
@@ -60,19 +60,19 @@ This is a details block.
 
 **Output**
 
-::: info
+::: info :nerd_face: Take note
 This is an info box.
 :::
 
-::: tip
+::: tip :bulb: Tip
 This is a tip.
 :::
 
-::: warning
+::: warning :warning: Warning
 This is a warning.
 :::
 
-::: danger
+::: danger :fire: Danger
 This is a dangerous warning.
 :::
 

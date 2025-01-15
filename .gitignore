@@ -26,6 +26,6 @@ docs/.vitepress/cache
 # environment
 .env
 
-# repopack
-.repopack*
-repopack*
+# repomix
+.repomix*
+repomix*

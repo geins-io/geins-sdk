@@ -5,6 +5,7 @@
 
 fragment Cart on CartType {
   id
+  isCompleted
   merchantData
   promoCode
   appliedCampaigns {
@@ -23,8 +24,7 @@ fragment Cart on CartType {
     }
     campaign {
       appliedCampaigns {
-        name
-        hideTitle
+        ...CampaignRule
         __typename
       }
       prices {

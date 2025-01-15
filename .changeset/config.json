@@ -7,7 +7,8 @@
       "@geins/types",
       "@geins/core",
       "@geins/cms",
-      "@geins/crm"
+      "@geins/crm",
+      "@geins/oms"
     ]
   ],
   "linked": [],
