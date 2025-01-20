@@ -1,0 +1,31 @@
+{
+  "name": "nuxt-checkout",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev --port 3002",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@headlessui/vue": "^1.7.19",
+    "@heroicons/vue": "^2.1.1",
+    "@vueuse/core": "^10.9.0",
+    "@geins/core": "file:../../packages/sdk/core/dist/",
+    "@geins/oms": "file:../../packages/sdk/oms/dist/",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@geins/eslint-config": "*",
+    "@geins/types": "file:../../packages/sdk/types/dist/",
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "@nuxt/eslint-config": "^0.3.13",
+    "@types/node": "^20.16.5",
+    "eslint": "^9",
+    "nuxt": "^3.13.0",
+    "typescript": "^5.4.2"
+  }
+}
