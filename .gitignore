@@ -6,7 +6,7 @@
 .temp
 
 # apps
-apps/
+apps/nuxt-app
 
 
 # node / nuxt / vite / rollup
