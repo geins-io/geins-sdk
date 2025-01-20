@@ -1,0 +1,19 @@
+#import "../fragments/checkout.gql"
+
+mutation createOrUpdateCheckout(
+  $cartId: String!
+  $checkout: CheckoutInputType
+  $channelId: String
+  $languageId: String
+  $checkoutMarketId: String
+) {
+  createOrUpdateCheckout(
+    cartId: $cartId
+    checkout: $checkout
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $checkoutMarketId
+  ) {
+    ...Checkout
+  }
+}

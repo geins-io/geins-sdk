@@ -5,7 +5,7 @@ import { ChannelsService } from './services/channelsService';
 import { CookieService } from './services/cookieService';
 import { EventService } from './services/eventService';
 import { Channel } from './logic';
-import { isServerContext, buildEndpoints } from './utils';
+import { isServerContext, buildEndpoints, encodeJWT, decodeJWT } from './utils';
 import { GraphQLService } from './services';
 
 export class GeinsCore {
@@ -210,5 +210,28 @@ export class GeinsCore {
       this._cookieService = new CookieService();
     }
     return this._cookieService;
+  }
+
+  /**
+   * Encodes a payload into a JWT.
+   * @param payload - The payload object to encode.
+   * @param secretKey - The secret key to sign the JWT.
+   * @param options - Additional options for signing the JWT.
+   * @returns The encoded JWT as a string.
+   */
+  public static encodeJWT(payload: object, secretKey?: string): string {
+    return encodeJWT(payload, secretKey);
+  }
+  /**
+   * Decodes a JWT token and optionally verifies its signature.
+   *
+   * @param token - The JWT token to decode.
+   * @param secretKey - The secret key to verify the signature (optional).
+   * @returns An object containing the decoded payload.
+   * @throws An error if the token is invalid or the signature verification fails (when secretKey is provided).
+   */
+  public static decodeJWT(token: string, secretKey?: string): any {
+    const decoded = decodeJWT(token, secretKey);
+    return decoded.payload;
   }
 }

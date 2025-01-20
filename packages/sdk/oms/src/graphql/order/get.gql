@@ -1,0 +1,18 @@
+query getOrderPublic(
+  $publicOrderId: Guid!
+  $channelId: String
+  $languageId: String
+  $checkoutMarketId: String
+) {
+  getOrderPublic(
+    cartId: $cartId
+    checkout: $checkout
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $checkoutMarketId
+  ) {
+    id
+    customerId
+    publicId
+  }
+}

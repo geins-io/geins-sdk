@@ -15,6 +15,7 @@
     "dev": "turbo dev",
     "dev:test": "turbo dev --filter=test-app",
     "dev:nuxt": "turbo dev --filter=nuxt-app",
+    "dev:checkout": "turbo dev --filter=nuxt-checkout",
     "start:nuxt": "turbo start --filter=nuxt-app",
     "build:nuxt": "turbo build --filter=nuxt-app",
     "build:sdk": "turbo build --filter=./packages/sdk/*",

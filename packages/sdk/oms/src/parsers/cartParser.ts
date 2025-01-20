@@ -12,8 +12,6 @@ import type {
   ProductPackageCartItemType,
 } from '@geins/types';
 import { ItemType } from '@geins/types';
-import { checkPrimeSync } from 'crypto';
-import { cp } from 'fs';
 
 export function groupCartItems(data: CartItemType[], locale: string): CartItemType[] {
   const items: CartItemType[] = [];
