@@ -1,0 +1,16 @@
+name: Release Checkout App
+on: workflow_dispatch
+
+jobs:
+  build_and_deploy_job:
+    name: Build and Deploy Job
+    runs-on: ubuntu-latest
+    env:
+      VITE_GA_ID: ${{ secrets.VITE_GA_ID }}
+      VITE_CALARIFY_ID: ${{ secrets.VITE_CALARIFY_ID }}
+    steps:
+      # Step 1: Checkout the repository
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: false
