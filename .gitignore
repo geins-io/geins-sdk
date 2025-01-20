@@ -6,8 +6,7 @@
 .temp
 
 # apps
-apps/nuxt-app
-
+apps/*/dist
 
 # node / nuxt / vite / rollup
 .bin
