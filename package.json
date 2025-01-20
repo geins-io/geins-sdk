@@ -11,13 +11,14 @@
     "packages/sdk/*"
   ],
   "scripts": {
-    "build": "yarn codegen &&  turbo build",
+    "build": "turbo build",
     "dev": "turbo dev",
     "dev:test": "turbo dev --filter=test-app",
     "dev:nuxt": "turbo dev --filter=nuxt-app",
     "dev:checkout": "turbo dev --filter=nuxt-checkout",
     "start:nuxt": "turbo start --filter=nuxt-app",
     "build:nuxt": "turbo build --filter=nuxt-app",
+    "build:checkout": "turbo build --filter=nuxt-checkout",
     "build:sdk": "turbo build --filter=./packages/sdk/*",
     "lint": "turbo lint",
     "link": "turbo run link",
