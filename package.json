@@ -23,6 +23,7 @@
     "lint": "turbo lint",
     "link": "turbo run link",
     "format": "prettier --write \"**/*.{ts,md,vue,js}\"",
+    "prepare": "husky",
     "clean": "node scripts/clean.cjs",
     "codegen": "yarn workspace @geins/types codegen",
     "prepare-schema": "node scripts/prepare-schema.js",
