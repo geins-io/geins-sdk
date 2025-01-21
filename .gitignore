@@ -6,6 +6,7 @@
 .temp
 
 # apps
+apps/
 apps/*/dist
 
 # node / nuxt / vite / rollup
