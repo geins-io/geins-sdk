@@ -1,11 +1,4 @@
-import {
-  BaseApiService,
-  CookieService,
-  CustomerType,
-  FetchPolicyOptions,
-  encodeJWT,
-  decodeJWT,
-} from '@geins/core';
+import { BaseApiService, CustomerType, FetchPolicyOptions, encodeJWT, decodeJWT } from '@geins/core';
 
 import type {
   GeinsSettings,
