@@ -1,6 +1,6 @@
 {
   "name": "@geins/oms",
-  "version": "0.3.10-canary-a231b735f9866e06454595f24a08fc6b6c352bc4",
+  "version": "0.3.10-canary-041e5f03d0f47a30733c0c2fba70ccb3dba3e26b",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -16,14 +16,14 @@
     "link": "yarn link"
   },
   "dependencies": {
-    "@geins/core": "*"
+    "@geins/core": "0.3.10-canary-041e5f03d0f47a30733c0c2fba70ccb3dba3e26b"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.0",
     "@rollup/plugin-terser": "^0.4.4",
-    "@geins/eslint-config": "*",
+    "@geins/eslint-config": "0.1.9-canary-041e5f03d0f47a30733c0c2fba70ccb3dba3e26b",
     "typescript": "^5.6.2",
     "eslint": "^9.11.1"
   }

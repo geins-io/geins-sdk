@@ -1,6 +1,15 @@
 # @geins/crm
 
+## 0.3.10-canary-041e5f03d0f47a30733c0c2fba70ccb3dba3e26b
+
+### Patch Changes
+
+- 041e5f0: shipping fixed
+- Updated dependencies [041e5f0]
+  - @geins/core@0.3.10-canary-041e5f03d0f47a30733c0c2fba70ccb3dba3e26b
+
 <<<<<<< HEAD
+
 ## 0.3.10-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e
 
 ### Patch Changes
@@ -10,15 +19,18 @@
   - @geins/core@0.3.10-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e
 
 ## 0.3.10-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e
+
 =======
+
 ## 0.3.10-canary-a231b735f9866e06454595f24a08fc6b6c352bc4
->>>>>>> 5516347da530cf07ac1dead6be1323755f456167
+
+> > > > > > > 5516347da530cf07ac1dead6be1323755f456167
 
 ### Patch Changes
 
 - b4f384b: add checkout features
 - Updated dependencies [b4f384b]
-<<<<<<< HEAD
+  <<<<<<< HEAD
   - @geins/core@0.3.10-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e
 
 ## 0.3.10-canary-9566e63dbbf7d2ef3cd4faef831e0343f15a3121
@@ -27,10 +39,9 @@
 
 - docs
 - Updated dependencies
-  - @geins/core@0.3.10-canary-9566e63dbbf7d2ef3cd4faef831e0343f15a3121
-=======
+  - # @geins/core@0.3.10-canary-9566e63dbbf7d2ef3cd4faef831e0343f15a3121
   - @geins/core@0.3.10-canary-a231b735f9866e06454595f24a08fc6b6c352bc4
->>>>>>> 5516347da530cf07ac1dead6be1323755f456167
+    > > > > > > > 5516347da530cf07ac1dead6be1323755f456167
 
 ## 0.3.9
 

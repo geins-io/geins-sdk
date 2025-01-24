@@ -1,5 +1,11 @@
 # @geins/eslint-config
 
+## 0.1.9-canary-041e5f03d0f47a30733c0c2fba70ccb3dba3e26b
+
+### Patch Changes
+
+- 041e5f0: shipping fixed
+
 ## 0.1.9-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e
 
 ### Patch Changes
