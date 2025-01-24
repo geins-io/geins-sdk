@@ -1,22 +1,50 @@
 import { CustomerType, GeinsSettings } from '../common';
 import { GeinsUserType } from '../generated';
+import type { AddressType, ShippingOptionType, PaymentOptionType } from '../shared';
+import type { CartType } from '../oms/cart';
+
+enum CheckoutStatus {
+  OK = 'OK',
+  CUSTOMER_BLACKLISTED = 'CUSTOMER_BLACKLISTED',
+}
 
 export type CheckoutInputType = {
-  paymentId: number;
-  shippingId: number;
+  paymentId?: number;
+  shippingId?: number;
   skipShippingValidation: boolean;
   externalShippingId?: string;
   pickupPoint?: string;
   desiredDeliveryDate?: Date;
   message?: string;
   acceptedConsents?: string[];
-  shippingAddress: AddressInputType;
-  billingAddress: AddressInputType;
+  shippingAddress?: AddressInputType;
+  billingAddress?: AddressInputType;
   identityNumber?: string;
-  email: string;
-  customerType: CustomerType;
+  email?: string;
+  customerType?: CustomerType;
   externalShippingFee?: number;
   merchantData?: string;
+};
+
+export type ConsentType = {
+  type?: string;
+  name?: string;
+  description?: string;
+  checked?: boolean;
+  autoAccept?: boolean;
+};
+
+export type CheckoutType = {
+  email?: string;
+  identityNumber?: string;
+  cart?: CartType;
+  billingAddress?: AddressType;
+  shippingAddress?: AddressType;
+  consents?: ConsentType[];
+  paymentOptions?: PaymentOptionType[];
+  shippingOptions?: ShippingOptionType[];
+  shippingData?: string;
+  checkoutStatus?: CheckoutStatus;
 };
 
 export type AddressInputType = {
@@ -36,18 +64,20 @@ export type AddressInputType = {
   phone?: string;
 };
 
+export type CheckoutRedirectsType = {
+  success?: string;
+  continue?: string;
+  cancel?: string;
+  error?: string;
+};
+
 export type CheckoutSettings = {
   paymentId?: number;
   shippingId?: number;
   customerType?: CustomerType;
   billingAddress?: AddressInputType;
   shippingAddress?: AddressInputType;
-  redirectUrls?: {
-    success?: string;
-    cancel?: string;
-    error?: string;
-    change?: string;
-  };
+  redirectUrls?: CheckoutRedirectsType;
 };
 
 export type CheckoutTokenPayload = {

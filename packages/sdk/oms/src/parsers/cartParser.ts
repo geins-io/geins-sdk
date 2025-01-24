@@ -5,13 +5,11 @@ import type {
   CartSummaryType,
   CartItemProductType,
   PriceType,
-  BalanceType,
-  ShippingOptionType,
-  CurrencyType,
   CampaignRuleType,
   ProductPackageCartItemType,
 } from '@geins/types';
 import { ItemType } from '@geins/types';
+import { parsePrice } from './sharedParsers';
 
 export function groupCartItems(data: CartItemType[], locale: string): CartItemType[] {
   const items: CartItemType[] = [];
@@ -339,99 +337,4 @@ function parseCartSummary(data: any, locale: string): CartSummaryType {
       isSelected: data.payment?.isSelected || false,
     },
   };
-}
-
-function parseCurrency(data: any): CurrencyType | undefined {
-  if (!data) {
-    return undefined;
-  }
-
-  return {
-    name: data?.name || '',
-    symbol: data?.symbol || '',
-    code: data?.code || '',
-    rate: data?.rate || 0,
-  };
-}
-
-function parsePrice(data: any, locale: string): PriceType {
-  const price: PriceType = {
-    sellingPriceIncVat: 0,
-    sellingPriceExVat: 0,
-    regularPriceIncVat: 0,
-    regularPriceExVat: 0,
-    discountIncVat: 0,
-    discountExVat: 0,
-    discountPercentage: 0,
-    vat: 0,
-    isDiscounted: false,
-    sellingPriceIncVatFormatted: '',
-    sellingPriceExVatFormatted: '',
-    regularPriceIncVatFormatted: '',
-    regularPriceExVatFormatted: '',
-    discountIncVatFormatted: '',
-    discountExVatFormatted: '',
-    vatFormatted: '',
-  };
-
-  if (!data) {
-    return price;
-  }
-
-  price.currency = parseCurrency(data.currency);
-  price.sellingPriceIncVat = data.sellingPriceIncVat || 0;
-  price.sellingPriceExVat = data.sellingPriceExVat || 0;
-  price.regularPriceIncVat = data.regularPriceIncVat || 0;
-  price.regularPriceExVat = data.regularPriceExVat || 0;
-  price.discountIncVat = data.discountIncVat || 0;
-  price.discountExVat = data.discountExVat || 0;
-  price.discountPercentage = data.discountPercentage || 0;
-  price.vat = data.vat || 0;
-  price.isDiscounted = data.isDiscounted || false;
-
-  if (price.currency?.code) {
-    price.sellingPriceIncVatFormatted =
-      data?.sellingPriceIncVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
-
-    price.sellingPriceExVatFormatted =
-      data?.sellingPriceExVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
-
-    price.regularPriceIncVatFormatted =
-      data?.regularPriceIncVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
-
-    price.regularPriceExVatFormatted =
-      data?.regularPriceExVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
-
-    price.discountIncVatFormatted =
-      data?.discountIncVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
-
-    price.discountExVatFormatted =
-      data?.discountExVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
-
-    price.vatFormatted =
-      data?.vat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
-  }
-
-  return price;
 }

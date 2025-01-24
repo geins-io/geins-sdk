@@ -13,7 +13,6 @@ mutation placeOrder(
     marketId: $checkoutMarketId
   ) {
     orderId
-    redirectUrl
-    status
+    publicId: orderId
   }
 }

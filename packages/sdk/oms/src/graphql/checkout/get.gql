@@ -3,10 +3,10 @@
 query checkout(
   $id: String!
   $paymentType: PaymentType!
-  $channelId: String
-  $languageId: String
   $cartId: String
   $checkoutMarket: String
+  $channelId: String
+  $languageId: String
 ) {
   checkout(
     id: $id

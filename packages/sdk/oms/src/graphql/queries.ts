@@ -10,10 +10,11 @@ import setShippingFee from './cart/set-shipping-fee.gql';
 import addItem from './cart/add-item.gql';
 import addPackageItem from './cart/add-package.gql';
 import updatePackageItem from './cart/update-package.gql';
-import getCheckout from './checkout/get.gql';
+// import getCheckout from './checkout/get.gql';
 import createOrUpdateCheckout from './checkout/create-update.gql';
 import validateCheckout from './checkout/validate.gql';
 import createOrder from './order/create.gql';
+import getOrder from './order/get.gql';
 
 const queries = {
   cartCreate: createCart,
@@ -28,10 +29,11 @@ const queries = {
   cartSetMerchantData: setMerchantData,
   cartSetPromotionCode: setPromotionCode,
   cartSetShippingFee: setShippingFee,
-  checkoutGet: getCheckout,
+  // checkoutGet: getCheckout,
   checkoutCreate: createOrUpdateCheckout,
   checkoutValidate: validateCheckout,
   orderCreate: createOrder,
+  orderGet: getOrder,
 };
 
 export { queries };

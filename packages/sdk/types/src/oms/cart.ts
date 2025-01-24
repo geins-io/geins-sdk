@@ -1,5 +1,5 @@
+import type { PriceType, ShippingOptionType, PaymentOptionType } from '../shared';
 import type { ProductType, StockType } from '../pim/product';
-import type { PriceType } from '../shared';
 import type { CampaignType } from '../pim/campaign';
 
 export type CartType = {
@@ -114,35 +114,4 @@ export type BalanceType = {
   totalSellingPriceExBalanceExVat: number;
   totalSellingPriceExBalanceIncVat: number;
   totalSellingPriceExBalanceIncVatFormatted: string;
-};
-
-export type ShippingOptionType = {
-  id: number;
-  name?: string;
-  displayName?: string;
-  feeIncVat: number;
-  feeExVat: number;
-  isDefault: boolean;
-  isSelected: boolean;
-  externalId?: string;
-  shippingData?: string;
-  amountLeftToFreeShipping: number;
-  logo?: string;
-  subOptions?: ShippingOptionType[];
-  amountLeftToFreeShippingFormatted?: string;
-  feeIncVatFormatted?: string;
-  feeExVatFormatted?: string;
-};
-
-export type PaymentOptionType = {
-  id: number;
-  name?: string;
-  displayName?: string;
-  logo?: string;
-  feeIncVat: number;
-  feeExVat: number;
-  isDefault: boolean;
-  isSelected: boolean;
-  paymentType?: string;
-  paymentData?: string;
 };

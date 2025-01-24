@@ -3,17 +3,16 @@ query validateOrderCreation(
   $checkout: CheckoutInputType!
   $channelId: String
   $languageId: String
-  $checkoutMarketId: String
+  $marketId: String
 ) {
   validateOrderCreation(
     cartId: $cartId
     checkout: $checkout
     channelId: $channelId
     languageId: $languageId
-    marketId: $checkoutMarketId
+    marketId: $marketId
   ) {
     isValid
     message
-    memberType
   }
 }

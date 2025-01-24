@@ -1,31 +1,36 @@
-import {
-  BaseApiService,
-  CookieService,
-  isServerContext,
-  CART_COOKIES,
-  CART_COOKIES_MAX_AGE,
-  CookieType,
-  FetchPolicyOptions,
-  encodeJWT,
-  decodeJWT,
-} from '@geins/core';
+import { GeinsOMS } from '../geinsOMS';
 import { queries } from '../graphql';
+import { BaseApiService, FetchPolicyOptions } from '@geins/core';
 import type {
-  CartType,
-  CartItemType,
-  CartItemInputType,
   GeinsSettings,
   OMSSettings,
-  ProductPackageSelectionType,
-  CartGroupInputType,
   CheckoutInputType,
-} from '@geins/types';
-import { parseCheckout } from '../parsers';
-import { GeinsOMS } from '../geinsOMS';
+  OrderSummaryType,
+  PlaceOrderResponseType,
+} from '@geins/core';
+import { parseOrder, parseOrderSummary } from '../parsers';
 
-export class OrderService extends BaseApiService {
-  private _settings!: OMSSettings;
+export interface OrderServiceInterface {
+  /**
+   * Retrieves an order summary based on the public order ID.
+   *
+   * @param {Object} args - The arguments object.
+   * @param {string} args.publicOrderId - The public order ID.
+   * @returns {Promise<OrderSummaryType | undefined>} A promise that resolves to the order summary or undefined.
+   */
+  get(args: { publicOrderId: string }): Promise<OrderSummaryType | undefined>;
 
+  /**
+   * Creates a new order based on the cart ID and checkout information.
+   *
+   * @param {Object} args - The arguments object.
+   * @param {string} args.cartId - The cart ID.
+   * @param {CheckoutInputType} args.checkout - The checkout input data.
+   * @returns {Promise<PlaceOrderResponseType | undefined>} A promise that resolves to the place order response or undefined.
+   */
+  create(args: { cartId: string; checkout: CheckoutInputType }): Promise<PlaceOrderResponseType | undefined>;
+}
+export class OrderService extends BaseApiService implements OrderServiceInterface {
   constructor(
     apiClient: any,
     geinsSettings: GeinsSettings,
@@ -33,17 +38,53 @@ export class OrderService extends BaseApiService {
     private _parent?: GeinsOMS,
   ) {
     super(apiClient, geinsSettings);
-    this._settings = _settings;
   }
 
-  async get(args: any): Promise<any> {
-    console.log('OrderService.get::', args);
-  }
+  async get(args: { publicOrderId: string }): Promise<OrderSummaryType | undefined> {
+    if (!args.publicOrderId) {
+      throw new Error('Missing publicOrderId');
+    }
 
-  async create(args: { cartId: string; user?: any; checkout?: CheckoutInputType }): Promise<any> {
     const variables = {
-      cartId: args.cartId,
-      checkout: args.checkout,
+      publicOrderId: args.publicOrderId,
+    };
+
+    const options: any = {
+      query: queries.orderGet,
+      variables: this.createVariables(variables),
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+    };
+
+    try {
+      const data = await this.runQuery(options);
+      return parseOrderSummary(data, this._geinsSettings.locale);
+    } catch (e) {
+      throw new Error('Error getting order');
+    }
+  }
+
+  async create(args: {
+    cartId?: string;
+    checkout: CheckoutInputType;
+  }): Promise<PlaceOrderResponseType | undefined> {
+    const { cartId, checkout } = args;
+
+    if (!cartId) {
+      const parentCartId = this._parent?.cart.id;
+      if (parentCartId) {
+        args.cartId = parentCartId;
+      } else {
+        throw new Error('Missing cartId');
+      }
+    }
+
+    if (!checkout) {
+      throw new Error('Missing checkout');
+    }
+
+    const variables = {
+      cartId,
+      checkout,
     };
 
     const options: any = {
@@ -52,20 +93,11 @@ export class OrderService extends BaseApiService {
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
-    // console.log('CHECKOUT validate() - options.variables', options.variables);
-
-    // validation type
-
     try {
       const data = await this.runQuery(options);
-      // console.log('CHECKOUT validate() - data', data);
-
-      return data;
+      return parseOrder(data, this._geinsSettings.locale);
     } catch (e) {
-      console.error('ERROR', e);
-      throw new Error('Error creating cart');
+      throw new Error('Error creating order');
     }
   }
-
-  // private util methods
 }
