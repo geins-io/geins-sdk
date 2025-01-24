@@ -102,11 +102,10 @@ export interface CartItemsInterface {
    * Deletes an item from the cart.
    * @param {Object} args - The arguments for deleting an item from the cart.
    * @param {string} [args.id] - The ID of the item.
-   * @param {CartItemType} [args.item] - The item to delete.
-   * @param {boolean} [args.updateCart] - Whether to update the cart after deletion.
+   * @param {number} [args.skuId] - The SKU ID of the item.
    * @returns {Promise<boolean>} A promise that resolves to true if the item was successfully deleted, otherwise false.
    */
-  delete(args: { id?: string; item?: CartItemType; updateCart?: boolean }): Promise<boolean>;
+  delete(args: { id?: string; skuId?: number }): Promise<boolean>;
 }
 
 export interface CartServiceInterface {
