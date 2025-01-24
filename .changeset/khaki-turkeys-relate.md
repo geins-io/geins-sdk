@@ -1,10 +1,10 @@
 ---
+'@geins/eslint-config': patch
 '@geins/types': patch
 '@geins/core': patch
-'@geins/oms': patch
-'@geins/eslint-config': patch
 '@geins/cms': patch
 '@geins/crm': patch
+'@geins/oms': patch
 ---
 
-add checkout features
+docs

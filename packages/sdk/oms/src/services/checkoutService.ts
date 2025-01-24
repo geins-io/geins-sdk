@@ -132,7 +132,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     }
 
     if (!resolvedArgs.shippingMethodId) {
-      resolvedArgs.paymentMethodId = this._settings.defaultShippingId ?? 0;
+      resolvedArgs.shippingMethodId = this._settings.defaultShippingId ?? 0;
     }
 
     const variables = {

@@ -1,5 +1,13 @@
 # @geins/crm
 
+## 0.3.10-canary-a231b735f9866e06454595f24a08fc6b6c352bc4
+
+### Patch Changes
+
+- b4f384b: add checkout features
+- Updated dependencies [b4f384b]
+  - @geins/core@0.3.10-canary-a231b735f9866e06454595f24a08fc6b6c352bc4
+
 ## 0.3.9
 
 ### Patch Changes
