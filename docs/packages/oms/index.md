@@ -119,4 +119,6 @@ Read more about `Cart` [here](./cart.md).
 
 ### Checkout
 
-_To be implemented._
+Checkout is a class that provides functionalities to manage the checkout process. It includes features such as order creation, payment handling, and order confirmation.
+
+Read more about `Checkout` [here](./checkout.md).
