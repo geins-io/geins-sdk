@@ -159,8 +159,8 @@ export default withMermaid({
                   ],
                 },
 
-                /*                 { text: 'Checkout', link: '/packages/oms/checkout' },
-                { text: 'Order', link: '/packages/oms/order' }, */
+                { text: 'Checkout', link: '/packages/oms/checkout' },
+                /*{ text: 'Order', link: '/packages/oms/order' }, */
                 { text: 'Merchant data', link: '/packages/oms/merchant-data' },
               ],
             },

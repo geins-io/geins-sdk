@@ -1,5 +1,6 @@
 # @geins/types
 
+<<<<<<< HEAD
 ## 0.3.10-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e
 
 ### Patch Changes
@@ -7,17 +8,23 @@
 - docs
 
 ## 0.3.10-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e
+=======
+## 0.3.10-canary-a231b735f9866e06454595f24a08fc6b6c352bc4
+>>>>>>> 5516347da530cf07ac1dead6be1323755f456167
 
 ### Patch Changes
 
 - b4f384b: add checkout features
 
+<<<<<<< HEAD
 ## 0.3.10-canary-9566e63dbbf7d2ef3cd4faef831e0343f15a3121
 
 ### Patch Changes
 
 - docs
 
+=======
+>>>>>>> 5516347da530cf07ac1dead6be1323755f456167
 ## 0.3.9
 
 ### Patch Changes

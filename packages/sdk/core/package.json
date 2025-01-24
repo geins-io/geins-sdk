@@ -1,6 +1,10 @@
 {
   "name": "@geins/core",
+<<<<<<< HEAD
   "version": "0.3.10-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e",
+=======
+  "version": "0.3.10-canary-a231b735f9866e06454595f24a08fc6b6c352bc4",
+>>>>>>> 5516347da530cf07ac1dead6be1323755f456167
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -22,8 +26,13 @@
     "broadcast-channel": "^7.0.0"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "@geins/types": "0.3.10-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e",
     "@geins/eslint-config": "0.1.9-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e",
+=======
+    "@geins/types": "0.3.10-canary-a231b735f9866e06454595f24a08fc6b6c352bc4",
+    "@geins/eslint-config": "0.1.9-canary-a231b735f9866e06454595f24a08fc6b6c352bc4",
+>>>>>>> 5516347da530cf07ac1dead6be1323755f456167
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-graphql": "^2.0.5",
     "@rollup/plugin-node-resolve": "^15.3.0",
