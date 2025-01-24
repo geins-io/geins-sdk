@@ -8,6 +8,7 @@ import {
   GraphQLQueryOptions,
   FetchPolicyOptions,
   ItemType,
+  encodeJWT,
 } from '@geins/core';
 import { MerchantData } from '../logic';
 import { parseCart, groupCartItems } from '../parsers';
@@ -21,7 +22,6 @@ import type {
   ProductPackageSelectionType,
   CartGroupInputType,
 } from '@geins/types';
-import { cpSync } from 'fs';
 
 /**
  * Shipping fee handling.
@@ -651,7 +651,19 @@ export class CartService extends BaseApiService implements CartServiceInterface 
     } catch (e) {
       throw new Error('Error updating item');
     }
-    return true;
+    // check if item was added
+    return this.itemsGet().then((items) => {
+      if (
+        !items?.find(
+          (item) =>
+            (item.id === args.item.id || item.skuId === args.item.skuId) &&
+            item.quantity === args.item.quantity,
+        )
+      ) {
+        return false;
+      }
+      return true;
+    });
   }
 
   private async itemPackageUpdate(args: {

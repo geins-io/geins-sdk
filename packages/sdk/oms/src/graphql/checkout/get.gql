@@ -1,0 +1,38 @@
+#import "../fragments/cart.gql"
+
+query checkout(
+  $id: String!
+  $paymentType: PaymentType!
+  $cartId: String
+  $checkoutMarket: String
+  $channelId: String
+  $languageId: String
+) {
+  checkout(
+    id: $id
+    paymentType: $paymentType
+    channelId: $channelId
+    languageId: $languageId
+    cartId: $cartId
+    marketId: $checkoutMarket
+  ) {
+    htmlSnippet
+    completed
+    order {
+      orderId
+      transactionId
+      firstName
+      lastName
+      email
+      zip
+      currency
+      itemValueExVat
+      itemValueIncVat
+    }
+    nthPurchase
+    cart {
+      isCompleted
+      ...Cart
+    }
+  }
+}

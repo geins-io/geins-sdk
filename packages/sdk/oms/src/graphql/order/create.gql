@@ -1,0 +1,18 @@
+mutation placeOrder(
+  $cartId: String!
+  $checkout: CheckoutInputType!
+  $channelId: String
+  $languageId: String
+  $checkoutMarketId: String
+) {
+  placeOrder(
+    cartId: $cartId
+    checkout: $checkout
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $checkoutMarketId
+  ) {
+    orderId
+    publicId: orderId
+  }
+}

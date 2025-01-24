@@ -1,10 +1,7 @@
 import { GeinsOMS } from '../src/geinsOMS';
 import { GeinsCore, RuntimeContext, GeinsLogLevel } from '@geins/core';
 import type { CartItemInputType, CartItemType, OMSSettings } from '@geins/types';
-
 import { validSettings, omsSettings } from '../../../../test/globalSettings';
-import exp from 'constants';
-import { c } from 'vite/dist/node/types.d-aGj9QkWt';
 
 describe('GeinsOMS cart', () => {
   let geinsOMS: GeinsOMS;

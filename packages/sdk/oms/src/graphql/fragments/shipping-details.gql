@@ -1,0 +1,8 @@
+fragment ShippingDetails on ShippingDetailType {
+  id
+  name
+  parcelNumber
+  shippingDate
+  shippingId
+  trackingLink
+}

@@ -1,0 +1,16 @@
+#import "../fragments/order-summary.gql"
+query getOrderPublic(
+  $publicOrderId: Guid!
+  $channelId: String
+  $languageId: String
+  $checkoutMarketId: String
+) {
+  getOrderPublic(
+    publicOrderId: $publicOrderId
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $checkoutMarketId
+  ) {
+    ...OrderSummary
+  }
+}
