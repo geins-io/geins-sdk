@@ -14,7 +14,7 @@ export function decodeJWT(token: string, secretKey?: string): { header: any; pay
   }
 
   const parts = token.split('.');
-  if (parts.length !== 3) {
+  if (parts.length !== 3 && secretKey || parts.length !== 2 && !secretKey) {
     throw new Error('Invalid JWT token format.');
   }
 
@@ -80,7 +80,7 @@ export function encodeJWT(payload: Record<string, any>, secretKey?: string): str
 
   if (!secretKey) {
     // Return unsigned token if no secretKey is provided
-    return `${encodedHeader}.${encodedPayload}.`;
+    return `${encodedHeader}.${encodedPayload}`;
   }
 
   // Create the signature
