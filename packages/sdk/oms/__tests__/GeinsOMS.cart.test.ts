@@ -32,19 +32,6 @@ describe('GeinsOMS cart', () => {
     expect(items?.length).toBe(1);
   });
 
-  it('should have the correct quantity when items is added and removed', async () => {
-    const skuId = omsSettings.skus.skuId2;
-    let result = await geinsOMS.cart.items.add({ skuId });
-    expect(result).toBe(true);
-
-    expect(geinsOMS.cart.id).toBeDefined();
-
-    const items = await geinsOMS.cart.items.get();
-    expect(items).toEqual(expect.arrayContaining([expect.objectContaining({ skuId })]));
-
-    result = await geinsOMS.cart.items.remove({ skuId });
-    expect(result).toBe(true);
-  });
 
   it('should have the correct quantity when items is added and removed', async () => {
     const skuId = omsSettings.skus.skuId2;

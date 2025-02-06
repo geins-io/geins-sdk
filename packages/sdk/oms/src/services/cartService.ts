@@ -8,7 +8,6 @@ import {
   GraphQLQueryOptions,
   FetchPolicyOptions,
   ItemType,
-  encodeJWT,
 } from '@geins/core';
 import { MerchantData } from '../logic';
 import { parseCart, groupCartItems } from '../parsers';
