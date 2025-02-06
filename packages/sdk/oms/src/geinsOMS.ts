@@ -57,7 +57,6 @@ export interface GeinsOMSInterface {
     geinsSettings?: GeinsSettings;
   }): Promise<string | undefined>;
 }
-
 /**
  * Geins Order Management System (OMS).
  * This package provides services for managing the shopping cart, handling the checkout process, and managing orders.
@@ -127,7 +126,6 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
       shippingMethods: args?.shippingMethods,
       ...args,
     };
-
-    return await this.checkout.tokenCreate(args);
+    return await this.checkout.tokenCreate(tokenArgs);
   }
 }

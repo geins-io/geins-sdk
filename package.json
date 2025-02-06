@@ -13,7 +13,7 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "dev:nuxt": "turbo dev --filter=nuxt-*",
+    "dev:nuxt": "turbo dev --filter=nuxt-app",
     "start:nuxt": "turbo start --filter=nuxt-*",
     "build:nuxt": "turbo build --filter=nuxt-*",
     "build:sdk": "turbo build --filter=./packages/sdk/*",
