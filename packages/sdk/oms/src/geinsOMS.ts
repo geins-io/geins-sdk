@@ -3,11 +3,6 @@ import {
   BasePackage,
   RuntimeContext,
   OMSSettings,
-  GeinsUserType,
-  CustomerType,
-  GeinsSettings,
-  CheckoutUrlsInputType,
-  CheckoutRedirectsType,
   GenerateCheckoutTokenOptions,
   CheckoutTokenPayload,
 } from '@geins/core';
@@ -38,8 +33,17 @@ export interface GeinsOMSInterface {
    * Creates a token for the checkout process to use when sending user to an external checkout page.
    *
    * @param args - The arguments for creating the token.
-
-   * @returns A promise that resolves to the created token or undefined.
+   * @param args.cartId - The ID of the cart (optional), if not provided cookie will be read.
+   * @param args.user - The user information (optional).
+   * @param args.isCartEditable - Indicates if the cart is editable (optional).
+   * @param args.selectedPaymentMethodId - The ID of the payment method (optional).
+   * @param args.selectedShippingMethodId - The ID of the shipping method (optional).
+   * @param args.availablePaymentMethodIds - The list of available payment method IDs (optional).
+   * @param args.availableShippingMethodIds - The list of available shipping method IDs (optional).
+   * @param args.redirectUrls - The redirect URLs (optional).
+   * @param args.checkoutStyle - The checkout style (optional).
+   * @param args.geinsSettings - The Geins settings (optional).
+   * @returns A promise that resolves to the generated token or undefined.
    */
   createCheckoutToken(args: GenerateCheckoutTokenOptions): Promise<string | undefined>;
 }
@@ -93,11 +97,6 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
   }
 
   async createCheckoutToken(options?: GenerateCheckoutTokenOptions): Promise<string | undefined> {
-    // get redirect urls from options or _omsSettings if not provided or undefined
-    const redirectUrls: CheckoutRedirectsType = options?.redirectUrls ?? this._omsSettings.checkoutUrls ?? {};
-
-    console.log('*** createCheckoutToken ', options);
-
     const tokenArgs = {
       cartId: options?.cartId ?? this.cart.id,
       user: options?.user,
@@ -110,9 +109,6 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
       checkoutStyle: options?.checkoutStyle,
       geinsSettings: this._geinsSettings,
     } as GenerateCheckoutTokenOptions;
-
-    console.log('*** createCheckoutToken tokenArgs ', tokenArgs);
-
     return await this.checkout.tokenCreate(tokenArgs);
   }
 

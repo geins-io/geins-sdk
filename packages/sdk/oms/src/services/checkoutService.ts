@@ -55,26 +55,17 @@ export interface CheckoutServiceInterface {
    * @param args - The arguments for creating the token.
    * @param args.cartId - The ID of the cart (optional), if not provided cookie will be read.
    * @param args.user - The user information (optional).
-   * @param args.customerType - The type of customer (optional).
-   * @param args.paymentId - The ID of the payment method (optional).
-   * @param args.shippingId - The ID of the shipping method (optional).
-   * @param args.paymentMethods - The list of payment method IDs (optional).
-   * @param args.shippingMethods - The list of shipping method IDs (optional).
+   * @param args.isCartEditable - Indicates if the cart is editable (optional).
+   * @param args.selectedPaymentMethodId - The ID of the payment method (optional).
+   * @param args.selectedShippingMethodId - The ID of the shipping method (optional).
+   * @param args.availablePaymentMethodIds - The list of available payment method IDs (optional).
+   * @param args.availableShippingMethodIds - The list of available shipping method IDs (optional).
    * @param args.redirectUrls - The redirect URLs (optional).
+   * @param args.checkoutStyle - The checkout style (optional).
    * @param args.geinsSettings - The Geins settings (optional).
-   * @returns A promise that resolves to the created token or undefined.
+   * @returns A promise that resolves to the generated token or undefined.
    */
-  tokenCreate(args?: {
-    cartId?: string;
-    user?: any;
-    customerType?: CustomerType;
-    paymentId?: number;
-    shippingId?: number;
-    paymentMethods?: number[];
-    shippingMethods?: number[];
-    redirectUrls?: any;
-    geinsSettings?: GeinsSettings;
-  }): Promise<string | undefined>;
+  tokenCreate(args?: GenerateCheckoutTokenOptions): Promise<string | undefined>;
 }
 
 export class CheckoutService extends BaseApiService implements CheckoutServiceInterface {
@@ -97,7 +88,6 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     checkout?: CheckoutInputType;
   }): Promise<CheckoutType | undefined> {
     const resolvedArgs = { ...args };
-    console.log('*** resolvedArgs', resolvedArgs);
 
     if (!resolvedArgs.cartId) {
       if (this._parent?.cart.id) {
@@ -143,7 +133,6 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       variables: this.generateVars(variables),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
-    console.log('*** options', options.variables);
 
     try {
       const data = await this.runMutation(options);
