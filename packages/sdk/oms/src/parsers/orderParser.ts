@@ -18,6 +18,7 @@ export function parseOrder(data: any, locale: string): PlaceOrderResponseType | 
   return {
     orderId: order.orderId,
     publicId: order.publicId,
+    redirectUrl: order.redirectUrl,
   };
 }
 

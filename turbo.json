@@ -12,7 +12,9 @@
       ]
     },
     "link": {
-      "dependsOn": []
+      "dependsOn": [
+        "^link"
+      ]
     },
     "test": {
       "dependsOn": [

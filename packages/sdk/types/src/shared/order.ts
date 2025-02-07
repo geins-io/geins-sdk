@@ -28,3 +28,12 @@ export type PaymentOptionType = {
   paymentType?: string;
   paymentData?: string;
 };
+
+
+export type CheckoutRedirectsType = {
+  terms?: string;
+  success?: string;
+  change?: string;
+  cancel?: string;
+  error?: string;
+};

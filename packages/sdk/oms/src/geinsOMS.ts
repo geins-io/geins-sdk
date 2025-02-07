@@ -6,6 +6,10 @@ import {
   GeinsUserType,
   CustomerType,
   GeinsSettings,
+  CheckoutUrlsInputType,
+  CheckoutRedirectsType,
+  GenerateCheckoutTokenOptions,
+  CheckoutTokenPayload,
 } from '@geins/core';
 import { CartService } from './services/cartService';
 import { CheckoutService } from './services/checkoutService';
@@ -34,28 +38,10 @@ export interface GeinsOMSInterface {
    * Creates a token for the checkout process to use when sending user to an external checkout page.
    *
    * @param args - The arguments for creating the token.
-   * @param args.cartId - The ID of the cart (optional), if not provided cookie will be read.
-   * @param args.user - The user information (optional).
-   * @param args.customerType - The type of customer (optional).
-   * @param args.paymentId - The ID of the payment method (optional).
-   * @param args.shippingId - The ID of the shipping method (optional).
-   * @param args.paymentMethods - The list of payment method IDs (optional).
-   * @param args.shippingMethods - The list of shipping method IDs (optional).
-   * @param args.redirectUrls - The redirect URLs (optional).
-   * @param args.geinsSettings - The Geins settings (optional).
+
    * @returns A promise that resolves to the created token or undefined.
    */
-  createCheckoutToken(args?: {
-    cartId?: string;
-    user?: GeinsUserType;
-    customerType?: CustomerType;
-    paymentId?: number;
-    shippingId?: number;
-    paymentMethods?: number[];
-    shippingMethods?: number[];
-    redirectUrls?: any;
-    geinsSettings?: GeinsSettings;
-  }): Promise<string | undefined>;
+  createCheckoutToken(args: GenerateCheckoutTokenOptions): Promise<string | undefined>;
 }
 /**
  * Geins Order Management System (OMS).
@@ -106,26 +92,31 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
     return this._order;
   }
 
-  async createCheckoutToken(args?: {
-    cartId?: string;
-    user?: any;
-    customerType?: CustomerType;
-    paymentId?: number;
-    shippingId?: number;
-    paymentMethods?: number[];
-    shippingMethods?: number[];
-    redirectUrls?: any;
-    geinsSettings?: GeinsSettings;
-  }): Promise<string | undefined> {
+  async createCheckoutToken(options?: GenerateCheckoutTokenOptions): Promise<string | undefined> {
+    // get redirect urls from options or _omsSettings if not provided or undefined
+    const redirectUrls: CheckoutRedirectsType = options?.redirectUrls ?? this._omsSettings.checkoutUrls ?? {};
+
+    console.log('*** createCheckoutToken ', options);
+
     const tokenArgs = {
-      cartId: args?.cartId ?? this.cart.id,
-      user: args?.user,
-      paymentId: args?.paymentId ?? this._omsSettings.defaultPaymentId ?? 0,
-      shippingId: args?.shippingId ?? this._omsSettings.defaultShippingId ?? 0,
-      paymentMethods: args?.paymentMethods,
-      shippingMethods: args?.shippingMethods,
-      ...args,
-    };
+      cartId: options?.cartId ?? this.cart.id,
+      user: options?.user,
+      isCartEditable: options?.isCartEditable ?? false,
+      selectedPaymentMethodId: options?.selectedPaymentMethodId ?? this._omsSettings.defaultPaymentId ?? 0,
+      selectedShippingMethodId: options?.selectedShippingMethodId ?? this._omsSettings.defaultShippingId ?? 0,
+      availablePaymentMethodIds: options?.availablePaymentMethodIds,
+      availableShippingMethodIds: options?.availableShippingMethodIds,
+      redirectUrls: options?.redirectUrls ?? this._omsSettings.checkoutUrls ?? undefined,
+      checkoutStyle: options?.checkoutStyle,
+      geinsSettings: this._geinsSettings,
+    } as GenerateCheckoutTokenOptions;
+
+    console.log('*** createCheckoutToken tokenArgs ', tokenArgs);
+
     return await this.checkout.tokenCreate(tokenArgs);
+  }
+
+  static async parseCheckoutToken(token: string): Promise<CheckoutTokenPayload | undefined> {
+    return await CheckoutService.tokenParse(token);
   }
 }

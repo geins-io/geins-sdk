@@ -4,6 +4,7 @@ import type { CartType } from '../oms/cart';
 export type PlaceOrderResponseType = {
   orderId?: string;
   publicId?: string;
+  redirectUrl?: string;
 };
 
 export type ShippingDetailType = {

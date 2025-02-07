@@ -9,6 +9,7 @@ import type {
   ValidateOrderCreationResponseType,
   CheckoutRedirectsType,
   GeinsUserType,
+  GenerateCheckoutTokenOptions,
 } from '@geins/core';
 
 import { GeinsOMS } from '../geinsOMS';
@@ -74,14 +75,6 @@ export interface CheckoutServiceInterface {
     redirectUrls?: any;
     geinsSettings?: GeinsSettings;
   }): Promise<string | undefined>;
-
-  /**
-   * Parses a checkout token and returns the payload.
-   *
-   * @param token - The token to parse.
-   * @returns A promise that resolves to the parsed token payload or undefined.
-   */
-  tokenParse(token: string): Promise<CheckoutTokenPayload | undefined>;
 }
 
 export class CheckoutService extends BaseApiService implements CheckoutServiceInterface {
@@ -104,6 +97,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     checkout?: CheckoutInputType;
   }): Promise<CheckoutType | undefined> {
     const resolvedArgs = { ...args };
+    console.log('*** resolvedArgs', resolvedArgs);
 
     if (!resolvedArgs.cartId) {
       if (this._parent?.cart.id) {
@@ -140,6 +134,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       checkout: {
         paymentId: resolvedArgs.paymentMethodId,
         shippingId: resolvedArgs.shippingMethodId,
+        checkoutUrls: resolvedArgs.checkout?.checkoutUrls,
       },
     };
 
@@ -148,6 +143,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       variables: this.generateVars(variables),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
+    console.log('*** options', options.variables);
 
     try {
       const data = await this.runMutation(options);
@@ -182,19 +178,8 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     }
   }
 
-  async tokenCreate(args?: {
-    cartId?: string;
-    user?: GeinsUserType;
-    customerType?: CustomerType;
-    paymentId?: number;
-    shippingId?: number;
-    paymentMethods?: number[];
-    shippingMethods?: number[];
-    redirectUrls?: CheckoutRedirectsType;
-    geinsSettings?: GeinsSettings;
-  }): Promise<string | undefined> {
+  async tokenCreate(args?: GenerateCheckoutTokenOptions): Promise<string | undefined> {
     const resolvedArgs = { ...args };
-
     if (!resolvedArgs.cartId) {
       if (this._parent?.cart.id) {
         resolvedArgs.cartId = this._parent?.cart.id;
@@ -205,7 +190,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     }
 
     if (!resolvedArgs.geinsSettings) {
-      resolvedArgs.geinsSettings = this._geinsSettings;
+      resolvedArgs.geinsSettings = this._geinsSettings ?? {};
     }
 
     if (!resolvedArgs.customerType) {
@@ -216,12 +201,14 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       resolvedArgs.user = args?.user;
     }
 
-    if (!resolvedArgs.paymentId) {
-      resolvedArgs.paymentId = args?.paymentId ?? this._settings.defaultPaymentId ?? 0;
+    if (!resolvedArgs.selectedPaymentMethodId) {
+      resolvedArgs.selectedPaymentMethodId =
+        args?.selectedPaymentMethodId ?? this._settings.defaultPaymentId ?? 0;
     }
 
-    if (!resolvedArgs.shippingId) {
-      resolvedArgs.shippingId = args?.shippingId ?? this._settings.defaultShippingId ?? 0;
+    if (!resolvedArgs.selectedShippingMethodId) {
+      resolvedArgs.selectedShippingMethodId =
+        args?.selectedShippingMethodId ?? this._settings.defaultShippingId ?? 0;
     }
 
     if (!resolvedArgs.redirectUrls) {
@@ -231,21 +218,23 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     const obj = {
       cartId: resolvedArgs.cartId,
       user: resolvedArgs.user,
-      settings: {
-        paymentId: resolvedArgs.paymentId,
-        paymentMethods: resolvedArgs.paymentMethods,
-        shippingId: resolvedArgs.shippingId,
-        shippingMethods: resolvedArgs.shippingMethods,
+      checkoutSettings: {
+        isCartEditable: resolvedArgs?.isCartEditable ?? false,
+        selectedPaymentMethodId: resolvedArgs.selectedPaymentMethodId,
+        selectedShippingMethodId: resolvedArgs.selectedShippingMethodId,
+        availablePaymentMethodIds: resolvedArgs.availablePaymentMethodIds,
+        availableShippingMethodIds: resolvedArgs.availableShippingMethodIds,
         customerType: resolvedArgs.customerType,
         redirectUrls: resolvedArgs.redirectUrls,
+        style: resolvedArgs.checkoutStyle,
       },
       geinsSettings: resolvedArgs.geinsSettings,
-    };
+    } as CheckoutTokenPayload;
 
     return encodeJWT(obj);
   }
 
-  async tokenParse(token: string): Promise<CheckoutTokenPayload | undefined> {
+  static async tokenParse(token: string): Promise<CheckoutTokenPayload | undefined> {
     const decodedToken = decodeJWT(token);
     if (!decodedToken) {
       return undefined;
