@@ -1,12 +1,18 @@
 import { CustomerType, GeinsSettings } from '../common';
 import { GeinsUserType } from '../generated';
-import type { AddressType, ShippingOptionType, PaymentOptionType } from '../shared';
+import type { AddressType, ShippingOptionType, PaymentOptionType, CheckoutRedirectsType } from '../shared';
 import type { CartType } from '../oms/cart';
 
 enum CheckoutStatus {
   OK = 'OK',
   CUSTOMER_BLACKLISTED = 'CUSTOMER_BLACKLISTED',
 }
+
+export type CheckoutUrlsInputType = {
+  termsPageUrl?: String;
+  redirectUrl?: String;
+  checkoutPageUrl?: String;
+};
 
 export type CheckoutInputType = {
   paymentId?: number;
@@ -24,6 +30,7 @@ export type CheckoutInputType = {
   customerType?: CustomerType;
   externalShippingFee?: number;
   merchantData?: string;
+  checkoutUrls: CheckoutUrlsInputType;
 };
 
 export type ConsentType = {
@@ -64,20 +71,34 @@ export type AddressInputType = {
   phone?: string;
 };
 
-export type CheckoutRedirectsType = {
-  success?: string;
-  continue?: string;
-  cancel?: string;
-  error?: string;
+export type CheckoutStyleType = {
+  logoUrl?: string;
+  backgroundColor?: string;
+  text?: {
+    backgroundColor?: string;
+    textColor?: string;
+  };
+  buttons?: {
+    backgroundColor?: string;
+    textColor?: string;
+  };
+  validation?: {
+    backgroundColor?: string;
+    textColor?: string;
+  };
 };
 
 export type CheckoutSettings = {
-  paymentId?: number;
-  shippingId?: number;
+  isCartEditable?: boolean;
+  selectedPaymentMethodId?: number;
+  selectedShippingMethodId?: number;
+  availablePaymentMethodIds?: number[];
+  availableShippingMethodIds?: number[];
   customerType?: CustomerType;
   billingAddress?: AddressInputType;
   shippingAddress?: AddressInputType;
   redirectUrls?: CheckoutRedirectsType;
+  style?: CheckoutStyleType;
 };
 
 export type CheckoutTokenPayload = {
@@ -85,4 +106,18 @@ export type CheckoutTokenPayload = {
   user?: GeinsUserType;
   checkoutSettings: CheckoutSettings;
   geinsSettings: GeinsSettings;
+};
+
+export type GenerateCheckoutTokenOptions = {
+  cartId?: string;
+  customerType?: CustomerType;
+  user?: GeinsUserType;
+  isCartEditable?: boolean;
+  selectedPaymentMethodId?: number;
+  selectedShippingMethodId?: number;
+  availablePaymentMethodIds?: number[];
+  availableShippingMethodIds?: number[];
+  redirectUrls?: CheckoutRedirectsType;
+  checkoutStyle?: CheckoutStyleType;
+  geinsSettings?: GeinsSettings;
 };

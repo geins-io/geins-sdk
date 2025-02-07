@@ -47,7 +47,7 @@ export class GraphQLService extends BaseApiService {
       ) || [];
 
     const providedVars = Object.keys(returnOptions.variables);
-    providedVars.forEach(v => {
+    providedVars.forEach((v) => {
       if (queryVars && !queryVars.includes(v)) {
         delete returnOptions.variables[v];
       }

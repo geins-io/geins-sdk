@@ -1,12 +1,9 @@
 import { RuntimeContext } from '../common';
+import type { CheckoutRedirectsType } from '../shared';
 export type OMSSettings = {
   context: RuntimeContext;
   merchantDataTemplate?: unknown;
   defaultPaymentId?: number;
   defaultShippingId?: number;
-  /*
-  - Callback url
-  - Merchant Data Model
-  - Ship Options
-  */
+  checkoutUrls?: CheckoutRedirectsType;
 };
