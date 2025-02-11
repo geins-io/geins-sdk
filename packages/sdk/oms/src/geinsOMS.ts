@@ -32,29 +32,9 @@ export interface GeinsOMSInterface {
   /**
    * Creates a token for the checkout process to use when sending user to an external checkout page.
    *
-   * @param args - The arguments for creating the token.
-   * @param args.cartId - The ID of the cart (optional), if not provided cookie will be read.
-   * @param args.user - The user information (optional).
-   * @param args.customerType - The type of customer (optional).
-   * @param args.paymentId - The ID of the payment method (optional).
-   * @param args.shippingId - The ID of the shipping method (optional).
-   * @param args.paymentMethods - The list of payment method IDs (optional).
-   * @param args.shippingMethods - The list of shipping method IDs (optional).
-   * @param args.redirectUrls - The redirect URLs (optional).
-   * @param args.geinsSettings - The Geins settings (optional).
-   * @returns A promise that resolves to the created token or undefined.
+   * @param args -WIP
    */
-  createCheckoutToken(args?: {
-    cartId?: string;
-    user?: GeinsUserType;
-    customerType?: CustomerType;
-    paymentId?: number;
-    shippingId?: number;
-    paymentMethods?: number[];
-    shippingMethods?: number[];
-    redirectUrls?: any;
-    geinsSettings?: GeinsSettings;
-  }): Promise<string | undefined>;
+  createCheckoutToken(args: GenerateCheckoutTokenOptions): Promise<string | undefined>;
 }
 /**
  * Geins Order Management System (OMS).
@@ -105,17 +85,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
     return this._order;
   }
 
-  async createCheckoutToken(args?: {
-    cartId?: string;
-    user?: any;
-    customerType?: CustomerType;
-    paymentId?: number;
-    shippingId?: number;
-    paymentMethods?: number[];
-    shippingMethods?: number[];
-    redirectUrls?: any;
-    geinsSettings?: GeinsSettings;
-  }): Promise<string | undefined> {
+  async createCheckoutToken(options?: GenerateCheckoutTokenOptions): Promise<string | undefined> {
     const tokenArgs = {
       cartId: options?.cartId ?? this.cart.id,
       user: options?.user,
