@@ -112,6 +112,7 @@ export type GenerateCheckoutTokenOptions = {
   cartId?: string;
   customerType?: CustomerType;
   user?: GeinsUserType;
+  cloneCart?: boolean;
   isCartEditable?: boolean;
   selectedPaymentMethodId?: number;
   selectedShippingMethodId?: number;
