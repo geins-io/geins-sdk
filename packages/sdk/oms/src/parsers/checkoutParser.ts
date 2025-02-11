@@ -2,6 +2,14 @@ import { findObjectWithProperty, CheckoutType, ValidateOrderCreationResponseType
 import { parseCart } from './cartParser';
 import { parseAddress } from './sharedParsers';
 
+export function parseCheckoutSummary(data: any, locale: string): any | undefined {
+  const checkoutSummary = findObjectWithProperty(data, '__typename', 'CheckoutDataType');
+  if (!checkoutSummary) {
+    return undefined;
+  }
+  return {};
+}
+
 export function parseCheckout(data: any, locale: string): CheckoutType | undefined {
   const checkout = findObjectWithProperty(data, '__typename', 'CheckoutType');
   if (!checkout) {
