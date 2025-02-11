@@ -1,4 +1,12 @@
-import { BaseApiService, CustomerType, FetchPolicyOptions, encodeJWT, decodeJWT } from '@geins/core';
+import {
+  BaseApiService,
+  CustomerType,
+  FetchPolicyOptions,
+  encodeJWT,
+  decodeJWT,
+  extractParametersFromUrl,
+  CHECKOUT_PARAMETERS,
+} from '@geins/core';
 
 import type {
   GeinsSettings,
@@ -14,7 +22,7 @@ import type {
 
 import { GeinsOMS } from '../geinsOMS';
 import { queries } from '../graphql';
-import { parseCheckout, parseValidateOrder } from '../parsers';
+import { parseCheckout, parseValidateOrder, parseCheckoutSummary } from '../parsers';
 
 export interface CheckoutServiceInterface {
   /**
@@ -48,6 +56,24 @@ export interface CheckoutServiceInterface {
     cartId: string;
     checkout: CheckoutInputType;
   }): Promise<ValidateOrderCreationResponseType | undefined>;
+
+  /**
+   * Retrieves a summary of the checkout process after a completed order.
+   *
+   * @param args - WIP
+   * @returns - WIP
+   */
+  getSummary(args: {}): Promise<CheckoutType | undefined>;
+
+  /**
+   * Generates checkout parameters by merging current parameters with default CHECKOUT_PARAMETERS
+   * @param currentParameters - Map of current parameters to merge with defaults
+   * @returns A new Map containing merged checkout parameters
+   * @example
+   * const params = new Map([['key', 'value']]);
+   * const mergedParams = generateCheckoutParameters(params);
+   */
+  generateExternalCheckoutUrlParameters(currentParameters: Map<string, string>): Map<string, string>;
 
   /**
    * Creates a token for the checkout process to use when sending user to an external checkout page.
@@ -167,6 +193,37 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     }
   }
 
+  async getSummary(args: { orderId: string; paymentType: string }): Promise<any | undefined> {
+    throw new Error('Method not implemented');
+    if (!args.orderId) {
+      throw new Error('Missing orderId');
+    }
+    if (!args.paymentType) {
+      throw new Error('Missing paymentType');
+    }
+
+    const variables = {
+      id: args.orderId,
+      paymentType: args.paymentType,
+    };
+
+    const options: any = {
+      query: queries.checkoutSummaryGet,
+      variables: this.createVariables(variables),
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+    };
+
+    try {
+      const data = await this.runQuery(options);
+
+      return {} as any;
+      return parseCheckoutSummary(data, this._geinsSettings.locale);
+      //return parseOrderSummary(data, this._geinsSettings.locale);
+    } catch (e) {
+      throw new Error(`Error getting order from external payementId`);
+    }
+  }
+
   async tokenCreate(args?: GenerateCheckoutTokenOptions): Promise<string | undefined> {
     const resolvedArgs = { ...args };
     if (!resolvedArgs.cartId) {
@@ -202,6 +259,13 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
 
     if (!resolvedArgs.redirectUrls) {
       resolvedArgs.redirectUrls = args?.redirectUrls;
+      if (!resolvedArgs.redirectUrls) {
+        resolvedArgs.redirectUrls = this._settings.checkoutUrls;
+      }
+    }
+    if (resolvedArgs.redirectUrls) {
+      // add parameters to urls
+      resolvedArgs.redirectUrls = this.addParametersToUrls(resolvedArgs.redirectUrls);
     }
 
     const obj = {
@@ -209,6 +273,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       user: resolvedArgs.user,
       checkoutSettings: {
         isCartEditable: resolvedArgs?.isCartEditable ?? false,
+        cloneCart: resolvedArgs?.cloneCart ?? true,
         selectedPaymentMethodId: resolvedArgs.selectedPaymentMethodId,
         selectedShippingMethodId: resolvedArgs.selectedShippingMethodId,
         availablePaymentMethodIds: resolvedArgs.availablePaymentMethodIds,
@@ -223,12 +288,52 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     return encodeJWT(obj);
   }
 
+  generateExternalCheckoutUrlParameters(currentParameters: Map<string, string>): Map<string, string> {
+    const mergedMap = new Map(CHECKOUT_PARAMETERS);
+    Array.from(currentParameters.entries()).forEach(([key, value]) => {
+      mergedMap.set(key, value);
+    });
+    return mergedMap;
+  }
+
   static async tokenParse(token: string): Promise<CheckoutTokenPayload | undefined> {
     const decodedToken = decodeJWT(token);
     if (!decodedToken) {
       return undefined;
     }
     return decodedToken.payload;
+  }
+
+  private addParametersToUrls(redirectUrls: CheckoutRedirectsType): CheckoutRedirectsType | undefined {
+    if (!redirectUrls) {
+      return;
+    }
+
+    (Object.keys(redirectUrls) as Array<keyof CheckoutRedirectsType>).forEach((key) => {
+      if (!redirectUrls[key]) {
+        return;
+      }
+      // only add for success url
+      if (key !== 'success') {
+        return;
+      }
+      const { url, params } = extractParametersFromUrl(redirectUrls[key]);
+      const parameters = this.generateExternalCheckoutUrlParameters(params);
+      const queryString = this.mapToQueryString(parameters);
+
+      redirectUrls[key] = `${url}${queryString}`;
+    });
+    return redirectUrls;
+  }
+
+  private mapToQueryString(parameters: Map<string, string>): string {
+    if (!parameters.size) {
+      return '';
+    }
+    const queryParams = Array.from(parameters.entries())
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+    return `?${queryParams}`;
   }
 
   private generateVars(variables: any) {

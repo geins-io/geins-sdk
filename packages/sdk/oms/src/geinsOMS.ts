@@ -101,6 +101,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
       cartId: options?.cartId ?? this.cart.id,
       user: options?.user,
       isCartEditable: options?.isCartEditable ?? false,
+      cloneCart: options?.cloneCart ?? true,
       selectedPaymentMethodId: options?.selectedPaymentMethodId ?? this._omsSettings.defaultPaymentId ?? 0,
       selectedShippingMethodId: options?.selectedShippingMethodId ?? this._omsSettings.defaultShippingId ?? 0,
       availablePaymentMethodIds: options?.availablePaymentMethodIds,
@@ -112,7 +113,22 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
     return await this.checkout.tokenCreate(tokenArgs);
   }
 
-  static async parseCheckoutToken(token: string): Promise<CheckoutTokenPayload | undefined> {
-    return await CheckoutService.tokenParse(token);
+  /**
+   * Parses a checkout token to retrieve the checkout payload.
+   *
+   * @param token The token to parse.
+   * @returns A promise that resolves to the parsed CheckoutTokenPayload or throws an error.
+   * @example:
+   * ```typescript
+   * const token = 'your-token-here';
+   * const payload = await GeinsOMS.parseCheckoutToken(token);
+   * ```
+   */
+  public static async parseCheckoutToken(token: string): Promise<CheckoutTokenPayload | undefined> {
+    const payload = await CheckoutService.tokenParse(token);
+    if (!payload) {
+      throw new Error('Invalid token: Unable to parse token.');
+    }
+    return payload;
   }
 }

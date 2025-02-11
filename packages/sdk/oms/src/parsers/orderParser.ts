@@ -22,6 +22,39 @@ export function parseOrder(data: any, locale: string): PlaceOrderResponseType | 
   };
 }
 
+export function parseCheckoutOrderSummary(data: any, locale: string): OrderSummaryType | undefined {
+  const orderSummary = findObjectWithProperty(data, '__typename', 'CheckoutDataType');
+  if (!orderSummary) {
+    return undefined;
+  }
+
+  return {
+    id: orderSummary.id,
+    customerId: orderSummary.customerId,
+    createdAt: orderSummary.createdAt,
+    completedAt: orderSummary.completedAt,
+    currency: orderSummary.currency,
+    desiredDeliveryDate: orderSummary.desiredDeliveryDate,
+    message: orderSummary.message,
+    status: orderSummary.status,
+    updatedAt: orderSummary.updatedAt,
+    publicId: orderSummary.publicId,
+    billingAddress: parseAddress(orderSummary.billingAddress),
+    shippingAddress: parseAddress(orderSummary.shippingAddress),
+    cart: parseCart(orderSummary.cart, locale),
+    paymentDetails: parsePaymentDetails(orderSummary.paymentDetails),
+    discount: parsePrice(orderSummary.discount, locale),
+    orderTotal: parsePrice(orderSummary.orderTotal, locale),
+    paymentFee: parsePrice(orderSummary.paymentFee, locale),
+    shippingFee: parsePrice(orderSummary.shippingFee, locale),
+    vat: parsePrice(orderSummary.vat, locale),
+    fromBalance: orderSummary.fromBalance,
+    fromBalanceFormatted: orderSummary.fromBalanceFormatted,
+    refunds: parseRefunds(orderSummary.refunds),
+    shippingDetails: parseShippingDetails(orderSummary.shippingDetails),
+  };
+}
+
 export function parseOrderSummary(data: any, locale: string): OrderSummaryType | undefined {
   const orderSummary = findObjectWithProperty(data, '__typename', 'OrderType');
   if (!orderSummary) {

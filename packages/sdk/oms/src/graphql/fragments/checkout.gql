@@ -28,8 +28,9 @@ fragment Checkout on CheckoutType {
   }
   paymentOptions {
     id
-    displayName
     logo
+    displayName
+    checkoutType
     paymentType
     paymentData
     isSelected
