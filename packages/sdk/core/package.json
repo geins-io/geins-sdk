@@ -22,8 +22,8 @@
     "broadcast-channel": "^7.0.0"
   },
   "devDependencies": {
-    "@geins/types": "0.3.10-canary-041e5f03d0f47a30733c0c2fba70ccb3dba3e26b",
-    "@geins/eslint-config": "0.1.9-canary-041e5f03d0f47a30733c0c2fba70ccb3dba3e26b",
+    "@geins/types": "*",
+    "@geins/eslint-config": "*",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-graphql": "^2.0.5",
     "@rollup/plugin-node-resolve": "^15.3.0",

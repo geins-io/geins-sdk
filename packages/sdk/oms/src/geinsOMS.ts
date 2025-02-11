@@ -32,7 +32,18 @@ export interface GeinsOMSInterface {
   /**
    * Creates a token for the checkout process to use when sending user to an external checkout page.
    *
-   * @param args -WIP
+   * @param args - The arguments for creating the token.
+   * @param args.cartId - The ID of the cart (optional), if not provided cookie will be read.
+   * @param args.user - The user information (optional).
+   * @param args.isCartEditable - Indicates if the cart is editable (optional).
+   * @param args.selectedPaymentMethodId - The ID of the payment method (optional).
+   * @param args.selectedShippingMethodId - The ID of the shipping method (optional).
+   * @param args.availablePaymentMethodIds - The list of available payment method IDs (optional).
+   * @param args.availableShippingMethodIds - The list of available shipping method IDs (optional).
+   * @param args.redirectUrls - The redirect URLs (optional).
+   * @param args.checkoutStyle - The checkout style (optional).
+   * @param args.geinsSettings - The Geins settings (optional).
+   * @returns A promise that resolves to the generated token or undefined.
    */
   createCheckoutToken(args: GenerateCheckoutTokenOptions): Promise<string | undefined>;
 }
