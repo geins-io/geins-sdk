@@ -79,19 +79,38 @@ export type AddressInputType = {
 };
 
 export type CheckoutStyleType = {
+  title?: string;
   logoUrl?: string;
-  backgroundColor?: string;
+  body?: {
+    backgroundColor?: string;
+    textColor?: string;
+    fontSize?: string;
+  };
+  topbar?: {
+    visible?: boolean;
+    backgroundColor?: string;
+    textColor?: string;
+  };
+  cards?: {
+    backgroundColor?: string;
+    textColor?: string;
+    fontSize?: string;
+    borderRadius?: string;
+  };
   text?: {
     backgroundColor?: string;
     textColor?: string;
+    fontSize?: string;
   };
   buttons?: {
     backgroundColor?: string;
     textColor?: string;
+    fontSize?: string;
   };
   validation?: {
     backgroundColor?: string;
     textColor?: string;
+    fontSize?: string;
   };
 };
 

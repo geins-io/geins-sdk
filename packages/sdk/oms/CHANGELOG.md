@@ -1,5 +1,23 @@
 # @geins/oms
 
+## 0.3.10-canary-9e45fd154702919aa27d04abc76e4e7d581975ff
+
+### Patch Changes
+
+- 15537bf: added docs and fixed up types
+- 3e745f6: jwt token update
+- c93670a: release
+- 9e45fd1: pkg
+- 37d6ca3: next
+- f3ed786: next rel
+- Updated dependencies [15537bf]
+- Updated dependencies [3e745f6]
+- Updated dependencies [c93670a]
+- Updated dependencies [9e45fd1]
+- Updated dependencies [37d6ca3]
+- Updated dependencies [f3ed786]
+  - @geins/core@0.3.10-canary-9e45fd154702919aa27d04abc76e4e7d581975ff
+
 ## 0.3.10-canary-041e5f03d0f47a30733c0c2fba70ccb3dba3e26b
 
 ### Patch Changes
