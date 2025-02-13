@@ -152,11 +152,6 @@ function parseCampaigns(data: any): CampaignRuleType[] {
       campaignId: item.campaignId || '',
       name: item.name || '',
       hideTitle: item.hideTitle || false,
-      /* ruleType: item.ruleType || '',
-      category: item.category || '',
-      action: item.action || '',
-      actionValue: item.actionValue || '',
-      canonicalUrl: item.canonicalUrl || '', */
     };
   });
 }

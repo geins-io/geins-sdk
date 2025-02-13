@@ -34,7 +34,7 @@ export const geinsSharedConfig = [
     },
     rules: {
       'brace-style': ['error', '1tbs', { allowSingleLine: true }], // Allow single-line braces
-      'max-len': ['error', { code: 110, ignoreUrls: true }], // Set maximum line length to 100 characters
+      'max-len': ['error', { code: 210, ignoreUrls: true }], // Set maximum line length to 210 characters
       'function-paren-newline': ['error', 'consistent'], // Ensure function parameters are consistently on a single line
       'function-call-argument-newline': ['error', 'consistent'], // Ensure function call arguments are consistently on a single line
       'no-console': ['error', { allow: ['warn', 'error'] }], // Allow only console.warn and console.error

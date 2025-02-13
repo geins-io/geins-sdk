@@ -194,10 +194,10 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
   }
 
   async getSummary(args: { orderId: string; paymentType: string }): Promise<any | undefined> {
-    throw new Error('Method not implemented');
     if (!args.orderId) {
       throw new Error('Missing orderId');
     }
+
     if (!args.paymentType) {
       throw new Error('Missing paymentType');
     }
@@ -215,12 +215,9 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
 
     try {
       const data = await this.runQuery(options);
-
-      return {} as any;
       return parseCheckoutSummary(data, this._geinsSettings.locale);
-      //return parseOrderSummary(data, this._geinsSettings.locale);
     } catch (e) {
-      throw new Error(`Error getting order from external payementId`);
+      throw new Error(`Error getting summmary`);
     }
   }
 

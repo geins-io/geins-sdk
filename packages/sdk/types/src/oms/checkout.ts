@@ -148,3 +148,102 @@ export type GenerateCheckoutTokenOptions = {
   checkoutStyle?: CheckoutStyleType;
   geinsSettings?: GeinsSettings;
 };
+
+export type CheckoutSummaryType = {
+  htmlSnippet?: string;
+  order?: CheckoutSummaryOrderType;
+  nthPurchase?: number;
+};
+
+export type CheckoutSummaryOrderType = {
+  status?: string;
+  orderId?: string;
+  transactionId?: string;
+  marketId?: string;
+  languageId?: string;
+  message?: string;
+  merchantData?: string;
+  customerId?: number;
+  customerTypeId?: number;
+  customerGroupId?: number;
+  organizationNumber?: string;
+  ipAddress?: string;
+  paymentId?: number;
+  shippingId?: number;
+  pickupPoint?: string;
+  desiredDeliveryDate?: string;
+  promoCode?: string;
+  appliedCampaignIds?: string[];
+  appliedCampaigns?: string[];
+  total?: CheckoutSummaryOrderTotalType;
+  billingAddress?: AddressType;
+  shippingAddress?: AddressType;
+  rows?: CheckoutSummaryOrderRowType[];
+};
+
+export type CheckoutSummaryOrderTotalType = {
+  itemValueExVat?: number;
+  itemValueExVatFormatted?: string;
+  itemValueIncVat?: number;
+  itemValueIncVatFormatted?: string;
+  orderValueExVat?: number;
+  orderValueExVatFormatted?: string;
+  orderValueIncVat?: number;
+  orderValueIncVatFormatted?: string;
+  paymentFeeExVat?: number;
+  paymentFeeExVatFormatted?: string;
+  paymentFeeIncVat?: number;
+  paymentFeeIncVatFormatted?: string;
+  shippingFeeExVat?: number;
+  shippingFeeExVatFormatted?: string;
+  shippingFeeIncVat?: number;
+  shippingFeeIncVatFormatted?: string;
+  discountExVat?: number;
+  discountExVatFormatted?: string;
+  discountIncVat?: number;
+  discountIncVatFormatted?: string;
+  sum?: number;
+  sumFormatted?: string;
+  currency?: string;
+};
+
+export type CheckoutSummaryOrderRowType = {
+  quantity?: number;
+  skuId?: string;
+  articleNumber?: string;
+  gtin?: string;
+  name?: string;
+  weight?: number;
+  height?: number;
+  length?: number;
+  width?: number;
+  message?: string;
+  product?: CheckoutSummaryProductType;
+  price?: CheckoutSummaryPriceType;
+};
+
+export type CheckoutSummaryProductType = {
+  name?: string;
+  brand?: string;
+  imageUrl?: string;
+  categories?: string[];
+  productId?: number;
+  productUrl?: string;
+};
+
+export type CheckoutSummaryPriceType = {
+  campaignIds?: string[];
+  campaignNames?: string[];
+  productPriceCampaignId?: string | null;
+  productPriceListId?: string | null;
+  discountRate?: number;
+  discountExVat?: number;
+  discountExVatFormatted?: string;
+  discountIncVat?: number;
+  discountIncVatFormatted?: string;
+  priceExVat?: number;
+  priceExVatFormatted?: string;
+  priceIncVat?: number;
+  priceIncVatFormatted?: string;
+  currency?: string;
+};
