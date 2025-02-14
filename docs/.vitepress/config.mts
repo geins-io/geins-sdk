@@ -159,7 +159,15 @@ export default withMermaid({
                   ],
                 },
 
-                { text: 'Checkout', link: '/packages/oms/checkout' },
+                {
+                  text: 'Checkout',
+                  link: '/packages/oms/checkout',
+                  items: [
+                    { text: 'Process', link: '/packages/oms/checkout-process' },
+                    { text: 'Configuration', link: '/packages/oms/checkout-configuration' },
+                    { text: 'Tokens', link: '/packages/oms/checkout-tokens' },
+                  ],
+                },
                 { text: 'Order', link: '/packages/oms/order' },
                 { text: 'Merchant data', link: '/packages/oms/merchant-data' },
               ],

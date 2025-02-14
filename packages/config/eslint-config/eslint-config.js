@@ -41,7 +41,7 @@ export const geinsSharedConfig = [
       'prettier/prettier': [
         'error',
         {
-          printWidth: 110,
+          printWidth: 210,
           singleQuote: true,
           trailingComma: 'none',
           arrowParens: 'always',

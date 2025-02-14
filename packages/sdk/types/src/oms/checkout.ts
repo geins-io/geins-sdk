@@ -8,6 +8,14 @@ enum CheckoutStatus {
   CUSTOMER_BLACKLISTED = 'CUSTOMER_BLACKLISTED',
 }
 
+export type ConsentType = {
+  type?: string;
+  name?: string;
+  description?: string;
+  checked?: boolean;
+  autoAccept?: boolean;
+};
+
 export type CheckoutQueryParameters = {
   'geins-cart'?: string;
   'geins-pm'?: string;
@@ -38,14 +46,6 @@ export type CheckoutInputType = {
   externalShippingFee?: number;
   merchantData?: string;
   checkoutUrls: CheckoutUrlsInputType;
-};
-
-export type ConsentType = {
-  type?: string;
-  name?: string;
-  description?: string;
-  checked?: boolean;
-  autoAccept?: boolean;
 };
 
 export type CheckoutType = {

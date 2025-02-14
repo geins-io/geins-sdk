@@ -97,6 +97,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
   }
 
   async createCheckoutToken(options?: GenerateCheckoutTokenOptions): Promise<string | undefined> {
+    console.log('createCheckoutToken', options);
     const tokenArgs = {
       cartId: options?.cartId ?? this.cart.id,
       user: options?.user,

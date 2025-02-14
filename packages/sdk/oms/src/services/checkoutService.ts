@@ -16,7 +16,6 @@ import type {
   CheckoutInputType,
   ValidateOrderCreationResponseType,
   CheckoutRedirectsType,
-  GeinsUserType,
   GenerateCheckoutTokenOptions,
 } from '@geins/core';
 
