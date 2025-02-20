@@ -1,7 +1,7 @@
+import { GeinsCore, GeinsLogLevel, RuntimeContext } from '@geins/core';
+import type { CartItemType } from '@geins/types';
+import { omsSettings, validSettings } from '../../../../test/globalSettings';
 import { GeinsOMS } from '../src/geinsOMS';
-import { GeinsCore, RuntimeContext, GeinsLogLevel } from '@geins/core';
-import type { CartItemInputType, CartItemType, OMSSettings } from '@geins/types';
-import { validSettings, omsSettings } from '../../../../test/globalSettings';
 
 describe('GeinsOMS cart', () => {
   let geinsOMS: GeinsOMS;
@@ -31,7 +31,6 @@ describe('GeinsOMS cart', () => {
     const items = await geinsOMS.cart.items.get();
     expect(items?.length).toBe(1);
   });
-
 
   it('should have the correct quantity when items is added and removed', async () => {
     const skuId = omsSettings.skus.skuId2;
@@ -154,9 +153,6 @@ describe('GeinsOMS cart', () => {
     const geinsOMS_local = new GeinsOMS(geinsCore_local, {
       omsSettings: { context: RuntimeContext.HYBRID },
     });
-
-    //    geinsOMS_local.cart.merchantData.extraData = 'test';
-    //  geinsOMS_local.cart.merchantData.testdata = 'testdata';
 
     geinsOMS_local.cart.merchantData = { extraData: 'test', testdata: 'testdata' };
 

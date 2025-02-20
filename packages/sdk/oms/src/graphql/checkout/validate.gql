@@ -14,5 +14,6 @@ query validateOrderCreation(
   ) {
     isValid
     message
+    memberType
   }
 }

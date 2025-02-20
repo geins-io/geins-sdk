@@ -14,6 +14,6 @@ mutation placeOrder(
   ) {
     orderId
     publicId
-    redirectUrl
+    status
   }
 }

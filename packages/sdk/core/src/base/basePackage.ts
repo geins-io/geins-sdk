@@ -1,7 +1,7 @@
-import { GeinsCore } from '../geinsCore';
-import { MerchantApiClient } from '../api-client/merchantApiClient';
 import type { GeinsEventMessage, GeinsSettings } from '@geins/types';
 import { GeinsEventType } from '@geins/types';
+import { MerchantApiClient } from '../api-client/merchantApiClient';
+import { GeinsCore } from '../geinsCore';
 export abstract class BasePackage {
   protected _geinsSettings: GeinsSettings;
   protected _apiClient: () => MerchantApiClient;
@@ -21,10 +21,7 @@ export abstract class BasePackage {
     this._apiClient = () => client ?? undefined;
   }
 
-  protected pushEvent(
-    eventMessage: GeinsEventMessage,
-    eventName?: GeinsEventType,
-  ) {
+  protected pushEvent(eventMessage: GeinsEventMessage, eventName?: GeinsEventType) {
     const eventNameStr = eventName ? GeinsEventType[eventName] : undefined;
     if (eventNameStr && eventNameStr.includes('_')) {
       const parentEvent = eventNameStr.split('_')[0];

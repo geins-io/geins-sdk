@@ -1,11 +1,11 @@
 import { findObjectWithProperty } from '@geins/core';
 import type {
-  CartType,
+  CampaignRuleType,
+  CartItemProductType,
   CartItemType,
   CartSummaryType,
-  CartItemProductType,
+  CartType,
   PriceType,
-  CampaignRuleType,
   ProductPackageCartItemType,
 } from '@geins/types';
 import { ItemType } from '@geins/types';
@@ -152,11 +152,6 @@ function parseCampaigns(data: any): CampaignRuleType[] {
       campaignId: item.campaignId || '',
       name: item.name || '',
       hideTitle: item.hideTitle || false,
-      /* ruleType: item.ruleType || '',
-      category: item.category || '',
-      action: item.action || '',
-      actionValue: item.actionValue || '',
-      canonicalUrl: item.canonicalUrl || '', */
     };
   });
 }

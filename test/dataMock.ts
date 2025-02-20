@@ -1,5 +1,10 @@
-// test/dataMock.ts
-import { GeinsUserInputTypeType, GeinsAddressTypeType, GeinsCustomerType, GeinsGender } from '@geins/types';
+import {
+  CheckoutInputType,
+  GeinsAddressTypeType,
+  GeinsCustomerType,
+  GeinsGender,
+  GeinsUserInputTypeType,
+} from '@geins/types';
 
 export function randomString(length: number): string {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -96,6 +101,7 @@ export function randomAddress(): GeinsAddressTypeType {
     country: 'Sweden',
   };
 }
+
 function randomCustomerType(): GeinsCustomerType {
   return randomBool() ? GeinsCustomerType.PersonType : GeinsCustomerType.OrganizationType;
 }
@@ -112,6 +118,18 @@ export function randomUserData(): GeinsUserInputTypeType {
     address: randomAddress(),
     newsletter: randomBool(),
     metaData: JSON.stringify(randomJson()),
+  };
+}
+
+export function randomCheckoutData(paymentId?: number): CheckoutInputType {
+  return {
+    ...(paymentId !== undefined && { paymentId }),
+    email: randomString(5) + '.' + randomString(5) + '@example.com',
+    billingAddress: randomAddress(),
+    //shippingAddress: randomAddress(),
+    //merchantData: JSON.stringify(randomJson()),
+    //message: randomString(10),
+    acceptedConsents: ['order'],
   };
 }
 

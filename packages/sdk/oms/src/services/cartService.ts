@@ -1,26 +1,26 @@
 import {
   BaseApiService,
-  CookieService,
-  CookieType,
-  isServerContext,
   CART_COOKIES,
   CART_COOKIES_MAX_AGE,
-  GraphQLQueryOptions,
+  CookieService,
+  CookieType,
   FetchPolicyOptions,
+  GraphQLQueryOptions,
+  isServerContext,
   ItemType,
 } from '@geins/core';
-import { MerchantData } from '../logic';
-import { parseCart, groupCartItems } from '../parsers';
-import { queries } from '../graphql';
 import type {
-  CartType,
-  CartItemType,
+  CartGroupInputType,
   CartItemInputType,
+  CartItemType,
+  CartType,
   GeinsSettings,
   OMSSettings,
   ProductPackageSelectionType,
-  CartGroupInputType,
 } from '@geins/types';
+import { queries } from '../graphql';
+import { MerchantData } from '../logic';
+import { groupCartItems, parseCart } from '../parsers';
 
 /**
  * Shipping fee handling.

@@ -9,6 +9,7 @@ The `CheckoutService` provides a straightforward way to interact with the checko
 - **Checkout Methods**: 
   - **Get Checkout**: Get the checkout for the cart with diffrent options.
   - **Validate Checkout**: Validate the the cart and checkout options before creating the order.
+  - **Get Summary**: Get the summary of the checkout process.
 
 - **Tokens**: 
   - **Create**: Create a token to be usesd to send the user to another checkout application.
@@ -21,6 +22,8 @@ Convert a cart to an order by using the `CheckoutService`.
 ### Checkout Process
 
 Use the `CheckoutService` to interact with the checkout process. The checkout process is the process of converting a cart to an order. The `CheckoutService` provides methods to get the checkout for the cart and validate the checkout options before creating the order.
+
+See the [Checkout Process](/packages/oms/checkout-process) for more information about the checkout process.
 
 #### Get
 
@@ -83,6 +86,7 @@ type CheckoutInputType = {
 };
 
 ```
+
 
 ### Checkout URLs
 

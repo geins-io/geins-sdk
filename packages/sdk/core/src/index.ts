@@ -1,10 +1,10 @@
+export { gql } from '@apollo/client/core';
 export * from '@geins/types';
 export * from './api-client';
 export * from './base';
 export * from './constants';
 export * from './geinsCore';
+export * from './logic';
 export * from './services';
 export * from './stores';
 export * from './utils';
-export * from './logic';
-export { gql } from '@apollo/client/core';

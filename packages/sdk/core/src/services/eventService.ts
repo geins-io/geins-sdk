@@ -1,8 +1,7 @@
-import { EventEmitter } from 'events';
-import { BroadcastChannel } from 'broadcast-channel';
-import { isServerContext } from '../utils';
 import type { GeinsEventMessage } from '@geins/types';
-import { logWrite } from './logService';
+import { BroadcastChannel } from 'broadcast-channel';
+import { EventEmitter } from 'events';
+import { isServerContext } from '../utils';
 
 /**
  * Event service

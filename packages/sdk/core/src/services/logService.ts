@@ -259,7 +259,7 @@ export class LogService {
         `${boxtColorServer}${logColorServer.fgBlack}${icon} ${fileName} ${logColorServer.reset}${logColorServer.bgWhite}${logColorServer.fgBlack} ${classInfo}${methodInfo}${logColorServer.reset} `,
       );
 
-      args.forEach(arg => {
+      args.forEach((arg) => {
         // check type of arg
         if (typeof arg === 'object') {
           console.log(`${logColorServer.dim}>> ${logColorServer.reset}`, `${JSON.stringify(arg)}`);
@@ -278,7 +278,7 @@ export class LogService {
         'background: #D3D3D3; color: #000; padding: 2px 8px; border-radius: 0 2px 2px 0;',
       );
 
-      args.forEach(arg => {
+      args.forEach((arg) => {
         console.log(`%c>>`, `color: ${typeMeta.color}; margin-left: 5px; font-weight: bold;`, arg);
       });
     }
@@ -398,7 +398,7 @@ export class LogService {
   private static getFileTypeFromExtension(fileName: string): LogFileMeta | null {
     for (const key in logTypeFiles) {
       const fileType = logTypeFiles[key as keyof LogTypeFiles];
-      if (fileType.fileExtensions.some(ext => fileName.endsWith(ext))) {
+      if (fileType.fileExtensions.some((ext) => fileName.endsWith(ext))) {
         return fileType;
       }
     }

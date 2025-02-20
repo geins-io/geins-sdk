@@ -1,24 +1,24 @@
-import { findObjectWithProperty } from '@geins/core';
 import type {
-  ShippingDetailType,
+  CreateOrderResponseType,
+  OrderSummaryType,
   PaymentDetailsType,
   RefundType,
-  OrderSummaryType,
-  PlaceOrderResponseType,
+  ShippingDetailType,
 } from '@geins/core';
-import { parseAddress, parsePrice } from './sharedParsers';
+import { findObjectWithProperty } from '@geins/core';
 import { parseCart } from './cartParser';
+import { parseAddress, parsePrice } from './sharedParsers';
 
-export function parseOrder(data: any, locale: string): PlaceOrderResponseType | undefined {
+export function parseOrder(data: any, locale: string): CreateOrderResponseType | undefined {
   const order = findObjectWithProperty(data, '__typename', 'PlaceOrderResponseType');
   if (!order) {
     return undefined;
   }
 
   return {
+    created: true,
     orderId: order.orderId,
     publicId: order.publicId,
-    redirectUrl: order.redirectUrl,
   };
 }
 

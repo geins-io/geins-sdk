@@ -1,12 +1,27 @@
 import { CustomerType, GeinsSettings } from '../common';
 import { GeinsUserType } from '../generated';
-import type { AddressType, ShippingOptionType, PaymentOptionType, CheckoutRedirectsType } from '../shared';
 import type { CartType } from '../oms/cart';
+import type { AddressType, CheckoutRedirectsType, PaymentOptionType, ShippingOptionType } from '../shared';
 
 enum CheckoutStatus {
   OK = 'OK',
   CUSTOMER_BLACKLISTED = 'CUSTOMER_BLACKLISTED',
 }
+
+export type CreateOrderResponseType = {
+  created?: boolean;
+  orderId?: string;
+  publicId?: string;
+  message?: string;
+};
+
+export type ConsentType = {
+  type?: string;
+  name?: string;
+  description?: string;
+  checked?: boolean;
+  autoAccept?: boolean;
+};
 
 export type CheckoutQueryParameters = {
   'geins-cart'?: string;
@@ -24,7 +39,7 @@ export type CheckoutUrlsInputType = {
 export type CheckoutInputType = {
   paymentId?: number;
   shippingId?: number;
-  skipShippingValidation: boolean;
+  skipShippingValidation?: boolean;
   externalShippingId?: string;
   pickupPoint?: string;
   desiredDeliveryDate?: Date;
@@ -37,15 +52,19 @@ export type CheckoutInputType = {
   customerType?: CustomerType;
   externalShippingFee?: number;
   merchantData?: string;
-  checkoutUrls: CheckoutUrlsInputType;
+  checkoutUrls?: CheckoutUrlsInputType;
 };
 
-export type ConsentType = {
-  type?: string;
-  name?: string;
-  description?: string;
-  checked?: boolean;
-  autoAccept?: boolean;
+export type GetCheckoutOptions = {
+  cartId?: string;
+  paymentMethodId?: number;
+  shippingMethodId?: number;
+  checkoutOptions?: CheckoutInputType;
+};
+
+export type CreateOrderOptions = {
+  cartId?: string;
+  checkoutOptions: CheckoutInputType;
 };
 
 export type CheckoutType = {
@@ -57,7 +76,6 @@ export type CheckoutType = {
   consents?: ConsentType[];
   paymentOptions?: PaymentOptionType[];
   shippingOptions?: ShippingOptionType[];
-  shippingData?: string;
   checkoutStatus?: CheckoutStatus;
 };
 
@@ -147,4 +165,103 @@ export type GenerateCheckoutTokenOptions = {
   redirectUrls?: CheckoutRedirectsType;
   checkoutStyle?: CheckoutStyleType;
   geinsSettings?: GeinsSettings;
+};
+
+export type CheckoutSummaryType = {
+  htmlSnippet?: string;
+  order?: CheckoutSummaryOrderType;
+  nthPurchase?: number;
+};
+
+export type CheckoutSummaryOrderType = {
+  status?: string;
+  orderId?: string;
+  transactionId?: string;
+  marketId?: string;
+  languageId?: string;
+  message?: string;
+  merchantData?: string;
+  customerId?: number;
+  customerTypeId?: number;
+  customerGroupId?: number;
+  organizationNumber?: string;
+  ipAddress?: string;
+  paymentId?: number;
+  shippingId?: number;
+  pickupPoint?: string;
+  desiredDeliveryDate?: string;
+  promoCode?: string;
+  appliedCampaignIds?: string[];
+  appliedCampaigns?: string[];
+  total?: CheckoutSummaryOrderTotalType;
+  billingAddress?: AddressType;
+  shippingAddress?: AddressType;
+  rows?: CheckoutSummaryOrderRowType[];
+};
+
+export type CheckoutSummaryOrderTotalType = {
+  itemValueExVat?: number;
+  itemValueExVatFormatted?: string;
+  itemValueIncVat?: number;
+  itemValueIncVatFormatted?: string;
+  orderValueExVat?: number;
+  orderValueExVatFormatted?: string;
+  orderValueIncVat?: number;
+  orderValueIncVatFormatted?: string;
+  paymentFeeExVat?: number;
+  paymentFeeExVatFormatted?: string;
+  paymentFeeIncVat?: number;
+  paymentFeeIncVatFormatted?: string;
+  shippingFeeExVat?: number;
+  shippingFeeExVatFormatted?: string;
+  shippingFeeIncVat?: number;
+  shippingFeeIncVatFormatted?: string;
+  discountExVat?: number;
+  discountExVatFormatted?: string;
+  discountIncVat?: number;
+  discountIncVatFormatted?: string;
+  sum?: number;
+  sumFormatted?: string;
+  currency?: string;
+};
+
+export type CheckoutSummaryOrderRowType = {
+  quantity?: number;
+  skuId?: string;
+  articleNumber?: string;
+  gtin?: string;
+  name?: string;
+  weight?: number;
+  height?: number;
+  length?: number;
+  width?: number;
+  message?: string;
+  product?: CheckoutSummaryProductType;
+  price?: CheckoutSummaryPriceType;
+};
+
+export type CheckoutSummaryProductType = {
+  name?: string;
+  brand?: string;
+  imageUrl?: string;
+  categories?: string[];
+  productId?: number;
+  productUrl?: string;
+};
+
+export type CheckoutSummaryPriceType = {
+  campaignIds?: string[];
+  campaignNames?: string[];
+  productPriceCampaignId?: string | null;
+  productPriceListId?: string | null;
+  discountRate?: number;
+  discountExVat?: number;
+  discountExVatFormatted?: string;
+  discountIncVat?: number;
+  discountIncVatFormatted?: string;
+  priceExVat?: number;
+  priceExVatFormatted?: string;
+  priceIncVat?: number;
+  priceIncVatFormatted?: string;
+  currency?: string;
 };

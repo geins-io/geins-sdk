@@ -1,5 +1,5 @@
+import type { AddressType, CurrencyType, PriceType } from '@geins/core';
 import { findObjectWithProperty } from '@geins/core';
-import type { AddressType, ShippingDetailType, CurrencyType, PriceType } from '@geins/core';
 
 export function parseAddress(data: any): AddressType | undefined {
   const address = findObjectWithProperty(data, '__typename', 'AddressType');
@@ -75,48 +75,48 @@ export function parsePrice(data: any, locale: string): PriceType {
   price.isDiscounted = data.isDiscounted || false;
 
   if (price.currency?.code) {
-    price.sellingPriceIncVatFormatted =
-      data?.sellingPriceIncVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
+    price.sellingPriceIncVatFormatted = parseMoneyCurrencyString(
+      data.sellingPriceIncVat,
+      locale,
+      price.currency.code,
+    );
 
-    price.sellingPriceExVatFormatted =
-      data?.sellingPriceExVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
+    price.sellingPriceExVatFormatted = parseMoneyCurrencyString(
+      data.sellingPriceExVat,
+      locale,
+      price.currency.code,
+    );
 
-    price.regularPriceIncVatFormatted =
-      data?.regularPriceIncVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
+    price.regularPriceIncVatFormatted = parseMoneyCurrencyString(
+      data.regularPriceIncVat,
+      locale,
+      price.currency.code,
+    );
 
-    price.regularPriceExVatFormatted =
-      data?.regularPriceExVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
+    price.regularPriceExVatFormatted = parseMoneyCurrencyString(
+      data.regularPriceExVat,
+      locale,
+      price.currency.code,
+    );
 
-    price.discountIncVatFormatted =
-      data?.discountIncVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
+    price.discountIncVatFormatted = parseMoneyCurrencyString(
+      data.discountIncVat,
+      locale,
+      price.currency.code,
+    );
 
-    price.discountExVatFormatted =
-      data?.discountExVat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
-
-    price.vatFormatted =
-      data?.vat.toLocaleString(locale, {
-        style: 'currency',
-        currency: price.currency.code,
-      }) || '';
+    price.discountExVatFormatted = parseMoneyCurrencyString(data.discountExVat, locale, price.currency.code);
+    price.vatFormatted = parseMoneyCurrencyString(data.vat, locale, price.currency.code);
   }
 
   return price;
+}
+
+export function parseMoneyCurrencyString(data: any, locale: string, currency: string): string {
+  return (
+    data.toLocaleString(locale, {
+      style: 'currency',
+      currency: currency,
+    }) || ''
+  );
 }
