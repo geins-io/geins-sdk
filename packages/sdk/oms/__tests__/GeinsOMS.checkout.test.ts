@@ -2,6 +2,7 @@ import { GeinsCore } from '@geins/core';
 import { randomCheckoutData } from '../../../../test/dataMock';
 import { omsSettings, validSettings } from '../../../../test/globalSettings';
 import { GeinsOMS } from '../src/geinsOMS';
+import { CheckoutService } from '../src/services';
 
 describe('GeinsOMS cart', () => {
   let geinsOMS: GeinsOMS;
@@ -21,9 +22,25 @@ describe('GeinsOMS cart', () => {
     jest.clearAllMocks();
   });
 
-  it('should throw error if no cartId', async () => {
+  it('should throw error if no cartId when getting checkout', async () => {
     const no_cart_geinsOms = new GeinsOMS(new GeinsCore(validSettings));
     await expect(no_cart_geinsOms.checkout.get()).rejects.toThrow('Missing cartId');
+  });
+
+  it('should throw error if no cartId when creating token', async () => {
+    const no_cart_geinsOms = new GeinsOMS(new GeinsCore(validSettings));
+    await expect(no_cart_geinsOms.checkout.createToken()).rejects.toThrow('Missing cartId');
+  });
+
+  it('should create a token and then parse it', async () => {
+    const token = await geinsOMS.checkout.createToken();
+    expect(token).toBeDefined();
+    const parsedToken = await CheckoutService.parseToken(token as string);
+    expect(parsedToken).toBeDefined();
+    expect(parsedToken).toHaveProperty('cartId');
+    expect(parsedToken).toHaveProperty('checkoutSettings');
+    expect(parsedToken).toHaveProperty('geinsSettings');
+    expect(parsedToken?.cartId).toBe(geinsOMS.cart.id);
   });
 
   it('should get a checkout', async () => {

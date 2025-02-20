@@ -1,17 +1,7 @@
-import {
-  BaseApiService,
-  CHECKOUT_PARAMETERS,
-  CustomerType,
-  FetchPolicyOptions,
-  decodeJWT,
-  encodeJWT,
-  extractParametersFromUrl,
-  parseErrorMessage,
-} from '@geins/core';
+import { BaseApiService, FetchPolicyOptions, decodeJWT, encodeJWT, parseErrorMessage } from '@geins/core';
 
 import type {
   CheckoutInputType,
-  CheckoutRedirectsType,
   CheckoutSummaryType,
   CheckoutTokenPayload,
   CheckoutType,
@@ -27,6 +17,7 @@ import type {
 import { GeinsOMS } from '../geinsOMS';
 import { queries } from '../graphql';
 import { parseCheckout, parseCheckoutSummary, parseOrder, parseValidateOrder } from '../parsers';
+import { CheckoutDataResolver } from '../util';
 
 export interface CheckoutServiceInterface {
   /**
@@ -74,16 +65,6 @@ export interface CheckoutServiceInterface {
   summary(args: { orderId: string; paymentMethod: string }): Promise<CheckoutSummaryType | undefined>;
 
   /**
-   * Generates checkout parameters by merging current parameters with default CHECKOUT_PARAMETERS
-   * @param currentParameters - Map of current parameters to merge with defaults
-   * @returns A new Map containing merged checkout parameters
-   * @example
-   * const params = new Map([['key', 'value']]);
-   * const mergedParams = generateExternalCheckoutUrlParameters(params);
-   */
-  generateExternalCheckoutUrlParameters(currentParameters: Map<string, string>): Map<string, string>;
-
-  /**
    * Creates a token for the checkout process to use when sending user to an external checkout page.
    *
    * @param {GenerateCheckoutTokenOptions} args - The arguments for creating the token.
@@ -103,6 +84,8 @@ export interface CheckoutServiceInterface {
 }
 
 export class CheckoutService extends BaseApiService implements CheckoutServiceInterface {
+  private readonly dataResolver;
+
   private _settings!: OMSSettings;
 
   constructor(
@@ -113,59 +96,30 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
   ) {
     super(apiClient, geinsSettings);
     this._settings = _settings;
+    this.dataResolver = new CheckoutDataResolver(geinsSettings, _settings, _parent || ({} as GeinsOMS));
   }
 
   async get(args?: GetCheckoutOptions): Promise<CheckoutType | undefined> {
-    const resolvedArgs = { ...args };
-    if (!resolvedArgs.cartId) {
-      if (this._parent?.cart.id) {
-        resolvedArgs.cartId = this._parent?.cart.id;
-      }
-
-      if (!resolvedArgs.cartId) {
-        throw new Error('Missing cartId');
-      }
-    }
-
-    if (resolvedArgs.checkoutOptions) {
-      const checkout: CheckoutInputType = resolvedArgs.checkoutOptions;
-
-      if (checkout.paymentId) {
-        resolvedArgs.paymentMethodId = checkout.paymentId;
-      }
-
-      if (checkout.shippingId) {
-        resolvedArgs.shippingMethodId = checkout.shippingId;
-      }
-    }
-
-    if (!resolvedArgs.paymentMethodId) {
-      resolvedArgs.paymentMethodId = this._settings.defaultPaymentId ?? 0;
-    }
-
-    if (!resolvedArgs.shippingMethodId) {
-      resolvedArgs.shippingMethodId = this._settings.defaultShippingId ?? 0;
-    }
-
-    const variables = {
-      cartId: resolvedArgs.cartId,
-      checkout: {
-        paymentId: resolvedArgs.paymentMethodId,
-        shippingId: resolvedArgs.shippingMethodId,
-        checkoutUrls: resolvedArgs.checkoutOptions?.checkoutUrls,
-      },
-    };
-
-    const options: any = {
-      query: queries.checkoutCreate,
-      variables: this.generateVars(variables),
-      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
-    };
-
+    const data = this.dataResolver.resolveGetCheckoutOptions(args);
     try {
-      const data = await this.runMutation(options);
-      return parseCheckout(data, this._geinsSettings.locale);
-    } catch (e) {
+      const variables = {
+        cartId: data.cartId,
+        checkout: {
+          paymentId: data.paymentMethodId,
+          shippingId: data.shippingMethodId,
+          ...data.checkoutOptions,
+        },
+      };
+
+      const options = {
+        query: queries.checkoutCreate,
+        variables: this.generateVars(variables),
+        requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+      };
+
+      const queryResult = await this.runMutation(options);
+      return parseCheckout(queryResult, this._geinsSettings.locale);
+    } catch (error) {
       throw new Error('Error getting checkout');
     }
   }
@@ -273,49 +227,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
   }
 
   async createToken(args?: GenerateCheckoutTokenOptions): Promise<string | undefined> {
-    const resolvedArgs = { ...args };
-    if (!resolvedArgs.cartId) {
-      if (this._parent?.cart.id) {
-        resolvedArgs.cartId = this._parent?.cart.id;
-      }
-      if (!resolvedArgs.cartId) {
-        throw new Error('Missing cartId');
-      }
-    }
-
-    if (!resolvedArgs.geinsSettings) {
-      resolvedArgs.geinsSettings = this._geinsSettings ?? {};
-    }
-
-    if (!resolvedArgs.customerType) {
-      resolvedArgs.customerType = args?.customerType ?? CustomerType.PERSON;
-    }
-
-    if (!resolvedArgs.user) {
-      resolvedArgs.user = args?.user;
-    }
-
-    if (!resolvedArgs.selectedPaymentMethodId) {
-      resolvedArgs.selectedPaymentMethodId =
-        args?.selectedPaymentMethodId ?? this._settings.defaultPaymentId ?? 0;
-    }
-
-    if (!resolvedArgs.selectedShippingMethodId) {
-      resolvedArgs.selectedShippingMethodId =
-        args?.selectedShippingMethodId ?? this._settings.defaultShippingId ?? 0;
-    }
-
-    if (!resolvedArgs.redirectUrls) {
-      resolvedArgs.redirectUrls = args?.redirectUrls;
-      if (!resolvedArgs.redirectUrls) {
-        resolvedArgs.redirectUrls = this._settings.checkoutUrls;
-      }
-    }
-    if (resolvedArgs.redirectUrls) {
-      // add parameters to urls
-      resolvedArgs.redirectUrls = this.addParametersToUrls(resolvedArgs.redirectUrls);
-    }
-
+    const resolvedArgs = this.dataResolver.resolveCheckoutTokenOptions(args);
     const obj = {
       cartId: resolvedArgs.cartId,
       user: resolvedArgs.user,
@@ -332,16 +244,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       },
       geinsSettings: resolvedArgs.geinsSettings,
     } as CheckoutTokenPayload;
-
     return encodeJWT(obj);
-  }
-
-  generateExternalCheckoutUrlParameters(currentParameters: Map<string, string>): Map<string, string> {
-    const mergedMap = new Map(CHECKOUT_PARAMETERS);
-    Array.from(currentParameters.entries()).forEach(([key, value]) => {
-      mergedMap.set(key, value);
-    });
-    return mergedMap;
   }
 
   static async parseToken(token: string): Promise<CheckoutTokenPayload | undefined> {
@@ -350,38 +253,6 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       return undefined;
     }
     return decodedToken.payload;
-  }
-
-  private addParametersToUrls(redirectUrls: CheckoutRedirectsType): CheckoutRedirectsType | undefined {
-    if (!redirectUrls) {
-      return;
-    }
-
-    (Object.keys(redirectUrls) as Array<keyof CheckoutRedirectsType>).forEach((key) => {
-      if (!redirectUrls[key]) {
-        return;
-      }
-      // only add for success url
-      if (key !== 'success') {
-        return;
-      }
-      const { url, params } = extractParametersFromUrl(redirectUrls[key]);
-      const parameters = this.generateExternalCheckoutUrlParameters(params);
-      const queryString = this.mapToQueryString(parameters);
-
-      redirectUrls[key] = `${url}${queryString}`;
-    });
-    return redirectUrls;
-  }
-
-  private mapToQueryString(parameters: Map<string, string>): string {
-    if (!parameters.size) {
-      return '';
-    }
-    const queryParams = Array.from(parameters.entries())
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&');
-    return `?${queryParams}`;
   }
 
   private generateVars(variables: any) {
