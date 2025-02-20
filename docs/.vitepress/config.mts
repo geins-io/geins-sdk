@@ -1,7 +1,7 @@
 // import { defineConfig } from 'vitepress'
 import { HeadConfig, loadEnv } from 'vitepress';
+import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons';
 import { withMermaid } from 'vitepress-plugin-mermaid';
-import { groupIconMdPlugin, groupIconVitePlugin, localIconLoader } from 'vitepress-plugin-group-icons';
 const env = loadEnv('', process.cwd());
 const scripts: HeadConfig[] = [];
 if (env.VITE_GA_ID) {
@@ -186,7 +186,7 @@ export default withMermaid({
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2024-present Geins',
     },
-    socialLinks: [{ icon: 'github', link: 'https://github.com/geins-io/geins' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/geins-io/geins-sdk' }],
     outline: {
       level: [2, 4],
     },
