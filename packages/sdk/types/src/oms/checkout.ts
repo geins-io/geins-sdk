@@ -134,6 +134,7 @@ export type CheckoutStyleType = {
 
 export type CheckoutSettings = {
   isCartEditable?: boolean;
+  cloneCart?: boolean;
   selectedPaymentMethodId?: number;
   selectedShippingMethodId?: number;
   availablePaymentMethodIds?: number[];
