@@ -1,6 +1,6 @@
 {
   "name": "@geins/crm",
-  "version": "0.3.10-canary-9e45fd154702919aa27d04abc76e4e7d581975ff",
+  "version": "0.4.0",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -16,11 +16,11 @@
     "link": "yarn link"
   },
   "dependencies": {
-    "@geins/core": "0.3.10-canary-9e45fd154702919aa27d04abc76e4e7d581975ff"
+    "@geins/core": "0.4.0"
   },
   "devDependencies": {
-    "@geins/eslint-config": "0.1.9-canary-9e45fd154702919aa27d04abc76e4e7d581975ff",
-    "@geins/types": "0.3.10-canary-9e45fd154702919aa27d04abc76e4e7d581975ff",
+    "@geins/eslint-config": "0.2.0",
+    "@geins/types": "0.4.0",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.0",

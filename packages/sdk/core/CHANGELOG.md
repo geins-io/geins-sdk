@@ -1,5 +1,11 @@
 # @geins/core
 
+## 0.4.0
+
+### Minor Changes
+
+- d623a63: oms package final
+
 ## 0.3.10-canary-9e45fd154702919aa27d04abc76e4e7d581975ff
 
 ### Patch Changes
