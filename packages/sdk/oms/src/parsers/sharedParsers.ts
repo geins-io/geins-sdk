@@ -1,5 +1,5 @@
+import type { AddressType, CurrencyType, PriceType } from '@geins/core';
 import { findObjectWithProperty } from '@geins/core';
-import type { AddressType, ShippingDetailType, CurrencyType, PriceType } from '@geins/core';
 
 export function parseAddress(data: any): AddressType | undefined {
   const address = findObjectWithProperty(data, '__typename', 'AddressType');

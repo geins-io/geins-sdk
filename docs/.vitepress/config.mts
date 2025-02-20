@@ -136,10 +136,10 @@ export default withMermaid({
                   text: 'User',
                   link: '/packages/crm/user',
                   items: [
-                    { text: 'Profile', link: '/packages/crm/user-profile' },
-                    { text: 'Group', link: '/packages/crm/user-group' },
-                    { text: 'Balance', link: '/packages/crm/user-balance' },
-                    { text: 'Transactions', link: '/packages/crm/user-transactions' },
+                    { text: 'Profile', link: '/packages/crm/user/profile' },
+                    { text: 'Group', link: '/packages/crm/user/group' },
+                    { text: 'Balance', link: '/packages/crm/user/balance' },
+                    { text: 'Transactions', link: '/packages/crm/user/transactions' },
                   ],
                 },
               ],
@@ -147,29 +147,35 @@ export default withMermaid({
             {
               text: '@geins/oms',
               link: '/packages/oms',
+
               items: [
+                { text: 'Merchant data', link: '/packages/oms/merchant-data' },
                 {
                   text: 'Cart',
                   link: '/packages/oms/cart',
                   items: [
-                    { text: 'Items', link: '/packages/oms/cart-items' },
-                    { text: 'Promotions', link: '/packages/oms/cart-promotions' },
-                    { text: 'Campaigns', link: '/packages/oms/cart-campaigns' },
-                    { text: 'Shipping', link: '/packages/oms/cart-shipping' },
+                    { text: 'Items', link: '/packages/oms/cart/items' },
+                    { text: 'Promotions', link: '/packages/oms/cart/promotions' },
+                    { text: 'Campaigns', link: '/packages/oms/cart/campaigns' },
+                    { text: 'Shipping', link: '/packages/oms/cart/shipping' },
                   ],
                 },
-
                 {
                   text: 'Checkout',
                   link: '/packages/oms/checkout',
                   items: [
-                    { text: 'Process', link: '/packages/oms/checkout-process' },
-                    { text: 'Configuration', link: '/packages/oms/checkout-configuration' },
-                    { text: 'Tokens', link: '/packages/oms/checkout-tokens' },
+                    { text: 'Process', link: '/packages/oms/checkout/process' },
+                    { text: 'Get Checkout', link: '/packages/oms/checkout/get' },
+                    { text: 'Validate', link: '/packages/oms/checkout/validate' },
+                    { text: 'Create Order', link: '/packages/oms/checkout/create-order' },
+                    { text: 'Summary', link: '/packages/oms/checkout/summary' },
                   ],
                 },
                 { text: 'Order', link: '/packages/oms/order' },
-                { text: 'Merchant data', link: '/packages/oms/merchant-data' },
+                /*
+                { text: 'Token', link: '/packages/oms/checkout-token' },
+                { text: 'Using Geins Checkout', link: '/packages/oms/geins-checkout' },
+                 */
               ],
             },
           ],

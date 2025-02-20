@@ -1,3 +1,3 @@
-import { geinsSharedConfig } from '@geins/eslint-config/eslint-config.js';
+import { geinsSharedConfig } from '@geins/eslint-config';
 
 export default [...geinsSharedConfig];

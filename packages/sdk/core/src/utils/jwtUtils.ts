@@ -14,7 +14,7 @@ export function decodeJWT(token: string, secretKey?: string): { header: any; pay
   }
 
   const parts = token.split('.');
-  if (parts.length !== 3 && secretKey || parts.length !== 2 && !secretKey) {
+  if ((parts.length !== 3 && secretKey) || (parts.length !== 2 && !secretKey)) {
     throw new Error('Invalid JWT token format.');
   }
 

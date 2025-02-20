@@ -1,3 +1,8 @@
+declare enum PaymentOptionCheckoutType {
+  STANDARD = 'STANDARD',
+  EXTERNAL = 'EXTERNAL',
+}
+
 export type ShippingOptionType = {
   id: number;
   name?: string;
@@ -25,10 +30,10 @@ export type PaymentOptionType = {
   feeExVat: number;
   isDefault: boolean;
   isSelected: boolean;
+  checkoutType?: PaymentOptionCheckoutType;
   paymentType?: string;
   paymentData?: string;
 };
-
 
 export type CheckoutRedirectsType = {
   terms?: string;

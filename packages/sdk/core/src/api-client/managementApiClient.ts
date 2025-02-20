@@ -1,5 +1,5 @@
-import { MANAGEMENT_API_URL } from '../constants/endpoints';
 import type { ManagementApiCredentials } from '@geins/types';
+import { MANAGEMENT_API_URL } from '../constants/endpoints';
 
 export class ManagementApiClient {
   private baseUrl: string;

@@ -1,10 +1,10 @@
 import {
-  GeinsCore,
   BasePackage,
-  RuntimeContext,
-  OMSSettings,
-  GenerateCheckoutTokenOptions,
   CheckoutTokenPayload,
+  GeinsCore,
+  GenerateCheckoutTokenOptions,
+  OMSSettings,
+  RuntimeContext,
 } from '@geins/core';
 import { CartService } from './services/cartService';
 import { CheckoutService } from './services/checkoutService';
@@ -97,7 +97,6 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
   }
 
   async createCheckoutToken(options?: GenerateCheckoutTokenOptions): Promise<string | undefined> {
-    console.log('createCheckoutToken', options);
     const tokenArgs = {
       cartId: options?.cartId ?? this.cart.id,
       user: options?.user,
@@ -111,22 +110,27 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
       checkoutStyle: options?.checkoutStyle,
       geinsSettings: this._geinsSettings,
     } as GenerateCheckoutTokenOptions;
-    return await this.checkout.tokenCreate(tokenArgs);
+
+    if (!tokenArgs.cartId) {
+      throw new Error('cartId is required to create a checkout token.');
+    }
+
+    return await this.checkout.createToken(tokenArgs);
   }
 
   /**
    * Parses a checkout token to retrieve the checkout payload.
    *
    * @param token The token to parse.
-   * @returns A promise that resolves to the parsed CheckoutTokenPayload or throws an error.
+   * @returns {Promise<CheckoutTokenPayload>} A promise that resolves to the parsed CheckoutTokenPayload or throws an error.
    * @example:
    * ```typescript
    * const token = 'your-token-here';
    * const payload = await GeinsOMS.parseCheckoutToken(token);
    * ```
    */
-  public static async parseCheckoutToken(token: string): Promise<CheckoutTokenPayload | undefined> {
-    const payload = await CheckoutService.tokenParse(token);
+  public static async parseCheckoutToken(token: string): Promise<CheckoutTokenPayload> {
+    const payload = await CheckoutService.parseToken(token);
     if (!payload) {
       throw new Error('Invalid token: Unable to parse token.');
     }

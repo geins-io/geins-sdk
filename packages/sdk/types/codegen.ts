@@ -1,5 +1,4 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
-import { UniqueFragmentNamesRule } from 'graphql';
 const config: CodegenConfig = {
   schema: '../../../schemas/schema-w-docblocks.graphql',
   documents: ['../core/src/graphql/**/*.gql', '../cms/src/graphql/**/*.gql', '../crm/src/graphql/**/*.gql'],

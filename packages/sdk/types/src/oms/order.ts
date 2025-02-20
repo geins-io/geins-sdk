@@ -1,12 +1,6 @@
 import type { AddressType, PriceType } from '../shared';
 import type { CartType } from '../oms/cart';
 
-export type PlaceOrderResponseType = {
-  orderId?: string;
-  publicId?: string;
-  redirectUrl?: string;
-};
-
 export type ShippingDetailType = {
   id?: string;
   name?: string;
@@ -74,4 +68,5 @@ export type OrderSummaryType = {
 export type ValidateOrderCreationResponseType = {
   isValid?: boolean;
   message?: string;
+  customerGroup?: string;
 };

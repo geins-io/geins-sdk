@@ -1,13 +1,12 @@
-import { findObjectWithProperty, CheckoutType, ValidateOrderCreationResponseType } from '@geins/core';
 import type {
-  CheckoutSummaryType,
-  CheckoutSummaryOrderType,
-  CheckoutSummaryOrderTotalType,
   CheckoutSummaryOrderRowType,
+  CheckoutSummaryOrderTotalType,
+  CheckoutSummaryOrderType,
+  CheckoutSummaryType,
 } from '@geins/core';
+import { CheckoutType, findObjectWithProperty, ValidateOrderCreationResponseType } from '@geins/core';
 import { parseCart } from './cartParser';
 import { parseAddress, parseMoneyCurrencyString } from './sharedParsers';
-import { l } from 'vite/dist/node/types.d-aGj9QkWt';
 
 export function parseCheckoutSummary(data: any, locale: string): CheckoutSummaryType | undefined {
   const checkoutSummary = findObjectWithProperty(data, '__typename', 'CheckoutDataType');
@@ -63,7 +62,7 @@ export function parseCheckoutSummaryOrderTotal(
   data: any,
   locale: string,
 ): CheckoutSummaryOrderTotalType | undefined {
-  const total = data;
+  const total = { ...data };
   if (!total) {
     return undefined;
   }
@@ -71,8 +70,8 @@ export function parseCheckoutSummaryOrderTotal(
   if (data.rows) {
     data.rows.forEach((row: any) => {
       if (row && row.discountExVat) {
-        total.discountExVat += row.discountExVat || 0;
-        total.discountIncVat += row.discountIncVat || 0;
+        total.discountExVat = (total.discountExVat || 0) + (row.discountExVat || 0);
+        total.discountIncVat = (total.discountIncVat || 0) + (row.discountIncVat || 0);
       }
     });
   }
@@ -108,13 +107,10 @@ export function parseCheckoutSummaryOrderRows(
   data: any,
   locale: string,
 ): CheckoutSummaryOrderRowType[] | undefined {
-  // check for "CheckoutOrderRowType" in data
   const rows = data;
   if (!rows) {
     return undefined;
   }
-  // check if item in array has same data, if so combine them into one row and set quantity to the sum of the quantities
-
   const combinedRows: { [key: string]: CheckoutSummaryOrderRowType } = {};
   rows.forEach((row: any) => {
     const parsedRow = parseCheckoutSummaryOrderRow(row, locale);
@@ -139,7 +135,7 @@ export function parseCheckoutSummaryOrderRows(
       existingRow.price.priceExVat = (existingRow.price.priceExVat || 0) + (parsedRow.price.priceExVat || 0);
       existingRow.price.priceIncVat =
         (existingRow.price.priceIncVat || 0) + (parsedRow.price.priceIncVat || 0);
-      // set formated values
+
       if (existingRow.price.currency) {
         existingRow.price.discountExVatFormatted = parseMoneyCurrencyString(
           existingRow.price.discountExVat,
@@ -168,10 +164,6 @@ export function parseCheckoutSummaryOrderRows(
   });
 
   return Object.values(combinedRows);
-  /*
-  return rows.map((row: any) => {
-    return parseCheckoutSummaryOrderRow(row, locale);
-  }); */
 }
 
 export function parseCheckoutSummaryOrderRow(
@@ -227,15 +219,13 @@ export function parseCheckout(data: any, locale: string): CheckoutType | undefin
   }
 
   return {
+    email: checkout.email,
     identityNumber: checkout.identityNumber,
     cart: parseCart(checkout.cart, locale),
     paymentOptions: checkout.paymentOptions,
     shippingOptions: checkout.shippingOptions,
-    consents: checkout.consents,
-    email: checkout.email,
     billingAddress: parseAddress(checkout.billingAddress),
     shippingAddress: parseAddress(checkout.shippingAddress),
-    shippingData: checkout.shippingData,
   };
 }
 
@@ -248,5 +238,6 @@ export function parseValidateOrder(data: any): ValidateOrderCreationResponseType
   return {
     isValid: validateOrder.isValid,
     message: validateOrder.message,
+    customerGroup: validateOrder.memberType,
   };
 }

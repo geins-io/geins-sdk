@@ -1,14 +1,12 @@
 import type {
   GeinsChannelTypeType,
-  GeinsMarketTypeType,
   GeinsCountryTypeType,
-  GeinsLanguageTypeType,
   GeinsCurrencyTypeType,
+  GeinsLanguageTypeType,
+  GeinsMarketTypeType,
 } from '@geins/types';
 
-export function parseChannelsResult(
-  result: any,
-): GeinsChannelTypeType[] | undefined {
+export function parseChannelsResult(result: any): GeinsChannelTypeType[] | undefined {
   if (!result || !result.data) {
     throw new Error('Invalid result structure for channels');
   }
@@ -20,9 +18,7 @@ export function parseChannelsResult(
   return channels.map((channel: any) => parseChannel(channel));
 }
 
-export function parseChannelResult(
-  result: any,
-): GeinsChannelTypeType | undefined {
+export function parseChannelResult(result: any): GeinsChannelTypeType | undefined {
   if (!result || !result.data) {
     throw new Error('Invalid result structure for channel');
   }
@@ -54,9 +50,7 @@ export function parseMarket(market: any): GeinsMarketTypeType {
   return {
     id: market.id,
     alias: market.alias,
-    allowedLanguages: market.allowedLanguages.map((item: any) =>
-      parseLanguage(item),
-    ),
+    allowedLanguages: market.allowedLanguages.map((item: any) => parseLanguage(item)),
     country: parseCountry(market.country),
     currency: parseCurrency(market.currency),
     onlyDisplayInCheckout: market.onlyDisplayInCheckout,

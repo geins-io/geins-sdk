@@ -1,5 +1,5 @@
-import { ENDPOINTS } from '../constants';
 import type { Environment, GeinsEndpoints } from '@geins/types';
+import { ENDPOINTS } from '../constants';
 
 /**
  * Get context of the runtime.
@@ -83,4 +83,11 @@ export function extractParametersFromUrl(url: string): { url: string; params: Ma
     queryString ? queryString.split('&').map((param) => param.split('=') as [string, string]) : [],
   );
   return { url: baseUrl, params };
+}
+
+export function parseErrorMessage(data: Error): string {
+  if (!data || !data.message) {
+    return '';
+  }
+  return data.message;
 }

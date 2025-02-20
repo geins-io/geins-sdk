@@ -1,12 +1,12 @@
-import type { GeinsSettings, GeinsChannelTypeType, GeinsEndpoints, Environment } from '@geins/types';
+import type { GeinsChannelTypeType, GeinsEndpoints, GeinsSettings } from '@geins/types';
 import { GeinsChannelInterface } from '@geins/types';
 import { MerchantApiClient } from './api-client';
+import { Channel } from './logic';
+import { GraphQLService } from './services';
 import { ChannelsService } from './services/channelsService';
 import { CookieService } from './services/cookieService';
 import { EventService } from './services/eventService';
-import { Channel } from './logic';
-import { isServerContext, buildEndpoints, encodeJWT, decodeJWT } from './utils';
-import { GraphQLService } from './services';
+import { buildEndpoints, decodeJWT, encodeJWT, isServerContext } from './utils';
 
 export class GeinsCore {
   // api client

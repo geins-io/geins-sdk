@@ -11,7 +11,6 @@ The `@geins/oms` package allows you to add shopping cart and checkout functional
 - [Cart](./cart)
 - [Checkout](./checkout)
 
-
 ## Setting Up @geins/oms
 
 ### Prerequisites
@@ -37,11 +36,10 @@ $ yarn add -D @geins/oms
 ```sh [bun]
 $ bun add -D @geins/oms
 ```
+
 :::
 
-
 ## Quick Start
-
 
 ```ts
 import { GeinsCore } from '@geins/core';
@@ -50,18 +48,42 @@ import { GeinsOMS } from '@geins/oms';
 const geinsCore = new GeinsCore(mySettings);
 const geinsOMS = new GeinsOMS(geinsCore);
 
-// add item with id 1234 to cart
+// Add item with id 1234 to cart
 await geinsOMS.cart.items.add({ skuId: 1234 });
 
-// get cart items
-const cartItems: CartItemType[] = await geinsOMS.cart.items.get();
+// Checkout
+const checkout = await geinsOMS.checkout.get();
 
-// output cart items
-for (const item of cartItems) {
-  console.log(item);
+// Create options for checkout
+const checkoutOptions = {
+  paymentId: 1,
+  email: 'john.doe@example.com',
+  billingAddress: {
+    firstName: 'John',
+    lastName: 'Doe',
+    addressLine1: '1312 Chestnut St',
+    city: 'San Francisco',
+    zip: '94123',
+    state: 'CA',
+    country: 'US',
+  },
+};
+
+// Validate checkout
+const validationResult = await geinsOMS.checkout.validate({
+  checkoutOptions,
+});
+
+if (validationResult.isValid) {
+  // Create order
+  const order = await geinsOMS.checkout.create({
+    checkoutOptions,
+  });
+
+  console.log('Order created:', order);
+} else {
+  console.error('Checkout validation failed:', validationResult.message);
 }
-
-
 ```
 
 ## Overview
@@ -74,15 +96,18 @@ The `@geins/oms` package provides the features to help you manage shopping carts
 
 ```typescript
 type OMSSettings = {
-    context: RuntimeContext;
-    merchantDataTemplate?: unknown;
+  context: RuntimeContext;
+  merchantDataTemplate?: unknown;
 };
 ```
+
 ##### context
+
 The context in which the OMS is running. It can be `RuntimeContext.CLIENT`, `RuntimeContext.SERVER`, or `RuntimeContext.HYBRID`.
 
-##### merchantDataTemplate 
-The template for the merchant data. It is an object that can be used to store additional data for the merchant. The data can be of any type and can be used to store additional information about the merchant. 
+##### merchantDataTemplate
+
+The template for the merchant data. It is an object that can be used to store additional data for the merchant. The data can be of any type and can be used to store additional information about the merchant.
 
 Read more about `merchantData` [here](./merchant-data.md).
 
@@ -91,6 +116,7 @@ To get some type safety on the merchant data, you can create your own type and u
 :::
 
 Example:
+
 ```typescript
 type MyMerchantDataTemplate = {
   extraData: string;
@@ -109,13 +135,11 @@ const mySettings: OMSSettings = {
 const geinsOMS = new GeinsOMS(geinsCore, myOSettings);
 ```
 
-
 ### Cart
 
-Cart is a class that provides functionalities to manage shopping carts. It includes features such as cart creation, item management, and promotion code handling. 
+Cart is a class that provides functionalities to manage shopping carts. It includes features such as cart creation, item management, and promotion code handling.
 
 Read more about `Cart` [here](./cart.md).
-
 
 ### Checkout
 

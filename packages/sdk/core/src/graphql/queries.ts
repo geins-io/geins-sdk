@@ -1,5 +1,5 @@
-import channels from './channels.gql';
 import channel from './channel.gql';
+import channels from './channels.gql';
 
 const queries = {
   channels,

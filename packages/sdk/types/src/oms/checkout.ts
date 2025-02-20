@@ -1,12 +1,19 @@
 import { CustomerType, GeinsSettings } from '../common';
 import { GeinsUserType } from '../generated';
-import type { AddressType, ShippingOptionType, PaymentOptionType, CheckoutRedirectsType } from '../shared';
 import type { CartType } from '../oms/cart';
+import type { AddressType, CheckoutRedirectsType, PaymentOptionType, ShippingOptionType } from '../shared';
 
 enum CheckoutStatus {
   OK = 'OK',
   CUSTOMER_BLACKLISTED = 'CUSTOMER_BLACKLISTED',
 }
+
+export type CreateOrderResponseType = {
+  created?: boolean;
+  orderId?: string;
+  publicId?: string;
+  message?: string;
+};
 
 export type ConsentType = {
   type?: string;
@@ -32,7 +39,7 @@ export type CheckoutUrlsInputType = {
 export type CheckoutInputType = {
   paymentId?: number;
   shippingId?: number;
-  skipShippingValidation: boolean;
+  skipShippingValidation?: boolean;
   externalShippingId?: string;
   pickupPoint?: string;
   desiredDeliveryDate?: Date;
@@ -45,7 +52,19 @@ export type CheckoutInputType = {
   customerType?: CustomerType;
   externalShippingFee?: number;
   merchantData?: string;
-  checkoutUrls: CheckoutUrlsInputType;
+  checkoutUrls?: CheckoutUrlsInputType;
+};
+
+export type GetCheckoutOptions = {
+  cartId?: string;
+  paymentMethodId?: number;
+  shippingMethodId?: number;
+  checkoutOptions?: CheckoutInputType;
+};
+
+export type CreateOrderOptions = {
+  cartId?: string;
+  checkoutOptions: CheckoutInputType;
 };
 
 export type CheckoutType = {
@@ -57,7 +76,6 @@ export type CheckoutType = {
   consents?: ConsentType[];
   paymentOptions?: PaymentOptionType[];
   shippingOptions?: ShippingOptionType[];
-  shippingData?: string;
   checkoutStatus?: CheckoutStatus;
 };
 
