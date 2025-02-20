@@ -9,12 +9,20 @@ import {
   parseErrorMessage,
 } from '@geins/core';
 
+interface CheckoutData {
+  cartId: string;
+  paymentMethodId: number;
+  shippingMethodId: number;
+  checkoutOptions: CheckoutInputType;
+}
+
 import type {
   CheckoutInputType,
   CheckoutRedirectsType,
   CheckoutSummaryType,
   CheckoutTokenPayload,
   CheckoutType,
+  CheckoutUrlsInputType,
   CreateOrderOptions,
   CreateOrderResponseType,
   GeinsSettings,
@@ -116,56 +124,27 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
   }
 
   async get(args?: GetCheckoutOptions): Promise<CheckoutType | undefined> {
-    const resolvedArgs = { ...args };
-    if (!resolvedArgs.cartId) {
-      if (this._parent?.cart.id) {
-        resolvedArgs.cartId = this._parent?.cart.id;
-      }
-
-      if (!resolvedArgs.cartId) {
-        throw new Error('Missing cartId');
-      }
-    }
-
-    if (resolvedArgs.checkoutOptions) {
-      const checkout: CheckoutInputType = resolvedArgs.checkoutOptions;
-
-      if (checkout.paymentId) {
-        resolvedArgs.paymentMethodId = checkout.paymentId;
-      }
-
-      if (checkout.shippingId) {
-        resolvedArgs.shippingMethodId = checkout.shippingId;
-      }
-    }
-
-    if (!resolvedArgs.paymentMethodId) {
-      resolvedArgs.paymentMethodId = this._settings.defaultPaymentId ?? 0;
-    }
-
-    if (!resolvedArgs.shippingMethodId) {
-      resolvedArgs.shippingMethodId = this._settings.defaultShippingId ?? 0;
-    }
-
-    const variables = {
-      cartId: resolvedArgs.cartId,
-      checkout: {
-        paymentId: resolvedArgs.paymentMethodId,
-        shippingId: resolvedArgs.shippingMethodId,
-        checkoutUrls: resolvedArgs.checkoutOptions?.checkoutUrls,
-      },
-    };
-
-    const options: any = {
-      query: queries.checkoutCreate,
-      variables: this.generateVars(variables),
-      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
-    };
-
     try {
-      const data = await this.runMutation(options);
-      return parseCheckout(data, this._geinsSettings.locale);
-    } catch (e) {
+      const data = await this.prepareCheckoutData(args);
+
+      const variables = {
+        cartId: data.cartId,
+        checkout: {
+          paymentId: data.paymentMethodId,
+          shippingId: data.shippingMethodId,
+          ...data.checkoutOptions,
+        },
+      };
+
+      const options = {
+        query: queries.checkoutCreate,
+        variables: this.generateVars(variables),
+        requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+      };
+
+      const queryResult = await this.runMutation(options);
+      return parseCheckout(queryResult, this._geinsSettings.locale);
+    } catch (error) {
       throw new Error('Error getting checkout');
     }
   }
@@ -312,7 +291,6 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       }
     }
     if (resolvedArgs.redirectUrls) {
-      // add parameters to urls
       resolvedArgs.redirectUrls = this.addParametersToUrls(resolvedArgs.redirectUrls);
     }
 
@@ -350,6 +328,76 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       return undefined;
     }
     return decodedToken.payload;
+  }
+
+  private prepareCheckoutData(args?: GetCheckoutOptions): CheckoutData {
+    const cartId = this.resolveCartId(args?.cartId);
+    const { paymentMethodId, shippingMethodId } = this.resolvePaymentAndShipping(args);
+    const checkoutOptions = this.resolveCheckoutOptions(args?.checkoutOptions);
+
+    return {
+      cartId,
+      paymentMethodId,
+      shippingMethodId,
+      checkoutOptions,
+    };
+  }
+
+  private resolveCartId(providedCartId?: string): string {
+    const cartId = providedCartId || this._parent?.cart.id;
+    if (!cartId) {
+      throw new CheckoutError('Cart ID is required for checkout');
+    }
+    return cartId;
+  }
+
+  private resolvePaymentAndShipping(args?: GetCheckoutOptions) {
+    return {
+      paymentMethodId:
+        args?.checkoutOptions?.paymentId || args?.paymentMethodId || this._settings.defaultPaymentId || 0,
+      shippingMethodId:
+        args?.checkoutOptions?.shippingId || args?.shippingMethodId || this._settings.defaultShippingId || 0,
+    };
+  }
+
+  private resolveCheckoutOptions(providedOptions?: CheckoutInputType): CheckoutInputType {
+    if (providedOptions) {
+      return this.processCheckoutUrls(providedOptions);
+    }
+
+    if (!this._settings.checkoutUrls) {
+      return {};
+    }
+
+    const checkoutUrls: CheckoutUrlsInputType = {
+      redirectUrl: this._settings.checkoutUrls.success,
+      checkoutPageUrl: this._settings.checkoutUrls.change,
+      termsPageUrl: this._settings.checkoutUrls.terms,
+    };
+
+    return this.processCheckoutUrls({ checkoutUrls });
+  }
+
+  private processCheckoutUrls(options: CheckoutInputType): CheckoutInputType {
+    if (!options.checkoutUrls?.redirectUrl) {
+      return options;
+    }
+
+    const urlsWithParameters = this.addParametersToUrls({
+      success: options.checkoutUrls.redirectUrl,
+    });
+
+    if (urlsWithParameters?.success) {
+      return {
+        ...options,
+        checkoutUrls: {
+          ...options.checkoutUrls,
+          redirectUrl: urlsWithParameters.success,
+        },
+      };
+    }
+
+    return options;
   }
 
   private addParametersToUrls(redirectUrls: CheckoutRedirectsType): CheckoutRedirectsType | undefined {

@@ -23,7 +23,7 @@ describe('GeinsOMS cart', () => {
 
   it('should throw error if no cartId', async () => {
     const no_cart_geinsOms = new GeinsOMS(new GeinsCore(validSettings));
-    await expect(no_cart_geinsOms.checkout.get()).rejects.toThrow('Missing cartId');
+    await expect(no_cart_geinsOms.checkout.get()).rejects.toThrow('Cart ID is required for checkout');
   });
 
   it('should get a checkout', async () => {

@@ -8,8 +8,13 @@ The `@geins/oms` package provides functionalities for managing shopping carts an
 
 The `@geins/oms` package allows you to add shopping cart and checkout functionalities to your application. It includes the following features:
 
-- [Cart](./cart)
-- [Checkout](./checkout)
+- [Cart](./cart/index.md)
+
+- [Checkout](./checkout/index.md)
+
+- [Order](./order/index.md)
+
+- [Merchant Data](./merchant-data.md)
 
 ## Setting Up @geins/oms
 
@@ -92,14 +97,23 @@ The `@geins/oms` package provides the features to help you manage shopping carts
 
 ### Settings
 
-`GeinsOMS`class takes in a options object that have the omsSettings propery of the type `OMSSettings` that include the properties `context` and `merchantDataTemplate`.
+`GeinsOMS` class takes in an options object that has the omsSettings property of the type `OMSSettings` that is used to configure the OMS on how to behave.
 
 ```typescript
 type OMSSettings = {
   context: RuntimeContext;
   merchantDataTemplate?: unknown;
+  defaultPaymentId?: number;
+  defaultShippingId?: number;
+  checkoutUrls?: CheckoutRedirectsType;
 };
 ```
+
+- `context`: The context in which the OMS is running. It can be `RuntimeContext.CLIENT`, `RuntimeContext.SERVER`, or `RuntimeContext.HYBRID`.
+- `merchantDataTemplate`: The template for the merchant data. It is an object that can be used to store additional data for the merchant. The data can be of any type and can be used to store additional information about the merchant.
+- `defaultPaymentId`: The default payment method id to be used for the checkout process.
+- `defaultShippingId`: The default shipping method id to be used for the checkout process.
+- `checkoutUrls`: The URLs to redirect the user to after the checkout process is completed. Read more about how `CheckoutRedirectsType` is used [here](./checkout/get.md#types).
 
 ##### context
 
@@ -139,10 +153,10 @@ const geinsOMS = new GeinsOMS(geinsCore, myOSettings);
 
 Cart is a class that provides functionalities to manage shopping carts. It includes features such as cart creation, item management, and promotion code handling.
 
-Read more about `Cart` [here](./cart.md).
+Read more about `Cart` [here](./cart/index.md)
 
 ### Checkout
 
 Checkout is a class that provides functionalities to manage the checkout process. It includes features such as order creation, payment handling, and order confirmation.
 
-Read more about `Checkout` [here](./checkout.md).
+Read more about `Checkout` [here](./checkout/index.md).

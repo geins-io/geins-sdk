@@ -13,10 +13,10 @@ The `@geins/crm` package allows you to add logged-in user functionalities to you
 - [Authentication](./authentication)
 - [Registration / Sign Up](./registration)
 - [Password management](./password)
-- [User management](./user)
-  - [Profile](./user-profile)
-  - [Balance](./user-balance)
-  - [Order history](./user-transactions)
+- [User management](./user/index.md)
+  - [Profile](./user/profile.md)
+  - [Balance](./user/balance.md)
+  - [Order history](./user/transactions.md)
 - [JWT token that attaches to the request headers for API calls](./jwt-token)
 
 ## Setting Up @geins/crm
@@ -44,7 +44,9 @@ $ yarn add -D @geins/crm
 ```sh [bun]
 $ bun add -D @geins/crm
 ```
+
 :::
+
 ### Quick Start
 
 ```ts
@@ -67,6 +69,6 @@ const geinsCRM = new GeinsCRM(geinsCore, authSettings);
 // Example: Authenticating a user
 crm.auth
   .login('user@example.com', 'userpassword')
-  .then(user => console.log('Logged in user:', user))
-  .catch(error => console.error('Login failed:', error));
+  .then((user) => console.log('Logged in user:', user))
+  .catch((error) => console.error('Login failed:', error));
 ```
