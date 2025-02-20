@@ -1,0 +1,39 @@
+#import "./cart.gql"
+#import "./address.gql"
+
+fragment Checkout on CheckoutType {
+  cart {
+    ...Cart
+  }
+  consents {
+    type
+    checked
+  }
+  email
+  identityNumber
+  billingAddress {
+    ...Address
+  }
+  shippingAddress {
+    ...Address
+  }
+  shippingData
+  shippingOptions {
+    id
+    displayName
+    logo
+    isSelected
+    feeIncVatFormatted
+    feeExVatFormatted
+  }
+  paymentOptions {
+    id
+    logo
+    displayName
+    checkoutType
+    paymentType
+    paymentData
+    isSelected
+    newCheckoutSession
+  }
+}

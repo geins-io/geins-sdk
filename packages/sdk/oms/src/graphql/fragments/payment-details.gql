@@ -1,0 +1,15 @@
+fragment PaymentDetails on PaymentDetailsType {
+  id
+  paymentId
+  transactionId
+  displayName
+  name
+  isPaid
+  paymentDate
+  paymentFee
+  paymentOption
+  reservationDate
+  reservationNumber
+  shippingFee
+  total
+}

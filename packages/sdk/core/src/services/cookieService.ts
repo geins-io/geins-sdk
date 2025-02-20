@@ -1,5 +1,5 @@
+import { type CookieSerializeOptions } from 'cookie';
 import Cookie from 'cookie-universal';
-import { parse, type CookieSerializeOptions } from 'cookie';
 
 /**
  * Configuration options for setting cookies.

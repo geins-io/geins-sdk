@@ -7,7 +7,7 @@
 
 # apps
 apps/
-
+apps/*/dist
 
 # node / nuxt / vite / rollup
 .bin
@@ -29,3 +29,4 @@ docs/.vitepress/cache
 # repomix
 .repomix*
 repomix*
+.windsurfrules

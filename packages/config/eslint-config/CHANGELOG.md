@@ -1,5 +1,40 @@
 # @geins/eslint-config
 
+## 0.1.9-canary-9e45fd154702919aa27d04abc76e4e7d581975ff
+
+### Patch Changes
+
+- 15537bf: added docs and fixed up types
+- 3e745f6: jwt token update
+- c93670a: release
+- 9e45fd1: pkg
+- 37d6ca3: next
+- f3ed786: next rel
+
+## 0.1.9-canary-041e5f03d0f47a30733c0c2fba70ccb3dba3e26b
+
+### Patch Changes
+
+- 041e5f0: shipping fixed
+
+## 0.1.9-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e
+
+### Patch Changes
+
+- docs
+
+## 0.1.9-canary-b4f384b9deaf8c6c36d7279cdb6a62d1dc40d78e
+
+### Patch Changes
+
+- b4f384b: add checkout features
+
+## 0.1.9-canary-9566e63dbbf7d2ef3cd4faef831e0343f15a3121
+
+### Patch Changes
+
+- docs
+
 ## 0.1.8
 
 ### Patch Changes

@@ -1,0 +1,12 @@
+fragment Refund on RefundType {
+  id
+  itemId
+  articleNumber
+  createdAt
+  reason
+  reasonCode
+  refundType
+  toBalance
+  total
+  vat
+}

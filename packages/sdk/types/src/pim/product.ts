@@ -52,6 +52,7 @@ export type LowestPriceType = {
 
 export type ProductImageType = {
   url: string;
+  fileName?: string;
   altText?: string;
   isPrimary: boolean;
 };

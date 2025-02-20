@@ -75,7 +75,7 @@ export abstract class BaseApiService {
 
         // Check if the value is an array, and clean each object inside it
         if (Array.isArray(value)) {
-          acc[key] = value.map(item => (item && typeof item === 'object' ? this.cleanObject(item) : item));
+          acc[key] = value.map((item) => (item && typeof item === 'object' ? this.cleanObject(item) : item));
         }
         // Recursively clean if the value is a non-null object
         else if (value && typeof value === 'object') {

@@ -2,7 +2,11 @@ import type { GeinsChannelTypeType } from '../generated';
 export * from './channel';
 export * from './event';
 
-/* export type GeinsCustomerTypeType = 'PERSON' | 'ORGANIZATION'; */
+export enum CustomerType {
+  PERSON = 'PERSON',
+  ORGANIZATION = 'ORGANIZATION',
+}
+
 export enum GeinsLogLevel {
   NONE = 'NONE',
   DEBUG = 'DEBUG',
@@ -55,3 +59,5 @@ export enum LinkAttributeRelEnum {
   search = 'search',
   tag = 'tag',
 }
+
+

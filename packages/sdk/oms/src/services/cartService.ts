@@ -1,27 +1,26 @@
 import {
   BaseApiService,
-  CookieService,
-  CookieType,
-  isServerContext,
   CART_COOKIES,
   CART_COOKIES_MAX_AGE,
-  GraphQLQueryOptions,
+  CookieService,
+  CookieType,
   FetchPolicyOptions,
+  GraphQLQueryOptions,
+  isServerContext,
   ItemType,
 } from '@geins/core';
-import { MerchantData } from '../logic';
-import { parseCart, groupCartItems } from '../parsers';
-import { queries } from '../graphql';
 import type {
-  CartType,
-  CartItemType,
+  CartGroupInputType,
   CartItemInputType,
+  CartItemType,
+  CartType,
   GeinsSettings,
   OMSSettings,
   ProductPackageSelectionType,
-  CartGroupInputType,
 } from '@geins/types';
-import { cpSync } from 'fs';
+import { queries } from '../graphql';
+import { MerchantData } from '../logic';
+import { groupCartItems, parseCart } from '../parsers';
 
 /**
  * Shipping fee handling.
@@ -651,7 +650,19 @@ export class CartService extends BaseApiService implements CartServiceInterface 
     } catch (e) {
       throw new Error('Error updating item');
     }
-    return true;
+    // check if item was added
+    return this.itemsGet().then((items) => {
+      if (
+        !items?.find(
+          (item) =>
+            (item.id === args.item.id || item.skuId === args.item.skuId) &&
+            item.quantity === args.item.quantity,
+        )
+      ) {
+        return false;
+      }
+      return true;
+    });
   }
 
   private async itemPackageUpdate(args: {

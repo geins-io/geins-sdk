@@ -1,9 +1,9 @@
-import type { GeinsSettings, GeinsChannelTypeType } from '@geins/types';
-import { SimpleCache } from '../utils/simpleCache';
-import { MerchantApiClient, FetchPolicyOptions } from '../api-client';
-import { buildEndpoints } from '../utils';
-import { ChannelStore } from '../stores';
+import type { GeinsChannelTypeType, GeinsSettings } from '@geins/types';
+import { FetchPolicyOptions, MerchantApiClient } from '../api-client';
 import { ChannelService } from '../services';
+import { ChannelStore } from '../stores';
+import { buildEndpoints } from '../utils';
+import { SimpleCache } from '../utils/simpleCache';
 
 let instance: Channel | null = null;
 
@@ -49,10 +49,7 @@ export class Channel {
   }
 
   private initChannelService() {
-    this.channelService = new ChannelService(
-      () => this._apiClient(),
-      this.geinsSettings,
-    );
+    this.channelService = new ChannelService(() => this._apiClient(), this.geinsSettings);
   }
 
   public static getInstance(geinsSettings: GeinsSettings) {

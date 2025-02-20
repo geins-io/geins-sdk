@@ -1,6 +1,6 @@
 {
   "name": "@geins/types",
-  "version": "0.3.9",
+  "version": "0.3.10-canary-9e45fd154702919aa27d04abc76e4e7d581975ff",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",

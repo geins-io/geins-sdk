@@ -1,8 +1,8 @@
-import type { GeinsSettings } from '@geins/types';
-import { BaseApiService } from '../base/baseApiService';
-import { GraphQLQueryOptions } from '../api-client/merchantApiClient';
-import { DocumentNode, OperationDefinitionNode } from 'graphql';
 import { gql } from '@apollo/client/core';
+import type { GeinsSettings } from '@geins/types';
+import { DocumentNode, OperationDefinitionNode } from 'graphql';
+import { GraphQLQueryOptions } from '../api-client/merchantApiClient';
+import { BaseApiService } from '../base/baseApiService';
 
 /**
  * GraphQLService class provides methods to interact with a GraphQL API.
@@ -47,7 +47,7 @@ export class GraphQLService extends BaseApiService {
       ) || [];
 
     const providedVars = Object.keys(returnOptions.variables);
-    providedVars.forEach(v => {
+    providedVars.forEach((v) => {
       if (queryVars && !queryVars.includes(v)) {
         delete returnOptions.variables[v];
       }

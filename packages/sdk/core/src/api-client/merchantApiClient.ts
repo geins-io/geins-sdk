@@ -1,17 +1,16 @@
-import { CookieService } from '../services/cookieService';
-import { AUTH_COOKIES } from '../constants';
 import {
   ApolloClient,
-  InMemoryCache,
-  NormalizedCacheObject,
+  ApolloQueryResult,
   DocumentNode,
   FetchPolicy,
-  ApolloQueryResult,
   FetchResult,
+  gql,
+  InMemoryCache,
+  NormalizedCacheObject,
   OperationVariables,
-  FieldPolicy,
 } from '@apollo/client/core';
-import { gql } from '@apollo/client/core';
+import { AUTH_COOKIES } from '../constants';
+import { CookieService } from '../services/cookieService';
 
 export enum FetchPolicyOptions {
   CACHE_FIRST = 'cache-first',

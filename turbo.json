@@ -4,9 +4,6 @@
     "build": {
       "dependsOn": [
         "^build"
-      ],
-      "outputs": [
-        "dist/**"
       ]
     },
     "lint": {
@@ -15,7 +12,9 @@
       ]
     },
     "link": {
-      "dependsOn": []
+      "dependsOn": [
+        "^link"
+      ]
     },
     "test": {
       "dependsOn": [

@@ -1,2 +1,2 @@
-export * from './routingStore';
 export * from './channelStore';
+export * from './routingStore';

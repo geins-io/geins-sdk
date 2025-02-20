@@ -1,0 +1,115 @@
+query checkout(
+  $id: String!
+  $paymentType: PaymentType!
+  $checkoutMarket: String
+  $channelId: String
+  $languageId: String
+) {
+  checkout(
+    id: $id
+    paymentType: $paymentType
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $checkoutMarket
+  ) {
+    htmlSnippet
+    completed
+    order {
+      status
+			orderId
+      transactionId
+      externalOrderId
+
+      marketId
+      languageId
+
+      message
+      metaData
+
+      customerId
+      customerTypeId
+      customerGroupId
+      organizationNumber
+      ipAddress
+
+      paymentId
+      shippingId
+      pickupPoint
+      desiredDeliveryDate
+
+      promoCode
+      campaignIds
+      campaignNames
+
+      currency
+      discountExVat
+      discountIncVat
+      itemValueExVat
+      itemValueIncVat
+      orderValueExVat
+      orderValueIncVat
+      paymentFeeExVat
+      paymentFeeIncVat
+      shippingFeeExVat
+      shippingFeeIncVat
+      sum
+
+      billingAddress {
+        company
+        firstName
+        lastName
+        zip
+        phone
+        addressLine1
+        addressLine2
+        city
+        country
+        mobile
+      	careOf
+      }
+      shippingAddress {
+        company
+        firstName
+        lastName
+        zip
+        phone
+        addressLine1
+        addressLine2
+        city
+        country
+        mobile
+      	careOf
+      }
+      rows {
+        articleNumber
+        brand
+        categories
+        campaignIds
+        campaignNames
+        discountExVat
+        discountIncVat
+        discountRate
+        externalId
+        gtin
+        imageUrl
+        height
+        length
+        width
+        weight
+        message
+        name
+        quantity
+        sku
+        variant
+        priceExVat
+        priceIncVat
+        currency
+        productId
+        productUrl
+        productPriceCampaignId
+        productPriceListId
+      }
+    }
+    nthPurchase
+  }
+}

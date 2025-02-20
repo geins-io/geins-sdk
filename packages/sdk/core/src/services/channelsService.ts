@@ -1,8 +1,8 @@
 import type { GeinsChannelTypeType, GeinsSettings } from '@geins/types';
-import { SimpleCache } from '../utils/simpleCache';
 import { BaseApiService } from '../base/baseApiService';
 import { queries } from '../graphql';
 import { parseChannelsResult } from '../parsers/channelParser';
+import { SimpleCache } from '../utils/simpleCache';
 
 export class ChannelsService extends BaseApiService {
   private cache: SimpleCache<GeinsChannelTypeType[]>;

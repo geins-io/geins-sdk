@@ -3,6 +3,7 @@ import globals from 'globals';
 import turbo from 'eslint-plugin-turbo';
 import onlyWarn from 'eslint-plugin-only-warn';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
+import unusedImports from 'eslint-plugin-unused-imports';
 
 /** Workaround - https://github.com/sindresorhus/globals/issues/239 */
 const GLOBALS_BROWSER_FIX = Object.assign({}, globals.browser, {
@@ -31,17 +32,29 @@ export const geinsSharedConfig = [
     plugins: {
       turbo,
       'only-warn': onlyWarn,
+      'unused-imports': unusedImports,
     },
     rules: {
-      'brace-style': ['error', '1tbs', { allowSingleLine: true }], // Allow single-line braces
-      'max-len': ['error', { code: 110, ignoreUrls: true }], // Set maximum line length to 100 characters
-      'function-paren-newline': ['error', 'consistent'], // Ensure function parameters are consistently on a single line
-      'function-call-argument-newline': ['error', 'consistent'], // Ensure function call arguments are consistently on a single line
-      'no-console': ['error', { allow: ['warn', 'error'] }], // Allow only console.warn and console.error
+      'brace-style': ['error', '1tbs', { allowSingleLine: true }],
+      'max-len': ['error', { code: 210, ignoreUrls: true }],
+      'function-paren-newline': ['error', 'consistent'],
+      'function-call-argument-newline': ['error', 'consistent'],
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-unused-vars': 'off', // Turned off in favor of unused-imports/no-unused-vars
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+        },
+      ],
       'prettier/prettier': [
         'error',
         {
-          printWidth: 110,
+          printWidth: 210,
           singleQuote: true,
           trailingComma: 'none',
           arrowParens: 'always',

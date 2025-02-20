@@ -1,7 +1,4 @@
-import {
-  API_ENDPOINT_URL_HISTORY,
-  API_ENDPOINT_SLUG_HISTORY,
-} from '../constants';
+import { API_ENDPOINT_SLUG_HISTORY, API_ENDPOINT_URL_HISTORY } from '../constants';
 export class EndpointApiClient {
   private apiKey: string;
 
@@ -24,9 +21,7 @@ export class EndpointApiClient {
       const response = await fetch(endpointUrl, options);
 
       if (!response.ok) {
-        throw new Error(
-          `Request failed with status ${response.status}: ${response.statusText}`,
-        );
+        throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
       }
 
       return await response.json();
@@ -38,15 +33,13 @@ export class EndpointApiClient {
 
   async getUrlHistory(lastFetchTime?: string) {
     const endpoint =
-      this.getEndpointUrl(API_ENDPOINT_URL_HISTORY) +
-      (lastFetchTime ? `?offset=${lastFetchTime}` : '');
+      this.getEndpointUrl(API_ENDPOINT_URL_HISTORY) + (lastFetchTime ? `?offset=${lastFetchTime}` : '');
     return this.request(endpoint);
   }
 
   async getSlugHistory(lastFetchTime?: string) {
     const endpoint =
-      this.getEndpointUrl(API_ENDPOINT_SLUG_HISTORY) +
-      (lastFetchTime ? `?offset=${lastFetchTime}` : '');
+      this.getEndpointUrl(API_ENDPOINT_SLUG_HISTORY) + (lastFetchTime ? `?offset=${lastFetchTime}` : '');
     return this.request(endpoint);
   }
 }

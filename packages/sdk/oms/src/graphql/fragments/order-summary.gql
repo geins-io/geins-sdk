@@ -1,0 +1,54 @@
+#import "./cart.gql"
+#import "./address.gql"
+#import "./price.gql"
+#import "./payment-details.gql"
+#import "./refund.gql"
+#import "./shipping-details.gql"
+
+fragment OrderSummary on OrderType {
+  id
+  customerId
+  createdAt
+  completedAt
+  currency
+  desiredDeliveryDate
+  message
+  status
+  updatedAt
+  publicId
+  billingAddress {
+    ...Address
+  }
+  shippingAddress {
+    ...Address
+  }
+  cart {
+    ...Cart
+  }
+  paymentDetails {
+    ...PaymentDetails
+  }
+  discount {
+    ...Price
+  }
+  orderTotal {
+    ...Price
+  }
+  paymentFee {
+    ...Price
+  }
+  shippingFee {
+    ...Price
+  }
+  vat {
+    ...Price
+  }
+  fromBalance
+  fromBalanceFormatted
+  refunds {
+    ...Refund
+  }
+  shippingDetails {
+    ...ShippingDetails
+  }
+}
