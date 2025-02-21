@@ -42,8 +42,6 @@ describe('EventService', () => {
 
   it('should add listener  emit and then not be removed', () => {
     let listeners = 0;
-    const eventHandler = jest.fn();
-    eventService.listenerAdd(eventHandler);
 
     eventService.listenerAdd((data: GeinsEventMessage) => {
       expect(data).toEqual(testEventMessage);
