@@ -1,29 +1,62 @@
-import { EventService } from '../src/services/eventService';
-import { BroadcastChannel } from 'broadcast-channel';
-import { EventEmitter } from 'events';
-import { isServerContext } from '../src/utils';
+import { GeinsEventType } from '@geins/core';
 import type { GeinsEventMessage } from '@geins/types';
-
-// Mock dependencies
-jest.mock('broadcast-channel');
-jest.mock('events');
-jest.mock('../src/utils', () => ({
-  isServerContext: jest.fn(),
-}));
+import { EventService } from '../src/services/eventService';
 
 describe('EventService', () => {
   let eventService: EventService;
+  const testEventMessage = {
+    subject: 'string',
+    payload: { data: 'data' },
+    broadcast: true,
+  };
 
   beforeEach(() => {
-    // Set isServerContext to return false to simulate a browser environment
-    (isServerContext as jest.Mock).mockReturnValue(false);
-
     // Create a new instance of EventService before each test
     eventService = new EventService();
   });
 
   it('should be defined', () => {
     expect(eventService).toBeDefined();
+    eventService.listenerAdd(() => {});
+    eventService.listenerOnce(() => {});
+  });
+
+  it('should add listener once emit and then be removed', () => {
+    let listeners = 0;
+
+    eventService.listenerOnce((data: GeinsEventMessage) => {
+      expect(data).toEqual(testEventMessage);
+    }, GeinsEventType.USER);
+
+    // before emitting the event
+    listeners = eventService.listenerCount(GeinsEventType.USER);
+    expect(listeners).toBe(1);
+
+    // emit the event
+    eventService.push(testEventMessage, GeinsEventType.USER);
+
+    // after emitting the event
+    listeners = eventService.listenerCount(GeinsEventType.USER);
+    expect(listeners).toBe(0);
+  });
+
+  it('should add listener  emit and then not be removed', () => {
+    let listeners = 0;
+
+    eventService.listenerAdd((data: GeinsEventMessage) => {
+      expect(data).toEqual(testEventMessage);
+    }, GeinsEventType.USER);
+
+    // before emitting the event
+    listeners = eventService.listenerCount(GeinsEventType.USER);
+    expect(listeners).toBe(1);
+
+    // emit the event
+    eventService.push(testEventMessage, GeinsEventType.USER);
+
+    // after emitting the event
+    listeners = eventService.listenerCount(GeinsEventType.USER);
+    expect(listeners).toBe(1);
   });
 
   afterEach(() => {
