@@ -40,16 +40,17 @@ describe('GeinsOMS cart', () => {
     );
   });
 
-  it('should get have a validate ', async () => {
+  it('should validate checkout checkout', async () => {
+    // needed to get the checkout before validate
     const checkoutOptions = randomCheckoutData(PAYEMENT_METHOD_ID);
-    // neded to get the checkout before validate
     await geinsOMS.checkout.get({ checkoutOptions });
+
     const validateResult = await geinsOMS.checkout.validate({ checkoutOptions });
     expect(validateResult).toBeDefined();
     expect(validateResult?.isValid).toBe(true);
   });
 
-  it('should get have a not-validate ', async () => {
+  it('should get not validate checkout', async () => {
     const checkoutOptions = randomCheckoutData();
     await geinsOMS.checkout.get({ checkoutOptions });
     const validateResult = await geinsOMS.checkout.validate({ checkoutOptions });
