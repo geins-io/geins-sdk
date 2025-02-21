@@ -233,7 +233,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       user: resolvedArgs.user,
       checkoutSettings: {
         isCartEditable: resolvedArgs?.isCartEditable ?? false,
-        cloneCart: resolvedArgs?.cloneCart ?? true,
+        cloneCart: resolvedArgs?.copyCart ?? true,
         selectedPaymentMethodId: resolvedArgs.selectedPaymentMethodId,
         selectedShippingMethodId: resolvedArgs.selectedShippingMethodId,
         availablePaymentMethodIds: resolvedArgs.availablePaymentMethodIds,
