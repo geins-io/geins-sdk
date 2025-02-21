@@ -17,7 +17,7 @@ import type {
 import { GeinsOMS } from '../geinsOMS';
 import { queries } from '../graphql';
 import { parseCheckout, parseCheckoutSummary, parseOrder, parseValidateOrder } from '../parsers';
-import { CheckoutDataResolver } from '../util';
+import { CheckoutDataResolver, UrlProcessor } from '../util';
 
 export interface CheckoutServiceInterface {
   /**
@@ -81,11 +81,20 @@ export interface CheckoutServiceInterface {
    * @returns {Promise<string | undefined>} A promise that resolves to the generated token or undefined.
    */
   createToken(args?: GenerateCheckoutTokenOptions): Promise<string | undefined>;
+
+  /**
+   * Generates checkout parameters by merging current parameters with default CHECKOUT_PARAMETERS
+   * @param currentParameters - Map of current parameters to merge with defaults
+   * @returns A new Map containing merged checkout parameters
+   * @example
+   * const params = new Map([['key', 'value']]);
+   * const mergedParams = generateExternalCheckoutUrlParameters(params);
+   */
+  generateExternalCheckoutUrlParameters(currentParameters: Map<string, string>): Map<string, string>;
 }
 
 export class CheckoutService extends BaseApiService implements CheckoutServiceInterface {
   private readonly dataResolver;
-
   private _settings!: OMSSettings;
 
   constructor(
@@ -245,6 +254,10 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       geinsSettings: resolvedArgs.geinsSettings,
     } as CheckoutTokenPayload;
     return encodeJWT(obj);
+  }
+
+  generateExternalCheckoutUrlParameters(currentParameters: Map<string, string>): Map<string, string> {
+    return UrlProcessor.generateParameters(currentParameters);
   }
 
   static async parseToken(token: string): Promise<CheckoutTokenPayload | undefined> {
