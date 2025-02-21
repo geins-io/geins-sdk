@@ -4,7 +4,7 @@ import { omsSettings, validSettings } from '../../../../test/globalSettings';
 import { GeinsOMS } from '../src/geinsOMS';
 import { CheckoutService } from '../src/services';
 
-describe('GeinsOMS cart', () => {
+describe('GeinsOMS checkout', () => {
   let geinsOMS: GeinsOMS;
   const PAYEMENT_METHOD_ID = 18;
 
@@ -64,6 +64,9 @@ describe('GeinsOMS cart', () => {
 
     const validateResult = await geinsOMS.checkout.validate({ checkoutOptions });
     expect(validateResult).toBeDefined();
+    if (validateResult?.isValid === false) {
+      console.error('Validation error:', validateResult);
+    }
     expect(validateResult?.isValid).toBe(true);
   });
 

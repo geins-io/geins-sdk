@@ -35,10 +35,12 @@ export class CheckoutDataResolver {
     resolvedArgs.geinsSettings = this.resolveGeinsSettings(args?.geinsSettings);
     resolvedArgs.customerType = args?.customerType ?? CustomerType.PERSON;
     resolvedArgs.user = this.resolveUser(args?.user);
+
     const paymentAndShipping = this.paymentAndShipping({
       paymentMethodId: args?.selectedPaymentMethodId,
       shippingMethodId: args?.selectedShippingMethodId,
     });
+
     resolvedArgs.selectedPaymentMethodId = paymentAndShipping.paymentMethodId;
     resolvedArgs.selectedShippingMethodId = paymentAndShipping.shippingMethodId;
     resolvedArgs.redirectUrls = this.resolveRedirectUrls(args?.redirectUrls);
@@ -151,8 +153,8 @@ export class CheckoutDataResolver {
 
   private resolvePaymentAndShipping(args?: GetCheckoutOptions) {
     return this.paymentAndShipping({
-      paymentMethodId: args?.paymentMethodId,
-      shippingMethodId: args?.shippingMethodId,
+      paymentMethodId: args?.paymentMethodId || args?.checkoutOptions?.paymentId,
+      shippingMethodId: args?.shippingMethodId || args?.checkoutOptions?.shippingId,
     });
   }
 
