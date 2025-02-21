@@ -1,6 +1,6 @@
 import addItem from './cart/add-item.gql';
 import addPackageItem from './cart/add-package.gql';
-import cloneCart from './cart/clone.gql';
+import copyCart from './cart/clone.gql';
 import completeCart from './cart/complete.gql';
 import createCart from './cart/create.gql';
 import getCart from './cart/get.gql';
@@ -19,7 +19,7 @@ import getOrder from './order/get.gql';
 const queries = {
   cartCreate: createCart,
   cartGet: getCart,
-  cartCopy: cloneCart,
+  cartCopy: copyCart,
   cartComplete: completeCart,
   cartAddItem: addItem,
   cartAddPackageItem: addPackageItem,

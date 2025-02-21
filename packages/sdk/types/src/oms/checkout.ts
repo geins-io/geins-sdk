@@ -134,7 +134,7 @@ export type CheckoutStyleType = {
 
 export type CheckoutSettings = {
   isCartEditable?: boolean;
-  cloneCart?: boolean;
+  copyCart?: boolean;
   selectedPaymentMethodId?: number;
   selectedShippingMethodId?: number;
   availablePaymentMethodIds?: number[];
@@ -158,7 +158,7 @@ export type GenerateCheckoutTokenOptions = {
   customerType?: CustomerType;
   user?: GeinsUserType;
   isCartEditable?: boolean;
-  cloneCart?: boolean;
+  copyCart?: boolean;
   selectedPaymentMethodId?: number;
   selectedShippingMethodId?: number;
   availablePaymentMethodIds?: number[];

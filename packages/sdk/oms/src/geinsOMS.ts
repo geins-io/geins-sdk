@@ -101,7 +101,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
       cartId: options?.cartId ?? this.cart.id,
       user: options?.user,
       isCartEditable: options?.isCartEditable ?? false,
-      cloneCart: options?.copyCart ?? true,
+      copyCart: options?.copyCart ?? true,
       selectedPaymentMethodId: options?.selectedPaymentMethodId ?? this._omsSettings.defaultPaymentId ?? 0,
       selectedShippingMethodId: options?.selectedShippingMethodId ?? this._omsSettings.defaultShippingId ?? 0,
       availablePaymentMethodIds: options?.availablePaymentMethodIds,
