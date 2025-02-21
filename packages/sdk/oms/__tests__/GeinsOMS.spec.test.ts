@@ -19,12 +19,16 @@ describe('GeinsOMS Shape', () => {
 
   it('should use the correct client and settings from GeinsCore', () => {
     expect(oms.cart).toBeDefined();
-    expect(oms.checkout).toBeDefined();
-    expect(oms.order).toBeDefined();
-
     expect(typeof oms.cart).toBe('object');
+
+    expect(oms.checkout).toBeDefined();
     expect(typeof oms.checkout).toBe('object');
+
+    expect(oms.order).toBeDefined();
     expect(typeof oms.order).toBe('object');
+
+    expect(oms.createCheckoutToken).toBeDefined();
+    expect(typeof oms.createCheckoutToken).toBe('function');
   });
 
   it('checkout service should expose methods', () => {
@@ -44,6 +48,7 @@ describe('GeinsOMS Shape', () => {
     expect(typeof oms.checkout.createToken).toBe('function');
 
     expect(oms.checkout.generateExternalCheckoutUrlParameters).toBeDefined();
+    expect(typeof oms.checkout.generateExternalCheckoutUrlParameters).toBe('function');
   });
 
   it('cart service should expose methods', () => {
