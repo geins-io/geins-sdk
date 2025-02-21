@@ -1,5 +1,11 @@
 # @geins/eslint-config
 
+## 0.2.1
+
+### Patch Changes
+
+- 8510539: refactor of checkout
+
 ## 0.2.0
 
 ### Minor Changes
