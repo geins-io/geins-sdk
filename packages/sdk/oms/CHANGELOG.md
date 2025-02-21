@@ -1,5 +1,13 @@
 # @geins/oms
 
+## 0.4.1
+
+### Patch Changes
+
+- 8510539: refactor of checkout
+- Updated dependencies [8510539]
+  - @geins/core@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes
