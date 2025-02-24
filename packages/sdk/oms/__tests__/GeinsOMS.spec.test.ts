@@ -1,5 +1,5 @@
 import { GeinsCore } from '@geins/core';
-import { GeinsOMS } from '../src/geinsOMS';
+import { GeinsOMS } from '@geins/oms';
 
 // Mock the GeinsCore class
 jest.mock('@geins/core');

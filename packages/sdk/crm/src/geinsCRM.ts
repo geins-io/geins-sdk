@@ -1,19 +1,19 @@
-import { GeinsCore, BasePackage, buildEndpoints } from '@geins/core';
+import { BasePackage, buildEndpoints, GeinsCore } from '@geins/core';
 import {
-  AuthSettings,
   AuthClientConnectionModes,
   AuthCredentials,
   AuthResponse,
+  AuthSettings,
   AuthTokens,
-  GeinsUserInputTypeType,
-  GeinsUserOrdersType,
   GeinsCustomerType,
   GeinsEventType,
+  GeinsUserInputTypeType,
+  GeinsUserOrdersType,
   GeinsUserType,
 } from '@geins/types';
-import { AuthClientDirect, AuthClientProxy, AuthService } from './auth';
+import { AuthClientDirect, AuthClientProxy } from './auth';
+import { PasswordResetService, UserOrdersService, UserService } from './services';
 import type { AuthInterface, UserInterface } from './types';
-import { UserService, UserOrdersService, PasswordResetService } from './services';
 
 class GeinsCRM extends BasePackage {
   private _authClient: AuthClientDirect | AuthClientProxy;
@@ -38,6 +38,13 @@ class GeinsCRM extends BasePackage {
     } else {
       throw new Error('Invalid client connection mode');
     }
+  }
+
+  destroy(): void {
+    this._authClient.destroy();
+    this._userService?.destroy();
+    this._passwordResetService?.destroy();
+    this._userOrdersService?.destroy();
   }
 
   private async initUserService(): Promise<void> {

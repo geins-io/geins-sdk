@@ -1,12 +1,11 @@
 // /packages/sdk/crm/__tests__/GeinsCRM.auth.test.ts
 
-import { GeinsCore, CookieService, AUTH_COOKIES } from '@geins/core';
-import { AuthSettings, AuthCredentials } from '@geins/types';
-import { GeinsCRM } from '../src/geinsCRM';
-import { validSettings, validUserCredentials, expectedCookiesAuthAll } from '../../../../test/globalSettings';
+import { CookieService, GeinsCore } from '@geins/core';
+import { AuthService, GeinsCRM } from '@geins/crm';
+import { AuthCredentials, AuthSettings } from '@geins/types';
+import { cleanObject, randomUserData } from '../../../../test/dataMock';
+import { validSettings, validUserCredentials } from '../../../../test/globalSettings';
 import { setupMockFetchForInternalApi } from '../../../../test/setupAuthMockFetch';
-import { randomString, randomUserData, cleanObject } from '../../../../test/dataMock';
-import { AuthService } from '../src/auth/authService';
 
 // Define type for test setup options
 type TestSetupOptions = {
@@ -104,6 +103,6 @@ const authSettingsVariations: TestSetupOptions[] = [
 ];
 
 // Use describe.each to run the test suite with different configurations
-describe.each(authSettingsVariations)('GeinsCRM User', options => {
+describe.each(authSettingsVariations)('GeinsCRM User', (options) => {
   testGeinsCRM(options);
 });

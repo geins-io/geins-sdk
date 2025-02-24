@@ -129,7 +129,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
    * const payload = await GeinsOMS.parseCheckoutToken(token);
    * ```
    */
-  public static async parseCheckoutToken(token: string): Promise<CheckoutTokenPayload> {
+  static async parseCheckoutToken(token: string): Promise<CheckoutTokenPayload> {
     const payload = await CheckoutService.parseToken(token);
     if (!payload) {
       throw new Error('Invalid token: Unable to parse token.');

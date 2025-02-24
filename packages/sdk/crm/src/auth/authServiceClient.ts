@@ -1,10 +1,4 @@
-import {
-  logWrite,
-  AUTH_HEADERS,
-  type AuthCredentials,
-  type AuthUserToken,
-  type AuthSignature,
-} from '@geins/core';
+import { AUTH_HEADERS, type AuthCredentials, type AuthSignature, type AuthUserToken } from '@geins/core';
 import { digest } from './authHelpers';
 
 export class AuthServiceClient {
@@ -18,6 +12,8 @@ export class AuthServiceClient {
     this.authEndpoint = authEndpoint;
     this.signEndpoint = signEndpoint;
   }
+
+  destroy(): void {}
 
   private getAuthEndpointUrl(endpoint: string): string {
     return `${this.authEndpoint}/${endpoint}`;

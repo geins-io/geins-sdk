@@ -1,12 +1,10 @@
-// /packages/sdk/crm/__tests__/GeinsCRM.auth.test.ts
+import { AUTH_COOKIES, CookieService, GeinsCore } from '@geins/core';
+import { AuthService, GeinsCRM } from '@geins/crm';
+import { AuthCredentials, AuthSettings } from '@geins/types';
 
-import { GeinsCore, CookieService, AUTH_COOKIES } from '@geins/core';
-import { AuthSettings, AuthCredentials } from '@geins/types';
-import { GeinsCRM } from '../src/geinsCRM';
-import { validSettings, validUserCredentials, expectedCookiesAuthAll } from '../../../../test/globalSettings';
+import { cleanObject, randomString, randomUserData } from '../../../../test/dataMock';
+import { expectedCookiesAuthAll, validSettings, validUserCredentials } from '../../../../test/globalSettings';
 import { setupMockFetchForInternalApi } from '../../../../test/setupAuthMockFetch';
-import { randomString, randomUserData, cleanObject } from '../../../../test/dataMock';
-import { AuthService } from '../src/auth/authService';
 
 // Define type for test setup options
 type TestSetupOptions = {
@@ -26,7 +24,7 @@ function testGeinsCRM(options: TestSetupOptions) {
     let removeCookieSpy: jest.SpyInstance;
     let expectedMaxAge: number;
 
-    let geinsCRM: GeinsCRM;
+    let geinsCRM: GeinsCRM | undefined;
 
     beforeEach(() => {
       setCookieSpy = jest.spyOn(CookieService.prototype, 'set');
@@ -51,6 +49,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       // Clean up mocks after each test
       jest.clearAllMocks();
       setCookieSpy.mockClear();
+      geinsCRM?.destroy();
     });
 
     it('should initialize GeinsCRM correctly', () => {
@@ -64,7 +63,7 @@ function testGeinsCRM(options: TestSetupOptions) {
         rememberUser: validUserCredentials.rememberUser,
       };
 
-      const loginResult = await geinsCRM.auth.login(credentials);
+      const loginResult = await geinsCRM?.auth.login(credentials);
 
       expect(loginResult).toBeDefined();
       expect(loginResult).toHaveProperty('succeeded');
@@ -77,13 +76,13 @@ function testGeinsCRM(options: TestSetupOptions) {
       expect(loginResult!.tokens).toHaveProperty('refreshToken');
 
       // check cookie set calls
-      const setCalls = setCookieSpy.mock.calls.map(call => call[0]);
-      expectedCookiesAuthAll.forEach(expectedName => {
+      const setCalls = setCookieSpy.mock.calls.map((call) => call[0]);
+      expectedCookiesAuthAll.forEach((expectedName) => {
         expect(setCalls).toContainEqual(expect.objectContaining({ name: expectedName }));
       });
       expect(setCookieSpy).toHaveBeenCalledTimes(expectedCookiesAuthAll.length);
       // check remove calls
-      const removeCalls = removeCookieSpy.mock.calls.map(call => call[0]);
+      const removeCalls = removeCookieSpy.mock.calls.map((call) => call[0]);
       expect(removeCalls).toHaveLength(0);
     });
 
@@ -93,16 +92,16 @@ function testGeinsCRM(options: TestSetupOptions) {
         password: validUserCredentials.password + '1',
       };
 
-      const loginResult = await geinsCRM.auth.login(credentials);
+      const loginResult = await geinsCRM?.auth.login(credentials);
 
       expect(loginResult).toBeDefined();
       expect(loginResult).toHaveProperty('succeeded');
       expect(loginResult!.succeeded).toBe(false);
 
       // check cookies
-      const setCalls = setCookieSpy.mock.calls.map(call => call[0]);
+      const setCalls = setCookieSpy.mock.calls.map((call) => call[0]);
       expect(setCalls).toHaveLength(0);
-      const removeCalls = removeCookieSpy.mock.calls.map(call => call[0]);
+      const removeCalls = removeCookieSpy.mock.calls.map((call) => call[0]);
       expect(removeCalls).toHaveLength(expectedCookiesAuthAll.length);
     });
 
@@ -110,7 +109,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       const randomUsername = `${randomString(10).toLowerCase()}@test-user.com`;
       const randomPassword = randomString(10);
 
-      const result = await geinsCRM.user.create({
+      const result = await geinsCRM?.user.create({
         username: randomUsername,
         password: randomPassword,
       });
@@ -126,7 +125,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       expect(result!.user?.username).toBe(randomUsername);
 
       // check cookies
-      const setCalls = setCookieSpy.mock.calls.map(call => call[0]);
+      const setCalls = setCookieSpy.mock.calls.map((call) => call[0]);
       expect(setCalls).toHaveLength(expectedCookiesAuthAll.length);
     });
 
@@ -139,19 +138,19 @@ function testGeinsCRM(options: TestSetupOptions) {
       // create random user data
       const changedUserInfo = randomUserData();
 
-      const loginResult = await geinsCRM.auth.login(credentials);
+      const loginResult = await geinsCRM?.auth.login(credentials);
       expect(loginResult).toBeDefined();
       expect(loginResult!.succeeded).toBe(true);
 
       // get user information
-      const user = await geinsCRM.user.get();
+      const user = await geinsCRM?.user.get();
       expect(user).toBeDefined();
       expect(user).toHaveProperty('email');
       expect(user).toHaveProperty('customerType');
       expect(user).toHaveProperty('address');
 
       // update user information
-      const updateResult = await geinsCRM.user.update(changedUserInfo);
+      const updateResult = await geinsCRM?.user.update(changedUserInfo);
       expect(updateResult).toBeDefined();
       expect(updateResult).toHaveProperty('email');
       expect(updateResult).toHaveProperty('personalId');
@@ -180,7 +179,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       expect(user).toHaveProperty('succeeded');
       expect(user!.succeeded).toBe(false);
 
-      const setCalls = setCookieSpy.mock.calls.map(call => call[0]);
+      const setCalls = setCookieSpy.mock.calls.map((call) => call[0]);
       expect(setCalls).toHaveLength(0);
     });
 
@@ -190,7 +189,7 @@ function testGeinsCRM(options: TestSetupOptions) {
         password: validUserCredentials.password,
       };
 
-      const loginResult = await geinsCRM.auth.login(credentials);
+      const loginResult = await geinsCRM?.auth.login(credentials);
       expect(loginResult).toBeDefined();
       expect(loginResult!.succeeded).toBe(true);
       expect(loginResult!.tokens).toBeDefined();
@@ -206,16 +205,16 @@ function testGeinsCRM(options: TestSetupOptions) {
       const latestRefreshToken = authUser?.tokens?.refreshToken;
       expect(authUser).toBeDefined();
 
-      const setCalls = setCookieSpy.mock.calls.map(call => call[0]);
+      const setCalls = setCookieSpy.mock.calls.map((call) => call[0]);
       const lastAuthRefreshTokenCookie = setCalls
         .reverse()
-        .find(item => item.name === AUTH_COOKIES.REFRESH_TOKEN);
+        .find((item) => item.name === AUTH_COOKIES.REFRESH_TOKEN);
       const lastAuthRefreshToken = lastAuthRefreshTokenCookie?.payload;
 
       expect(latestRefreshToken).toBe(lastAuthRefreshToken);
 
       // no remove calls
-      const removeCalls = removeCookieSpy.mock.calls.map(call => call[0]);
+      const removeCalls = removeCookieSpy.mock.calls.map((call) => call[0]);
       expect(removeCalls).toHaveLength(0);
     });
 
@@ -225,7 +224,7 @@ function testGeinsCRM(options: TestSetupOptions) {
         password: validUserCredentials.password,
       };
 
-      const loginResult = await geinsCRM.auth.login(credentials);
+      const loginResult = await geinsCRM?.auth.login(credentials);
       expect(loginResult).toBeDefined();
       expect(loginResult!.succeeded).toBe(true);
 
@@ -237,8 +236,8 @@ function testGeinsCRM(options: TestSetupOptions) {
       const authorized = await isolatedCRM.auth.authorized(refreshToken);
       expect(authorized).toBe(true);
 
-      const setCalls = setCookieSpy.mock.calls.map(call => call[0]);
-      expectedCookiesAuthAll.forEach(expectedName => {
+      const setCalls = setCookieSpy.mock.calls.map((call) => call[0]);
+      expectedCookiesAuthAll.forEach((expectedName) => {
         expect(setCalls).toContainEqual(expect.objectContaining({ name: expectedName }));
       });
     });
@@ -252,10 +251,10 @@ function testGeinsCRM(options: TestSetupOptions) {
       const authorized = await isolatedCRM.auth.authorized(refreshToken);
       expect(authorized).toBe(false);
 
-      const setCalls = setCookieSpy.mock.calls.map(call => call[0]);
+      const setCalls = setCookieSpy.mock.calls.map((call) => call[0]);
       expect(setCalls).toHaveLength(0);
-      const removeCalls = removeCookieSpy.mock.calls.map(call => call[0]);
-      expectedCookiesAuthAll.forEach(expectedName => {
+      const removeCalls = removeCookieSpy.mock.calls.map((call) => call[0]);
+      expectedCookiesAuthAll.forEach((expectedName) => {
         expect(removeCalls).toContainEqual(expect.stringContaining(expectedName));
       });
     });
@@ -279,6 +278,6 @@ const authSettingsVariations: TestSetupOptions[] = [
 ];
 
 // Use describe.each to run the test suite with different configurations
-describe.each(authSettingsVariations)('GeinsCRM Auth', options => {
+describe.each(authSettingsVariations)('GeinsCRM Auth', (options) => {
   testGeinsCRM(options);
 });

@@ -1,10 +1,10 @@
 /*
   SERVER OR/AND CLIENT
 */
-import { AUTH_COOKIES, CookieService, logWrite } from '@geins/core';
-import type { AuthResponse, AuthCredentials, AuthTokens } from '@geins/types';
-import { AuthServiceClient } from './authServiceClient';
+import { CookieService } from '@geins/core';
+import type { AuthCredentials, AuthResponse } from '@geins/types';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
+import { AuthServiceClient } from './authServiceClient';
 
 const EXPIRES_SOON_THRESHOLD = 90;
 
@@ -32,6 +32,13 @@ export class AuthService {
     if (!this.client) {
       throw new Error('AuthServiceClient is not initialized');
     }
+  }
+
+  destroy(): void {
+    if (this.client) {
+      this.client.destroy();
+    }
+    this.client = undefined;
   }
 
   // login in user

@@ -1,4 +1,5 @@
-import { GeinsCore, GraphQLService, gql } from '../src';
+
+import { GeinsCore, GraphQLService, gql } from '@geins/core';
 import { validSettings } from '../../../../test/globalSettings';
 
 describe('GeinsCMS', () => {
@@ -14,7 +15,7 @@ describe('GeinsCMS', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  /*
+
   it('should get result from custom query', async () => {
     const MY_QUERY = gql`
       query getChannels {
@@ -58,7 +59,7 @@ describe('GeinsCMS', () => {
       }[];
     }
 
-    graphqlClient.console_log = true;
+    graphqlClient.log_to_console = true;
 
     const result = await graphqlClient.query<Channels>({
       queryAsString: MY_QUERY,
@@ -67,7 +68,7 @@ describe('GeinsCMS', () => {
     expect(result).toBeDefined();
     expect(result!.channels).toBeDefined();
     expect(result!.channels.length).toBeGreaterThan(0);
-  }); */
+  });
 
   it('should add standard vars is if present in query', async () => {
     const MY_QUERY = `

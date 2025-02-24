@@ -1,6 +1,5 @@
-import { GeinsEventType } from '@geins/core';
+import { EventService, GeinsEventType } from '@geins/core';
 import type { GeinsEventMessage } from '@geins/types';
-import { EventService } from '../src/services/eventService';
 
 describe('EventService', () => {
   let eventService: EventService;

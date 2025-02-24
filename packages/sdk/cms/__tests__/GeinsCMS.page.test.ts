@@ -1,5 +1,5 @@
 import { GeinsCore } from '@geins/core';
-import { GeinsCMS } from '../src/geinsCMS';
+import { GeinsCMS } from '@geins/cms';
 
 import { validSettings, cmsSettings } from '../../../../test/globalSettings';
 

@@ -1,4 +1,4 @@
-import type { AuthResponse, AuthCredentials } from '@geins/types';
+import type { AuthCredentials, AuthResponse } from '@geins/types';
 import { AuthClient } from './authClient';
 import { AuthService } from './authService';
 
@@ -8,6 +8,11 @@ export class AuthClientDirect extends AuthClient {
   constructor(signEndpoint: string, authEndpoint: string) {
     super();
     this._authService = new AuthService(signEndpoint, authEndpoint);
+  }
+
+  destroy(): void {
+    this._authService.destroy();
+    this._authService = undefined as any;
   }
 
   protected async handleLogin(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
