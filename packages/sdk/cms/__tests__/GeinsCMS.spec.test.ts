@@ -1,4 +1,4 @@
-import { GeinsCMS } from '../src/geinsCMS';
+import { GeinsCMS } from '@geins/cms';
 import { GeinsCore } from '@geins/core';
 import { MenuService, ContentPageService, ContentAreaService } from '../src/services';
 

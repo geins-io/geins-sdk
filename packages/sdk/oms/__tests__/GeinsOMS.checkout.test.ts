@@ -1,8 +1,7 @@
 import { GeinsCore } from '@geins/core';
+import { GeinsOMS } from '@geins/oms';
 import { randomCheckoutData } from '../../../../test/dataMock';
 import { omsSettings, validSettings } from '../../../../test/globalSettings';
-import { GeinsOMS } from '../src/geinsOMS';
-import { CheckoutService } from '../src/services';
 
 describe('GeinsOMS checkout', () => {
   let geinsOMS: GeinsOMS;
@@ -35,7 +34,7 @@ describe('GeinsOMS checkout', () => {
   it('should create a token and then parse it', async () => {
     const token = await geinsOMS.checkout.createToken();
     expect(token).toBeDefined();
-    const parsedToken = await CheckoutService.parseToken(token as string);
+    const parsedToken = await GeinsOMS.parseCheckoutToken(token as string);
     expect(parsedToken).toBeDefined();
     expect(parsedToken).toHaveProperty('cartId');
     expect(parsedToken).toHaveProperty('checkoutSettings');

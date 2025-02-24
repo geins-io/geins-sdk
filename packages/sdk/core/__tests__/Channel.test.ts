@@ -1,6 +1,6 @@
 // packages/sdk/core/__tests__/GeinsCore.test.ts
 
-import { Channel } from '../src/logic/channel';
+import { Channel } from '@geins/core';
 import { validSettings } from '../../../../test/globalSettings';
 
 describe('Channel', () => {
