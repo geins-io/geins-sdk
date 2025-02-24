@@ -24,7 +24,7 @@ function testGeinsCRM(options: TestSetupOptions) {
     let removeCookieSpy: jest.SpyInstance;
     let expectedMaxAge: number;
 
-    let geinsCRM: GeinsCRM;
+    let geinsCRM: GeinsCRM | undefined;
 
     beforeEach(() => {
       setCookieSpy = jest.spyOn(CookieService.prototype, 'set');
@@ -49,6 +49,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       // Clean up mocks after each test
       jest.clearAllMocks();
       setCookieSpy.mockClear();
+      geinsCRM?.destroy();
     });
 
     it('should initialize GeinsCRM correctly', () => {
@@ -62,7 +63,7 @@ function testGeinsCRM(options: TestSetupOptions) {
         rememberUser: validUserCredentials.rememberUser,
       };
 
-      const loginResult = await geinsCRM.auth.login(credentials);
+      const loginResult = await geinsCRM?.auth.login(credentials);
 
       expect(loginResult).toBeDefined();
       expect(loginResult).toHaveProperty('succeeded');
@@ -91,7 +92,7 @@ function testGeinsCRM(options: TestSetupOptions) {
         password: validUserCredentials.password + '1',
       };
 
-      const loginResult = await geinsCRM.auth.login(credentials);
+      const loginResult = await geinsCRM?.auth.login(credentials);
 
       expect(loginResult).toBeDefined();
       expect(loginResult).toHaveProperty('succeeded');
@@ -108,7 +109,7 @@ function testGeinsCRM(options: TestSetupOptions) {
       const randomUsername = `${randomString(10).toLowerCase()}@test-user.com`;
       const randomPassword = randomString(10);
 
-      const result = await geinsCRM.user.create({
+      const result = await geinsCRM?.user.create({
         username: randomUsername,
         password: randomPassword,
       });
@@ -137,19 +138,19 @@ function testGeinsCRM(options: TestSetupOptions) {
       // create random user data
       const changedUserInfo = randomUserData();
 
-      const loginResult = await geinsCRM.auth.login(credentials);
+      const loginResult = await geinsCRM?.auth.login(credentials);
       expect(loginResult).toBeDefined();
       expect(loginResult!.succeeded).toBe(true);
 
       // get user information
-      const user = await geinsCRM.user.get();
+      const user = await geinsCRM?.user.get();
       expect(user).toBeDefined();
       expect(user).toHaveProperty('email');
       expect(user).toHaveProperty('customerType');
       expect(user).toHaveProperty('address');
 
       // update user information
-      const updateResult = await geinsCRM.user.update(changedUserInfo);
+      const updateResult = await geinsCRM?.user.update(changedUserInfo);
       expect(updateResult).toBeDefined();
       expect(updateResult).toHaveProperty('email');
       expect(updateResult).toHaveProperty('personalId');
@@ -188,7 +189,7 @@ function testGeinsCRM(options: TestSetupOptions) {
         password: validUserCredentials.password,
       };
 
-      const loginResult = await geinsCRM.auth.login(credentials);
+      const loginResult = await geinsCRM?.auth.login(credentials);
       expect(loginResult).toBeDefined();
       expect(loginResult!.succeeded).toBe(true);
       expect(loginResult!.tokens).toBeDefined();
@@ -223,7 +224,7 @@ function testGeinsCRM(options: TestSetupOptions) {
         password: validUserCredentials.password,
       };
 
-      const loginResult = await geinsCRM.auth.login(credentials);
+      const loginResult = await geinsCRM?.auth.login(credentials);
       expect(loginResult).toBeDefined();
       expect(loginResult!.succeeded).toBe(true);
 

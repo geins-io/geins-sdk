@@ -25,9 +25,11 @@ describe('Channel', () => {
     if (currentChannel) {
       expect(currentChannel.id).toEqual(`${validSettings.channel}|${validSettings.tld}`);
     }
+
   });
 
   afterEach(() => {
+    Channel.destroy();
     // Clean up mocks after each test
     jest.clearAllMocks();
   });
