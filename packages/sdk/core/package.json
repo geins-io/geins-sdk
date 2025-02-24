@@ -1,6 +1,6 @@
 {
   "name": "@geins/core",
-  "version": "0.4.1",
+  "version": "0.4.2-canary-f89b9fa822bf743ef392241754ecc42bf3175823",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -18,11 +18,11 @@
   "dependencies": {
     "@apollo/client": "^3.11.8",
     "cookie-universal": "^2.2.2",
-    "node-cache": "^5.1.2",
+    "@cacheable/node-cache": "^1.5.2",
     "broadcast-channel": "^7.0.0"
   },
   "devDependencies": {
-    "@geins/types": "0.4.1",
+    "@geins/types": "0.4.2-canary-f89b9fa822bf743ef392241754ecc42bf3175823",
     "@geins/eslint-config": "0.2.1",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-graphql": "^2.0.5",
