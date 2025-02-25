@@ -13,9 +13,9 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "dev:nuxt": "turbo dev --filter=nuxt-app",
-    "start:nuxt": "turbo start --filter=nuxt-*",
-    "build:nuxt": "turbo build --filter=nuxt-*",
+    "dev:apps": "turbo dev --filter=./apps/*",
+    "start:apps": "turbo start --filter=./apps/*",
+    "build:apps": "turbo build --filter=./apps/*",
     "build:sdk": "turbo build --filter=./packages/sdk/*",
     "lint": "turbo lint",
     "link": "turbo run link",

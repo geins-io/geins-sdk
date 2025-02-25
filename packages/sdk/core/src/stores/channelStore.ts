@@ -1,4 +1,4 @@
-import NodeCache from '@cacheable/node-cache';
+import { NodeCache } from '@cacheable/node-cache';
 import { IStore } from '../base';
 
 const TTL_SECONDS = 60 * 60 * 24; // 24 hours

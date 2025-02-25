@@ -17,7 +17,7 @@ export abstract class BaseApiService {
     this._channelId = `${geinsSettings.channel}|${geinsSettings.tld}`;
   }
 
-  protected destroy(): void {
+  destroy(): void {
     this._apiClient = undefined as any;
   }
 
