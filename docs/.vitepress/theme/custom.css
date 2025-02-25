@@ -36,7 +36,7 @@
   --vp-button-brand-hover-text: var(--vp-c-white);
   --vp-button-brand-hover-bg: transparent;
 
-   --vp-button-brand-active-border:var( --vp-c-gray-2);
+  --vp-button-brand-active-border:var( --vp-c-gray-2);
   --vp-button-brand-active-text: var(--vp-c-gray-1);
   --vp-button-brand-active-bg: var( --vp-c-gray-soft);
 
