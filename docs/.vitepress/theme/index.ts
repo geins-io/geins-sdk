@@ -1,13 +1,13 @@
 // https://vitepress.dev/guide/custom-theme
-import { h } from 'vue';
-import { useRoute } from 'vitepress';
-import type { Theme } from 'vitepress';
-import Confetti from './components/Confetti.vue';
-import DefaultTheme from 'vitepress/theme';
-import Layout from './Layout.vue';
 import 'virtual:group-icons.css';
-import './style.css';
+import { useRoute } from 'vitepress';
+import DefaultTheme from 'vitepress/theme';
+import { h } from 'vue';
+import Confetti from './components/Confetti.vue';
+import CheckoutTokenGenerator from './components/geinsTools/CheckoutTokenGenerator.vue';
 import './custom.css';
+import Layout from './Layout.vue';
+import './style.css';
 
 export default {
   extends: DefaultTheme,
@@ -20,5 +20,6 @@ export default {
     // add global components
     app.component('Confetti', Confetti);
     app.component('Layout', Layout);
+    app.component('CheckoutTokenGenerator', CheckoutTokenGenerator);
   },
 };
