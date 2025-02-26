@@ -94,17 +94,9 @@ const handleSubmit = async (event: Event) => {
 
 <template>
   <div class="checkout-token-generator">
-    Settings is validated:
-    <GeinsSettingsValidated :count="validationTries" />
-
+    <GeinsSettingsStatus class="settings-status" :only-status-circle="true" />
     <form @submit.prevent="handleSubmit">
       <div class="form-container">
-        <!-- GeinsSettings -->
-        <div class="section-header">
-          <h4>Geins Settings</h4>
-          <div class="divider"></div>
-        </div>
-
         <div class="form-grid">
           <div class="form-group two-thirds-row-group">
             <label for="apiKey">API Key</label>
@@ -186,7 +178,7 @@ const handleSubmit = async (event: Event) => {
 .validation-error {
   margin: 1rem 0;
   padding: 0.75rem 1rem;
-  border-radius: 4px;
+  border-radius: 5px;
   background-color: var(--vp-c-danger-soft);
   color: var(--vp-c-danger-1);
   font-size: 0.9rem;
@@ -194,9 +186,13 @@ const handleSubmit = async (event: Event) => {
 }
 
 .checkout-token-generator {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  position: relative;
+}
+
+.settings-status {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
 .description {
@@ -213,7 +209,7 @@ const handleSubmit = async (event: Event) => {
 }
 
 .section-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .section-header h4 {
@@ -224,8 +220,8 @@ const handleSubmit = async (event: Event) => {
 
 .divider {
   height: 2px;
-  background: linear-gradient(to right, var(--vp-c-brand), transparent);
-  margin-bottom: 1.5rem;
+  background-color: var(--vp-c-divider);
+  margin-bottom: 1rem;
 }
 
 .form-grid {
@@ -238,7 +234,7 @@ const handleSubmit = async (event: Event) => {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.2rem;
 }
 
 .one-forth-row-group {
@@ -274,7 +270,7 @@ const handleSubmit = async (event: Event) => {
   background: var(--vp-c-bg);
   border: 1px solid var(--vp-c-divider);
   color: var(--vp-c-text-1);
-  border-radius: 4px;
+  border-radius: 5px;
   transition: all 0.2s ease;
 }
 
@@ -295,7 +291,7 @@ button {
   font-weight: 600;
 
   border: 1px solid var(--vp-button-brand-border);
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 
@@ -332,7 +328,7 @@ button:focus {
 .token-value {
   background: var(--vp-c-bg);
   padding: 1rem;
-  border-radius: 4px;
+  border-radius: 5px;
   border: 1px solid var(--vp-c-divider);
 }
 
@@ -388,7 +384,7 @@ select {
   background: var(--vp-c-bg);
   border: 1px solid var(--vp-c-divider);
   color: var(--vp-c-text-1);
-  border-radius: 4px;
+  border-radius: 5px;
   transition: all 0.2s ease;
 }
 
@@ -404,7 +400,7 @@ textarea {
   background: var(--vp-c-bg);
   border: 1px solid var(--vp-c-divider);
   color: var(--vp-c-text-1);
-  border-radius: 4px;
+  border-radius: 5px;
   transition: all 0.2s ease;
   resize: vertical;
 }
@@ -442,7 +438,7 @@ h5 {
   grid-column: span 12;
   background: var(--vp-c-bg);
   border: 1px solid var(--vp-c-divider);
-  border-radius: 4px;
+  border-radius: 5px;
   padding: 1rem;
   margin-bottom: 1rem;
 }
