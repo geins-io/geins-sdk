@@ -1,37 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, defineProps } from 'vue';
-import { getStoredSettings } from '../../utils';
+import { ref, onMounted, computed, defineProps } from 'vue';
+import { getStoredSettings, settingsValid } from '../../utils';
 
 // add prop to watch
-const props = defineProps<{
-  count?: number;
+const _props = defineProps<{
   onlyStatusCircle?: boolean;
 }>();
 
-// watch props
-watch(
-  () => props.count,
-  (count, prevCount) => {
-    checkValidSettings();
-  },
-);
-
-// GeinsSettings
-const settingsValid = ref<boolean>(false);
-
-const checkValidSettings = () => {
-  const settings = getStoredSettings();
-  if (settings) {
-    settingsValid.value = settings.validated;
-  } else {
-    settingsValid.value = false;
-  }
-};
-
-// onmount
-onMounted(() => {
-  checkValidSettings();
-});
+const settings = ref();
 
 const color = computed(() => {
   return settingsValid.value ? '#74e878' : '#e87474';
@@ -39,6 +15,10 @@ const color = computed(() => {
 
 const text = computed(() => {
   return settingsValid.value ? 'Geins settings valid' : 'Geins settings inactive';
+});
+
+onMounted(() => {
+  settings.value = getStoredSettings();
 });
 </script>
 

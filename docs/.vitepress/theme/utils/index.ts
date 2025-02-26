@@ -1,22 +1,33 @@
 import { GeinsSettings } from '@geins/types';
-const STROAGE_PARAMS = {
+const STORAGE_PARAMS = {
   geinsSettings: 'geins-settings',
 };
 
-export const getStoredSettings = () => {
-  const geinsSettings = localStorage.getItem(STROAGE_PARAMS.geinsSettings);
+import { ref } from 'vue';
+export const settingsValid = ref(false);
+
+export interface StoredGeinsSettings {
+  valid: boolean;
+  geinsSettings: GeinsSettings;
+}
+
+export const getStoredSettings = (): StoredGeinsSettings | null => {
+  const geinsSettings = localStorage.getItem(STORAGE_PARAMS.geinsSettings);
   if (geinsSettings) {
-    return JSON.parse(geinsSettings);
+    const parsed = JSON.parse(geinsSettings);
+    settingsValid.value = parsed.valid;
+    return parsed;
   }
   return null;
 };
 
-export const storeSettings = (validated: boolean, settings: GeinsSettings) => {
+export const storeSettings = (valid: boolean, settings: GeinsSettings) => {
   const obj = {
-    validated,
+    valid,
     geinsSettings: settings,
   };
-  localStorage.setItem(STROAGE_PARAMS.geinsSettings, JSON.stringify(obj));
+  settingsValid.value = valid;
+  localStorage.setItem(STORAGE_PARAMS.geinsSettings, JSON.stringify(obj));
 };
 
 export const cleanObjectForToken = (obj: any): any => {

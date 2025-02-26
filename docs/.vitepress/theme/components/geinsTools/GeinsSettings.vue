@@ -1,95 +1,79 @@
 <script setup lang="ts">
-import { GeinsCore, CustomerType } from '@geins/core';
+import { GeinsCore } from '@geins/core';
 import { GeinsSettings } from '@geins/types';
 import { ref, onMounted } from 'vue';
-import { getStoredSettings, storeSettings } from '../../utils';
+import { getStoredSettings, storeSettings, settingsValid, type StoredGeinsSettings } from '../../utils';
 
 // GeinsSettings
 const validationError = ref<string>('');
 const validationTries = ref<number>(0);
 
-//load settings
-const loadSettings = () => {
-  const storedSettings = getStoredSettings();
-  if (storedSettings) {
-    const parsedGeinsSettings = storedSettings.geinsSettings;
-    settings.value.apiKey = parsedGeinsSettings.apiKey;
-    settings.value.accountName = parsedGeinsSettings.accountName;
-    settings.value.channel = parsedGeinsSettings.channel;
-    settings.value.tld = parsedGeinsSettings.tld;
-    settings.value.locale = parsedGeinsSettings.locale;
-    settings.value.market = parsedGeinsSettings.market;
-  }
-};
-
-// GeinsSettings
-const settings = ref<any>({
-  validated: false,
-  geinsSettings: {
-    apiKey: '',
-    accountName: '',
-    channel: '',
-    tld: '',
-    locale: '',
-    market: '',
-  },
+// GeinsStoredSettings
+const settings = ref<GeinsSettings>({
+  apiKey: '',
+  accountName: '',
+  channel: '',
+  tld: '',
+  locale: '',
+  market: '',
 });
-
-const createSettingsJson = (): GeinsSettings => {
-  return {
-    apiKey: settings.value.apiKey,
-    accountName: settings.value.accountName,
-    channel: settings.value.channel,
-    tld: settings.value.tld,
-    locale: settings.value.locale,
-    market: settings.value.market,
-  };
-};
 
 const validateSettings = async (settings: GeinsSettings) => {
   if (!settings.apiKey || settings.apiKey === '') {
+    validationError.value = 'API Key is required.';
     return false;
   }
   if (!settings.accountName || settings.accountName === '') {
+    validationError.value = 'Account Name is required.';
     return false;
   }
   if (!settings.channel || settings.channel === '') {
+    validationError.value = 'Channel is required.';
     return false;
   }
   if (!settings.tld || settings.tld === '') {
-    return false;
-  }
-  if (!settings.locale || settings.locale === '') {
+    validationError.value = 'TLD is required.';
     return false;
   }
   if (!settings.market || settings.market === '') {
+    validationError.value = 'Market is required.';
+    return false;
+  }
+  if (!settings.locale || settings.locale === '') {
+    validationError.value = 'Locale is required.';
     return false;
   }
 
   const geinsCore = new GeinsCore(settings);
   let valid = false;
   try {
-    await geinsCore.channel.current();
+    const channel = await geinsCore.channel.current();
+    if (!channel) {
+      throw new Error('Failed to validate settings.');
+    }
     validationError.value = '';
     valid = true;
   } catch (error) {
     validationError.value = 'Failed to validate settings.';
     valid = false;
   }
+
   storeSettings(valid, settings);
   return valid;
 };
 
-// onmount
-onMounted(() => {
-  loadSettings();
-});
-
 const handleSubmit = async (event: Event) => {
   event.preventDefault();
-  validateSettings(createSettingsJson());
+  validateSettings(settings.value);
   validationTries.value += 1;
 };
+
+onMounted(() => {
+  const storedSettings: StoredGeinsSettings | null = getStoredSettings();
+  if (storedSettings) {
+    settings.value = storedSettings.geinsSettings;
+  }
+});
 </script>
 
 <template>
@@ -105,8 +89,7 @@ const handleSubmit = async (event: Event) => {
               id="apiKey"
               name="apiKey"
               v-model="settings.apiKey"
-              placeholder="Enter your API key"
-              required
+              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
             />
           </div>
 
@@ -117,50 +100,28 @@ const handleSubmit = async (event: Event) => {
               id="accountName"
               name="accountName"
               v-model="settings.accountName"
-              placeholder="Account Name"
-              required
+              placeholder="name"
             />
           </div>
 
           <div class="form-group one-forth-row-group">
-            <label for="channel">Channel</label>
-            <input
-              type="text"
-              id="channel"
-              name="channel"
-              v-model="settings.channel"
-              placeholder="Channel"
-              required
-            />
+            <label for="channel">Channel ID</label>
+            <input type="text" id="channel" name="channel" v-model="settings.channel" placeholder="1" />
           </div>
 
           <div class="form-group one-forth-row-group">
             <label for="tld">TLD</label>
-            <input type="text" id="tld" name="tld" v-model="settings.tld" placeholder="TLD" required />
+            <input type="text" id="tld" name="tld" v-model="settings.tld" placeholder="com" />
           </div>
 
           <div class="form-group one-forth-row-group">
-            <label for="market">Market</label>
-            <input
-              type="text"
-              id="market"
-              name="market"
-              v-model="settings.market"
-              placeholder="market"
-              required
-            />
+            <label for="market">Market ID</label>
+            <input type="text" id="market" name="market" v-model="settings.market" placeholder="1" />
           </div>
 
           <div class="form-group one-forth-row-group">
             <label for="locale">Locale</label>
-            <input
-              type="text"
-              id="locale"
-              name="locale"
-              v-model="settings.locale"
-              placeholder="locale"
-              required
-            />
+            <input type="text" id="locale" name="locale" v-model="settings.locale" placeholder="en-US" />
           </div>
         </div>
 
