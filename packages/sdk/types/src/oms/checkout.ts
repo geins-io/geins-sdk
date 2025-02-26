@@ -97,39 +97,23 @@ export type AddressInputType = {
 };
 
 export type CheckoutStyleType = {
-  title?: string;
-  logoUrl?: string;
-  body?: {
-    backgroundColor?: string;
-    textColor?: string;
-    fontSize?: string;
-  };
-  topbar?: {
-    visible?: boolean;
-    backgroundColor?: string;
-    textColor?: string;
-  };
-  cards?: {
-    backgroundColor?: string;
-    textColor?: string;
-    fontSize?: string;
-    borderRadius?: string;
-  };
-  text?: {
-    backgroundColor?: string;
-    textColor?: string;
-    fontSize?: string;
-  };
-  buttons?: {
-    backgroundColor?: string;
-    textColor?: string;
-    fontSize?: string;
-  };
-  validation?: {
-    backgroundColor?: string;
-    textColor?: string;
-    fontSize?: string;
-  };
+  fontSize: string;
+  radius: string;
+  background: string;
+  foreground: string;
+  card: string;
+  cardForeground: string;
+  accent: string;
+  accentForeground: string;
+  border: string;
+  sale: string;
+};
+
+export type CheckoutBrandingType = {
+  name?: string;
+  avatar?: string;
+  logo?: string;
+  styles?: CheckoutStyleType;
 };
 
 export type CheckoutSettings = {
@@ -143,7 +127,7 @@ export type CheckoutSettings = {
   billingAddress?: AddressInputType;
   shippingAddress?: AddressInputType;
   redirectUrls?: CheckoutRedirectsType;
-  style?: CheckoutStyleType;
+  branding?: CheckoutBrandingType;
 };
 
 export type CheckoutTokenPayload = {
