@@ -3,8 +3,9 @@ import { ref, onMounted, computed, defineProps } from 'vue';
 import { getStoredSettings, settingsValid } from '../../utils';
 
 // add prop to watch
-const _props = defineProps<{
+const props = defineProps<{
   onlyStatusCircle?: boolean;
+  linked?: boolean;
 }>();
 
 const settings = ref();
@@ -13,9 +14,19 @@ const color = computed(() => {
   return settingsValid.value ? '#74e878' : '#e87474';
 });
 
+const size = computed(() => {
+  return props.onlyStatusCircle ? '15px' : '10px';
+});
+
 const text = computed(() => {
   return settingsValid.value ? 'Geins settings valid' : 'Geins settings inactive';
 });
+
+const handleClick = (event: Event) => {
+  if (!props.linked) {
+    event.preventDefault();
+  }
+};
 
 onMounted(() => {
   settings.value = getStoredSettings();
@@ -23,14 +34,22 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="onlyStatusCircle" class="status-circle" :title="text"></div>
-  <a v-else class="geins-settings" href="/guide/setting-up-sdk.html" @click="handleClick">
-    <div class="status-circle"></div>
-    <span>{{ text }}</span>
+  <a class="link" href="/guide/setting-up-sdk.html" @click="handleClick">
+    <div v-if="onlyStatusCircle" class="status-circle" :title="text" />
+    <div v-else class="geins-settings">
+      <div class="status-circle"></div>
+      <span>{{ text }}</span>
+    </div>
   </a>
 </template>
 
 <style scoped>
+.link {
+  text-decoration: none;
+  &:hover {
+    color: var(--vp-c-primary);
+  }
+}
 .geins-settings {
   display: flex;
   align-items: center;
@@ -41,15 +60,12 @@ onMounted(() => {
   font-size: 12px;
   border: 1px solid var(--vp-c-divider);
   color: var(--vp-c-primary);
-  &:hover {
-    color: var(--vp-c-primary);
-  }
 }
 .status-circle {
   border-radius: 50%;
   background-color: v-bind('color');
-  width: 10px;
-  height: 10px;
+  width: v-bind('size');
+  height: v-bind('size');
   box-shadow: 0px 0px 5px 2px v-bind('color');
   animation: glow 0.6s linear infinite alternate;
 }

@@ -148,7 +148,7 @@ export type GenerateCheckoutTokenOptions = {
   availablePaymentMethodIds?: number[];
   availableShippingMethodIds?: number[];
   redirectUrls?: CheckoutRedirectsType;
-  checkoutStyle?: CheckoutStyleType;
+  branding?: CheckoutBrandingType;
   geinsSettings?: GeinsSettings;
 };
 

@@ -4,4 +4,4 @@ Jump right in with the following commands:
 
 ## Geins Settings
 
-<GeinsSettings />
+<GeinsSettings :show-settings-form="true" />

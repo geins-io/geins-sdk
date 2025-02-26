@@ -4,6 +4,7 @@ import DefaultTheme from 'vitepress/theme';
 import Confetti from './components/Confetti.vue';
 import CheckoutTokenGenerator from './components/geinsTools/CheckoutTokenGenerator.vue';
 import GeinsSettings from './components/geinsTools/GeinsSettings.vue';
+import GeinsSettingsForm from './components/geinsTools/GeinsSettingsForm.vue';
 import GeinsSettingsStatus from './components/geinsTools/GeinsSettingsStatus.vue';
 import CustomLayout from './CustomLayout.vue';
 import './style.css';
@@ -17,6 +18,7 @@ export default {
     app.component('Confetti', Confetti);
     app.component('CheckoutTokenGenerator', CheckoutTokenGenerator);
     app.component('GeinsSettings', GeinsSettings);
+    app.component('GeinsSettingsForm', GeinsSettingsForm);
     app.component('GeinsSettingsStatus', GeinsSettingsStatus);
   },
 };

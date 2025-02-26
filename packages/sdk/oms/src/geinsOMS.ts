@@ -41,7 +41,7 @@ export interface GeinsOMSInterface {
    * @param args.availablePaymentMethodIds - The list of available payment method IDs (optional).
    * @param args.availableShippingMethodIds - The list of available shipping method IDs (optional).
    * @param args.redirectUrls - The redirect URLs (optional).
-   * @param args.checkoutStyle - The checkout style (optional).
+   * @param args.branding - The checkout branding (optional).
    * @param args.geinsSettings - The Geins settings (optional).
    * @returns A promise that resolves to the generated token or undefined.
    */
@@ -107,7 +107,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
       availablePaymentMethodIds: options?.availablePaymentMethodIds,
       availableShippingMethodIds: options?.availableShippingMethodIds,
       redirectUrls: options?.redirectUrls ?? this._omsSettings.checkoutUrls ?? undefined,
-      checkoutStyle: options?.checkoutStyle,
+      branding: options?.branding,
       geinsSettings: this._geinsSettings,
     } as GenerateCheckoutTokenOptions;
 

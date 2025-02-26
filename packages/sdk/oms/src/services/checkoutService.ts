@@ -76,7 +76,7 @@ export interface CheckoutServiceInterface {
    * @param {number[]} [args.availablePaymentMethodIds] - The list of available payment method IDs (optional).
    * @param {number[]} [args.availableShippingMethodIds] - The list of available shipping method IDs (optional).
    * @param {string[]} [args.redirectUrls] - The redirect URLs (optional).
-   * @param {string} [args.checkoutStyle] - The checkout style (optional).
+   * @param {string} [args.branding] - The checkout style (optional).
    * @param {GeinsSettings} [args.geinsSettings] - The Geins settings (optional).
    * @returns {Promise<string | undefined>} A promise that resolves to the generated token or undefined.
    */
@@ -249,7 +249,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
         availableShippingMethodIds: resolvedArgs.availableShippingMethodIds,
         customerType: resolvedArgs.customerType,
         redirectUrls: resolvedArgs.redirectUrls,
-        style: resolvedArgs.checkoutStyle,
+        branding: resolvedArgs.branding,
       },
       geinsSettings: resolvedArgs.geinsSettings,
     } as CheckoutTokenPayload;

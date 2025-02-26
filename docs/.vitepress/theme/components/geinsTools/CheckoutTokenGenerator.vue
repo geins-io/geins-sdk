@@ -13,8 +13,8 @@ const tld = ref<string>('');
 const locale = ref<string>('');
 const market = ref<string>('');
 
-// CheckoutStyle
-const checkoutStyle = ref({
+// branding
+const branding = ref({
   title: '',
   logoUrl: '',
   body: {
@@ -94,7 +94,7 @@ onMounted(() => {
     selectedPaymentMethodId.value = tokenOptions.selectedPaymentMethodId;
     selectedShippingMethodId.value = tokenOptions.selectedShippingMethodId;
     redirectUrls.value = tokenOptions.redirectUrls;
-    checkoutStyle.value = tokenOptions.checkoutStyle;
+    branding.value = tokenOptions.branding;
   }
 });
 
@@ -119,7 +119,7 @@ const cleanObjectForToken = (obj: any): any => {
 };
 
 const createCheckoutTokenOptions = (): GenerateCheckoutTokenOptions => {
-  const style = cleanObjectForToken(checkoutStyle.value);
+  const style = cleanObjectForToken(branding.value);
   const urls = cleanObjectForToken(redirectUrls.value);
   const cartIdValue = cartId.value || '';
 
@@ -131,7 +131,7 @@ const createCheckoutTokenOptions = (): GenerateCheckoutTokenOptions => {
     selectedPaymentMethodId: selectedPaymentMethodId.value,
     selectedShippingMethodId: selectedShippingMethodId.value,
     redirectUrls: urls,
-    checkoutStyle: style,
+    branding: style,
   };
 };
 
@@ -246,58 +246,6 @@ const handleSubmit = async (event: Event) => {
   <div class="checkout-token-generator">
     <form @submit.prevent="handleSubmit">
       <div class="form-container">
-        <!-- GeinsSettings -->
-        <div class="section-header">
-          <h4>Geins Settings</h4>
-          <div class="divider"></div>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-group two-thirds-row-group">
-            <label for="apiKey">API Key</label>
-            <input
-              type="text"
-              id="apiKey"
-              name="apiKey"
-              v-model="apiKey"
-              placeholder="Enter your API key"
-              required
-            />
-          </div>
-
-          <div class="form-group account-name-group">
-            <label for="accountName">Account Name </label>
-            <input
-              type="text"
-              id="accountName"
-              name="accountName"
-              v-model="accountName"
-              placeholder="Account Name"
-              required
-            />
-          </div>
-
-          <div class="form-group one-forth-row-group">
-            <label for="channel">Channel</label>
-            <input type="text" id="channel" name="channel" v-model="channel" placeholder="Channel" required />
-          </div>
-
-          <div class="form-group one-forth-row-group">
-            <label for="tld">TLD</label>
-            <input type="text" id="tld" name="tld" v-model="tld" placeholder="TLD" required />
-          </div>
-
-          <div class="form-group one-forth-row-group">
-            <label for="market">Market</label>
-            <input type="text" id="market" name="market" v-model="market" placeholder="market" required />
-          </div>
-
-          <div class="form-group one-forth-row-group">
-            <label for="locale">Locale</label>
-            <input type="text" id="locale" name="locale" v-model="locale" placeholder="locale" required />
-          </div>
-        </div>
-
         <!-- GenerateCheckoutTokenOptions -->
         <div class="section-header">
           <h4>Checkout Token Options</h4>
@@ -371,12 +319,12 @@ const handleSubmit = async (event: Event) => {
           <!-- General -->
           <div class="form-group full-row-group">
             <label for="title">Title</label>
-            <input type="text" id="title" v-model="checkoutStyle.title" placeholder="Checkout title" />
+            <input type="text" id="title" v-model="branding.title" placeholder="Checkout title" />
           </div>
 
           <div class="form-group full-row-group">
             <label for="logoUrl">Logo URL</label>
-            <input type="url" id="logoUrl" v-model="checkoutStyle.logoUrl" placeholder="https://..." />
+            <input type="url" id="logoUrl" v-model="branding.logoUrl" placeholder="https://..." />
           </div>
 
           <!-- Topbar Section -->
@@ -385,16 +333,16 @@ const handleSubmit = async (event: Event) => {
             <div class="style-grid">
               <div class="form-group">
                 <label for="topbarBg">Background</label>
-                <input type="color" id="topbarBg" v-model="checkoutStyle.topbar.backgroundColor" />
+                <input type="color" id="topbarBg" v-model="branding.topbar.backgroundColor" />
               </div>
               <div class="form-group">
                 <label for="topbarColor">Text Color</label>
-                <input type="color" id="topbarColor" v-model="checkoutStyle.topbar.textColor" />
+                <input type="color" id="topbarColor" v-model="branding.topbar.textColor" />
               </div>
             </div>
             <div class="form-group checkbox-group">
               <label class="checkbox-label">
-                <input type="checkbox" v-model="checkoutStyle.topbar.visible" />
+                <input type="checkbox" v-model="branding.topbar.visible" />
                 Visible
               </label>
             </div>
@@ -406,15 +354,15 @@ const handleSubmit = async (event: Event) => {
             <div class="style-grid">
               <div class="form-group">
                 <label for="bodyBg">Background</label>
-                <input type="color" id="bodyBg" v-model="checkoutStyle.body.backgroundColor" />
+                <input type="color" id="bodyBg" v-model="branding.body.backgroundColor" />
               </div>
               <div class="form-group">
                 <label for="bodyColor">Text Color</label>
-                <input type="color" id="bodyColor" v-model="checkoutStyle.body.textColor" />
+                <input type="color" id="bodyColor" v-model="branding.body.textColor" />
               </div>
               <div class="form-group">
                 <label for="bodySize">Font Size</label>
-                <input type="text" id="bodySize" v-model="checkoutStyle.body.fontSize" placeholder="16px" />
+                <input type="text" id="bodySize" v-model="branding.body.fontSize" placeholder="16px" />
               </div>
             </div>
           </div>
@@ -425,24 +373,19 @@ const handleSubmit = async (event: Event) => {
             <div class="style-grid">
               <div class="form-group">
                 <label for="cardsBg">Background</label>
-                <input type="color" id="cardsBg" v-model="checkoutStyle.cards.backgroundColor" />
+                <input type="color" id="cardsBg" v-model="branding.cards.backgroundColor" />
               </div>
               <div class="form-group">
                 <label for="cardsColor">Text Color</label>
-                <input type="color" id="cardsColor" v-model="checkoutStyle.cards.textColor" />
+                <input type="color" id="cardsColor" v-model="branding.cards.textColor" />
               </div>
               <div class="form-group">
                 <label for="cardsSize">Font Size</label>
-                <input type="text" id="cardsSize" v-model="checkoutStyle.cards.fontSize" placeholder="14px" />
+                <input type="text" id="cardsSize" v-model="branding.cards.fontSize" placeholder="14px" />
               </div>
               <div class="form-group">
                 <label for="cardsRadius">Border Radius</label>
-                <input
-                  type="text"
-                  id="cardsRadius"
-                  v-model="checkoutStyle.cards.borderRadius"
-                  placeholder="8px"
-                />
+                <input type="text" id="cardsRadius" v-model="branding.cards.borderRadius" placeholder="8px" />
               </div>
             </div>
           </div>
