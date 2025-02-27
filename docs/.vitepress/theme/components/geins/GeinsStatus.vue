@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, defineProps, withDefaults } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { getStoredSettings, settingsValid, cartValid, GeinsStorageParam } from '../../utils';
 
 const props = withDefaults(

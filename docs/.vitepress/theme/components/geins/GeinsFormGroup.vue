@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
-
 const props = defineProps<{
   rowSize: string;
 }>();
@@ -37,5 +35,10 @@ const rowClass = props.rowSize ? `${props.rowSize}-row-group` : 'full-row-group'
 
 .two-thirds-row-group {
   grid-column: span 8;
+}
+@media (max-width: 768px) {
+  .form-group {
+    grid-column: span 1;
+  }
 }
 </style>

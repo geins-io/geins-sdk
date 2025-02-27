@@ -12,4 +12,10 @@
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
 </style>

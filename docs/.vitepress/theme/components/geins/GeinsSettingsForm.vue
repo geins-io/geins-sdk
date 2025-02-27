@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { GeinsCore } from '@geins/core';
 import { GeinsSettings } from '@geins/types';
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted } from 'vue';
 import { getStoredSettings, storeSettings, type GeinsSettingsStorage, GeinsStorageParam } from '../../utils';
+import GeinsInput from './GeinsInput.vue';
 
 // add prop to watch
 const _props = defineProps<{
@@ -80,61 +81,64 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="checkout-token-generator">
-    <form @submit.prevent="handleSubmit">
-      <div class="form-container">
-        <GeinsFormGrid>
-          <GeinsFormGroup row-size="two-thirds">
-            <label for="apiKey">API Key</label>
-            <input
-              type="text"
-              id="apiKey"
-              name="apiKey"
-              v-model="settings.apiKey"
-              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-            />
-          </GeinsFormGroup>
+  <form @submit.prevent="handleSubmit">
+    <GeinsFormContainer>
+      <GeinsFormGrid>
+        <GeinsFormGroup row-size="two-thirds">
+          <GeinsInput
+            label="API Key"
+            id="apiKey"
+            name="apiKey"
+            v-model="settings.apiKey"
+            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="one-third">
+          <GeinsInput
+            label="Account Name"
+            id="accountName"
+            name="accountName"
+            v-model="settings.accountName"
+            placeholder="name"
+          />
+        </GeinsFormGroup>
 
-          <GeinsFormGroup row-size="one-third">
-            <label for="accountName">Account Name </label>
-            <input
-              type="text"
-              id="accountName"
-              name="accountName"
-              v-model="settings.accountName"
-              placeholder="name"
-            />
-          </GeinsFormGroup>
+        <GeinsFormGroup row-size="one-forth">
+          <GeinsInput
+            label="Channel ID"
+            id="channel"
+            name="channel"
+            v-model="settings.channel"
+            placeholder="1"
+          />
+        </GeinsFormGroup>
 
-          <GeinsFormGroup row-size="one-forth">
-            <label for="channel">Channel ID</label>
-            <input type="text" id="channel" name="channel" v-model="settings.channel" placeholder="1" />
-          </GeinsFormGroup>
+        <GeinsFormGroup row-size="one-forth">
+          <GeinsInput label="TLD" id="tld" name="tld" v-model="settings.tld" placeholder="com" />
+        </GeinsFormGroup>
 
-          <GeinsFormGroup row-size="one-forth">
-            <label for="tld">TLD</label>
-            <input type="text" id="tld" name="tld" v-model="settings.tld" placeholder="com" />
-          </GeinsFormGroup>
+        <GeinsFormGroup row-size="one-forth">
+          <GeinsInput label="Market ID" id="market" name="market" v-model="settings.market" placeholder="1" />
+        </GeinsFormGroup>
 
-          <GeinsFormGroup row-size="one-forth">
-            <label for="market">Market ID</label>
-            <input type="text" id="market" name="market" v-model="settings.market" placeholder="1" />
-          </GeinsFormGroup>
+        <GeinsFormGroup row-size="one-forth">
+          <GeinsInput
+            label="Locale"
+            id="locale"
+            name="locale"
+            v-model="settings.locale"
+            placeholder="en-US"
+          />
+        </GeinsFormGroup>
+      </GeinsFormGrid>
 
-          <GeinsFormGroup row-size="one-forth">
-            <label for="locale">Locale</label>
-            <input type="text" id="locale" name="locale" v-model="settings.locale" placeholder="en-US" />
-          </GeinsFormGroup>
-        </GeinsFormGrid>
-
-        <!-- Validation Error -->
-        <div v-if="validationError" class="validation-error">
-          {{ validationError }}
-        </div>
-        <button type="submit">Save Settings</button>
+      <!-- Validation Error -->
+      <div v-if="validationError" class="validation-error">
+        {{ validationError }}
       </div>
-    </form>
-  </div>
+      <button type="submit">Save Settings</button>
+    </GeinsFormContainer>
+  </form>
 </template>
 
 <style scoped>
@@ -146,72 +150,6 @@ onMounted(() => {
   color: var(--vp-c-danger-1);
   font-size: 0.9rem;
   border: 1px solid var(--vp-c-danger-2);
-}
-
-.checkout-token-generator {
-  position: relative;
-}
-
-.settings-status {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-.description {
-  color: var(--vp-c-text-2);
-  margin-bottom: 2rem;
-}
-
-.form-container {
-  background: var(--vp-c-bg-soft);
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--vp-c-divider);
-}
-
-.section-header {
-  margin-bottom: 1rem;
-}
-
-.section-header h4 {
-  color: var(--vp-c-text-1);
-  font-size: 1.2rem;
-  margin: 0 0 0.5rem 0;
-}
-
-.divider {
-  height: 2px;
-  background-color: var(--vp-c-divider);
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--vp-c-text-1);
-}
-
-.form-group input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  background: var(--vp-c-bg);
-  border: 1px solid var(--vp-c-divider);
-  color: var(--vp-c-text-1);
-  border-radius: 5px;
-  transition: all 0.2s ease;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: var(--vp-c-brand);
-  box-shadow: 0 0 0 2px var(--vp-c-brand-lighter);
-}
-
-.form-group input::placeholder {
-  color: var(--vp-c-text-3);
 }
 
 button {
@@ -271,10 +209,6 @@ button:focus {
 @media (max-width: 768px) {
   .form-container {
     padding: 1.5rem;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
   }
 
   .api-key-group,

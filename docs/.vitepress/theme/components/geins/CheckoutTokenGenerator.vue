@@ -135,35 +135,6 @@ const createCheckoutTokenOptions = (): GenerateCheckoutTokenOptions => {
   };
 };
 
-const generateCart = async () => {
-  const settingsJson = createSettingsJson();
-  if (!(await validateSettings(settingsJson))) return;
-
-  const skuIdsArray = skuIds.value
-    .split(',')
-    .filter((id) => id !== '')
-    .map((id) => parseInt(id.trim()));
-
-  if (skuIdsArray.length === 0) {
-    return;
-  }
-
-  try {
-    const geinsCore = new GeinsCore(settingsJson);
-    const geinsOMS = new GeinsOMS(geinsCore);
-
-    for (const skuId of skuIdsArray) {
-      await geinsOMS.cart.items.add({ skuId, quantity: 1 });
-    }
-    const cart = await geinsOMS.cart.get();
-    cartId.value = cart?.id || '';
-    // save cart to local storage
-    localStorage.setItem('geinsCart', JSON.stringify(cart));
-  } catch (error) {
-    validationError.value = 'Failed to generate cart.';
-  }
-};
-
 const validateSettings = async (settings: GeinsSettings) => {
   if (!settings.apiKey || settings.apiKey === '') {
     return false;

@@ -49,7 +49,7 @@ Follow these steps to generate a token for the checkout:
     <template #trigger>
         <GeinsStatus for="geins-cart" name="Geins cart" />
     </template>
-    <GeinsSettingsForm />
+    <GeinsCartForm />
 </GeinsToggle>
 
 ### 3. Generate a checkout token
