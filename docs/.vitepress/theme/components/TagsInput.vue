@@ -1,4 +1,5 @@
 <template>
+  <div class="label">{{ label }}</div>
   <div
     @click="focusNewTag()"
     :class="{
@@ -84,6 +85,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    label: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -123,7 +128,6 @@ export default {
     newTag() {
       if (this.tagLength !== -1 || this.newTag.length > this.tagLength) {
         this.$refs.inputTag.className = 'v3ti-new-tag v3ti-new-tag--error';
-        this.$refs.inputTag.style.textDecoration = 'underline';
       }
     },
   },
@@ -220,27 +224,32 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 3px;
+  margin-left: 2px;
+  display: block;
+  color: var(--vp-c-text-1);
+}
 .v3ti {
-  border-radius: 5px;
-  min-height: 32px;
-  line-height: 1.4 !important;
-  background-color: #fff;
-  border: 1px solid #9ca3af;
-  overflow: hidden;
-  cursor: text;
-  text-align: left;
-  -webkit-appearance: textfield;
-  display: flex;
-  flex-wrap: wrap;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  font-size: 13px;
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-1);
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 .v3ti--focus {
-  outline: 0;
-  border-color: #000000;
-  box-shadow: 0 0 0 1px #000000;
+  outline: none;
+  border-color: var(--vp-c-brand);
+  box-shadow: 0 0 0 2px var(--vp-c-brand-lighter);
 }
 .v3ti--error {
-  border-color: #f56c6c;
+  /* border-color: #f56c6c; */
 }
 .v3ti .v3ti-content {
   width: 100%;
@@ -252,18 +261,19 @@ export default {
   font-weight: 400;
   margin: 3px;
   padding: 0 5px;
-  background: #317caf;
-  color: #ffffff;
-  height: 27px;
+  background: var(--vp-button-brand-bg);
+  color: var(--vp-button-brand-text);
   border-radius: 5px;
   align-items: center;
 }
 .v3ti .v3ti-tag .v3ti-remove-tag {
-  color: #ffffff;
+  color: var(--vp-button-brand-text);
   transition: opacity 0.3s ease;
   opacity: 0.5;
   cursor: pointer;
   padding: 0 5px 0 7px;
+  text-decoration: none;
+  font-size: 15px;
 }
 .v3ti .v3ti-tag .v3ti-remove-tag::before {
   content: 'x';
@@ -279,10 +289,5 @@ export default {
   outline: none;
   padding: 0 4px;
   flex: 1;
-  min-width: 60px;
-  height: 27px;
-}
-.v3ti .v3ti-new-tag--error {
-  color: #f56c6c;
 }
 </style>

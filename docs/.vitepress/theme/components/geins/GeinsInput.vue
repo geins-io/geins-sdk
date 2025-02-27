@@ -32,8 +32,8 @@ const emit = defineEmits(['update:modelValue']);
 .input label {
   font-size: 0.9rem;
   font-weight: 500;
-  margin-bottom: 3px;
-  margin-left: 2px;
+  margin-bottom: 0.1rem;
+  margin-left: 3px;
   display: block;
   color: var(--vp-c-text-1);
 }

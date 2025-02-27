@@ -3,6 +3,7 @@ import 'virtual:group-icons.css';
 import DefaultTheme from 'vitepress/theme';
 import Confetti from './components/Confetti.vue';
 import CheckoutTokenGenerator from './components/geins/CheckoutTokenGenerator.vue';
+import GeinsButton from './components/geins/GeinsButton.vue';
 import GeinsCartForm from './components/geins/GeinsCartForm.vue';
 import GeinsFormContainer from './components/geins/GeinsFormContainer.vue';
 import GeinsFormGrid from './components/geins/GeinsFormGrid.vue';
@@ -31,6 +32,7 @@ export default {
     app.component('GeinsFormGrid', GeinsFormGrid);
     app.component('GeinsFormGroup', GeinsFormGroup);
     app.component('GeinsInput', GeinsInput);
+    app.component('GeinsButton', GeinsButton);
     app.component('TagsInput', TagsInput);
   },
 };

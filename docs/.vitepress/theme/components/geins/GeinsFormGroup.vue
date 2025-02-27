@@ -15,7 +15,7 @@ const rowClass = props.rowSize ? `${props.rowSize}-row-group` : 'full-row-group'
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.1rem;
 }
 .one-forth-row-group {
   grid-column: span 3;

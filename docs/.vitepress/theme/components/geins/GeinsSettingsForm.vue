@@ -2,7 +2,7 @@
 import { GeinsCore } from '@geins/core';
 import { GeinsSettings } from '@geins/types';
 import { ref, onMounted } from 'vue';
-import { getStoredSettings, storeSettings, type GeinsSettingsStorage, GeinsStorageParam } from '../../utils';
+import { getStoredSettings, storeSettings, type GeinsStorage, GeinsStorageParam } from '../../utils';
 import GeinsInput from './GeinsInput.vue';
 
 // add prop to watch
@@ -63,7 +63,7 @@ const validateSettings = async (settings: GeinsSettings) => {
     valid = false;
   }
 
-  storeSettings(valid, settings, GeinsStorageParam.settings);
+  storeSettings(valid, settings, GeinsStorageParam.Settings);
   return valid;
 };
 
@@ -73,7 +73,7 @@ const handleSubmit = async (event: Event) => {
 };
 
 onMounted(() => {
-  const storedSettings: GeinsSettingsStorage | null = getStoredSettings();
+  const storedSettings: GeinsStorage | null = getStoredSettings();
   if (storedSettings?.geinsSettings) {
     settings.value = storedSettings.geinsSettings;
   }
@@ -136,7 +136,8 @@ onMounted(() => {
       <div v-if="validationError" class="validation-error">
         {{ validationError }}
       </div>
-      <button type="submit">Save Settings</button>
+
+      <GeinsButton>Save Settings</GeinsButton>
     </GeinsFormContainer>
   </form>
 </template>
@@ -150,33 +151,6 @@ onMounted(() => {
   color: var(--vp-c-danger-1);
   font-size: 0.9rem;
   border: 1px solid var(--vp-c-danger-2);
-}
-
-button {
-  width: 100%;
-  padding: 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-
-  border: 1px solid var(--vp-button-brand-border);
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  background-color: var(--vp-button-brand-bg);
-  color: var(--vp-button-brand-text);
-  border-color: var(--vp-button-brand-border);
-}
-
-button:hover {
-  color: var(--vp-button-brand-hover-text);
-  background-color: var(--vp-button-brand-hover-bg);
-  border-color: var(--vp-button-brand-hover-border);
-}
-
-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--vp-c-brand-lighter);
 }
 
 .token-display {

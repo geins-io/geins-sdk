@@ -1,34 +1,33 @@
 import { GeinsSettings } from '@geins/types';
 
 export const enum GeinsStorageParam {
-  settings = 'geins-settings',
-  cart = 'geins-cart',
+  Settings = 'geins-settings',
+  Cart = 'geins-cart',
 }
 
 import { ref } from 'vue';
 export const settingsValid = ref(false);
 export const cartValid = ref(false);
 
-export interface GeinsSettingsStorage {
+export interface GeinsStorage {
   valid: boolean;
   geinsSettings?: GeinsSettings;
+  geinsCart?: GeinsStorageCart;
 }
-export interface GeinsCartStorage {
-  valid: boolean;
-  geinsCart?: GeinsCart;
+export interface GeinsStorageCart {
+  id: string;
+  skus: number[];
 }
 
 export const getStoredSettings = (
-  storageParam: GeinsStorageParam = GeinsStorageParam.settings,
-): GeinsSettingsStorage | GeinsCartStorage | null => {
-  console.log('🚀 ~ storageParam:', storageParam);
+  storageParam: GeinsStorageParam = GeinsStorageParam.Settings,
+): GeinsStorage | null => {
   const stored = localStorage.getItem(storageParam);
-  console.log('🚀 ~ stored:', stored);
   if (stored) {
     const parsed = JSON.parse(stored);
-    if (storageParam === GeinsStorageParam.settings) {
+    if (storageParam === GeinsStorageParam.Settings) {
       settingsValid.value = parsed.valid;
-    } else if (storageParam === GeinsStorageParam.cart) {
+    } else if (storageParam === GeinsStorageParam.Cart) {
       cartValid.value = parsed.valid;
     }
     return parsed;
@@ -38,20 +37,20 @@ export const getStoredSettings = (
 
 export const storeSettings = (
   valid: boolean,
-  payload: GeinsSettings | GeinsCart,
-  storageParam: GeinsStorageParam = GeinsStorageParam.settings,
+  payload: GeinsSettings | GeinsStorageCart,
+  storageParam: GeinsStorageParam = GeinsStorageParam.Settings,
 ) => {
   let obj = {};
-  if (storageParam === GeinsStorageParam.settings) {
+  if (storageParam === GeinsStorageParam.Settings) {
     obj = {
       valid,
       geinsSettings: payload as GeinsSettings,
     };
     settingsValid.value = valid;
-  } else if (storageParam === GeinsStorageParam.cart) {
+  } else if (storageParam === GeinsStorageParam.Cart) {
     obj = {
       valid,
-      geinsCart: payload as GeinsCart,
+      geinsCart: payload as GeinsStorageCart,
     };
     cartValid.value = valid;
   }

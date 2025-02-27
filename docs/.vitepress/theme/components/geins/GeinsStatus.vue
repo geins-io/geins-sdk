@@ -10,20 +10,19 @@ const props = withDefaults(
     name?: string;
   }>(),
   {
-    for: GeinsStorageParam.settings,
+    for: GeinsStorageParam.Settings,
     href: '',
     onlyStatusCircle: false,
     name: 'Geins settings',
   },
 );
-console.log('🚀 ~ for:', props.for);
 
 const settings = ref();
 const valid = computed(() => {
   switch (props.for) {
-    case GeinsStorageParam.settings:
+    case GeinsStorageParam.Settings:
       return settingsValid.value;
-    case GeinsStorageParam.cart:
+    case GeinsStorageParam.Cart:
       return cartValid.value;
     default:
       return false;
