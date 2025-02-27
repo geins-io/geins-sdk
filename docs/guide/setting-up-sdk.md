@@ -4,4 +4,9 @@ Jump right in with the following commands:
 
 ## Geins Settings
 
-<GeinsSettings :show-settings-form="true" />
+<GeinsToggle :show-content="true">
+    <template #trigger>
+        <GeinsStatus />
+    </template>
+    <GeinsSettingsForm />
+</GeinsToggle>

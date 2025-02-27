@@ -6,7 +6,7 @@ const { Layout } = DefaultTheme;
 <template>
   <Layout>
     <template #sidebar-nav-after>
-      <GeinsSettingsStatus />
+      <GeinsStatus href="/guide/setting-up-sdk.html" />
     </template>
   </Layout>
 </template>

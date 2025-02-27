@@ -1,17 +1,37 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, defineProps } from 'vue';
-import { getStoredSettings, settingsValid } from '../../utils';
+import { ref, onMounted, computed, defineProps, withDefaults } from 'vue';
+import { getStoredSettings, settingsValid, cartValid, GeinsStorageParam } from '../../utils';
 
-// add prop to watch
-const props = defineProps<{
-  onlyStatusCircle?: boolean;
-  linked?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    for?: GeinsStorageParam;
+    href?: string;
+    onlyStatusCircle?: boolean;
+    name?: string;
+  }>(),
+  {
+    for: GeinsStorageParam.settings,
+    href: '',
+    onlyStatusCircle: false,
+    name: 'Geins settings',
+  },
+);
+console.log('🚀 ~ for:', props.for);
 
 const settings = ref();
+const valid = computed(() => {
+  switch (props.for) {
+    case GeinsStorageParam.settings:
+      return settingsValid.value;
+    case GeinsStorageParam.cart:
+      return cartValid.value;
+    default:
+      return false;
+  }
+});
 
 const color = computed(() => {
-  return settingsValid.value ? '#74e878' : '#e87474';
+  return valid.value ? '#74e878' : '#e87474';
 });
 
 const size = computed(() => {
@@ -19,24 +39,24 @@ const size = computed(() => {
 });
 
 const text = computed(() => {
-  return settingsValid.value ? 'Geins settings valid' : 'Geins settings inactive';
+  return valid.value ? `${props.name} valid` : `${props.name} inactive`;
 });
 
 const handleClick = (event: Event) => {
-  if (!props.linked) {
+  if (!props.href) {
     event.preventDefault();
   }
 };
 
 onMounted(() => {
-  settings.value = getStoredSettings();
+  settings.value = getStoredSettings(props.for);
 });
 </script>
 
 <template>
-  <a class="link" href="/guide/setting-up-sdk.html" @click="handleClick">
+  <a class="link" :href="href" @click="handleClick">
     <div v-if="onlyStatusCircle" class="status-circle" :title="text" />
-    <div v-else class="geins-settings">
+    <div v-else class="status-box">
       <div class="status-circle"></div>
       <span>{{ text }}</span>
     </div>
@@ -50,7 +70,7 @@ onMounted(() => {
     color: var(--vp-c-primary);
   }
 }
-.geins-settings {
+.status-box {
   display: flex;
   align-items: center;
   text-decoration: none;

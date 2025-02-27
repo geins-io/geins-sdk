@@ -2,7 +2,7 @@
 import { GeinsCore } from '@geins/core';
 import { GeinsSettings } from '@geins/types';
 import { ref, onMounted, defineProps } from 'vue';
-import { getStoredSettings, storeSettings, type StoredGeinsSettings } from '../../utils';
+import { getStoredSettings, storeSettings, type GeinsSettingsStorage, GeinsStorageParam } from '../../utils';
 
 // add prop to watch
 const _props = defineProps<{
@@ -62,7 +62,7 @@ const validateSettings = async (settings: GeinsSettings) => {
     valid = false;
   }
 
-  storeSettings(valid, settings);
+  storeSettings(valid, settings, GeinsStorageParam.settings);
   return valid;
 };
 
@@ -72,8 +72,8 @@ const handleSubmit = async (event: Event) => {
 };
 
 onMounted(() => {
-  const storedSettings: StoredGeinsSettings | null = getStoredSettings();
-  if (storedSettings) {
+  const storedSettings: GeinsSettingsStorage | null = getStoredSettings();
+  if (storedSettings?.geinsSettings) {
     settings.value = storedSettings.geinsSettings;
   }
 });
@@ -83,8 +83,8 @@ onMounted(() => {
   <div class="checkout-token-generator">
     <form @submit.prevent="handleSubmit">
       <div class="form-container">
-        <div class="form-grid">
-          <div class="form-group two-thirds-row-group">
+        <GeinsFormGrid>
+          <GeinsFormGroup row-size="two-thirds">
             <label for="apiKey">API Key</label>
             <input
               type="text"
@@ -93,9 +93,9 @@ onMounted(() => {
               v-model="settings.apiKey"
               placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
             />
-          </div>
+          </GeinsFormGroup>
 
-          <div class="form-group account-name-group">
+          <GeinsFormGroup row-size="one-third">
             <label for="accountName">Account Name </label>
             <input
               type="text"
@@ -104,28 +104,28 @@ onMounted(() => {
               v-model="settings.accountName"
               placeholder="name"
             />
-          </div>
+          </GeinsFormGroup>
 
-          <div class="form-group one-forth-row-group">
+          <GeinsFormGroup row-size="one-forth">
             <label for="channel">Channel ID</label>
             <input type="text" id="channel" name="channel" v-model="settings.channel" placeholder="1" />
-          </div>
+          </GeinsFormGroup>
 
-          <div class="form-group one-forth-row-group">
+          <GeinsFormGroup row-size="one-forth">
             <label for="tld">TLD</label>
             <input type="text" id="tld" name="tld" v-model="settings.tld" placeholder="com" />
-          </div>
+          </GeinsFormGroup>
 
-          <div class="form-group one-forth-row-group">
+          <GeinsFormGroup row-size="one-forth">
             <label for="market">Market ID</label>
             <input type="text" id="market" name="market" v-model="settings.market" placeholder="1" />
-          </div>
+          </GeinsFormGroup>
 
-          <div class="form-group one-forth-row-group">
+          <GeinsFormGroup row-size="one-forth">
             <label for="locale">Locale</label>
             <input type="text" id="locale" name="locale" v-model="settings.locale" placeholder="en-US" />
-          </div>
-        </div>
+          </GeinsFormGroup>
+        </GeinsFormGrid>
 
         <!-- Validation Error -->
         <div v-if="validationError" class="validation-error">
@@ -185,39 +185,6 @@ onMounted(() => {
   height: 2px;
   background-color: var(--vp-c-divider);
   margin-bottom: 1rem;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.one-forth-row-group {
-  grid-column: span 3; /* Updated to span 3 instead of 6 */
-}
-
-.half-row-group {
-  grid-column: span 6;
-}
-
-.full-row-group {
-  grid-column: span 12;
-}
-
-.two-thirds-row-group {
-  grid-column: span 8;
-}
-
-.account-name-group {
-  grid-column: span 4;
 }
 
 .form-group label {

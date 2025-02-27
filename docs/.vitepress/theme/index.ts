@@ -2,13 +2,15 @@
 import 'virtual:group-icons.css';
 import DefaultTheme from 'vitepress/theme';
 import Confetti from './components/Confetti.vue';
-import CheckoutTokenGenerator from './components/geinsTools/CheckoutTokenGenerator.vue';
-import GeinsSettings from './components/geinsTools/GeinsSettings.vue';
-import GeinsSettingsForm from './components/geinsTools/GeinsSettingsForm.vue';
-import GeinsSettingsStatus from './components/geinsTools/GeinsSettingsStatus.vue';
+import CheckoutTokenGenerator from './components/geins/CheckoutTokenGenerator.vue';
+import GeinsFormGrid from './components/geins/GeinsFormGrid.vue';
+import GeinsFormGroup from './components/geins/GeinsFormGroup.vue';
+import GeinsSettingsForm from './components/geins/GeinsSettingsForm.vue';
+import GeinsStatus from './components/geins/GeinsStatus.vue';
+import GeinsToggle from './components/geins/GeinsToggle.vue';
+import './custom.css';
 import CustomLayout from './CustomLayout.vue';
 import './style.css';
-import './custom.css';
 
 export default {
   extends: DefaultTheme,
@@ -17,8 +19,10 @@ export default {
   enhanceApp({ app }) {
     app.component('Confetti', Confetti);
     app.component('CheckoutTokenGenerator', CheckoutTokenGenerator);
-    app.component('GeinsSettings', GeinsSettings);
     app.component('GeinsSettingsForm', GeinsSettingsForm);
-    app.component('GeinsSettingsStatus', GeinsSettingsStatus);
+    app.component('GeinsStatus', GeinsStatus);
+    app.component('GeinsToggle', GeinsToggle);
+    app.component('GeinsFormGrid', GeinsFormGrid);
+    app.component('GeinsFormGroup', GeinsFormGroup);
   },
 };

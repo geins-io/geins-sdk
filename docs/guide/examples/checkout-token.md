@@ -36,11 +36,21 @@ Follow these steps to generate a token for the checkout:
 
 ### 1. Set up your Geins Settings
 
-<GeinsSettings margin-top="20px" />
+<GeinsToggle margin-top="20px">
+    <template #trigger>
+        <GeinsStatus />
+    </template>
+    <GeinsSettingsForm />
+</GeinsToggle>
 
-### 2. Create a cart
+### 2. Create a Cart
 
-<GeinsSettings margin-top="20px" />
+<GeinsToggle margin-top="20px">
+    <template #trigger>
+        <GeinsStatus for="geins-cart" name="Geins cart" />
+    </template>
+    <GeinsSettingsForm />
+</GeinsToggle>
 
 ### 3. Generate a checkout token
 

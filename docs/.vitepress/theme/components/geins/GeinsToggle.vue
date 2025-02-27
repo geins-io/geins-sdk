@@ -1,34 +1,30 @@
 <script setup lang="ts">
 import { ref, defineProps } from 'vue';
 const props = defineProps<{
-  showSettingsForm?: boolean;
+  showContent?: boolean;
   marginTop?: string;
 }>();
-const showSettings = ref(props.showSettingsForm);
+const showContent = ref(props.showContent);
 </script>
 
 <template>
-  <div class="settings-wrap">
-    <button class="toggle" @click="showSettings = !showSettings">
-      <slot name="toggle">
-        <div class="toggle-wrap">
-          <GeinsSettingsStatus :linked="false" class="status" />
-          <i class="chevron" :class="{ closed: !showSettings }"></i>
-        </div>
-      </slot>
+  <div class="toggle-wrap">
+    <button class="toggle" @click="showContent = !showContent">
+      <div class="trigger-wrap">
+        <slot name="trigger" />
+        <i class="chevron" :class="{ closed: !showContent }"></i>
+      </div>
     </button>
     <Transition name="slide-up">
-      <div v-if="showSettings" class="content">
-        <slot name="content">
-          <GeinsSettingsForm />
-        </slot>
+      <div v-if="showContent" class="content">
+        <slot />
       </div>
     </Transition>
   </div>
 </template>
 
 <style scoped>
-.settings-wrap {
+.toggle-wrap {
   margin-top: v-bind('marginTop');
 }
 
@@ -53,12 +49,12 @@ const showSettings = ref(props.showSettingsForm);
   width: 100%;
 }
 
-.toggle-wrap {
+.trigger-wrap {
   display: flex;
   position: relative;
 }
 
-.status {
+.trigger-wrap > * {
   width: 100%;
 }
 
