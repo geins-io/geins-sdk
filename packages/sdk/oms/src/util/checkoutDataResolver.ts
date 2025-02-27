@@ -89,7 +89,7 @@ export class CheckoutDataResolver {
 
     const mapping: Record<keyof CheckoutUrlsInputType, keyof CheckoutRedirectsType> = {
       redirectUrl: 'success',
-      checkoutPageUrl: 'change',
+      checkoutPageUrl: 'cancel',
       termsPageUrl: 'terms',
     };
 
@@ -103,7 +103,7 @@ export class CheckoutDataResolver {
     if (!redirects) return {};
 
     const defaultUrls = this._settings.checkoutUrls || {};
-    const keys: (keyof CheckoutRedirectsType)[] = ['terms', 'success', 'error', 'cancel', 'change'];
+    const keys: (keyof CheckoutRedirectsType)[] = ['terms', 'success', 'error', 'cancel'];
 
     return keys.reduce((acc, key) => {
       if (redirects[key] || defaultUrls[key]) acc[key] = redirects[key] || defaultUrls[key]!;
@@ -116,7 +116,6 @@ export class CheckoutDataResolver {
 
     const mapping: Record<keyof CheckoutRedirectsType, keyof CheckoutUrlsInputType> = {
       success: 'redirectUrl',
-      change: 'checkoutPageUrl',
       terms: 'termsPageUrl',
       cancel: 'checkoutPageUrl',
       error: 'checkoutPageUrl',
