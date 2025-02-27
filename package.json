@@ -75,7 +75,10 @@
     "vite": "^5.4.12",
     "vitepress": "^1.5.0",
     "vitepress-plugin-mermaid": "^2.0.17",
-    "vitepress-plugin-group-icons": "^1.3.3"
+    "vitepress-plugin-group-icons": "^1.3.3",
+    "@geins/core": "*",
+    "@geins/oms": "*",
+    "@geins/types": "*"
   },
   "packageManager": "yarn@1.22.22",
   "engines": {

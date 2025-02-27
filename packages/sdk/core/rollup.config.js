@@ -1,31 +1,30 @@
-import commonjs from '@rollup/plugin-commonjs';
-import graphql from '@rollup/plugin-graphql';
 import resolve from '@rollup/plugin-node-resolve';
-import terser from '@rollup/plugin-terser';
+import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
+import graphql from '@rollup/plugin-graphql';
+import terser from '@rollup/plugin-terser';
 
 export default {
   input: 'src/index.ts',
   output: [
     {
       file: 'dist/index.cjs',
-      format: 'cjs',
-      exports: 'auto',
-      sourcemap: true,
+      format: 'cjs'
     },
     {
-      file: 'dist/index.mjs',
-      format: 'esm',
-      sourcemap: true,
-    },
+      file: 'dist/index.esm.js',
+      format: 'esm'
+    }
   ],
   plugins: [
-    resolve({ preferBuiltins: true }),
+    resolve({
+      preferBuiltins: true
+    }),
     commonjs(),
-    typescript({ tsconfig: './tsconfig.json' }),
+    typescript(),
     graphql(),
-    terser(),
+    terser()
   ],
   external: ['@apollo/client', 'cookie-universal', '@cacheable/node-cache', 'broadcast-channel'],
-  treeshake: true,
+  treeshake: true
 };
