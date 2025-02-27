@@ -54,4 +54,5 @@ Follow these steps to generate a token for the checkout:
 
 ### 3. Generate a checkout token
 
+<GeinsCheckoutTokenForm />
 <CheckoutTokenGenerator />

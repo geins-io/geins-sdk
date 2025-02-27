@@ -10,8 +10,8 @@ const props = defineProps<{}>();
 <style scoped>
 button {
   width: 100%;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.7rem;
+  font-size: 0.95rem;
   font-weight: 600;
 
   border: 1px solid var(--vp-button-brand-border);

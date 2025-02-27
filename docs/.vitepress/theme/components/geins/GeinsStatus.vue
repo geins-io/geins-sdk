@@ -8,12 +8,14 @@ const props = withDefaults(
     href?: string;
     onlyStatusCircle?: boolean;
     name?: string;
+    fontSize?: string;
   }>(),
   {
     for: GeinsStorageParam.Settings,
     href: '',
     onlyStatusCircle: false,
     name: 'Geins settings',
+    fontSize: '14px',
   },
 );
 
@@ -39,6 +41,10 @@ const size = computed(() => {
 
 const text = computed(() => {
   return valid.value ? `${props.name} valid` : `${props.name} inactive`;
+});
+
+const fontSize = computed(() => {
+  return props.fontSize;
 });
 
 const handleClick = (event: Event) => {
@@ -76,7 +82,7 @@ onMounted(() => {
   gap: 20px;
   padding: 10px 20px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: v-bind('fontSize');
   border: 1px solid var(--vp-c-divider);
   color: var(--vp-c-primary);
 }

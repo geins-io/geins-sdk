@@ -114,7 +114,6 @@ export default {
     modelValue: {
       immediate: true,
       handler(value) {
-        console.log('value: ', value);
         this.newTag = value;
       },
     },

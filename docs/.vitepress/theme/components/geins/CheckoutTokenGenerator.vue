@@ -4,15 +4,6 @@ import { GeinsOMS } from '@geins/oms';
 import { GeinsSettings, GenerateCheckoutTokenOptions, CheckoutRedirectsType } from '@geins/types';
 import { ref, onMounted } from 'vue';
 
-// GeinsSettings
-const validationError = ref<string>('');
-const apiKey = ref<string>('');
-const accountName = ref<string>('');
-const channel = ref<string>('');
-const tld = ref<string>('');
-const locale = ref<string>('');
-const market = ref<string>('');
-
 // branding
 const branding = ref({
   title: '',
@@ -238,14 +229,7 @@ const handleSubmit = async (event: Event) => {
             <input type="text" id="cartId" v-model="cartId" placeholder="Enter cart ID" />
           </div>
 
-          <div class="form-group account-name-group">
-            <label for="customerType">Customer Type</label>
-            <select id="customerType" v-model="customerType">
-              <option value="">Select type</option>
-              <option value="PERSON">D2C</option>
-              <option value="COMPANY">B2B</option>
-            </select>
-          </div>
+          <div class="form-group account-name-group"></div>
 
           <div class="form-group half-row-group">
             <label for="selectedPaymentMethodId">Payment ID</label>
@@ -583,22 +567,6 @@ button:focus {
   margin: 0;
 }
 
-select {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  background: var(--vp-c-bg);
-  border: 1px solid var(--vp-c-divider);
-  color: var(--vp-c-text-1);
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-select:focus {
-  outline: none;
-  border-color: var(--vp-c-brand);
-  box-shadow: 0 0 0 2px var(--vp-c-brand-lighter);
-}
 textarea {
   width: 100%;
   padding: 0.75rem 1rem;
