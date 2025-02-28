@@ -2,7 +2,6 @@
 import 'virtual:group-icons.css';
 import DefaultTheme from 'vitepress/theme';
 import Confetti from './components/Confetti.vue';
-import CheckoutTokenGenerator from './components/geins/CheckoutTokenGenerator.vue';
 import GeinsButton from './components/geins/GeinsButton.vue';
 import GeinsCartForm from './components/geins/GeinsCartForm.vue';
 import GeinsCheckoutTokenForm from './components/geins/GeinsCheckoutTokenForm.vue';
@@ -25,7 +24,6 @@ export default {
 
   enhanceApp({ app }) {
     app.component('Confetti', Confetti);
-    app.component('CheckoutTokenGenerator', CheckoutTokenGenerator);
     app.component('GeinsSettingsForm', GeinsSettingsForm);
     app.component('GeinsCartForm', GeinsCartForm);
     app.component('GeinsStatus', GeinsStatus);

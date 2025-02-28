@@ -68,6 +68,7 @@ const getCart = () => {
 
 const getStoredCheckout = () => {
   const stored: GeinsStorage | null = getStoredSettings(GeinsStorageParam.CheckoutToken);
+  console.log('🚀 ~ getStoredCheckout ~ stored:', stored);
   if (stored?.geinsCheckout) {
     checkoutToken.value = stored.geinsCheckout.token;
     checkoutSettings.value = {
@@ -164,7 +165,7 @@ onMounted(() => {
         </GeinsFormGroup>
       </GeinsFormGrid>
       <h3>Checkout Urls</h3>
-      <GeinsFormGrid>
+      <GeinsFormGrid v-if="checkoutSettings.redirectUrls">
         <GeinsFormGroup row-size="half">
           <GeinsInput
             v-model="checkoutSettings.redirectUrls.success"
@@ -203,7 +204,7 @@ onMounted(() => {
         </GeinsFormGroup>
       </GeinsFormGrid>
       <h3>Checkout Branding</h3>
-      <GeinsFormGrid>
+      <GeinsFormGrid v-if="checkoutSettings.branding">
         <GeinsFormGroup row-size="full">
           <GeinsInput
             v-model="checkoutSettings.branding.title"
@@ -234,7 +235,7 @@ onMounted(() => {
             description="Url for your logo. Will be shown 48px high with auto width."
           />
         </GeinsFormGroup>
-        <GeinsFormGroup row-size="half">
+        <GeinsFormGroup v-if="checkoutSettings.branding.styles" row-size="half">
           <GeinsInput
             v-model="checkoutSettings.branding.styles.fontSize"
             id="brand-font-size"
@@ -244,7 +245,7 @@ onMounted(() => {
             description="Font size of the body text"
           />
         </GeinsFormGroup>
-        <GeinsFormGroup row-size="half">
+        <GeinsFormGroup v-if="checkoutSettings.branding.styles" row-size="half">
           <GeinsInput
             v-model="checkoutSettings.branding.styles.radius"
             id="border-radius"
@@ -257,7 +258,7 @@ onMounted(() => {
       </GeinsFormGrid>
       <h4>Branding Colors</h4>
       <p class="desc">The colors below are set to the default values.</p>
-      <GeinsFormGrid>
+      <GeinsFormGrid v-if="checkoutSettings.branding?.styles">
         <GeinsFormGroup row-size="half">
           <GeinsColorInput
             v-model="checkoutSettings.branding.styles.background"
