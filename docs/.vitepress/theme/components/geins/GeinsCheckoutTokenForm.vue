@@ -1,31 +1,55 @@
 <script setup lang="ts">
 import { GeinsCore } from '@geins/core';
 import { GeinsOMS } from '@geins/oms';
-import type { CheckoutTokenPayload, CheckoutSettings, GeinsSettings } from '@geins/types';
-import { ref, watch, computed, onMounted, watchEffect } from 'vue';
-import { cartValid, getStoredSettings, GeinsStorageParam, type GeinsStorage } from '../../utils';
-import { get } from 'http';
+import type { GenerateCheckoutTokenOptions, CheckoutSettings, GeinsSettings } from '@geins/types';
+import { ref, watch, computed, onMounted } from 'vue';
+import {
+  cartValid,
+  getStoredSettings,
+  storeSettings,
+  GeinsStorageParam,
+  type GeinsStorage,
+  type GeinsStorageCheckout,
+} from '../../utils';
 import GeinsFormGroup from './GeinsFormGroup.vue';
 
+const checkoutToken = ref();
+const validationError = ref('');
 const cartId = ref('');
-const customerType = ref('');
-const checkoutSettings = ref({
-  selectedPaymentMethodId: '',
-  selectedShippingMethodId: '',
+const checkoutSettings = ref<CheckoutSettings>({
+  selectedPaymentMethodId: undefined,
+  selectedShippingMethodId: undefined,
+  customerType: undefined,
   redirectUrls: {
     success: '',
     cancel: '',
     error: '',
     terms: '',
   },
+  branding: {
+    title: '',
+    avatar: '',
+    logo: '',
+    styles: {
+      fontSize: '',
+      radius: '',
+      background: '#f7f7f7',
+      foreground: '#9c9c9c',
+      card: '#ffffff',
+      cardForeground: '#131313',
+      accent: '#131313',
+      accentForeground: '#ffffff',
+      border: '#e6e6e6',
+      sale: '#b70000',
+    },
+  },
 });
-const geinsSettings = ref({} as GeinsSettings);
+const geinsSettings = ref<GeinsSettings>();
 
-const payload = computed(() => ({
+const payload = computed<GenerateCheckoutTokenOptions>(() => ({
   cartId: cartId.value,
-  customerType: customerType.value,
-  checkoutSettings: checkoutSettings.value,
   geinsSettings: geinsSettings.value,
+  ...checkoutSettings.value,
 }));
 
 watch(cartValid, (valid) => {
@@ -42,8 +66,37 @@ const getCart = () => {
   }
 };
 
+const getStoredCheckout = () => {
+  const stored: GeinsStorage | null = getStoredSettings(GeinsStorageParam.CheckoutToken);
+  if (stored?.geinsCheckout) {
+    checkoutToken.value = stored.geinsCheckout.token;
+    checkoutSettings.value = {
+      ...stored.geinsCheckout,
+    };
+  }
+};
+
+const generateToken = async () => {
+  if (!geinsCore || !geinsOMS || !geinsSettings.value) {
+    validationError.value = 'Geins settings are missing.';
+    return;
+  }
+  try {
+    checkoutToken.value = await geinsOMS.createCheckoutToken(payload.value);
+    const obj = {
+      token: checkoutToken.value,
+      ...checkoutSettings.value,
+    };
+    console.log('🚀 ~ generateToken ~ obj:', obj);
+    storeSettings(!!checkoutToken.value, obj, GeinsStorageParam.CheckoutToken);
+  } catch (error) {
+    validationError.value = 'Token generation failed.';
+  }
+};
+
 onMounted(() => {
   getCart();
+  getStoredCheckout();
   const storedSettings: GeinsStorage | null = getStoredSettings(GeinsStorageParam.Settings);
   if (storedSettings?.geinsSettings) {
     geinsSettings.value = storedSettings.geinsSettings;
@@ -71,7 +124,7 @@ onMounted(() => {
       <GeinsFormGrid>
         <GeinsFormGroup row-size="half">
           <GeinsInput
-            v-model="checkoutSettings.selectedPaymentMethodId"
+            v-model.number="checkoutSettings.selectedPaymentMethodId"
             id="payment-method-id"
             name="payment-method-id"
             label="Payment Method ID"
@@ -79,19 +132,21 @@ onMounted(() => {
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
           <GeinsInput
-            v-model="checkoutSettings.selectedShippingMethodId"
+            v-model.number="checkoutSettings.selectedShippingMethodId"
             id="shipping-method-id"
             name="shipping-method-id"
             label="Shipping Method ID"
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="full">
-          <label for="customerType">Customer Type</label>
-          <select id="customerType" v-model="customerType">
-            <option value="" selected>Select type</option>
-            <option value="PERSON">D2C</option>
-            <option value="COMPANY">B2B</option>
-          </select>
+          <div class="select">
+            <label for="customerType">Customer Type</label>
+            <select id="customerType" v-model="checkoutSettings.customerType">
+              <option value="" selected>Select type</option>
+              <option value="PERSON">D2C</option>
+              <option value="COMPANY">B2B</option>
+            </select>
+          </div>
         </GeinsFormGroup>
       </GeinsFormGrid>
       <h3>Checkout Urls</h3>
@@ -102,6 +157,7 @@ onMounted(() => {
             id="success-url"
             name="success-url"
             label="Success Url"
+            placeholder="https://example.com/thank-you"
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -110,6 +166,7 @@ onMounted(() => {
             id="cancel-url"
             name="cancel-url"
             label="Cancel Url"
+            placeholder="https://example.com/cart"
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -118,6 +175,7 @@ onMounted(() => {
             id="error-url"
             name="error-url"
             label="Error Url"
+            placeholder="https://example.com/error"
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -126,6 +184,136 @@ onMounted(() => {
             id="terms-url"
             name="terms-url"
             label="Terms Url"
+            placeholder="https://example.com/terms"
+          />
+        </GeinsFormGroup>
+      </GeinsFormGrid>
+      <h3>Checkout Branding</h3>
+      <GeinsFormGrid>
+        <GeinsFormGroup row-size="full">
+          <GeinsInput
+            v-model="checkoutSettings.branding.title"
+            id="title"
+            name="title"
+            label="Title"
+            placeholder="Checkout"
+            description="Title for the checkout page. Add your brand name here if you don't wanna use a logo."
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsInput
+            v-model="checkoutSettings.branding.avatar"
+            id="avatar"
+            name="avatar"
+            label="Avatar Image URL"
+            placeholder="https://example.com/avatar.png"
+            description="Used next to the title if no logo is provided. Will be shown as 48x48px"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsInput
+            v-model="checkoutSettings.branding.logo"
+            id="logo"
+            name="logo"
+            label="Logo URL"
+            placeholder="https://example.com/logo.svg"
+            description="Url for your logo. Will be shown 48px high with auto width."
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsInput
+            v-model="checkoutSettings.branding.styles.fontSize"
+            id="brand-font-size"
+            name="brand-font-size"
+            label="Font Size"
+            placeholder="16px"
+            description="Font size of the body text"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsInput
+            v-model="checkoutSettings.branding.styles.radius"
+            id="border-radius"
+            name="border-radius"
+            label="Border Radius"
+            placeholder="5px"
+            description="Radius of UI elements in pixels"
+          />
+        </GeinsFormGroup>
+      </GeinsFormGrid>
+      <h4>Branding Colors</h4>
+      <p class="desc">The colors below are set to the default values.</p>
+      <GeinsFormGrid>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.background"
+            id="brand-background"
+            name="brand-background"
+            label="Background Color"
+            description="The first background color"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.foreground"
+            id="brand-foreground"
+            name="brand-foreground"
+            label="Foreground Color"
+            description="Color for text and icons used on the first background color"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.card"
+            id="brand-card"
+            name="brand-card"
+            label="Secondary Background Color"
+            description="Used as a secondary background color"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.cardForeground"
+            id="brand-card-foreground"
+            name="brand-card-foreground"
+            label="Secondary Foreground Color"
+            description="Color for text and icons used on the secondary background color"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.accent"
+            id="brand-accent"
+            name="brand-accent"
+            label="Accent Color"
+            description="Color used on buttons and other accent elements"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.accentForeground"
+            id="brand-accent-foreground"
+            name="brand-accent-foreground"
+            label="Accent Foreground Color"
+            description="Color for text and icons used on accent elements"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.border"
+            id="brand-border"
+            name="brand-border"
+            label="Border Color"
+            description="Color for borders"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.sale"
+            id="brand-sale"
+            name="brand-sale"
+            label="Sale Color"
+            description="Color used for sale prices in the cart"
           />
         </GeinsFormGroup>
       </GeinsFormGrid>
@@ -147,12 +335,17 @@ onMounted(() => {
   right: 20px;
 }
 
-h3 {
+h3,
+h4 {
   margin-bottom: 20px;
   font-size: 1.2rem;
   font-weight: 600;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--vp-c-divider);
+}
+
+h4 {
+  font-size: 1rem;
 }
 
 select {
@@ -170,5 +363,11 @@ select:focus {
   outline: none;
   border-color: var(--vp-c-brand);
   box-shadow: 0 0 0 2px var(--vp-c-brand-lighter);
+}
+
+.desc {
+  font-size: 0.9rem;
+  color: var(--vp-c-text-3);
+  margin-bottom: 20px;
 }
 </style>

@@ -1,22 +1,29 @@
-import { GeinsSettings } from '@geins/types';
+import { GeinsSettings, GenerateCheckoutTokenOptions } from '@geins/types';
 
 export const enum GeinsStorageParam {
   Settings = 'geins-settings',
   Cart = 'geins-cart',
+  CheckoutToken = 'geins-checkout-token',
 }
 
 import { ref } from 'vue';
 export const settingsValid = ref(false);
 export const cartValid = ref(false);
+export const checkoutTokenValid = ref(false);
 
 export interface GeinsStorage {
   valid: boolean;
   geinsSettings?: GeinsSettings;
   geinsCart?: GeinsStorageCart;
+  geinsCheckout?: GeinsStorageCheckout;
 }
 export interface GeinsStorageCart {
   id: string;
   skus: number[];
+}
+
+export interface GeinsStorageCheckout extends GenerateCheckoutTokenOptions {
+  token?: string;
 }
 
 export const getStoredSettings = (
@@ -29,6 +36,8 @@ export const getStoredSettings = (
       settingsValid.value = parsed.valid;
     } else if (storageParam === GeinsStorageParam.Cart) {
       cartValid.value = parsed.valid;
+    } else if (storageParam === GeinsStorageParam.CheckoutToken) {
+      checkoutTokenValid.value = parsed.valid;
     }
     return parsed;
   }
@@ -37,7 +46,7 @@ export const getStoredSettings = (
 
 export const storeSettings = (
   valid: boolean,
-  payload: GeinsSettings | GeinsStorageCart,
+  payload: GeinsSettings | GeinsStorageCart | GeinsStorageCheckout,
   storageParam: GeinsStorageParam = GeinsStorageParam.Settings,
 ) => {
   let obj = {};
@@ -53,6 +62,11 @@ export const storeSettings = (
       geinsCart: payload as GeinsStorageCart,
     };
     cartValid.value = valid;
+  } else if (storageParam === GeinsStorageParam.CheckoutToken) {
+    obj = {
+      valid,
+      geinsCheckout: payload as GeinsStorageCheckout,
+    };
   }
   localStorage.setItem(storageParam, JSON.stringify(obj));
 };

@@ -97,20 +97,20 @@ export type AddressInputType = {
 };
 
 export type CheckoutStyleType = {
-  fontSize: string;
-  radius: string;
-  background: string;
-  foreground: string;
-  card: string;
-  cardForeground: string;
-  accent: string;
-  accentForeground: string;
-  border: string;
-  sale: string;
+  fontSize?: string;
+  radius?: string;
+  background?: string;
+  foreground?: string;
+  card?: string;
+  cardForeground?: string;
+  accent?: string;
+  accentForeground?: string;
+  border?: string;
+  sale?: string;
 };
 
 export type CheckoutBrandingType = {
-  name?: string;
+  title?: string;
   avatar?: string;
   logo?: string;
   styles?: CheckoutStyleType;
