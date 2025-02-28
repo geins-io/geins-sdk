@@ -93,6 +93,14 @@ const generateToken = async () => {
     validationError.value = 'Token generation failed.';
   }
 };
+const successText = ref();
+const copyToken = () => {
+  navigator.clipboard.writeText(checkoutToken.value);
+  successText.value = 'Token copied to clipboard!';
+  setTimeout(() => {
+    successText.value = '';
+  }, 3000);
+};
 
 onMounted(() => {
   getCart();
@@ -108,6 +116,12 @@ onMounted(() => {
 <template>
   <form class="token-form" @submit.prevent="generateToken">
     <GeinsFormContainer>
+      <div v-if="checkoutToken" class="token">
+        <p>Your Checkout Token</p>
+        <pre id="checkout-token">{{ checkoutToken }}</pre>
+        <button type="button" class="link" @click="copyToken">Copy</button>
+        <p v-if="successText" class="success">{{ successText }}</p>
+      </div>
       <GeinsFormGrid>
         <GeinsFormGroup row-size="full" class="cart-id-group">
           <GeinsInput
@@ -317,6 +331,12 @@ onMounted(() => {
           />
         </GeinsFormGroup>
       </GeinsFormGrid>
+      <div v-if="checkoutToken" class="token">
+        <p>Your Checkout Token</p>
+        <pre id="checkout-token">{{ checkoutToken }}</pre>
+        <button type="button" class="link" @click="copyToken">Copy</button>
+        <p v-if="successText" class="success">{{ successText }}</p>
+      </div>
       <GeinsButton type="submit">Generate Checkout Token</GeinsButton>
     </GeinsFormContainer>
   </form>
@@ -368,6 +388,44 @@ select:focus {
 .desc {
   font-size: 0.9rem;
   color: var(--vp-c-text-3);
+  margin-bottom: 20px;
+}
+
+.token {
+  padding: 0 1rem;
+  border: var(--vp-c-success-1) 1px solid;
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.token p {
+  font-size: 1rem;
+  color: var(--vp-c-white);
+  margin-bottom: 0.5rem;
+}
+
+.token .success {
+  font-size: 0.6rem;
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+
+.token pre {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--vp-c-success-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-align: center;
+  width: 100%;
   margin-bottom: 20px;
 }
 </style>

@@ -59,7 +59,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <a class="link" :href="href" @click="handleClick">
+  <a class="status-link" :href="href" @click="handleClick">
     <div v-if="onlyStatusCircle" class="status-circle" :title="text" />
     <div v-else class="status-box">
       <div class="status-circle"></div>
@@ -69,7 +69,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.link {
+.status-link {
   text-decoration: none;
   &:hover {
     color: var(--vp-c-primary);
