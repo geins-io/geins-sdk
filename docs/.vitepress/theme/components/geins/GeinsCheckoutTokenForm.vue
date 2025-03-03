@@ -152,8 +152,8 @@ onMounted(() => {
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="full">
+          <label for="customerType">Customer Type</label>
           <div class="select">
-            <label for="customerType">Customer Type</label>
             <select id="customerType" v-model="checkoutSettings.customerType">
               <option value="" selected>Select type</option>
               <option value="PERSON">D2C</option>
@@ -367,11 +367,24 @@ h4 {
   font-size: 1rem;
 }
 
+.select {
+  position: relative;
+}
+
+.select::after {
+  content: '▼';
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
 select {
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-
+  background: var(--vp-c-bg);
   border: 1px solid var(--vp-c-divider);
   color: var(--vp-c-text-1);
   border-radius: 6px;
