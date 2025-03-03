@@ -68,7 +68,6 @@ const getCart = () => {
 
 const getStoredCheckout = () => {
   const stored: GeinsStorage | null = getStoredSettings(GeinsStorageParam.CheckoutToken);
-  console.log('🚀 ~ getStoredCheckout ~ stored:', stored);
   if (stored?.geinsCheckout) {
     checkoutToken.value = stored.geinsCheckout.token;
     checkoutSettings.value = {
@@ -88,7 +87,6 @@ const generateToken = async () => {
       token: checkoutToken.value,
       ...checkoutSettings.value,
     };
-    console.log('🚀 ~ generateToken ~ obj:', obj);
     storeSettings(!!checkoutToken.value, obj, GeinsStorageParam.CheckoutToken);
   } catch (error) {
     validationError.value = 'Token generation failed.';
@@ -373,7 +371,7 @@ select {
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  background: var(--vp-c-bg);
+
   border: 1px solid var(--vp-c-divider);
   color: var(--vp-c-text-1);
   border-radius: 6px;
@@ -393,8 +391,6 @@ select:focus {
 }
 
 .token {
-  padding: 0 1rem;
-  border: var(--vp-c-success-1) 1px solid;
   border-radius: 6px;
   text-align: center;
   margin-bottom: 20px;
@@ -420,6 +416,10 @@ select:focus {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  border: 1px solid var(--vp-c-success-1);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  padding: 1rem;
 }
 
 .link {
