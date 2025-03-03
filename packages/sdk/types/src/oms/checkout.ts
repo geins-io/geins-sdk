@@ -32,6 +32,7 @@ export type CheckoutQueryParameters = {
 
 export type CheckoutUrlsInputType = {
   termsPageUrl?: string;
+  privacyPageUrl?: string;
   redirectUrl?: string;
   checkoutPageUrl?: string;
 };
@@ -111,7 +112,7 @@ export type CheckoutStyleType = {
 
 export type CheckoutBrandingType = {
   title?: string;
-  avatar?: string;
+  icon?: string;
   logo?: string;
   styles?: CheckoutStyleType;
 };

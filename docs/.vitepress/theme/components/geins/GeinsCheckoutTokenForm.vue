@@ -9,7 +9,6 @@ import {
   storeSettings,
   GeinsStorageParam,
   type GeinsStorage,
-  type GeinsStorageCheckout,
 } from '../../utils';
 import GeinsFormGroup from './GeinsFormGroup.vue';
 
@@ -25,10 +24,11 @@ const checkoutSettings = ref<CheckoutSettings>({
     cancel: '',
     error: '',
     terms: '',
+    privacy: '',
   },
   branding: {
     title: '',
-    avatar: '',
+    icon: '',
     logo: '',
     styles: {
       fontSize: '',
@@ -76,12 +76,14 @@ const getStoredCheckout = () => {
   }
 };
 
+const loading = ref(false);
 const generateToken = async () => {
   if (!geinsCore || !geinsOMS || !geinsSettings.value) {
     validationError.value = 'Geins settings are missing.';
     return;
   }
   try {
+    loading.value = true;
     checkoutToken.value = await geinsOMS.createCheckoutToken(payload.value);
     const obj = {
       token: checkoutToken.value,
@@ -90,6 +92,10 @@ const generateToken = async () => {
     storeSettings(!!checkoutToken.value, obj, GeinsStorageParam.CheckoutToken);
   } catch (error) {
     validationError.value = 'Token generation failed.';
+  } finally {
+    setTimeout(() => {
+      loading.value = false;
+    }, 400);
   }
 };
 const successText = ref();
@@ -116,10 +122,15 @@ onMounted(() => {
   <form class="token-form" @submit.prevent="generateToken">
     <GeinsFormContainer>
       <div v-if="checkoutToken" class="token">
-        <p>Your Checkout Token</p>
-        <pre id="checkout-token">{{ checkoutToken }}</pre>
-        <button type="button" class="link" @click="copyToken">Copy</button>
-        <p v-if="successText" class="success">{{ successText }}</p>
+        <p class="token-title">Your Checkout Token</p>
+        <div class="token-box">
+          <pre id="checkout-token">{{ checkoutToken }}</pre>
+          <button type="button" class="link" @click="copyToken">Copy</button>
+          <p v-if="successText" class="success">{{ successText }}</p>
+          <div class="spinner" v-if="loading">
+            <div class="spinner-circle"></div>
+          </div>
+        </div>
       </div>
       <GeinsFormGrid>
         <GeinsFormGroup row-size="full" class="cart-id-group">
@@ -162,7 +173,7 @@ onMounted(() => {
           </div>
         </GeinsFormGroup>
       </GeinsFormGrid>
-      <h3>Checkout Urls</h3>
+      <h3>Urls</h3>
       <GeinsFormGrid v-if="checkoutSettings.redirectUrls">
         <GeinsFormGroup row-size="half">
           <GeinsInput
@@ -171,6 +182,7 @@ onMounted(() => {
             name="success-url"
             label="Success Url"
             placeholder="https://example.com/thank-you"
+            description="Url to redirect to after successful checkout, if you don't want to use the default one."
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -180,6 +192,7 @@ onMounted(() => {
             name="cancel-url"
             label="Cancel Url"
             placeholder="https://example.com/cart"
+            description="Url to redirect to if user cancels the checkout."
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -189,6 +202,7 @@ onMounted(() => {
             name="error-url"
             label="Error Url"
             placeholder="https://example.com/error"
+            description="Url to redirect to if an error occurs during the checkout, if you want to use a custom one."
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -198,6 +212,17 @@ onMounted(() => {
             name="terms-url"
             label="Terms Url"
             placeholder="https://example.com/terms"
+            description="Will display a Terms link on the checkout page."
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsInput
+            v-model="checkoutSettings.redirectUrls.privacy"
+            id="privacy-url"
+            name="privacy-url"
+            label="Privacy Url"
+            placeholder="https://example.com/privacy"
+            description="Will display a Privacy link on the checkout page."
           />
         </GeinsFormGroup>
       </GeinsFormGrid>
@@ -210,17 +235,17 @@ onMounted(() => {
             name="title"
             label="Title"
             placeholder="Checkout"
-            description="Title for the checkout page. Add your brand name here if you don't wanna use a logo."
+            description="Optional title for the checkout page. A tip is to add your brand name here if you don't wanna use a logo."
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
           <GeinsInput
-            v-model="checkoutSettings.branding.avatar"
-            id="avatar"
-            name="avatar"
-            label="Avatar Image URL"
-            placeholder="https://example.com/avatar.png"
-            description="Used next to the title if no logo is provided. Will be shown as 48x48px"
+            v-model="checkoutSettings.branding.icon"
+            id="icon"
+            name="icon"
+            label="Icon URL"
+            placeholder="https://example.com/icon.png"
+            description="Used next to the logo or title. Will be shown in a circle as 48x48px"
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -331,10 +356,15 @@ onMounted(() => {
         </GeinsFormGroup>
       </GeinsFormGrid>
       <div v-if="checkoutToken" class="token">
-        <p>Your Checkout Token</p>
-        <pre id="checkout-token">{{ checkoutToken }}</pre>
-        <button type="button" class="link" @click="copyToken">Copy</button>
-        <p v-if="successText" class="success">{{ successText }}</p>
+        <p class="token-title">Your Checkout Token</p>
+        <div class="token-box">
+          <pre id="checkout-token">{{ checkoutToken }}</pre>
+          <button type="button" class="link" @click="copyToken">Copy</button>
+          <p v-if="successText" class="success">{{ successText }}</p>
+          <div class="spinner" v-if="loading">
+            <div class="spinner-circle"></div>
+          </div>
+        </div>
       </div>
       <GeinsButton type="submit">Generate Checkout Token</GeinsButton>
     </GeinsFormContainer>
@@ -409,16 +439,34 @@ select:focus {
   margin-bottom: 20px;
 }
 
-.token p {
+.token-box {
+  border: 1px solid var(--vp-c-success-1);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.token-title {
   font-size: 1rem;
   color: var(--vp-c-white);
   margin-bottom: 0.5rem;
 }
 
 .token .success {
-  font-size: 0.6rem;
-  margin-top: -10px;
-  margin-bottom: 20px;
+  font-size: 0.7rem;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vp-c-bg);
+  margin: 0;
+  z-index: 10;
 }
 
 .token pre {
@@ -428,18 +476,47 @@ select:focus {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
-  border: 1px solid var(--vp-c-success-1);
-  border-radius: 6px;
-  background: var(--vp-c-bg);
-  padding: 1rem;
+  max-width: calc(100% - 60px);
+  margin: 0;
 }
 
 .link {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
   text-decoration: underline;
   text-underline-offset: 3px;
-  text-align: center;
+  padding-left: 20px;
+  padding-right: 10px;
+  background: var(--vp-c-bg);
+}
+
+.spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  margin-bottom: 20px;
+  height: 100%;
+  background: var(--vp-c-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.spinner-circle {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--vp-c-white);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
