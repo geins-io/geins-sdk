@@ -39,7 +39,7 @@ const checkoutSettings = ref<CheckoutSettings>({
       cardForeground: '#131313',
       accent: '#131313',
       accentForeground: '#ffffff',
-      border: '#e6e6e6',
+      border: '#ffffff',
       sale: '#b70000',
     },
   },
