@@ -41,7 +41,7 @@ export interface GeinsOMSInterface {
    * @param args.availablePaymentMethodIds - The list of available payment method IDs (optional).
    * @param args.availableShippingMethodIds - The list of available shipping method IDs (optional).
    * @param args.redirectUrls - The redirect URLs (optional).
-   * @param args.checkoutStyle - The checkout style (optional).
+   * @param args.branding - The checkout branding (optional).
    * @param args.geinsSettings - The Geins settings (optional).
    * @returns A promise that resolves to the generated token or undefined.
    */
@@ -101,13 +101,13 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
       cartId: options?.cartId ?? this.cart.id,
       user: options?.user,
       isCartEditable: options?.isCartEditable ?? false,
-      cloneCart: options?.cloneCart ?? true,
+      copyCart: options?.copyCart ?? true,
       selectedPaymentMethodId: options?.selectedPaymentMethodId ?? this._omsSettings.defaultPaymentId ?? 0,
       selectedShippingMethodId: options?.selectedShippingMethodId ?? this._omsSettings.defaultShippingId ?? 0,
       availablePaymentMethodIds: options?.availablePaymentMethodIds,
       availableShippingMethodIds: options?.availableShippingMethodIds,
       redirectUrls: options?.redirectUrls ?? this._omsSettings.checkoutUrls ?? undefined,
-      checkoutStyle: options?.checkoutStyle,
+      branding: options?.branding,
       geinsSettings: this._geinsSettings,
     } as GenerateCheckoutTokenOptions;
 
@@ -129,7 +129,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
    * const payload = await GeinsOMS.parseCheckoutToken(token);
    * ```
    */
-  public static async parseCheckoutToken(token: string): Promise<CheckoutTokenPayload> {
+  static async parseCheckoutToken(token: string): Promise<CheckoutTokenPayload> {
     const payload = await CheckoutService.parseToken(token);
     if (!payload) {
       throw new Error('Invalid token: Unable to parse token.');

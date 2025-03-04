@@ -12,7 +12,7 @@ export class Channel {
   private channelService: ChannelService | undefined;
   private cache: SimpleCache<GeinsChannelTypeType>;
   private store: ChannelStore | undefined;
-  private _apiClient!: () => MerchantApiClient;
+  private _apiClient!: () => MerchantApiClient | undefined;
 
   constructor(private geinsSettings: GeinsSettings) {
     if (!geinsSettings.channel) {
@@ -57,6 +57,17 @@ export class Channel {
       instance = new Channel(geinsSettings);
     }
     return instance;
+  }
+
+  public static destroy() {
+    if (!instance) {
+      return;
+    }
+    instance.cache.clear();
+    instance.store?.destroy();
+    instance.channelService = undefined;
+    instance._apiClient = () => undefined;
+    instance = null;
   }
 
   setKey(key: string, value: string): void {

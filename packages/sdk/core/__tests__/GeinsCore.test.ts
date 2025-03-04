@@ -1,6 +1,4 @@
-// packages/sdk/core/__tests__/GeinsCore.test.ts
-
-import { GeinsCore } from '../src/geinsCore';
+import { GeinsCore } from '@geins/core';
 import { GeinsSettings } from '@geins/types';
 import { validSettings } from '../../../../test/globalSettings';
 

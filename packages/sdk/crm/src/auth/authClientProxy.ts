@@ -1,7 +1,6 @@
 import { AUTH_HEADERS } from '@geins/core';
-import type { AuthResponse, AuthCredentials } from '@geins/types';
+import type { AuthCredentials, AuthResponse } from '@geins/types';
 import { AuthClient } from './authClient';
-import { AuthService } from './authService';
 
 export class AuthClientProxy extends AuthClient {
   private _authEndpointApp: string;
@@ -9,6 +8,10 @@ export class AuthClientProxy extends AuthClient {
   constructor(authEndpointApp: string) {
     super();
     this._authEndpointApp = authEndpointApp;
+  }
+
+  destroy(): void {
+    this._authEndpointApp = '';
   }
 
   private async request<T>(path: string, options: RequestInit): Promise<T> {

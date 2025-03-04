@@ -1,5 +1,15 @@
 # @geins/cms
 
+## 0.4.2-canary-f89b9fa822bf743ef392241754ecc42bf3175823
+
+### Patch Changes
+
+- ff99952: patch eventservice
+- f89b9fa: Replaced node-cache and added destory() to baseService
+- Updated dependencies [ff99952]
+- Updated dependencies [f89b9fa]
+  - @geins/core@0.4.2-canary-f89b9fa822bf743ef392241754ecc42bf3175823
+
 ## 0.4.1
 
 ### Patch Changes

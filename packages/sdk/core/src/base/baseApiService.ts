@@ -17,6 +17,10 @@ export abstract class BaseApiService {
     this._channelId = `${geinsSettings.channel}|${geinsSettings.tld}`;
   }
 
+  destroy(): void {
+    this._apiClient = undefined as any;
+  }
+
   protected createVariables(vars: any) {
     const variables = { ...vars };
 

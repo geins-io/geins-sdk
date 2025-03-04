@@ -2,7 +2,7 @@ import type { CheckoutRedirectsType } from '@geins/core';
 import { CHECKOUT_PARAMETERS, extractParametersFromUrl } from '@geins/core';
 
 export class UrlProcessor {
-  generateParameters(currentParameters: Map<string, string>): Map<string, string> {
+  static generateParameters(currentParameters: Map<string, string>): Map<string, string> {
     const mergedMap = new Map(CHECKOUT_PARAMETERS);
     Array.from(currentParameters.entries()).forEach(([key, value]) => {
       mergedMap.set(key, value);
@@ -16,7 +16,7 @@ export class UrlProcessor {
     Object.keys(processedUrls).forEach((key) => {
       if (key === 'success' && processedUrls[key]) {
         const { url, params } = extractParametersFromUrl(processedUrls[key]);
-        const parameters = this.generateParameters(params);
+        const parameters = UrlProcessor.generateParameters(params);
         processedUrls[key] = `${url}${this.createQueryString(parameters)}`;
       }
     });

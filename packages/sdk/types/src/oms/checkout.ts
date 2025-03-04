@@ -32,6 +32,7 @@ export type CheckoutQueryParameters = {
 
 export type CheckoutUrlsInputType = {
   termsPageUrl?: string;
+  privacyPageUrl?: string;
   redirectUrl?: string;
   checkoutPageUrl?: string;
 };
@@ -97,44 +98,28 @@ export type AddressInputType = {
 };
 
 export type CheckoutStyleType = {
+  fontSize?: string;
+  radius?: string;
+  background?: string;
+  foreground?: string;
+  card?: string;
+  cardForeground?: string;
+  accent?: string;
+  accentForeground?: string;
+  border?: string;
+  sale?: string;
+};
+
+export type CheckoutBrandingType = {
   title?: string;
-  logoUrl?: string;
-  body?: {
-    backgroundColor?: string;
-    textColor?: string;
-    fontSize?: string;
-  };
-  topbar?: {
-    visible?: boolean;
-    backgroundColor?: string;
-    textColor?: string;
-  };
-  cards?: {
-    backgroundColor?: string;
-    textColor?: string;
-    fontSize?: string;
-    borderRadius?: string;
-  };
-  text?: {
-    backgroundColor?: string;
-    textColor?: string;
-    fontSize?: string;
-  };
-  buttons?: {
-    backgroundColor?: string;
-    textColor?: string;
-    fontSize?: string;
-  };
-  validation?: {
-    backgroundColor?: string;
-    textColor?: string;
-    fontSize?: string;
-  };
+  icon?: string;
+  logo?: string;
+  styles?: CheckoutStyleType;
 };
 
 export type CheckoutSettings = {
   isCartEditable?: boolean;
-  cloneCart?: boolean;
+  copyCart?: boolean;
   selectedPaymentMethodId?: number;
   selectedShippingMethodId?: number;
   availablePaymentMethodIds?: number[];
@@ -143,7 +128,7 @@ export type CheckoutSettings = {
   billingAddress?: AddressInputType;
   shippingAddress?: AddressInputType;
   redirectUrls?: CheckoutRedirectsType;
-  style?: CheckoutStyleType;
+  branding?: CheckoutBrandingType;
 };
 
 export type CheckoutTokenPayload = {
@@ -158,13 +143,13 @@ export type GenerateCheckoutTokenOptions = {
   customerType?: CustomerType;
   user?: GeinsUserType;
   isCartEditable?: boolean;
-  cloneCart?: boolean;
+  copyCart?: boolean;
   selectedPaymentMethodId?: number;
   selectedShippingMethodId?: number;
   availablePaymentMethodIds?: number[];
   availableShippingMethodIds?: number[];
   redirectUrls?: CheckoutRedirectsType;
-  checkoutStyle?: CheckoutStyleType;
+  branding?: CheckoutBrandingType;
   geinsSettings?: GeinsSettings;
 };
 

@@ -1,7 +1,7 @@
+import { GeinsCMS } from '@geins/cms';
 import { GeinsCore } from '@geins/core';
-import { GeinsCMS } from '../src/geinsCMS';
 
-import { validSettings, cmsSettings } from '../../../../test/globalSettings';
+import { cmsSettings, validSettings } from '../../../../test/globalSettings';
 
 describe('GeinsCMS area', () => {
   let geinsCMS: GeinsCMS;
