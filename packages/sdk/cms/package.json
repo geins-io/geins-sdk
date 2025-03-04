@@ -1,6 +1,6 @@
 {
   "name": "@geins/cms",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",

@@ -1,6 +1,6 @@
 {
   "name": "@geins/crm",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@geins/eslint-config": "0.2.1",
+    "@geins/types": "*",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.0",
