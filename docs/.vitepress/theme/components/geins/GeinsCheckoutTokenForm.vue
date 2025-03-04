@@ -34,7 +34,7 @@ const checkoutSettings = ref<CheckoutSettings>({
       fontSize: '',
       radius: '',
       background: '#f7f7f7',
-      foreground: '#9c9c9c',
+      foreground: '#131313',
       card: '#ffffff',
       cardForeground: '#131313',
       accent: '#131313',
