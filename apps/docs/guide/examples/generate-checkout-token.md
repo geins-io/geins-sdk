@@ -19,7 +19,7 @@ const geinsSettings = {
   channel: 'your-channel-id', // '1'
   tld: 'your-tld', // 'com'
   locale: 'your-locale', // 'en-US'
-  market: 'your-market', // '1'
+  market: 'your-market', // 'us'
 };
 
 const geinsCore = new GeinsCore(geinsSettings);
