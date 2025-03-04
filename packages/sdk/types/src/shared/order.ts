@@ -37,8 +37,8 @@ export type PaymentOptionType = {
 
 export type CheckoutRedirectsType = {
   terms?: string;
+  privacy?: string;
   success?: string;
-  change?: string;
   cancel?: string;
   error?: string;
 };

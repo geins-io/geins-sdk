@@ -10,12 +10,12 @@ import { GeinsOMS } from '@geins/oms';
 import type { GenerateCheckoutTokenOptions } from '@geins/types';
 
 const geinsSettings = {
-  apiKey: 'your-api-key',
-  accountName: 'your-account-name',
-  channel: 'your-channel-id',
-  tld: 'your-tld',
-  locale: 'your-locale',
-  market: 'your-market',
+  apiKey: 'your-api-key', // xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  accountName: 'your-account-name', // 'name'
+  channel: 'your-channel-id', // '1'
+  tld: 'your-tld', // 'com'
+  locale: 'your-locale', // 'en-US'
+  market: 'your-market', // '1'
 };
 
 const geinsCore = new GeinsCore(geinsSettings);
@@ -32,4 +32,26 @@ window.open(`https://checkout.geins.services/${token}`);
 
 ## Generate a checkout token
 
-<CheckoutTokenGenerator />
+Follow these steps to generate a token for the checkout:
+
+### 1. Set up your Geins Settings
+
+<GeinsToggle margin-top="20px">
+    <template #trigger>
+        <GeinsStatus />
+    </template>
+    <GeinsSettingsForm />
+</GeinsToggle>
+
+### 2. Create a Cart
+
+<GeinsToggle margin-top="20px">
+    <template #trigger>
+        <GeinsStatus for="geins-cart" name="Geins cart" />
+    </template>
+    <GeinsCartForm />
+</GeinsToggle>
+
+### 3. Generate a checkout token
+
+<GeinsCheckoutTokenForm />

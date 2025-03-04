@@ -68,6 +68,10 @@ export default withMermaid({
               text: 'Quickstart',
               link: '/guide/quickstart',
             },
+            {
+              text: 'Setting up SDK Docs',
+              link: '/guide/setting-up-sdk',
+            },
           ],
         },
         {
