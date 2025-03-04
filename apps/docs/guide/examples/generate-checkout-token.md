@@ -1,8 +1,12 @@
-# Create a checkout token
+# Generate a checkout token
 
-If you want to use Geins Chekcout you will need to create a checkout token. This token is used to authenticate the user and create a new order.
+::: warning :warning: Warning
+This is a work in progress and not yet available.
+:::
 
-## Example: Create a checkout token
+If you want to use managed version of [Geins Checkout](https://github.com/geins-io/geins-checkout) you will need to create a checkout token. This token will be used by the checkout to load the cart and customer information. The token can also carry the look and feel of your brand during the checkout process.
+
+## Example: Generate a checkout token
 
 ```typescript
 import { GeinsCore } from '@geins/core';

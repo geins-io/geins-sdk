@@ -1,4 +1,4 @@
-# Setting up the SDK with your account
+# Setting up the SDK with your geins account
 
 To get the most of the Geins SDK documentation, you can use the form below to set up the SDK with your account details. This will allow you to see the SDK in action with your own data. The information you provide will be stored in your browser's local storage for future reference.
 

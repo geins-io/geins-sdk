@@ -85,6 +85,10 @@ export default withMermaid({
               text: 'Using custom queries',
               link: '/guide/examples/graphql-client',
             },
+            {
+              text: 'Generate checkout token',
+              link: '/guide/examples/generate-checkout-token',
+            },
             /* {
               text: 'Routing',
               link: '/guide/examples/routing',
