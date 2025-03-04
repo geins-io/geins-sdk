@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { defineClientComponent } from 'vitepress';
-const GeinsCore = defineClientComponent(() => {
-  return import('@geins/core');
-});
-
+import { GeinsCore } from '@geins/core';
 import { GeinsSettings } from '@geins/types';
 import { ref, onMounted } from 'vue';
 import { getStoredSettings, storeSettings, type GeinsStorage, GeinsStorageParam } from '../../utils';
