@@ -1,5 +1,11 @@
 # @geins/core
 
+## 0.4.3
+
+### Patch Changes
+
+- b28b7d7: Added interactivity to docs
+
 ## 0.4.2-canary-f89b9fa822bf743ef392241754ecc42bf3175823
 
 ### Patch Changes
