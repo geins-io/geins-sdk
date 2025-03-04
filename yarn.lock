@@ -9896,9 +9896,9 @@ ofetch@^1.4.1:
     ufo "^1.5.4"
 
 ohash@^1.1.4:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/ohash/-/ohash-1.1.5.tgz#4358eb72929901a85ffffa12d6d899532b126237"
-  integrity sha512-AtXrG/lMFjPBWj3uhWYFwYVZQqutPYRsv6nnPLTipnC+gJuMFc+WFzf/jx+94Ebray1vxfQfEFDtpIpppOe4xQ==
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/ohash/-/ohash-1.1.6.tgz#9ff7b0271d7076290794537d68ec2b40a60d133e"
+  integrity sha512-TBu7PtV8YkAZn0tSxobKY2n2aAQva936lhRrj6957aDaCf9IEtqsKbgMzXE/F/sjqYOwmrukeORHNLe5glk7Cg==
 
 ohash@^2.0.4, ohash@^2.0.5, ohash@^2.0.9:
   version "2.0.10"
