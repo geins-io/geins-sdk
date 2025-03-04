@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { GeinsCore } from '@geins/core';
-import { GeinsOMS } from '@geins/oms';
+import { defineClientComponent } from 'vitepress';
+const GeinsCore = defineClientComponent(() => {
+  return import('@geins/core');
+});
+const GeinsOMS = defineClientComponent(() => {
+  return import('@geins/oms');
+});
+
 import { ref, onMounted } from 'vue';
 import {
   getStoredSettings,
@@ -16,8 +22,8 @@ const cart = ref<GeinsStorageCart>({
   skus: [],
 });
 
-let geinsCore: GeinsCore | null = null;
-let geinsOMS: GeinsOMS | null = null;
+let geinsCore: any | null = null;
+let geinsOMS: any | null = null;
 
 const addItemsToCart = async () => {
   try {
