@@ -15,16 +15,6 @@ jobs:
           submodules: true
           lfs: false
 
-      # Step 2: Set up Node.js environment
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20' # Adjust to your Node.js version
-
-      # Step 3: Install dependencies
-      - name: Install dependencies
-        run: yarn install
-
       # Step 6: Build and Deploy to Azure
       - name: Build And Deploy
         id: builddeploy
