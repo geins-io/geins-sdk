@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineEmits, watch, ref } from 'vue';
+import { watch, ref } from 'vue';
 
 const props = defineProps<{
   label: string;
