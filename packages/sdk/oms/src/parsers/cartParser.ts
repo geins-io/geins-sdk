@@ -9,7 +9,7 @@ import type {
   ProductPackageCartItemType,
 } from '@geins/types';
 import { ItemType } from '@geins/types';
-import { parsePrice } from './sharedParsers';
+import { parseMoneyCurrencyString, parsePrice } from './sharedParsers';
 
 export function groupCartItems(data: CartItemType[], locale: string): CartItemType[] {
   const items: CartItemType[] = [];
@@ -289,6 +289,8 @@ function parseCartSummary(data: any, locale: string): CartSummaryType {
     };
   }
 
+  const currencyCode = data.total?.currency?.code || '';
+
   return {
     total: parsePrice(data.total, locale),
     subTotal: parsePrice(data.subTotal, locale),
@@ -305,22 +307,29 @@ function parseCartSummary(data: any, locale: string): CartSummaryType {
     },
     balance: {
       pending: data.balance?.pending || 0,
-      pendingFormatted: data.balance?.pendingFormatted || '',
+      pendingFormatted: parseMoneyCurrencyString(data.balance?.pendingFormatted, locale, currencyCode),
       totalSellingPriceExBalanceExVat: data.balance?.totalSellingPriceExBalanceExVat || 0,
       totalSellingPriceExBalanceIncVat: data.balance?.totalSellingPriceExBalanceIncVat || 0,
-      totalSellingPriceExBalanceIncVatFormatted:
-        data.balance?.totalSellingPriceExBalanceIncVatFormatted || '',
+      totalSellingPriceExBalanceIncVatFormatted: parseMoneyCurrencyString(
+        data.balance?.totalSellingPriceExBalanceIncVat,
+        locale,
+        currencyCode,
+      ),
     },
     fixedAmountDiscountIncVat: data.fixedAmountDiscountIncVat || 0,
     fixedAmountDiscountExVat: data.fixedAmountDiscountExVat || 0,
     shipping: {
       id: data.shipping?.id || 0,
       amountLeftToFreeShipping: data.shipping?.amountLeftToFreeShipping || 0,
-      amountLeftToFreeShippingFormatted: data.shipping?.amountLeftToFreeShippingFormatted || '',
+      amountLeftToFreeShippingFormatted: parseMoneyCurrencyString(
+        data.shipping?.amountLeftToFreeShipping,
+        locale,
+        currencyCode,
+      ),
       feeIncVat: data.shipping?.feeIncVat || 0,
       feeExVat: data.shipping?.feeExVat || 0,
-      feeExVatFormatted: data.shipping?.feeExVatFormatted || '',
-      feeIncVatFormatted: data.shipping?.feeIncVatFormatted || '',
+      feeExVatFormatted: parseMoneyCurrencyString(data.shipping?.feeExVat, locale, currencyCode),
+      feeIncVatFormatted: parseMoneyCurrencyString(data.shipping?.feeIncVat, locale, currencyCode),
       isDefault: data.shipping?.isDefault || false,
       isSelected: data.shipping?.isSelected || false,
     },

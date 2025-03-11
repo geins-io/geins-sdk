@@ -84,6 +84,8 @@ const generateToken = async () => {
   }
   try {
     loading.value = true;
+    console.log('🚀 ~ generateToken ~ payload.value:', payload.value);
+
     checkoutToken.value = await geinsOMS.createCheckoutToken(payload.value);
     const obj = {
       token: checkoutToken.value,
@@ -105,6 +107,16 @@ const copyToken = () => {
   setTimeout(() => {
     successText.value = '';
   }, 3000);
+};
+
+const parseToken = async () => {
+  const settings = await GeinsOMS.parseCheckoutToken(checkoutToken.value);
+  cartId.value = settings.cartId;
+  checkoutSettings.value = {
+    ...checkoutSettings.value,
+    ...settings.checkoutSettings,
+  };
+  console.log('🚀 ~ parseToken ~ checkoutSettings.value:', checkoutSettings.value);
 };
 
 onMounted(() => {
@@ -132,6 +144,14 @@ onMounted(() => {
           </div>
         </div>
       </div>
+      <GeinsInput
+        v-model="checkoutToken"
+        id="checkout-token"
+        name="checkout-token"
+        label="Checkout Token"
+        placeholder="Generate Checkout Token above"
+        @input="parseToken"
+      />
       <GeinsFormGrid>
         <GeinsFormGroup row-size="full" class="cart-id-group">
           <GeinsInput
@@ -167,8 +187,8 @@ onMounted(() => {
           <div class="select">
             <select id="customerType" v-model="checkoutSettings.customerType">
               <option value="" selected>Select type</option>
-              <option value="PERSON">D2C</option>
-              <option value="COMPANY">B2B</option>
+              <option value="PERSON">Individual</option>
+              <option value="ORGANIZATION">Business</option>
             </select>
           </div>
         </GeinsFormGroup>
@@ -361,9 +381,7 @@ onMounted(() => {
           <pre id="checkout-token">{{ checkoutToken }}</pre>
           <button type="button" class="link" @click="copyToken">Copy</button>
           <p v-if="successText" class="success">{{ successText }}</p>
-          <div class="spinner" v-if="loading">
-            <div class="spinner-circle"></div>
-          </div>
+          <GeinsLoading v-if="loading" />
         </div>
       </div>
       <GeinsButton type="submit">Generate Checkout Token</GeinsButton>
@@ -490,33 +508,5 @@ select:focus {
   padding-left: 20px;
   padding-right: 10px;
   background: var(--vp-c-bg);
-}
-
-.spinner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--vp-c-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.spinner-circle {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--vp-c-white);
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>
