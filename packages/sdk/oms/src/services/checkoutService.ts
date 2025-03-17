@@ -11,12 +11,14 @@ import type {
   GenerateCheckoutTokenOptions,
   GetCheckoutOptions,
   OMSSettings,
+  ValidateOrderConditionsArgs,
+  ValidateOrderConditionsResponseType,
   ValidateOrderCreationResponseType,
 } from '@geins/core';
 
 import { GeinsOMS } from '../geinsOMS';
 import { queries } from '../graphql';
-import { parseCheckout, parseCheckoutSummary, parseOrder, parseValidateOrder } from '../parsers';
+import { parseCheckout, parseCheckoutSummary, parseOrder, parseValidateOrderConditions } from '../parsers';
 import { CheckoutDataResolver, UrlProcessor } from '../util';
 
 export interface CheckoutServiceInterface {
@@ -43,6 +45,17 @@ export interface CheckoutServiceInterface {
    * @returns A promise that resolves to the validation response or undefined.
    */
   validate(args: CreateOrderOptions): Promise<ValidateOrderCreationResponseType | undefined>;
+
+  /**
+   * Validates the order conditions with the given cart ID and email.
+   * Validations include checking that the cart has stock and that the customer is not blocked.
+   *
+   * @param {ValidateOrderConditionsArgs} args - The arguments for validating the order conditions.
+   * @param {string} args.cartId - The ID of the cart to validate.
+   * @param {string} [args.email] - The email of the customer.
+   * @returns A promise that resolves to the validation response or undefined.
+   */
+  validateOrder(args: ValidateOrderConditionsArgs): Promise<ValidateOrderConditionsResponseType | undefined>;
 
   /**
    * Creates a new order based on the cart ID and checkout information.
@@ -163,7 +176,41 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
 
     try {
       const data = await this.runQuery(options);
-      return parseValidateOrder(data);
+      return parseValidateOrderConditions(data);
+    } catch (e) {
+      throw new Error('Error validating order');
+    }
+  }
+
+  async validateOrder(
+    args: ValidateOrderConditionsArgs,
+  ): Promise<ValidateOrderConditionsResponseType | undefined> {
+    const resolvedArgs = { ...args };
+
+    if (!resolvedArgs.cartId) {
+      if (this._parent?.cart.id) {
+        resolvedArgs.cartId = this._parent?.cart.id;
+      }
+      if (!resolvedArgs.cartId) {
+        throw new Error('Missing cartId');
+      }
+    }
+
+    const variables = {
+      cartId: resolvedArgs.cartId,
+      email: resolvedArgs.email,
+      marketId: this._geinsSettings.market,
+    };
+
+    const options: any = {
+      query: queries.checkoutValidate,
+      variables: this.createVariables(variables),
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+    };
+
+    try {
+      const data = await this.runQuery(options);
+      return parseValidateOrderConditions(data);
     } catch (e) {
       throw new Error('Error validating order');
     }

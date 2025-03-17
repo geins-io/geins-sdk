@@ -63,6 +63,11 @@ export type GetCheckoutOptions = {
   checkoutOptions?: CheckoutInputType;
 };
 
+export type ValidateOrderConditionsArgs = {
+  cartId: string;
+  email?: string;
+};
+
 export type CreateOrderOptions = {
   cartId?: string;
   checkoutOptions: CheckoutInputType;

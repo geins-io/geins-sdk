@@ -1,0 +1,18 @@
+query validateOrderConditions(
+  $cartId: String!
+  $email: String
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
+  validateOrderConditions(
+    cartId: $cartId
+    email: $email
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $marketId
+  ) {
+    isValid
+    message
+  }
+}

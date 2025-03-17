@@ -1,3 +1,5 @@
+import { GeinsPaymentType } from '../generated';
+
 declare enum PaymentOptionCheckoutType {
   STANDARD = 'STANDARD',
   EXTERNAL = 'EXTERNAL',
@@ -31,7 +33,7 @@ export type PaymentOptionType = {
   isDefault: boolean;
   isSelected: boolean;
   checkoutType?: PaymentOptionCheckoutType;
-  paymentType?: string;
+  paymentType?: GeinsPaymentType;
   paymentData?: string;
 };
 

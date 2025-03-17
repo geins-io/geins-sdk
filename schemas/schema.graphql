@@ -519,8 +519,7 @@ type ProductType {
   canonicalUrl: String
 
   # Alternative full paths to the product
-  alternativeCanonicalUrls: [String]
-    @deprecated(reason: "Use AlternativeUrls instead.")
+  alternativeCanonicalUrls: [String] @deprecated(reason: "Use AlternativeUrls instead.")
 
   # Alternative urls to the product
   alternativeUrls: [AlternativeUrlType]
@@ -688,12 +687,10 @@ type StockType {
   static: Int
 
   # Incoming date
-  incoming: DateTime
-    @deprecated(reason: "Use SkuType.Incoming or VariantType.Incoming instead")
+  incoming: DateTime @deprecated(reason: "Use SkuType.Incoming or VariantType.Incoming instead")
 
   # Shelf
-  shelf: String
-    @deprecated(reason: "Use SkuType.Shelf or VariantType.Shelf instead")
+  shelf: String @deprecated(reason: "Use SkuType.Shelf or VariantType.Shelf instead")
 }
 
 # The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
@@ -723,8 +720,7 @@ type BrandType {
   canonicalUrl: String
 
   # Alternative full paths to the brand
-  alternativeCanonicalUrls: [String]
-    @deprecated(reason: "Use AlternativeUrls instead.")
+  alternativeCanonicalUrls: [String] @deprecated(reason: "Use AlternativeUrls instead.")
 
   # Alternative urls to the brand
   alternativeUrls: [AlternativeUrlType]
@@ -754,8 +750,7 @@ type CategoryType {
   canonicalUrl: String!
 
   # Alternative full paths to the category
-  alternativeCanonicalUrls: [String]
-    @deprecated(reason: "Use AlternativeUrls instead.")
+  alternativeCanonicalUrls: [String] @deprecated(reason: "Use AlternativeUrls instead.")
 
   # Alternative urls to the category
   alternativeUrls: [AlternativeUrlType]
@@ -1454,8 +1449,7 @@ type RelatedProductType {
   unitPrice: PriceType
 
   # Relation type
-  relation: ProductRelation
-    @deprecated(reason: "Use RelatedProductType.RelationType instead.")
+  relation: ProductRelation @deprecated(reason: "Use RelatedProductType.RelationType instead.")
 
   # Relation type
   relationType: String!
@@ -1467,8 +1461,7 @@ type RelatedProductType {
   secondaryImage: String
 
   # List of product images
-  images: [String]
-    @deprecated(reason: "Use RelatedProductType.ProductImages instead.")
+  images: [String] @deprecated(reason: "Use RelatedProductType.ProductImages instead.")
 
   # List of product images and their related properties
   productImages: [ProductImageType]
@@ -1510,8 +1503,7 @@ type BrandListType {
   canonicalUrl: String
 
   # Alternative full paths to the brand
-  alternativeCanonicalUrls: [String]
-    @deprecated(reason: "Use AlternativeUrls instead.")
+  alternativeCanonicalUrls: [String] @deprecated(reason: "Use AlternativeUrls instead.")
 
   # Alternative urls to the brand
   alternativeUrls: [AlternativeUrlType]
@@ -2017,8 +2009,7 @@ type PageInfoType {
   canonicalUrl: String
 
   # Alternative full paths to the page
-  alternativeCanonicalUrls: [String]
-    @deprecated(reason: "Use AlternativeUrls instead.")
+  alternativeCanonicalUrls: [String] @deprecated(reason: "Use AlternativeUrls instead.")
 
   # Alternative urls to the page
   alternativeUrls: [AlternativeUrlType]
@@ -2398,6 +2389,11 @@ type ProductReviewType {
 
   # Author of the review
   author: String!
+}
+
+type ValidateOrderConditionsResponseType {
+  isValid: Boolean!
+  message: String
 }
 
 type ValidateOrderCreationResponseType {
