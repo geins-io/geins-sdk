@@ -32,7 +32,6 @@ export type CheckoutQueryParameters = {
 
 export type CheckoutUrlsInputType = {
   termsPageUrl?: string;
-  privacyPageUrl?: string;
   redirectUrl?: string;
   checkoutPageUrl?: string;
 };
@@ -103,7 +102,7 @@ export type AddressInputType = {
 };
 
 export type CheckoutStyleType = {
-  fontSize?: string;
+  logoSize?: string;
   radius?: string;
   background?: string;
   foreground?: string;
@@ -113,6 +112,7 @@ export type CheckoutStyleType = {
   accentForeground?: string;
   border?: string;
   sale?: string;
+  error?: string;
 };
 
 export type CheckoutBrandingType = {

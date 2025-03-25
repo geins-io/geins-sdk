@@ -2,6 +2,7 @@
 import { GeinsCore } from '@geins/core';
 import { GeinsOMS } from '@geins/oms';
 import type { GenerateCheckoutTokenOptions, CheckoutSettings, GeinsSettings } from '@geins/types';
+import { GeinsPaymentType } from '@geins/types';
 import { ref, watch, computed, onMounted } from 'vue';
 import {
   cartValid,
@@ -15,6 +16,30 @@ import GeinsFormGroup from './GeinsFormGroup.vue';
 const checkoutToken = ref();
 const validationError = ref('');
 const cartId = ref('');
+
+enum LogoSize {
+  xs = '1.5rem',
+  sm = '2rem',
+  md = '2.5rem',
+  lg = '3rem',
+}
+
+const logoSizeOptions = [
+  { size: LogoSize.xs, label: 'XS (24px height)' },
+  { size: LogoSize.sm, label: 'S (32px height)' },
+  { size: LogoSize.md, label: 'M (40px height)' },
+  { size: LogoSize.lg, label: 'L (48px height)' },
+];
+
+const paymentMethodOptions = [
+  { id: 18, label: 'Manual Invoice' },
+  { id: 23, label: 'Klarna Checkout' },
+  { id: 24, label: 'Svea Checkout' },
+  { id: 25, label: 'Walley Checkout' },
+  { id: 26, label: 'Avarda Checkout' },
+  { id: 27, label: 'Geins Pay' },
+];
+
 const checkoutSettings = ref<CheckoutSettings>({
   selectedPaymentMethodId: undefined,
   selectedShippingMethodId: undefined,
@@ -31,7 +56,7 @@ const checkoutSettings = ref<CheckoutSettings>({
     icon: '',
     logo: '',
     styles: {
-      fontSize: '',
+      logoSize: LogoSize.sm,
       radius: '',
       background: '#f7f7f7',
       foreground: '#131313',
@@ -39,8 +64,9 @@ const checkoutSettings = ref<CheckoutSettings>({
       cardForeground: '#131313',
       accent: '#131313',
       accentForeground: '#ffffff',
-      border: '#ffffff',
-      sale: '#b70000',
+      border: '#ebebeb',
+      sale: '#11890c',
+      error: '#b80000',
     },
   },
 });
@@ -167,12 +193,15 @@ onMounted(() => {
       <h3>Checkout Settings</h3>
       <GeinsFormGrid>
         <GeinsFormGroup row-size="half">
-          <GeinsInput
-            v-model.number="checkoutSettings.selectedPaymentMethodId"
-            id="payment-method-id"
-            name="payment-method-id"
-            label="Payment Method ID"
-          />
+          <label for="payment-method-id">Payment Method</label>
+          <div class="select">
+            <select v-model.number="checkoutSettings.selectedPaymentMethodId">
+              <option value="" selected>Select payment method</option>
+              <option v-for="option in paymentMethodOptions" :value="option.id" :key="option.id">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
           <GeinsInput
@@ -227,6 +256,16 @@ onMounted(() => {
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
           <GeinsInput
+            v-model="checkoutSettings.redirectUrls.continue"
+            id="continue-url"
+            name="continue-url"
+            label="Continue Url"
+            placeholder="https://example.com/continue"
+            description="If supplied, will show a button to continue shopping on confirmation page."
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsInput
             v-model="checkoutSettings.redirectUrls.terms"
             id="terms-url"
             name="terms-url"
@@ -275,18 +314,20 @@ onMounted(() => {
             name="logo"
             label="Logo URL"
             placeholder="https://example.com/logo.svg"
-            description="Url for your logo. Will be shown 48px high with auto width."
+            description="Url for your logo. Choose size for your logo below."
           />
         </GeinsFormGroup>
         <GeinsFormGroup v-if="checkoutSettings.branding.styles" row-size="half">
-          <GeinsInput
-            v-model="checkoutSettings.branding.styles.fontSize"
-            id="brand-font-size"
-            name="brand-font-size"
-            label="Font Size"
-            placeholder="16px"
-            description="Font size of the body text"
-          />
+          <GeinsFormGroup row-size="full">
+            <label for="logoSize">Logo Size</label>
+            <div class="select">
+              <select id="logoSize" v-model="checkoutSettings.branding.styles.logoSize">
+                <option v-for="option in logoSizeOptions" :value="option.size" :key="option.size">
+                  {{ option.label }}
+                </option>
+              </select>
+            </div>
+          </GeinsFormGroup>
         </GeinsFormGroup>
         <GeinsFormGroup v-if="checkoutSettings.branding.styles" row-size="half">
           <GeinsInput
@@ -294,8 +335,8 @@ onMounted(() => {
             id="border-radius"
             name="border-radius"
             label="Border Radius"
-            placeholder="5px"
-            description="Radius of UI elements in pixels"
+            placeholder="5px / 0.5rem"
+            description="Radius of UI elements"
           />
         </GeinsFormGroup>
       </GeinsFormGrid>
@@ -372,6 +413,15 @@ onMounted(() => {
             name="brand-sale"
             label="Sale Color"
             description="Color used for sale prices in the cart"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.error"
+            id="brand-error"
+            name="brand-error"
+            label="Error Color"
+            description="Color used for error messages"
           />
         </GeinsFormGroup>
       </GeinsFormGrid>

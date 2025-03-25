@@ -91,7 +91,6 @@ export class CheckoutDataResolver {
       redirectUrl: 'success',
       checkoutPageUrl: 'cancel',
       termsPageUrl: 'terms',
-      privacyPageUrl: 'privacy',
     };
 
     return Object.entries(checkoutUrls).reduce((acc, [key, value]) => {
@@ -118,9 +117,10 @@ export class CheckoutDataResolver {
     const mapping: Record<keyof CheckoutRedirectsType, keyof CheckoutUrlsInputType> = {
       success: 'redirectUrl',
       terms: 'termsPageUrl',
+      privacy: 'termsPageUrl',
       cancel: 'checkoutPageUrl',
+      continue: 'checkoutPageUrl',
       error: 'checkoutPageUrl',
-      privacy: 'privacyPageUrl',
     };
 
     return Object.entries(redirects).reduce((acc, [key, value]) => {

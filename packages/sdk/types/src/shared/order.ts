@@ -42,5 +42,6 @@ export type CheckoutRedirectsType = {
   privacy?: string;
   success?: string;
   cancel?: string;
+  continue?: string;
   error?: string;
 };
