@@ -103,7 +103,14 @@ export class CheckoutDataResolver {
     if (!redirects) return {};
 
     const defaultUrls = this._settings.checkoutUrls || {};
-    const keys: (keyof CheckoutRedirectsType)[] = ['terms', 'success', 'error', 'cancel'];
+    const keys: (keyof CheckoutRedirectsType)[] = [
+      'terms',
+      'success',
+      'error',
+      'cancel',
+      'continue',
+      'privacy',
+    ];
 
     return keys.reduce((acc, key) => {
       if (redirects[key] || defaultUrls[key]) acc[key] = redirects[key] || defaultUrls[key]!;
