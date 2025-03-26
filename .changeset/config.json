@@ -8,7 +8,8 @@
       "@geins/core",
       "@geins/cms",
       "@geins/crm",
-      "@geins/oms"
+      "@geins/oms",
+      "@geins/pim"
     ]
   ],
   "linked": [],

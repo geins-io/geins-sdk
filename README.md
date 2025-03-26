@@ -4,6 +4,7 @@
 [![cms-badge-version]][cms-npm-url]
 [![crm-badge-version]][crm-npm-url]
 [![oms-badge-version]][oms-npm-url]
+[![pim-badge-version]][pim-npm-url]
 
 # Geins SDK
 
@@ -33,6 +34,7 @@ This repository is a monorepo. The main directories are:
 - `@geins/cms`: CMS-specific features, including menus and content areas.
 - `@geins/crm`: CRM features like user authentication and profile management.
 - `@geins/oms`: Order management features like cart and checkout.
+- `@geins/pim`: PIM features for product information management.
 - `@geins/types`: Type definitions for Geins SDK.
 
 ### Documentation
@@ -55,3 +57,5 @@ Licensed under the MIT License. Check the [LICENSE](LICENSE.md) file for details
 [crm-badge-version]: https://img.shields.io/npm/v/%40geins%2Fcrm?style=for-the-badge&label=@geins/crm
 [oms-npm-url]: https://www.npmjs.com/package/@geins/oms
 [oms-badge-version]: https://img.shields.io/npm/v/%40geins%2Fcrm?style=for-the-badge&label=@geins/oms
+[pim-npm-url]: https://www.npmjs.com/package/@geins/pim
+[pim-badge-version]: https://img.shields.io/npm/v/%40geins%2Fcrm?style=for-the-badge&label=@geins/pim

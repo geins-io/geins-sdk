@@ -7,6 +7,7 @@
 
 # apps
 apps/*/dist
+apps/nuxt-app
 
 # node / nuxt / vite / rollup
 .bin

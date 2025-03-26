@@ -1,0 +1,4 @@
+fragment Brand on BrandType {
+  id
+  name
+}

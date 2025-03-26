@@ -11,6 +11,7 @@ export default {
     '^@geins/cms$': '<rootDir>/packages/sdk/cms/src',
     '^@geins/crm$': '<rootDir>/packages/sdk/crm/src',
     '^@geins/oms$': '<rootDir>/packages/sdk/oms/src',
+    '^@geins/pim$': '<rootDir>/packages/sdk/pim/src',
   },
   transform: {
     '^.+\\.[tj]sx?$': [
