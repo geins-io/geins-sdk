@@ -248,7 +248,7 @@ export function parseValidateOrder(data: any): ValidateOrderCreationResponseType
 }
 
 export function parseValidateOrderConditions(data: any): ValidateOrderConditionsResponseType | undefined {
-  const validateOrder = findObjectWithProperty(data, '__typename', 'ValidateOrderConditionsResponseType');
+  const validateOrder = findObjectWithProperty(data, '__typename', 'ValidateOrderCreationResponseType');
   if (!validateOrder) {
     return undefined;
   }
