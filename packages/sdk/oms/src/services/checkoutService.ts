@@ -131,6 +131,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
           shippingId: data.shippingMethodId,
           ...data.checkoutOptions,
         },
+        checkoutMarketId: this._geinsSettings.market,
       };
 
       const options = {
