@@ -170,12 +170,14 @@ onMounted(() => {
           </div>
         </div>
       </div>
+      <p class="token-text">Already have a token and want to edit it? Paste it below:</p>
       <GeinsInput
         v-model="checkoutToken"
         id="checkout-token"
         name="checkout-token"
-        label="Checkout Token"
-        placeholder="Generate Checkout Token above"
+        label=""
+        placeholder="Paste token here"
+        class="token-input"
         @input="parseToken"
       />
       <GeinsFormGrid>
@@ -498,6 +500,16 @@ select:focus {
 .desc {
   font-size: 0.9rem;
   color: var(--vp-c-text-3);
+  margin-bottom: 20px;
+}
+
+.token-text {
+  font-size: 0.9rem;
+  margin-bottom: 0px;
+  text-align: center;
+}
+
+.token-input {
   margin-bottom: 20px;
 }
 
