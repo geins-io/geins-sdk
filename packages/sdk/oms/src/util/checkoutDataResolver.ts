@@ -12,12 +12,6 @@ import { CustomerType } from '@geins/core';
 import { GeinsOMS } from '../geinsOMS';
 import { CheckoutError } from '../util/checkoutError';
 import { UrlProcessor } from '../util/urlProcessor';
-export interface CheckoutData {
-  cartId: string;
-  paymentMethodId: number;
-  shippingMethodId: number;
-  checkoutOptions: CheckoutInputType;
-}
 
 export class CheckoutDataResolver {
   private readonly urlProcessor;
@@ -47,13 +41,14 @@ export class CheckoutDataResolver {
     return resolvedArgs;
   }
 
-  resolveGetCheckoutOptions(args?: GetCheckoutOptions): CheckoutData {
+  resolveGetCheckoutOptions(args?: GetCheckoutOptions): GetCheckoutOptions {
     return {
       cartId: this.resolveCartId(args?.cartId),
       ...this.resolvePaymentAndShipping(args),
       checkoutOptions: {
         ...this.resolveCheckoutInputOptions(args?.checkoutOptions),
       },
+      checkoutMarketId: args?.checkoutMarketId,
     };
   }
 

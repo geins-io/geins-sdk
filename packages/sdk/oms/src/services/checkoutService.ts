@@ -131,7 +131,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
           shippingId: data.shippingMethodId,
           ...data.checkoutOptions,
         },
-        checkoutMarketId: this._geinsSettings.market,
+        marketId: data.checkoutMarketId || this._geinsSettings.market,
       };
 
       const options = {
@@ -166,7 +166,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     const variables = {
       cartId: resolvedArgs.cartId,
       checkout: resolvedArgs.checkoutOptions,
-      marketId: this._geinsSettings.market,
+      marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
     };
 
     const options: any = {
@@ -236,6 +236,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     const variables = {
       cartId: resolvedArgs.cartId,
       checkout: resolvedArgs.checkoutOptions,
+      marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
     };
 
     const options: any = {

@@ -60,6 +60,7 @@ export type GetCheckoutOptions = {
   paymentMethodId?: number;
   shippingMethodId?: number;
   checkoutOptions?: CheckoutInputType;
+  checkoutMarketId?: number;
 };
 
 export type ValidateOrderConditionsArgs = {
@@ -70,6 +71,7 @@ export type ValidateOrderConditionsArgs = {
 export type CreateOrderOptions = {
   cartId?: string;
   checkoutOptions: CheckoutInputType;
+  checkoutMarketId?: string;
 };
 
 export type CheckoutType = {
