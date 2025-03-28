@@ -32,7 +32,6 @@ export type CheckoutQueryParameters = {
 
 export type CheckoutUrlsInputType = {
   termsPageUrl?: string;
-  privacyPageUrl?: string;
   redirectUrl?: string;
   checkoutPageUrl?: string;
 };
@@ -61,11 +60,18 @@ export type GetCheckoutOptions = {
   paymentMethodId?: number;
   shippingMethodId?: number;
   checkoutOptions?: CheckoutInputType;
+  checkoutMarketId?: number;
+};
+
+export type ValidateOrderConditionsArgs = {
+  cartId: string;
+  email?: string;
 };
 
 export type CreateOrderOptions = {
   cartId?: string;
   checkoutOptions: CheckoutInputType;
+  checkoutMarketId?: string;
 };
 
 export type CheckoutType = {
@@ -98,7 +104,7 @@ export type AddressInputType = {
 };
 
 export type CheckoutStyleType = {
-  fontSize?: string;
+  logoSize?: string;
   radius?: string;
   background?: string;
   foreground?: string;
@@ -108,6 +114,7 @@ export type CheckoutStyleType = {
   accentForeground?: string;
   border?: string;
   sale?: string;
+  error?: string;
 };
 
 export type CheckoutBrandingType = {

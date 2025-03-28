@@ -10,6 +10,7 @@ import GeinsFormContainer from './components/geins/GeinsFormContainer.vue';
 import GeinsFormGrid from './components/geins/GeinsFormGrid.vue';
 import GeinsFormGroup from './components/geins/GeinsFormGroup.vue';
 import GeinsInput from './components/geins/GeinsInput.vue';
+import GeinsLoading from './components/geins/GeinsLoading.vue';
 import GeinsSettingsForm from './components/geins/GeinsSettingsForm.vue';
 import GeinsStatus from './components/geins/GeinsStatus.vue';
 import GeinsToggle from './components/geins/GeinsToggle.vue';
@@ -35,6 +36,7 @@ export default {
     app.component('GeinsButton', GeinsButton);
     app.component('GeinsCheckoutTokenForm', GeinsCheckoutTokenForm);
     app.component('GeinsColorInput', GeinsColorInput);
+    app.component('GeinsLoading', GeinsLoading);
     app.component('TagsInput', TagsInput);
   },
 };

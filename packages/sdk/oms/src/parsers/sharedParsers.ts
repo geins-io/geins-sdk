@@ -113,6 +113,9 @@ export function parsePrice(data: any, locale: string): PriceType {
 }
 
 export function parseMoneyCurrencyString(data: any, locale: string, currency: string): string {
+  if (!data || !currency || !locale) {
+    return '';
+  }
   return (
     data.toLocaleString(locale, {
       style: 'currency',

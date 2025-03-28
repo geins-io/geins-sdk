@@ -1,19 +1,18 @@
-#import "../fragments/checkout.gql"
-
-mutation createOrUpdateCheckout(
+query validateOrderConditions(
   $cartId: String!
-  $checkout: CheckoutInputType
+  $email: String
   $channelId: String
   $languageId: String
   $marketId: String
 ) {
-  createOrUpdateCheckout(
+  validateOrderConditions(
     cartId: $cartId
-    checkout: $checkout
+    email: $email
     channelId: $channelId
     languageId: $languageId
     marketId: $marketId
   ) {
-    ...Checkout
+    isValid
+    message
   }
 }

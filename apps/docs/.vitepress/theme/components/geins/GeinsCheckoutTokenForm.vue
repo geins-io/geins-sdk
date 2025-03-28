@@ -2,6 +2,7 @@
 import { GeinsCore } from '@geins/core';
 import { GeinsOMS } from '@geins/oms';
 import type { GenerateCheckoutTokenOptions, CheckoutSettings, GeinsSettings } from '@geins/types';
+import { GeinsPaymentType } from '@geins/types';
 import { ref, watch, computed, onMounted } from 'vue';
 import {
   cartValid,
@@ -15,6 +16,30 @@ import GeinsFormGroup from './GeinsFormGroup.vue';
 const checkoutToken = ref();
 const validationError = ref('');
 const cartId = ref('');
+
+enum LogoSize {
+  xs = '1.5rem',
+  sm = '2rem',
+  md = '2.5rem',
+  lg = '3rem',
+}
+
+const logoSizeOptions = [
+  { size: LogoSize.xs, label: 'XS (24px height)' },
+  { size: LogoSize.sm, label: 'S (32px height)' },
+  { size: LogoSize.md, label: 'M (40px height)' },
+  { size: LogoSize.lg, label: 'L (48px height)' },
+];
+
+const paymentMethodOptions = [
+  { id: 18, label: 'Manual Invoice' },
+  { id: 23, label: 'Klarna Checkout' },
+  { id: 24, label: 'Svea Checkout' },
+  { id: 25, label: 'Walley Checkout' },
+  { id: 26, label: 'Avarda Checkout' },
+  { id: 27, label: 'Geins Pay' },
+];
+
 const checkoutSettings = ref<CheckoutSettings>({
   selectedPaymentMethodId: undefined,
   selectedShippingMethodId: undefined,
@@ -31,7 +56,7 @@ const checkoutSettings = ref<CheckoutSettings>({
     icon: '',
     logo: '',
     styles: {
-      fontSize: '',
+      logoSize: LogoSize.sm,
       radius: '',
       background: '#f7f7f7',
       foreground: '#131313',
@@ -39,8 +64,9 @@ const checkoutSettings = ref<CheckoutSettings>({
       cardForeground: '#131313',
       accent: '#131313',
       accentForeground: '#ffffff',
-      border: '#ffffff',
-      sale: '#b70000',
+      border: '#ebebeb',
+      sale: '#11890c',
+      error: '#b80000',
     },
   },
 });
@@ -84,6 +110,8 @@ const generateToken = async () => {
   }
   try {
     loading.value = true;
+    console.log('🚀 ~ generateToken ~ payload.value:', payload.value);
+
     checkoutToken.value = await geinsOMS.createCheckoutToken(payload.value);
     const obj = {
       token: checkoutToken.value,
@@ -105,6 +133,16 @@ const copyToken = () => {
   setTimeout(() => {
     successText.value = '';
   }, 3000);
+};
+
+const parseToken = async () => {
+  const settings = await GeinsOMS.parseCheckoutToken(checkoutToken.value);
+  cartId.value = settings.cartId;
+  checkoutSettings.value = {
+    ...checkoutSettings.value,
+    ...settings.checkoutSettings,
+  };
+  console.log('🚀 ~ parseToken ~ checkoutSettings.value:', checkoutSettings.value);
 };
 
 onMounted(() => {
@@ -132,6 +170,16 @@ onMounted(() => {
           </div>
         </div>
       </div>
+      <p class="token-text">Already have a token and want to edit it? Paste it below:</p>
+      <GeinsInput
+        v-model="checkoutToken"
+        id="checkout-token"
+        name="checkout-token"
+        label=""
+        placeholder="Paste token here"
+        class="token-input"
+        @input="parseToken"
+      />
       <GeinsFormGrid>
         <GeinsFormGroup row-size="full" class="cart-id-group">
           <GeinsInput
@@ -147,12 +195,15 @@ onMounted(() => {
       <h3>Checkout Settings</h3>
       <GeinsFormGrid>
         <GeinsFormGroup row-size="half">
-          <GeinsInput
-            v-model.number="checkoutSettings.selectedPaymentMethodId"
-            id="payment-method-id"
-            name="payment-method-id"
-            label="Payment Method ID"
-          />
+          <label for="payment-method-id">Payment Method</label>
+          <div class="select">
+            <select v-model.number="checkoutSettings.selectedPaymentMethodId">
+              <option value="" selected>Select payment method</option>
+              <option v-for="option in paymentMethodOptions" :value="option.id" :key="option.id">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
           <GeinsInput
@@ -167,8 +218,8 @@ onMounted(() => {
           <div class="select">
             <select id="customerType" v-model="checkoutSettings.customerType">
               <option value="" selected>Select type</option>
-              <option value="PERSON">D2C</option>
-              <option value="COMPANY">B2B</option>
+              <option value="PERSON">Individual</option>
+              <option value="ORGANIZATION">Business</option>
             </select>
           </div>
         </GeinsFormGroup>
@@ -203,6 +254,16 @@ onMounted(() => {
             label="Error Url"
             placeholder="https://example.com/error"
             description="Url to redirect to if an error occurs during the checkout, if you want to use a custom one."
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsInput
+            v-model="checkoutSettings.redirectUrls.continue"
+            id="continue-url"
+            name="continue-url"
+            label="Continue Url"
+            placeholder="https://example.com/continue"
+            description="If supplied, will show a button to continue shopping on confirmation page."
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -255,18 +316,20 @@ onMounted(() => {
             name="logo"
             label="Logo URL"
             placeholder="https://example.com/logo.svg"
-            description="Url for your logo. Will be shown 48px high with auto width."
+            description="Url for your logo. Choose size for your logo below."
           />
         </GeinsFormGroup>
         <GeinsFormGroup v-if="checkoutSettings.branding.styles" row-size="half">
-          <GeinsInput
-            v-model="checkoutSettings.branding.styles.fontSize"
-            id="brand-font-size"
-            name="brand-font-size"
-            label="Font Size"
-            placeholder="16px"
-            description="Font size of the body text"
-          />
+          <GeinsFormGroup row-size="full">
+            <label for="logoSize">Logo Size</label>
+            <div class="select">
+              <select id="logoSize" v-model="checkoutSettings.branding.styles.logoSize">
+                <option v-for="option in logoSizeOptions" :value="option.size" :key="option.size">
+                  {{ option.label }}
+                </option>
+              </select>
+            </div>
+          </GeinsFormGroup>
         </GeinsFormGroup>
         <GeinsFormGroup v-if="checkoutSettings.branding.styles" row-size="half">
           <GeinsInput
@@ -274,8 +337,8 @@ onMounted(() => {
             id="border-radius"
             name="border-radius"
             label="Border Radius"
-            placeholder="5px"
-            description="Radius of UI elements in pixels"
+            placeholder="5px / 0.5rem"
+            description="Radius of UI elements"
           />
         </GeinsFormGroup>
       </GeinsFormGrid>
@@ -354,6 +417,15 @@ onMounted(() => {
             description="Color used for sale prices in the cart"
           />
         </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.error"
+            id="brand-error"
+            name="brand-error"
+            label="Error Color"
+            description="Color used for error messages"
+          />
+        </GeinsFormGroup>
       </GeinsFormGrid>
       <div v-if="checkoutToken" class="token">
         <p class="token-title">Your Checkout Token</p>
@@ -361,9 +433,7 @@ onMounted(() => {
           <pre id="checkout-token">{{ checkoutToken }}</pre>
           <button type="button" class="link" @click="copyToken">Copy</button>
           <p v-if="successText" class="success">{{ successText }}</p>
-          <div class="spinner" v-if="loading">
-            <div class="spinner-circle"></div>
-          </div>
+          <GeinsLoading v-if="loading" />
         </div>
       </div>
       <GeinsButton type="submit">Generate Checkout Token</GeinsButton>
@@ -433,6 +503,16 @@ select:focus {
   margin-bottom: 20px;
 }
 
+.token-text {
+  font-size: 0.9rem;
+  margin-bottom: 0px;
+  text-align: center;
+}
+
+.token-input {
+  margin-bottom: 20px;
+}
+
 .token {
   border-radius: 6px;
   text-align: center;
@@ -490,33 +570,5 @@ select:focus {
   padding-left: 20px;
   padding-right: 10px;
   background: var(--vp-c-bg);
-}
-
-.spinner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--vp-c-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.spinner-circle {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--vp-c-white);
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

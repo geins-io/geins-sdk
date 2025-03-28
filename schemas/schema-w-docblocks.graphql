@@ -6,1202 +6,1981 @@ schema {
 type Query {
   channels: [ChannelType]
 
-  """Gets a channel with the specified ID."""
+  """
+  Gets a channel with the specified ID.
+  """
   channel(
-    """The channel ID"""
+    """
+    The channel ID
+    """
     channelId: String
   ): ChannelType
 
-  """Gets all products according to the values provided."""
+  """
+  Gets all products according to the values provided.
+  """
   products(
-    """The amount of products to skip. Default maximum value is 6000"""
+    """
+    The amount of products to skip. Default maximum value is 6000
+    """
     skip: Int
 
-    """The amount of products to take. Default maximum value is 200"""
+    """
+    The amount of products to take. Default maximum value is 200
+    """
     take: Int
 
-    """When specified, only include products associated with that brand"""
+    """
+    When specified, only include products associated with that brand
+    """
     brandAlias: String
 
-    """When specified, only include products associated with that category"""
+    """
+    When specified, only include products associated with that category
+    """
     categoryAlias: String
 
-    """When specified, only include products associated with that discount campaign"""
+    """
+    When specified, only include products associated with that discount campaign
+    """
     discountCampaignAlias: String
 
-    """Get products associated with the specified URL"""
+    """
+    Get products associated with the specified URL
+    """
     url: String
 
-    """Additional filter parameters"""
+    """
+    Additional filter parameters
+    """
     filter: FilterInputType
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): ProductsResultType
 
-  """Gets a product with the specified ID."""
+  """
+  Gets a product with the specified ID.
+  """
   product(
-    """The product alias"""
+    """
+    The product alias
+    """
     alias: String
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): ProductType
 
-  """Gets related products for the specified alias."""
+  """
+  Gets related products for the specified alias.
+  """
   relatedProducts(
-    """The product alias"""
+    """
+    The product alias
+    """
     alias: String!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): [RelatedProductType]
 
-  """Gets a category with the specified ID."""
+  """
+  Gets a category with the specified ID.
+  """
   category(
-    """The product alias"""
+    """
+    The product alias
+    """
     alias: String
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CategoryType
 
-  """Get all categories."""
+  """
+  Get all categories.
+  """
   categories(
-    """Decides if hidden categories should be returned"""
+    """
+    Decides if hidden categories should be returned
+    """
     includeHidden: Boolean
 
-    """When set only categories with a matching parentId will be returned. Specify '0' to only select the root level."""
+    """
+    When set only categories with a matching parentId will be returned. Specify '0' to only select the root level.
+    """
     parentCategoryId: Int
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): [CategoryType]
 
-  """Get all brands."""
+  """
+  Get all brands.
+  """
   brands(
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): [BrandListType]
 
-  """Get the cart"""
+  """
+  Get the cart
+  """
   getCart(
-    """Specify the ID of an existing cart"""
+    """
+    Specify the ID of an existing cart
+    """
     id: String
 
-    """Decides if a completed cart can be returned"""
+    """
+    Decides if a completed cart can be returned
+    """
     includeCompleted: Boolean
 
-    """If the the shipping fee on cart is allowed to take the value of an external shipping. Set to false if outside checkout."""
+    """
+    If the the shipping fee on cart is allowed to take the value of an external shipping. Set to false if outside checkout.
+    """
     allowExternalShippingFee: Boolean
 
-    """Set to true to force a refresh of all product data. This will remove products that are inactive or out of stock."""
+    """
+    Set to true to force a refresh of all product data. This will remove products that are inactive or out of stock.
+    """
     forceRefresh: Boolean
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CartType
 
-  """Gets html snippet for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content."""
+  """
+  Gets html snippet for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content.
+  """
   getCheckout(
-    """The external order id."""
+    """
+    The external order id.
+    """
     id: String!
 
-    """The payment type for the checkout."""
+    """
+    The payment type for the checkout.
+    """
     paymentType: PaymentType!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): String @deprecated(reason: "Use Checkout instead")
 
-  """Gets html snippet and checkout order data for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content."""
+  """
+  Gets html snippet and checkout order data for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content.
+  """
   getCheckoutAndOrder(
-    """The external order id."""
+    """
+    The external order id.
+    """
     id: String!
 
-    """The payment used for the checkout."""
+    """
+    The payment used for the checkout.
+    """
     paymentType: PaymentType!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CheckoutAndOrderType @deprecated(reason: "Use Checkout instead")
 
-  """Gets checkout data with a html snippet, checkout order data for the specified order and the User. If the order was recently completed, the html snippet will contain the "Thank you"-content."""
+  """
+  Gets checkout data with a html snippet, checkout order data for the specified order and the User. If the order was recently completed, the html snippet will contain the "Thank you"-content.
+  """
   checkout(
-    """The external order id."""
+    """
+    The external order id.
+    """
     id: String!
 
-    """optional cartId."""
+    """
+    optional cartId.
+    """
     cartId: String
 
-    """The payment used for the checkout."""
+    """
+    The payment used for the checkout.
+    """
     paymentType: PaymentType!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CheckoutDataType
 
-  """Gets information about the specified list page."""
+  """
+  Gets information about the specified list page.
+  """
   listPageInfo(
-    """Page alias"""
+    """
+    Page alias
+    """
     alias: String
 
-    """Path to list page. e.g. /c/category-1"""
+    """
+    Path to list page. e.g. /c/category-1
+    """
     url: String
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): PageInfoType
 
-  """Gets all CMS pages."""
+  """
+  Gets all CMS pages.
+  """
   cmsPages(
-    """Only CMS pages with these tags will be included. Null or empty will fetch all pages."""
+    """
+    Only CMS pages with these tags will be included. Null or empty will fetch all pages.
+    """
     includeTags: [String]
 
-    """CMS pages with these tags will not be included in the result."""
+    """
+    CMS pages with these tags will not be included in the result.
+    """
     excludeTags: [String]
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): [PageWidgetPageType]
 
-  """Gets the page area and widgets from the specifed family."""
+  """
+  Gets the page area and widgets from the specifed family.
+  """
   widgetArea(
-    """Widget alias"""
+    """
+    Widget alias
+    """
     alias: String
 
-    """Widget family"""
+    """
+    Widget family
+    """
     family: String
 
-    """Widget area"""
+    """
+    Widget area
+    """
     areaName: String
 
-    """Widget display setting"""
+    """
+    Widget display setting
+    """
     displaySetting: String
 
-    """Filter by customer type. (Only for anonymous users)"""
+    """
+    Filter by customer type. (Only for anonymous users)
+    """
     customerType: CustomerType
 
-    """Widget preview option. (only for authorized users)"""
+    """
+    Widget preview option. (only for authorized users)
+    """
     preview: Boolean
 
-    """Path to widget"""
+    """
+    Path to widget
+    """
     url: String
 
-    """Widget filter options"""
+    """
+    Widget filter options
+    """
     filters: [PageWidgetCollectionFilterInputType]
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): PageWidgetCollectionType
 
-  """Get orders for the current user"""
+  """
+  Get orders for the current user
+  """
   getOrders(
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): [OrderType]
 
-  """Get a specific order with details"""
+  """
+  Get a specific order with details
+  """
   getOrder(
     #
     orderId: Int!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): OrderType
 
-  """Get a specific order with details via public id"""
+  """
+  Get a specific order with details via public id
+  """
   getOrderPublic(
     #
     publicOrderId: Guid!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): OrderType
 
-  """Get the current user"""
+  """
+  Get the current user
+  """
   getUser(
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): UserType
 
-  """Gets an alternate url for a given url."""
+  """
+  Gets an alternate url for a given url.
+  """
   urlHistory(
     #
     url: String
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): UrlHistoryType
 
-  """Get a menu"""
+  """
+  Get a menu
+  """
   getMenuAtLocation(
-    """Specify the ID of a menu location"""
+    """
+    Specify the ID of a menu location
+    """
     menuLocationId: String
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): MenuType
 
-  """Gets all products reviews to the values provided."""
+  """
+  Gets all products reviews to the values provided.
+  """
   reviews(
-    """Product alias"""
+    """
+    Product alias
+    """
     alias: String
 
-    """The amount of products to skip"""
+    """
+    The amount of products to skip
+    """
     skip: Int
 
-    """The amount of products to take"""
+    """
+    The amount of products to take
+    """
     take: Int
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): ProductReviewResultType
   validateOrderCreation(
-    """The cart ID"""
+    """
+    The cart ID
+    """
     cartId: String!
 
-    """The choices made in checkout"""
+    """
+    The choices made in checkout
+    """
     checkout: CheckoutInputType!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): ValidateOrderCreationResponseType
 }
 
-"""Type containing all information about the channel-type"""
+"""
+Type containing all information about the channel-type
+"""
 type ChannelType {
-  """ID"""
+  """
+  ID
+  """
   id: String!
 
-  """Name"""
+  """
+  Name
+  """
   name: String!
 
-  """Type"""
+  """
+  Type
+  """
   type: String!
 
-  """Base URL"""
+  """
+  Base URL
+  """
   url: String!
 
-  """Default language ID used if no other is specified, or an invalid is supplied."""
+  """
+  Default language ID used if no other is specified, or an invalid is supplied.
+  """
   defaultLanguageId: String!
   languages: [LanguageType]
 
-  """Default market ID used if no other is specified, or an invalid is supplied."""
+  """
+  Default market ID used if no other is specified, or an invalid is supplied.
+  """
   defaultMarketId: String!
   markets: [MarketType]
 }
 
-"""Type containing all information about the language-type"""
+"""
+Type containing all information about the language-type
+"""
 type LanguageType {
-  """Language ID"""
+  """
+  Language ID
+  """
   id: String!
 
-  """Language name"""
+  """
+  Language name
+  """
   name: String!
 
-  """Two-letter ISO code"""
+  """
+  Two-letter ISO code
+  """
   code: String!
 }
 
-"""Type containing all information about the market-type"""
+"""
+Type containing all information about the market-type
+"""
 type MarketType {
-  """ID"""
+  """
+  ID
+  """
   id: String!
 
-  """Default language ID used if no other is specified, or an invalid is supplied."""
+  """
+  Default language ID used if no other is specified, or an invalid is supplied.
+  """
   defaultLanguageId: String!
 
-  """If true, indicates that the market is virtual. Virtual markets cannot be used in the checkout process"""
+  """
+  If true, indicates that the market is virtual. Virtual markets cannot be used in the checkout process
+  """
   virtual: Boolean
 
-  """Indicates if the market should only be displayed in the checkout process."""
+  """
+  Indicates if the market should only be displayed in the checkout process.
+  """
   onlyDisplayInCheckout: Boolean
 
-  """Group key used to group related markets together, i.e. if they belong to the same region or continent."""
+  """
+  Group key used to group related markets together, i.e. if they belong to the same region or continent.
+  """
   groupKey: String!
 
-  """The part of the market id that is used in the url."""
+  """
+  The part of the market id that is used in the url.
+  """
   alias: String
   allowedLanguages: [LanguageType]
 
-  """Country"""
+  """
+  Country
+  """
   country: CountryType
 
-  """Currency"""
+  """
+  Currency
+  """
   currency: CurrencyType
 }
 
-"""Type containing all information about the country-type"""
+"""
+Type containing all information about the country-type
+"""
 type CountryType {
-  """Name"""
+  """
+  Name
+  """
   name: String!
 
-  """Two-letter ISO code"""
+  """
+  Two-letter ISO code
+  """
   code: String!
 }
 
-"""Type containing all information about the currency-type"""
+"""
+Type containing all information about the currency-type
+"""
 type CurrencyType {
-  """Name"""
+  """
+  Name
+  """
   name: String!
 
-  """Currency symbol"""
+  """
+  Currency symbol
+  """
   symbol: String!
 
-  """Currency code"""
+  """
+  Currency code
+  """
   code: String!
 
-  """Currency rate used to convert from this currency to default currency"""
+  """
+  Currency rate used to convert from this currency to default currency
+  """
   rate: Decimal!
 }
 
 scalar Decimal
 
-"""The results of the products-query."""
+"""
+The results of the products-query.
+"""
 type ProductsResultType {
-  """The total count of results for the query"""
+  """
+  The total count of results for the query
+  """
   count: Long!
 
-  """Results returned by the query"""
+  """
+  Results returned by the query
+  """
   products: [ProductType]
 
-  """The filters available for this query"""
+  """
+  The filters available for this query
+  """
   filters: FilterCollectionType
 }
 
 scalar Long
 
-"""Type containing all information about a product"""
+"""
+Type containing all information about a product
+"""
 type ProductType {
-  """Product ID"""
+  """
+  Product ID
+  """
   productId: Int!
 
-  """The product name"""
+  """
+  The product name
+  """
   name: String
 
-  """Alias for the product"""
+  """
+  Alias for the product
+  """
   alias: String!
 
-  """The product article number"""
+  """
+  The product article number
+  """
   articleNumber: String
 
-  """The primary category ID"""
+  """
+  The primary category ID
+  """
   categoryId: Int!
 
-  """The full path to the product"""
+  """
+  The full path to the product
+  """
   canonicalUrl: String
 
-  """Alternative full paths to the product"""
-  alternativeCanonicalUrls: [String]
-    @deprecated(reason: "Use AlternativeUrls instead.")
+  """
+  Alternative full paths to the product
+  """
+  alternativeCanonicalUrls: [String] @deprecated(reason: "Use AlternativeUrls instead.")
 
-  """Alternative urls to the product"""
+  """
+  Alternative urls to the product
+  """
   alternativeUrls: [AlternativeUrlType]
 
-  """The date on which the product was first available (yyyy-mm-dd)"""
+  """
+  The date on which the product was first available (yyyy-mm-dd)
+  """
   firstAvailableOn: String
 
-  """Product text info"""
+  """
+  Product text info
+  """
   texts: ProductTextsType
 
-  """The product type. Either 'product' or 'package'"""
+  """
+  The product type. Either 'product' or 'package'
+  """
   type: String
 
-  """Product SKUs"""
+  """
+  Product SKUs
+  """
   skus: [SkuType]
 
-  """Product brand information"""
+  """
+  Product brand information
+  """
   brand: BrandType
 
-  """Product category information"""
+  """
+  Product category information
+  """
   categories: [CategoryType]
 
-  """Product price information"""
+  """
+  Product price information
+  """
   unitPrice: PriceType
 
-  """Lowest price and comparison price according to EU price laws"""
+  """
+  Lowest price and comparison price according to EU price laws
+  """
   lowestPrice: LowestPriceType
 
-  """List of product images"""
+  """
+  List of product images
+  """
   images: [String] @deprecated(reason: "Use ProductType.ProductImages instead.")
 
-  """List of product images and their related properties"""
+  """
+  List of product images and their related properties
+  """
   productImages: [ProductImageType]
 
-  """Product parameter groups"""
+  """
+  Product parameter groups
+  """
   parameterGroups: [ParameterGroupType]
 
-  """Variant dimensions"""
+  """
+  Variant dimensions
+  """
   variantDimensions: [VariantDimensionType]
 
-  """Product variant group"""
+  """
+  Product variant group
+  """
   variantGroup: VariantGroupType
 
-  """Product rating"""
+  """
+  Product rating
+  """
   rating: RatingType
 
-  """Product stock information"""
+  """
+  Product stock information
+  """
   totalStock: StockType
 
-  """Product metadata"""
+  """
+  Product metadata
+  """
   meta: MetadataType
 
-  """Primary category for this product"""
+  """
+  Primary category for this product
+  """
   primaryCategory: CategoryType
 
-  """The current variant selection"""
+  """
+  The current variant selection
+  """
   currentProductVariant: VariantType
 
-  """Breadcrumbs"""
+  """
+  Breadcrumbs
+  """
   breadcrumbs: [BreadcrumbType]
 
-  """Product discount campaigns"""
+  """
+  Product discount campaigns
+  """
   discountCampaigns: [CampaignRuleType]
 
-  """Price log with the prices from the last 30 days"""
+  """
+  Price log with the prices from the last 30 days
+  """
   priceLog: [PriceLogItemType]
 
-  """Type of discount price: None, Sale or Campaign"""
+  """
+  Type of discount price: None, Sale or Campaign
+  """
   discountType: DiscountType
 
-  """Package specific information for this product"""
+  """
+  Package specific information for this product
+  """
   productPackage: ProductPackageType
 
-  """The dimensions of the Product. Note that this can also be set on SKU level"""
+  """
+  The dimensions of the Product. Note that this can also be set on SKU level
+  """
   dimensions: DimensionsType
 
-  """Weight in grams (g). Note that this can also be set on SKU level"""
+  """
+  Weight in grams (g). Note that this can also be set on SKU level
+  """
   weight: Int!
 
-  """The Freightclass set for this product"""
+  """
+  The Freightclass set for this product
+  """
   freightClass: String
 
-  """The Supplier Id"""
+  """
+  The Supplier Id
+  """
   supplierId: Int!
 }
 
-"""Type containing information about alternative urls to an entity"""
+"""
+Type containing information about alternative urls to an entity
+"""
 type AlternativeUrlType {
-  """Alternative url"""
+  """
+  Alternative url
+  """
   url: String!
 
-  """The culture of the alternative url"""
+  """
+  The culture of the alternative url
+  """
   culture: String!
 
-  """The language code of the alternative url"""
+  """
+  The language code of the alternative url
+  """
   language: String!
 
-  """The country code of the alternative url"""
+  """
+  The country code of the alternative url
+  """
   country: String
 
-  """The id of the channel that the alternative url exists on"""
+  """
+  The id of the channel that the alternative url exists on
+  """
   channelId: String!
 }
 
-"""Product info"""
+"""
+Product info
+"""
 type ProductTextsType {
-  """Main product info"""
+  """
+  Main product info
+  """
   text1: String
 
-  """Secondary product info"""
+  """
+  Secondary product info
+  """
   text2: String
 
-  """Tertiary product info"""
+  """
+  Tertiary product info
+  """
   text3: String
 }
 
-"""Type containing all information about a product SKU"""
+"""
+Type containing all information about a product SKU
+"""
 type SkuType {
-  """ID of the SKU"""
+  """
+  ID of the SKU
+  """
   skuId: Int!
 
-  """The associated product ID"""
+  """
+  The associated product ID
+  """
   productId: Int!
 
-  """The article number of the SKU"""
+  """
+  The article number of the SKU
+  """
   articleNumber: String!
 
-  """SKU name"""
+  """
+  SKU name
+  """
   name: String
 
-  """External ID of the SKU"""
+  """
+  External ID of the SKU
+  """
   externalId: String
 
-  """SKU GTIN"""
+  """
+  SKU GTIN
+  """
   gtin: String
 
-  """Stock information"""
+  """
+  Stock information
+  """
   stock: StockType
 
-  """The dimensions of the SKU"""
+  """
+  The dimensions of the SKU
+  """
   dimensions: DimensionsType
 
-  """Shelf"""
+  """
+  Shelf
+  """
   shelf: String
 
-  """Incoming date"""
+  """
+  Incoming date
+  """
   incoming: DateTime
 
-  """Weight in grams (g)"""
+  """
+  Weight in grams (g)
+  """
   weight: Int!
 }
 
-"""Type containing information about SKU stock"""
+"""
+Type containing information about SKU stock
+"""
 type StockType {
-  """The total units available"""
+  """
+  The total units available
+  """
   totalStock: Int!
 
-  """The units available at this moment"""
+  """
+  The units available at this moment
+  """
   inStock: Int!
 
-  """Over-sellable units"""
+  """
+  Over-sellable units
+  """
   oversellable: Int!
 
-  """Amount of units that are always available"""
+  """
+  Amount of units that are always available
+  """
   static: Int
 
-  """Incoming date"""
-  incoming: DateTime
-    @deprecated(reason: "Use SkuType.Incoming or VariantType.Incoming instead")
+  """
+  Incoming date
+  """
+  incoming: DateTime @deprecated(reason: "Use SkuType.Incoming or VariantType.Incoming instead")
 
-  """Shelf"""
-  shelf: String
-    @deprecated(reason: "Use SkuType.Shelf or VariantType.Shelf instead")
+  """
+  Shelf
+  """
+  shelf: String @deprecated(reason: "Use SkuType.Shelf or VariantType.Shelf instead")
 }
 
-"""The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard."""
+"""
+The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+"""
 scalar DateTime
 
-"""SKU dimensions"""
+"""
+SKU dimensions
+"""
 type DimensionsType {
-  """Length"""
+  """
+  Length
+  """
   length: Int!
 
-  """Width"""
+  """
+  Width
+  """
   width: Int!
 
-  """Height"""
+  """
+  Height
+  """
   height: Int!
 }
 
-"""Type containing brand information"""
+"""
+Type containing brand information
+"""
 type BrandType {
-  """Brand ID"""
+  """
+  Brand ID
+  """
   brandId: Int!
 
-  """Brand alias"""
+  """
+  Brand alias
+  """
   alias: String
 
-  """The full path for this brand. e.g. '/l/brand-1'"""
+  """
+  The full path for this brand. e.g. '/l/brand-1'
+  """
   canonicalUrl: String
 
-  """Alternative full paths to the brand"""
-  alternativeCanonicalUrls: [String]
-    @deprecated(reason: "Use AlternativeUrls instead.")
+  """
+  Alternative full paths to the brand
+  """
+  alternativeCanonicalUrls: [String] @deprecated(reason: "Use AlternativeUrls instead.")
 
-  """Alternative urls to the brand"""
+  """
+  Alternative urls to the brand
+  """
   alternativeUrls: [AlternativeUrlType]
 
-  """Brand name"""
+  """
+  Brand name
+  """
   name: String
 
-  """Brand description"""
+  """
+  Brand description
+  """
   description: String
 }
 
-"""Type containing category information"""
+"""
+Type containing category information
+"""
 type CategoryType {
-  """Category ID"""
+  """
+  Category ID
+  """
   categoryId: Int!
 
-  """Parent category ID"""
+  """
+  Parent category ID
+  """
   parentCategoryId: Int!
 
-  """Category display order"""
+  """
+  Category display order
+  """
   order: Int!
 
-  """Category alias"""
+  """
+  Category alias
+  """
   alias: String
 
-  """The full path to the category. e.g. '/l/category-1'"""
+  """
+  The full path to the category. e.g. '/l/category-1'
+  """
   canonicalUrl: String!
 
-  """Alternative full paths to the category"""
-  alternativeCanonicalUrls: [String]
-    @deprecated(reason: "Use AlternativeUrls instead.")
+  """
+  Alternative full paths to the category
+  """
+  alternativeCanonicalUrls: [String] @deprecated(reason: "Use AlternativeUrls instead.")
 
-  """Alternative urls to the category"""
+  """
+  Alternative urls to the category
+  """
   alternativeUrls: [AlternativeUrlType]
 
-  """Category name"""
+  """
+  Category name
+  """
   name: String!
 
-  """Category description"""
+  """
+  Category description
+  """
   description: String
 
-  """Category secondary description"""
+  """
+  Category secondary description
+  """
   secondaryDescription: String
 
-  """Category is hidden"""
+  """
+  Category is hidden
+  """
   isHidden: Boolean
 
-  """Google taxonomy data for this category"""
+  """
+  Google taxonomy data for this category
+  """
   googleTaxonomy: GoogleTaxonomyType
 
-  """Primary image"""
+  """
+  Primary image
+  """
   primaryImage: String
 
-  """Background image"""
+  """
+  Background image
+  """
   backgroundImage: String
 }
 
-"""Type containing Google taxonomy data"""
+"""
+Type containing Google taxonomy data
+"""
 type GoogleTaxonomyType {
-  """Google taxonomy ID"""
+  """
+  Google taxonomy ID
+  """
   id: Int
 
-  """Parent Google taxonomy ID"""
+  """
+  Parent Google taxonomy ID
+  """
   parentId: Int
 
-  """Google taxonomy name"""
+  """
+  Google taxonomy name
+  """
   name: String
 
-  """Google taxonomy path"""
+  """
+  Google taxonomy path
+  """
   path: String
 }
 
-"""Type containing price information"""
+"""
+Type containing price information
+"""
 type PriceType {
-  """The selling price including VAT"""
+  """
+  The selling price including VAT
+  """
   sellingPriceIncVat: Decimal!
 
-  """The selling price excluding VAT"""
+  """
+  The selling price excluding VAT
+  """
   sellingPriceExVat: Decimal!
 
-  """The regular price including VAT"""
+  """
+  The regular price including VAT
+  """
   regularPriceIncVat: Decimal!
 
-  """The regular price excluding VAT"""
+  """
+  The regular price excluding VAT
+  """
   regularPriceExVat: Decimal!
 
-  """Discount amount including VAT"""
+  """
+  Discount amount including VAT
+  """
   discountIncVat: Decimal!
 
-  """Discount amount excluding VAT"""
+  """
+  Discount amount excluding VAT
+  """
   discountExVat: Decimal!
 
-  """Discount percentage"""
+  """
+  Discount percentage
+  """
   discountPercentage: Int!
 
-  """VAT amount"""
+  """
+  VAT amount
+  """
   vat: Decimal!
 
-  """Whether the price is discounted or not"""
+  """
+  Whether the price is discounted or not
+  """
   isDiscounted: Boolean!
 
-  """Selling price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Selling price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   sellingPriceIncVatFormatted: String
 
-  """Selling price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Selling price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   sellingPriceExVatFormatted: String
 
-  """Regular price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Regular price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   regularPriceIncVatFormatted: String
 
-  """Regular price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Regular price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   regularPriceExVatFormatted: String
 
-  """Discount (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Discount (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   discountIncVatFormatted: String
 
-  """Discount (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Discount (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   discountExVatFormatted: String
 
-  """VAT amount, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  VAT amount, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   vatFormatted: String
 }
 
-"""Type containing information about the lowest price during last 30 days and the legal comparison price (EU). Observe that discount is calculated against comparison price and not the regular price."""
+"""
+Type containing information about the lowest price during last 30 days and the legal comparison price (EU). Observe that discount is calculated against comparison price and not the regular price.
+"""
 type LowestPriceType {
-  """The selling price including VAT"""
+  """
+  The selling price including VAT
+  """
   sellingPriceIncVat: Decimal!
 
-  """The selling price excluding VAT"""
+  """
+  The selling price excluding VAT
+  """
   sellingPriceExVat: Decimal!
 
-  """The comparison price including VAT"""
+  """
+  The comparison price including VAT
+  """
   comparisonPriceIncVat: Decimal!
 
-  """The comparison price excluding VAT"""
+  """
+  The comparison price excluding VAT
+  """
   comparisonPriceExVat: Decimal!
 
-  """The lowest price including VAT"""
+  """
+  The lowest price including VAT
+  """
   lowestPriceIncVat: Decimal!
 
-  """The lowest price excluding VAT"""
+  """
+  The lowest price excluding VAT
+  """
   lowestPriceExVat: Decimal!
 
-  """Discount amount including VAT."""
+  """
+  Discount amount including VAT.
+  """
   discountIncVat: Decimal!
 
-  """Discount amount excluding VAT."""
+  """
+  Discount amount excluding VAT.
+  """
   discountExVat: Decimal!
 
-  """Discount percentage."""
+  """
+  Discount percentage.
+  """
   discountPercentage: Int!
 
-  """VAT amount"""
+  """
+  VAT amount
+  """
   vat: Decimal!
 
-  """Whether the price is discounted or not"""
+  """
+  Whether the price is discounted or not
+  """
   isDiscounted: Boolean!
 
-  """Selling price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Selling price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   sellingPriceIncVatFormatted: String
 
-  """Selling price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Selling price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   sellingPriceExVatFormatted: String
 
-  """Comparison price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Comparison price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   comparisonPriceIncVatFormatted: String
 
-  """Comparison price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Comparison price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   comparisonPriceExVatFormatted: String
 
-  """Lowest price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Lowest price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   lowestPriceIncVatFormatted: String
 
-  """Lowest price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Lowest price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   lowestPriceExVatFormatted: String
 
-  """Discount (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Discount (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   discountIncVatFormatted: String
 
-  """Discount (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Discount (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   discountExVatFormatted: String
 
-  """VAT amount, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  VAT amount, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   vatFormatted: String
 }
 
-"""Type containing all information about a product image"""
+"""
+Type containing all information about a product image
+"""
 type ProductImageType {
-  """The file name of the product image."""
+  """
+  The file name of the product image.
+  """
   fileName: String!
 
-  """Custom tags associated with the product image."""
+  """
+  Custom tags associated with the product image.
+  """
   tags: [String]
 }
 
-"""Type containing product parameter group information"""
+"""
+Type containing product parameter group information
+"""
 type ParameterGroupType {
-  """Parameter group ID"""
+  """
+  Parameter group ID
+  """
   parameterGroupId: Int
 
-  """Product ID associated with this parameter group"""
+  """
+  Product ID associated with this parameter group
+  """
   productId: Int!
 
-  """The parameter group name"""
+  """
+  The parameter group name
+  """
   name: String!
 
-  """List of parameters"""
+  """
+  List of parameters
+  """
   parameters: [ParameterType]
 }
 
-"""Type containing parameter information"""
+"""
+Type containing parameter information
+"""
 type ParameterType {
-  """Parameter ID"""
+  """
+  Parameter ID
+  """
   parameterId: Int!
 
-  """ID of the associated parameter group"""
+  """
+  ID of the associated parameter group
+  """
   parameterGroupId: Int!
 
-  """The parameter type"""
+  """
+  The parameter type
+  """
   type: String
 
-  """Parameter name"""
+  """
+  Parameter name
+  """
   name: String
 
-  """Parameter label"""
+  """
+  Parameter label
+  """
   label: String
 
-  """Parameter description"""
+  """
+  Parameter description
+  """
   description: String
 
-  """Parameter value"""
+  """
+  Parameter value
+  """
   value: String
 
-  """Whether this parameter should be shown within the product specifications"""
+  """
+  Whether this parameter should be shown within the product specifications
+  """
   show: Boolean!
 
-  """Whether this parameter should be shown within filter options"""
+  """
+  Whether this parameter should be shown within filter options
+  """
   showFilter: Boolean!
 
-  """The internal identifier of the parameter. This value is the same for all languages and does not change if the parameter name changes."""
+  """
+  The internal identifier of the parameter. This value is the same for all languages and does not change if the parameter name changes.
+  """
   identifier: String
 
-  """The ID of the associated facet"""
+  """
+  The ID of the associated facet
+  """
   facetId: String
 }
 
-"""Type containing variant dimension information"""
+"""
+Type containing variant dimension information
+"""
 type VariantDimensionType {
-  """The level of this variant dimension"""
+  """
+  The level of this variant dimension
+  """
   level: Int!
 
-  """The dimension name"""
+  """
+  The dimension name
+  """
   dimension: String!
 
-  """Dimension type. e.g. 'product' if it leads to a different product, otherwise 'selection'"""
+  """
+  Dimension type. e.g. 'product' if it leads to a different product, otherwise 'selection'
+  """
   type: String!
 
-  """Dimension value"""
+  """
+  Dimension value
+  """
   value: String
 
-  """Dimension label"""
+  """
+  Dimension label
+  """
   label: String
 
-  """Dimension attributes"""
+  """
+  Dimension attributes
+  """
   attributes: [VariantAttributeType]
 
-  """Group values"""
+  """
+  Group values
+  """
   group: [VariantValueType]
 }
 
-"""Type containing variant attribute information"""
+"""
+Type containing variant attribute information
+"""
 type VariantAttributeType {
-  """Attribute key"""
+  """
+  Attribute key
+  """
   key: String!
 
-  """Attribute value"""
+  """
+  Attribute value
+  """
   value: String!
 }
 
-"""Type containing variant value information"""
+"""
+Type containing variant value information
+"""
 type VariantValueType {
-  """Label"""
+  """
+  Label
+  """
   label: String!
 
-  """Value"""
+  """
+  Value
+  """
   value: String!
 }
 
-"""Type containing variant group information"""
+"""
+Type containing variant group information
+"""
 type VariantGroupType {
-  """Variant group ID"""
+  """
+  Variant group ID
+  """
   variantGroupId: Int!
 
-  """Variant group name"""
+  """
+  Variant group name
+  """
   name: String!
 
-  """ID of the main product in this group"""
+  """
+  ID of the main product in this group
+  """
   mainProductId: Int!
 
-  """If true, only the main product will show up in product lists"""
+  """
+  If true, only the main product will show up in product lists
+  """
   collapseInLists: Boolean!
 
-  """The amount of active products in this variant group"""
+  """
+  The amount of active products in this variant group
+  """
   activeProducts: Int!
 
-  """Group variants"""
+  """
+  Group variants
+  """
   variants: [VariantType]
 }
 
-"""Type containing variant information"""
+"""
+Type containing variant information
+"""
 type VariantType {
-  """Level of this variant. Lower value is a more accurate selection"""
+  """
+  Level of this variant. Lower value is a more accurate selection
+  """
   level: Int!
 
-  """Variant dimension"""
+  """
+  Variant dimension
+  """
   dimension: String!
 
-  """Variant type. In order of accuracy 'sku', 'product', 'selection'"""
+  """
+  Variant type. In order of accuracy 'sku', 'product', 'selection'
+  """
   type: String!
 
-  """Variant value"""
+  """
+  Variant value
+  """
   value: String
 
-  """Variant label"""
+  """
+  Variant label
+  """
   label: String
 
-  """SKU ID associated with this variant"""
+  """
+  SKU ID associated with this variant
+  """
   skuId: Int
 
-  """Incoming date"""
+  """
+  Incoming date
+  """
   incoming: DateTime
 
-  """Shelf"""
+  """
+  Shelf
+  """
   shelf: String
 
-  """Stock information for variant"""
+  """
+  Stock information for variant
+  """
   stock: StockType
 
-  """Product ID associated with this variant"""
+  """
+  Product ID associated with this variant
+  """
   productId: Int!
 
-  """Variant name"""
+  """
+  Variant name
+  """
   name: String
 
-  """Alias for variant selection. e.g. 'product-4'"""
+  """
+  Alias for variant selection. e.g. 'product-4'
+  """
   alias: String
 
-  """Canonical URL. Only available for the 'product'-level"""
+  """
+  Canonical URL. Only available for the 'product'-level
+  """
   canonicalUrl: String
 
-  """The primary image used for the product. Only available for the 'product'-level"""
+  """
+  The primary image used for the product. Only available for the 'product'-level
+  """
   primaryImage: String
 
-  """Variant attributes"""
+  """
+  Variant attributes
+  """
   attributes: [VariantAttributeType]
 
-  """List of variants for this variant"""
+  """
+  List of variants for this variant
+  """
   variants: [VariantType]
 }
 
-"""Type containing product rating information"""
+"""
+Type containing product rating information
+"""
 type RatingType {
-  """Rating score"""
+  """
+  Rating score
+  """
   score: Decimal!
 
-  """Vote count"""
+  """
+  Vote count
+  """
   voteCount: Int!
 }
 
-"""Type containing metadata"""
+"""
+Type containing metadata
+"""
 type MetadataType {
-  """Title"""
+  """
+  Title
+  """
   title: String
 
-  """Description"""
+  """
+  Description
+  """
   description: String
 
-  """Keywords"""
+  """
+  Keywords
+  """
   keywords: String
 }
 
-"""Type containing breadcrumb information"""
+"""
+Type containing breadcrumb information
+"""
 type BreadcrumbType {
-  """Category ID"""
+  """
+  Category ID
+  """
   categoryId: Int!
 
-  """Parent category ID"""
+  """
+  Parent category ID
+  """
   parentCategoryId: Int!
 
-  """Breadcrumb path"""
+  """
+  Breadcrumb path
+  """
   url: String
 
-  """Breadcrumb display name"""
+  """
+  Breadcrumb display name
+  """
   name: String!
 }
 
-"""Type containing campaign rule information"""
+"""
+Type containing campaign rule information
+"""
 type CampaignRuleType {
-  """Campaign ID"""
+  """
+  Campaign ID
+  """
   campaignId: String!
 
-  """Campaign name"""
+  """
+  Campaign name
+  """
   name: String
 
-  """Whether to hide the campaign title"""
+  """
+  Whether to hide the campaign title
+  """
   hideTitle: Boolean
 
-  """Campaign rule type"""
+  """
+  Campaign rule type
+  """
   ruleType: String
 
-  """Campaign category"""
+  """
+  Campaign category
+  """
   category: String
 
-  """Campaign action"""
+  """
+  Campaign action
+  """
   action: String
 
-  """Campaign action value"""
+  """
+  Campaign action value
+  """
   actionValue: String
 
-  """The url to this campaign, if any"""
+  """
+  The url to this campaign, if any
+  """
   canonicalUrl: String
 }
 
-"""Type containing all information about a product price log item"""
+"""
+Type containing all information about a product price log item
+"""
 type PriceLogItemType {
-  """The selling price including VAT"""
+  """
+  The selling price including VAT
+  """
   sellingPriceIncVat: Decimal!
 
-  """The selling price excluding VAT"""
+  """
+  The selling price excluding VAT
+  """
   sellingPriceExVat: Decimal!
 
-  """The regular price including VAT"""
+  """
+  The regular price including VAT
+  """
   regularPriceIncVat: Decimal!
 
-  """The regular price excluding VAT"""
+  """
+  The regular price excluding VAT
+  """
   regularPriceExVat: Decimal!
 
-  """Discount amount including VAT"""
+  """
+  Discount amount including VAT
+  """
   discountIncVat: Decimal!
 
-  """Discount amount excluding VAT"""
+  """
+  Discount amount excluding VAT
+  """
   discountExVat: Decimal!
 
-  """Discount percentage"""
+  """
+  Discount percentage
+  """
   discountPercentage: Int!
 
-  """VAT amount"""
+  """
+  VAT amount
+  """
   vat: Decimal!
 
-  """Whether the price is discounted or not"""
+  """
+  Whether the price is discounted or not
+  """
   isDiscounted: Boolean!
 
-  """True if this log items has the lowest price for the last 30 days"""
+  """
+  True if this log items has the lowest price for the last 30 days
+  """
   isLowest: Boolean!
 
-  """Date of the price change"""
+  """
+  Date of the price change
+  """
   date: String!
 
-  """Selling price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Selling price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   sellingPriceIncVatFormatted: String
 
-  """Selling price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Selling price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   sellingPriceExVatFormatted: String
 
-  """Regular price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Regular price (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   regularPriceIncVatFormatted: String
 
-  """Regular price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Regular price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   regularPriceExVatFormatted: String
 
-  """Discount (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Discount (incl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   discountIncVatFormatted: String
 
-  """Discount (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Discount (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   discountExVatFormatted: String
 
-  """VAT amount, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  VAT amount, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   vatFormatted: String
 }
 
@@ -1211,1011 +1990,1671 @@ enum DiscountType {
   PRICE_CAMPAIGN
 }
 
-"""Type containing type specific information for a product of the type 'package'"""
+"""
+Type containing type specific information for a product of the type 'package'
+"""
 type ProductPackageType {
-  """Groups in this package"""
+  """
+  Groups in this package
+  """
   groups: [GroupType]
 }
 
-"""Type containing information for a group in a product package"""
+"""
+Type containing information for a group in a product package
+"""
 type GroupType {
-  """The package group id"""
+  """
+  The package group id
+  """
   groupId: Int!
 
-  """The package group name"""
+  """
+  The package group name
+  """
   name: String
 
-  """The package group description"""
+  """
+  The package group description
+  """
   description: String
 
-  """The package group image"""
+  """
+  The package group image
+  """
   image: String
 
-  """'true' if this package group is required in order to place the package in cart"""
+  """
+  'true' if this package group is required in order to place the package in cart
+  """
   required: Boolean!
 
-  """The sort order of this package group relative to other groups"""
+  """
+  The sort order of this package group relative to other groups
+  """
   sortOrder: Int!
 
-  """Options in this package group"""
+  """
+  Options in this package group
+  """
   options: [OptionType]
 }
 
-"""Type containing information for an option in a product package group"""
+"""
+Type containing information for an option in a product package group
+"""
 type OptionType {
-  """The option id"""
+  """
+  The option id
+  """
   optionId: Int!
 
-  """The quantity of items that is chosen if this option is selected"""
+  """
+  The quantity of items that is chosen if this option is selected
+  """
   quantity: Int!
 
-  """'true' if this option should be selected by default"""
+  """
+  'true' if this option should be selected by default
+  """
   isSelected: Boolean!
 
-  """The sort order of this option relative to other options"""
+  """
+  The sort order of this option relative to other options
+  """
   sortOrder: Int!
 
-  """The product that this options refers to"""
+  """
+  The product that this options refers to
+  """
   product: ProductType
 }
 
-"""Type containing collection of filters"""
+"""
+Type containing collection of filters
+"""
 type FilterCollectionType {
-  """The lowest / highest price found in the results"""
+  """
+  The lowest / highest price found in the results
+  """
   price: PriceFilterType
 
-  """The collection of facet values returned from the query"""
+  """
+  The collection of facet values returned from the query
+  """
   facets: [FilterType]
 }
 
-"""Price range filter"""
+"""
+Price range filter
+"""
 type PriceFilterType {
-  """The lowest price found in the results"""
+  """
+  The lowest price found in the results
+  """
   lowest: Float!
 
-  """The highest price found in the results"""
+  """
+  The highest price found in the results
+  """
   highest: Float!
 }
 
-"""Filter group"""
+"""
+Filter group
+"""
 type FilterType {
-  """ID for this filter type"""
+  """
+  ID for this filter type
+  """
   filterId: String!
 
-  """Filter type. e.g. 'Parameter', 'Category', 'Sku'"""
+  """
+  Filter type. e.g. 'Parameter', 'Category', 'Sku'
+  """
   type: String
 
-  """Parameter group name"""
+  """
+  Parameter group name
+  """
   group: String
 
-  """Parameter group display name"""
+  """
+  Parameter group display name
+  """
   label: String
 
-  """Collection of facet values in this group"""
+  """
+  Collection of facet values in this group
+  """
   values: [FilterValueType]
 }
 
-"""Filter value"""
+"""
+Filter value
+"""
 type FilterValueType {
-  """FacetId_Count"""
+  """
+  FacetId_Count
+  """
   _id: String!
 
-  """Facet ID. Use this in the Facets-list in the products-query to retrieve products associated with it"""
+  """
+  Facet ID. Use this in the Facets-list in the products-query to retrieve products associated with it
+  """
   facetId: String
 
-  """Parent ID. Only available for category-facets.0"""
+  """
+  Parent ID. Only available for category-facets.0
+  """
   parentId: String
 
-  """Facet display name"""
+  """
+  Facet display name
+  """
   label: String
 
-  """The path associated with this facet. e.g. '/c/category-1'"""
+  """
+  The path associated with this facet. e.g. '/c/category-1'
+  """
   url: String
 
-  """The display order of this facet"""
+  """
+  The display order of this facet
+  """
   order: Int!
 
-  """The amount of products in the results associated with this facet"""
+  """
+  The amount of products in the results associated with this facet
+  """
   count: Long!
 
-  """If the filter for this facet is hidden"""
+  """
+  If the filter for this facet is hidden
+  """
   hidden: Boolean!
 }
 
-"""Filter options"""
+"""
+Filter options
+"""
 input FilterInputType {
-  """Search text to filter by"""
+  """
+  Search text to filter by
+  """
   searchText: String
 
-  """A list of string values, that when specified will only include products associated with those values"""
+  """
+  A list of string values, that when specified will only include products associated with those values
+  """
   facets: [String]
 
-  """A list of string values, that when specified will exclude products that are associated with one of the facets"""
+  """
+  A list of string values, that when specified will exclude products that are associated with one of the facets
+  """
   excludeFacets: [String]
 
-  """A list of string values, that when specified will only include products associated with those values"""
+  """
+  A list of string values, that when specified will only include products associated with those values
+  """
   include: [String]
 
-  """A list of string values, that when specified will exclude products that are associated with one of the facets"""
+  """
+  A list of string values, that when specified will exclude products that are associated with one of the facets
+  """
   exclude: [String]
 
-  """Use this to sort the results in a particular way"""
+  """
+  Use this to sort the results in a particular way
+  """
   sort: SortType
 
-  """Price filter"""
+  """
+  Price filter
+  """
   price: PriceFilterInputType
 
-  """Filter mode"""
+  """
+  Filter mode
+  """
   filterMode: FilterMode
 
-  """A list of product ids to filter on"""
+  """
+  A list of product ids to filter on
+  """
   productIds: [Int]
 
-  """Include collapsed products"""
+  """
+  Include collapsed products
+  """
   includeCollapsed: Boolean
 }
 
-"""Sort types"""
+"""
+Sort types
+"""
 enum SortType {
-  """No sorting"""
+  """
+  No sorting
+  """
   NONE
 
-  """Sort by price"""
+  """
+  Sort by price
+  """
   PRICE
 
-  """Sort by price, in descending order"""
+  """
+  Sort by price, in descending order
+  """
   PRICE_DESC
 
-  """Sort by most sold"""
+  """
+  Sort by most sold
+  """
   MOST_SOLD
 
-  """Sort by votes"""
+  """
+  Sort by votes
+  """
   VOTES
 
-  """Sort by brand"""
+  """
+  Sort by brand
+  """
   BRAND
 
-  """Sort by latest products"""
+  """
+  Sort by latest products
+  """
   LATEST
 
-  """Sort by relevance"""
+  """
+  Sort by relevance
+  """
   RELEVANCE
 
-  """Sort by facets"""
+  """
+  Sort by facets
+  """
   FACET_ORDER
 
-  """Sort by alphabetical"""
+  """
+  Sort by alphabetical
+  """
   ALPHABETICAL
 
-  """Sort by alphabetical, in descending order"""
+  """
+  Sort by alphabetical, in descending order
+  """
   ALPHABETICAL_DESC
 
-  """Sort by custom value 1"""
+  """
+  Sort by custom value 1
+  """
   CUSTOM_1
 
-  """Sort by custom value 2"""
+  """
+  Sort by custom value 2
+  """
   CUSTOM_2
 
-  """Sort by custom value 3"""
+  """
+  Sort by custom value 3
+  """
   CUSTOM_3
 
-  """Sort by custom value 4"""
+  """
+  Sort by custom value 4
+  """
   CUSTOM_4
 
-  """Sort by custom value 5"""
+  """
+  Sort by custom value 5
+  """
   CUSTOM_5
 
-  """Sort by available stock balance"""
+  """
+  Sort by available stock balance
+  """
   AVAILABLE_STOCK
 
-  """Sort by available stock balance, in descending order"""
+  """
+  Sort by available stock balance, in descending order
+  """
   AVAILABLE_STOCK_DESC
 
-  """Sort by total stock balance, including oversellable"""
+  """
+  Sort by total stock balance, including oversellable
+  """
   TOTAL_STOCK
 
-  """Sort by total stock balance, including oversellable, in descending order"""
+  """
+  Sort by total stock balance, including oversellable, in descending order
+  """
   TOTAL_STOCK_DESC
 }
 
-"""Price range filter"""
+"""
+Price range filter
+"""
 input PriceFilterInputType {
-  """The lowest price you want to include"""
+  """
+  The lowest price you want to include
+  """
   lowest: Float
 
-  """The highest price you want to include"""
+  """
+  The highest price you want to include
+  """
   highest: Float
 }
 
-"""Filter mode"""
+"""
+Filter mode
+"""
 enum FilterMode {
-  """Get the counts for the results, including the ones excluded by the groups"""
+  """
+  Get the counts for the results, including the ones excluded by the groups
+  """
   BY_GROUP
 
-  """Get the counts for the current filter results"""
+  """
+  Get the counts for the current filter results
+  """
   CURRENT
 }
 
-"""Type containing a subset of product information for related products"""
+"""
+Type containing a subset of product information for related products
+"""
 type RelatedProductType {
-  """Product alias"""
+  """
+  Product alias
+  """
   alias: String!
 
-  """Product name"""
+  """
+  Product name
+  """
   name: String
 
-  """Full path to the product"""
+  """
+  Full path to the product
+  """
   canonicalUrl: String
 
-  """Product brand information"""
+  """
+  Product brand information
+  """
   brand: BrandType
 
-  """Product price"""
+  """
+  Product price
+  """
   unitPrice: PriceType
 
-  """Relation type"""
-  relation: ProductRelation
-    @deprecated(reason: "Use RelatedProductType.RelationType instead.")
+  """
+  Relation type
+  """
+  relation: ProductRelation @deprecated(reason: "Use RelatedProductType.RelationType instead.")
 
-  """Relation type"""
+  """
+  Relation type
+  """
   relationType: String!
 
-  """Product primary image"""
+  """
+  Product primary image
+  """
   primaryImage: String
 
-  """Product secondary image"""
+  """
+  Product secondary image
+  """
   secondaryImage: String
 
-  """List of product images"""
-  images: [String]
-    @deprecated(reason: "Use RelatedProductType.ProductImages instead.")
+  """
+  List of product images
+  """
+  images: [String] @deprecated(reason: "Use RelatedProductType.ProductImages instead.")
 
-  """List of product images and their related properties"""
+  """
+  List of product images and their related properties
+  """
   productImages: [ProductImageType]
 
-  """Product SKUs"""
+  """
+  Product SKUs
+  """
   skus: [SkuType]
 
-  """Product campaigns"""
+  """
+  Product campaigns
+  """
   discountCampaigns: [CampaignRuleType]
 
-  """Primary category for this product"""
+  """
+  Primary category for this product
+  """
   primaryCategory: CategoryType
 
-  """Product parameter groups. The availability of data in this field needs to be configured."""
+  """
+  Product parameter groups. The availability of data in this field needs to be configured.
+  """
   parameterGroups: [ParameterGroupType]
 }
 
-"""Product relation type"""
+"""
+Product relation type
+"""
 enum ProductRelation {
-  """Product is related to this product"""
+  """
+  Product is related to this product
+  """
   RELATED
 
-  """Product is an accessory to this product"""
+  """
+  Product is an accessory to this product
+  """
   ACCESSORIES
 
-  """Product is similar to this product"""
+  """
+  Product is similar to this product
+  """
   SIMILAR
 }
 
-"""Type containing brand listing information"""
+"""
+Type containing brand listing information
+"""
 type BrandListType {
-  """Brand ID"""
+  """
+  Brand ID
+  """
   brandId: Int!
 
-  """Brand alias"""
+  """
+  Brand alias
+  """
   alias: String
 
-  """The full path for this brand. e.g. '/l/brand-1'"""
+  """
+  The full path for this brand. e.g. '/l/brand-1'
+  """
   canonicalUrl: String
 
-  """Alternative full paths to the brand"""
-  alternativeCanonicalUrls: [String]
-    @deprecated(reason: "Use AlternativeUrls instead.")
+  """
+  Alternative full paths to the brand
+  """
+  alternativeCanonicalUrls: [String] @deprecated(reason: "Use AlternativeUrls instead.")
 
-  """Alternative urls to the brand"""
+  """
+  Alternative urls to the brand
+  """
   alternativeUrls: [AlternativeUrlType]
 
-  """Brand name"""
+  """
+  Brand name
+  """
   name: String
 
-  """Brand description"""
+  """
+  Brand description
+  """
   description: String
 
-  """Secondary description"""
+  """
+  Secondary description
+  """
   secondaryDescription: String
 
-  """Primary image"""
+  """
+  Primary image
+  """
   primaryImage: String
 
-  """Background image"""
+  """
+  Background image
+  """
   backgroundImage: String
 
-  """Brand logo"""
+  """
+  Brand logo
+  """
   logo: String
 }
 
-"""Type containing cart information"""
+"""
+Type containing cart information
+"""
 type CartType {
-  """The cart ID"""
+  """
+  The cart ID
+  """
   id: String
 
-  """The cart items"""
+  """
+  The cart items
+  """
   items: [CartItemType]
 
-  """If true, the cart can not be modified further"""
+  """
+  If true, the cart can not be modified further
+  """
   isCompleted: Boolean!
 
-  """Cart promo code"""
+  """
+  Cart promo code
+  """
   promoCode: String
 
-  """Whether the cart has free shipping"""
+  """
+  Whether the cart has free shipping
+  """
   freeShipping: Boolean!
 
-  """Cart fixed discount"""
+  """
+  Cart fixed discount
+  """
   fixedDiscount: Decimal!
 
-  """Campaigns applied to this cart"""
+  """
+  Campaigns applied to this cart
+  """
   appliedCampaigns: [CampaignRuleType]
 
-  """The cart summary"""
+  """
+  The cart summary
+  """
   summary: CartSummaryType
 }
 
-"""Type containing cart item information"""
+"""
+Type containing cart item information
+"""
 type CartItemType {
-  """Product"""
+  """
+  Product
+  """
   product: ProductType
 
-  """SKU Id"""
+  """
+  SKU Id
+  """
   skuId: Int!
 
-  """Cart item Id"""
+  """
+  Cart item Id
+  """
   id: ID!
 
-  """Total price"""
+  """
+  Total price
+  """
   totalPrice: PriceType
 
-  """Price per unit"""
+  """
+  Price per unit
+  """
   unitPrice: PriceType
 
-  """Quantity"""
+  """
+  Quantity
+  """
   quantity: Int!
 
-  """Campaign"""
+  """
+  Campaign
+  """
   campaign: CampaignType
 
-  """The key of the group that this cart item belong to"""
+  """
+  The key of the group that this cart item belong to
+  """
   groupKey: ID
 
-  """Contains package meta data if the cart item was part of package"""
+  """
+  Contains package meta data if the cart item was part of package
+  """
   productPackage: ProductPackageCartItemType
 
-  """Custom message"""
+  """
+  Custom message
+  """
   message: String
 }
 
-"""Type containing campaign information"""
+"""
+Type containing campaign information
+"""
 type CampaignType {
-  """Applied campaigns"""
+  """
+  Applied campaigns
+  """
   appliedCampaigns: [CampaignRuleType]
 
-  """Campaign prices"""
+  """
+  Campaign prices
+  """
   prices: [CampaignPriceType]
 }
 
-"""Type containing campaign price information"""
+"""
+Type containing campaign price information
+"""
 type CampaignPriceType {
-  """Campaign price quantity"""
+  """
+  Campaign price quantity
+  """
   quantity: Int!
 
-  """Campaign price discount"""
+  """
+  Campaign price discount
+  """
   discount: Decimal!
 
-  """Campaign price discount percentage"""
+  """
+  Campaign price discount percentage
+  """
   discountPercentage: Decimal!
 
-  """Campaign price"""
+  """
+  Campaign price
+  """
   price: PriceType
 }
 
-"""Type containing meta data for the package selection that a cart item was added from"""
+"""
+Type containing meta data for the package selection that a cart item was added from
+"""
 type ProductPackageCartItemType {
-  """The package id"""
+  """
+  The package id
+  """
   packageId: Int!
 
-  """The package name"""
+  """
+  The package name
+  """
   packageName: String!
 
-  """The group id"""
+  """
+  The group id
+  """
   groupId: Int!
 
-  """The option id"""
+  """
+  The option id
+  """
   optionId: Int!
 }
 
-"""Type containing cart summary information"""
+"""
+Type containing cart summary information
+"""
 type CartSummaryType {
-  """Cart total"""
+  """
+  Cart total
+  """
   total: PriceType
 
-  """Cart sub-total"""
+  """
+  Cart sub-total
+  """
   subTotal: PriceType
 
-  """Cart VAT information"""
+  """
+  Cart VAT information
+  """
   vats: [VatGroupType]
 
-  """Cart fee information"""
+  """
+  Cart fee information
+  """
   fees: CartFeesType
 
-  """Account balance information"""
+  """
+  Account balance information
+  """
   balance: BalanceType
 
-  """Cart fixed discount amount incl. VAT"""
+  """
+  Cart fixed discount amount incl. VAT
+  """
   fixedAmountDiscountIncVat: Decimal!
 
-  """Cart fixed discount amount excl. VAT"""
+  """
+  Cart fixed discount amount excl. VAT
+  """
   fixedAmountDiscountExVat: Decimal!
 
-  """Cart shipping option information"""
+  """
+  Cart shipping option information
+  """
   shipping: ShippingOptionType
 
-  """Cart payment option information"""
+  """
+  Cart payment option information
+  """
   payment: PaymentOptionType
 }
 
-"""Type containing VAT group information"""
+"""
+Type containing VAT group information
+"""
 type VatGroupType {
-  """VAT rate"""
+  """
+  VAT rate
+  """
   rate: Int!
 
-  """VAT amount"""
+  """
+  VAT amount
+  """
   amount: Decimal!
 }
 
-"""Type containing information about cart fees"""
+"""
+Type containing information about cart fees
+"""
 type CartFeesType {
-  """Payment fee incl. VAT"""
+  """
+  Payment fee incl. VAT
+  """
   paymentFeeIncVat: Decimal!
 
-  """Payment fee excl. VAT"""
+  """
+  Payment fee excl. VAT
+  """
   paymentFeeExVat: Decimal!
 
-  """Shipping fee incl. VAT"""
+  """
+  Shipping fee incl. VAT
+  """
   shippingFeeIncVat: Decimal!
 
-  """Shipping fee excl. VAT"""
+  """
+  Shipping fee excl. VAT
+  """
   shippingFeeExVat: Decimal!
 }
 
-"""Type containing account balance information"""
+"""
+Type containing account balance information
+"""
 type BalanceType {
-  """The remaining account balance"""
+  """
+  The remaining account balance
+  """
   remaining: Decimal!
 
-  """The amount that will be used for this order"""
+  """
+  The amount that will be used for this order
+  """
   pending: Decimal!
 
-  """The cart total selling price incl. VAT if balance hadn't been withdrawn ."""
+  """
+  The cart total selling price incl. VAT if balance hadn't been withdrawn .
+  """
   totalSellingPriceExBalanceIncVat: Decimal!
 
-  """The cart total selling price excl. VAT if balance hadn't been withdrawn."""
+  """
+  The cart total selling price excl. VAT if balance hadn't been withdrawn.
+  """
   totalSellingPriceExBalanceExVat: Decimal!
 
-  """Remaining account balance, formatted as a currency string"""
+  """
+  Remaining account balance, formatted as a currency string
+  """
   remainingFormatted: String
 
-  """Pending balance, formatted as a currency string"""
+  """
+  Pending balance, formatted as a currency string
+  """
   pendingFormatted: String
 
-  """Cart total incl. VAT, excl. balance, formatted as a currency string"""
+  """
+  Cart total incl. VAT, excl. balance, formatted as a currency string
+  """
   totalSellingPriceExBalanceIncVatFormatted: String
 
-  """Cart total excl. VAT, excl. balance, formatted as a currency string"""
+  """
+  Cart total excl. VAT, excl. balance, formatted as a currency string
+  """
   totalSellingPriceExBalanceExVatFormatted: String
 }
 
-"""Type containing shipping option information"""
+"""
+Type containing shipping option information
+"""
 type ShippingOptionType {
-  """Shipping option ID"""
+  """
+  Shipping option ID
+  """
   id: Int!
 
-  """Name"""
+  """
+  Name
+  """
   name: String
 
-  """Display name"""
+  """
+  Display name
+  """
   displayName: String
 
-  """Fee incl. VAT"""
+  """
+  Fee incl. VAT
+  """
   feeIncVat: Decimal!
 
-  """Fee excl. VAT"""
+  """
+  Fee excl. VAT
+  """
   feeExVat: Decimal!
 
-  """Whether this shipping option is the default selection"""
+  """
+  Whether this shipping option is the default selection
+  """
   isDefault: Boolean!
 
-  """Whether this option is the one selected"""
+  """
+  Whether this option is the one selected
+  """
   isSelected: Boolean!
 
-  """External ID"""
+  """
+  External ID
+  """
   externalId: String
 
-  """Shipping data"""
+  """
+  Shipping data
+  """
   shippingData: String
 
-  """Amount left to recieve free shipping"""
+  """
+  Amount left to recieve free shipping
+  """
   amountLeftToFreeShipping: Decimal!
 
-  """Shipping option logo"""
+  """
+  Shipping option logo
+  """
   logo: String
 
-  """Sub-options"""
+  """
+  Sub-options
+  """
   subOptions: [ShippingOptionType]
 
-  """Amount left to recieve free shipping formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Amount left to recieve free shipping formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   amountLeftToFreeShippingFormatted: String
 
-  """Fee incl. VAT, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Fee incl. VAT, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   feeIncVatFormatted: String
 
-  """Fee excl. VAT, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Fee excl. VAT, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   feeExVatFormatted: String
 }
 
-"""Type containing payment option information"""
+"""
+Type containing payment option information
+"""
 type PaymentOptionType {
-  """Payment option ID"""
+  """
+  Payment option ID
+  """
   id: Int!
 
-  """Name"""
+  """
+  Name
+  """
   name: String
 
-  """Display name"""
+  """
+  Display name
+  """
   displayName: String
 
-  """Shipping option logo"""
+  """
+  Shipping option logo
+  """
   logo: String
 
-  """Fee incl. VAT"""
+  """
+  Fee incl. VAT
+  """
   feeIncVat: Decimal!
 
-  """Fee excl. VAT"""
+  """
+  Fee excl. VAT
+  """
   feeExVat: Decimal!
 
-  """Whether this payment option is the default selection"""
+  """
+  Whether this payment option is the default selection
+  """
   isDefault: Boolean!
 
-  """Whether this option is the one selected"""
+  """
+  Whether this option is the one selected
+  """
   isSelected: Boolean!
 
-  """Payment type"""
+  """
+  Payment type
+  """
   paymentType: PaymentType
 
-  """Payment option data"""
+  """
+  Payment option data
+  """
   paymentData: String
 
-  """Whether it is a new checkout session"""
+  """
+  Whether it is a new checkout session
+  """
   newCheckoutSession: Boolean!
 
-  """Fee incl. VAT, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Fee incl. VAT, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   feeIncVatFormatted: String
 
-  """Fee excl. VAT, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'"""
+  """
+  Fee excl. VAT, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
+  """
   feeExVatFormatted: String
 }
 
-"""Payment types"""
+"""
+Payment types
+"""
 enum PaymentType {
-  """Standard"""
+  """
+  Standard
+  """
   STANDARD
 
-  """Klarna"""
+  """
+  Klarna
+  """
   KLARNA
 
-  """Svea"""
+  """
+  Svea
+  """
   SVEA
 
-  """Walley"""
+  """
+  Walley
+  """
   WALLEY
 
-  """Avarda"""
+  """
+  Avarda
+  """
   AVARDA
 }
 
 type CheckoutAndOrderType {
-  """HTML-snippet"""
+  """
+  HTML-snippet
+  """
   htmlSnippet: String!
 
-  """Order details"""
+  """
+  Order details
+  """
   order: CheckoutOrderType
 }
 
 type CheckoutOrderType {
-  """Order ID"""
+  """
+  Order ID
+  """
   orderId: String
 
-  """Transaction ID"""
+  """
+  Transaction ID
+  """
   transactionId: String
 
-  """Secondary transaction ID"""
+  """
+  Secondary transaction ID
+  """
   secondaryTransactionId: String
 
-  """First name"""
+  """
+  First name
+  """
   firstName: String
 
-  """Last name"""
+  """
+  Last name
+  """
   lastName: String
 
-  """Zip code"""
+  """
+  Zip code
+  """
   zip: String
 
-  """E-mail"""
+  """
+  E-mail
+  """
   email: String
 
-  """Order message"""
+  """
+  Order message
+  """
   message: String
 
-  """Currency"""
+  """
+  Currency
+  """
   currency: String
 
-  """Campaign IDs"""
+  """
+  Campaign IDs
+  """
   campaignIds: [String]
 
-  """Campaign names"""
+  """
+  Campaign names
+  """
   campaignNames: [String]
 
-  """Discount excl. VAT"""
+  """
+  Discount excl. VAT
+  """
   discountExVat: Decimal!
 
-  """Discount incl. VAT"""
+  """
+  Discount incl. VAT
+  """
   discountIncVat: Decimal!
 
-  """Item-value excl. VAT"""
+  """
+  Item-value excl. VAT
+  """
   itemValueExVat: Decimal!
 
-  """Item-value incl. VAT"""
+  """
+  Item-value incl. VAT
+  """
   itemValueIncVat: Decimal!
 
-  """Order excl. VAT"""
+  """
+  Order excl. VAT
+  """
   orderValueExVat: Decimal!
 
-  """Order incl. VAT"""
+  """
+  Order incl. VAT
+  """
   orderValueIncVat: Decimal!
 
-  """Payment excl. VAT"""
+  """
+  Payment excl. VAT
+  """
   paymentFeeExVat: Decimal!
 
-  """Payment incl. VAT"""
+  """
+  Payment incl. VAT
+  """
   paymentFeeIncVat: Decimal!
 
-  """Shipping excl. VAT"""
+  """
+  Shipping excl. VAT
+  """
   shippingFeeExVat: Decimal!
 
-  """Shipping incl. VAT"""
+  """
+  Shipping incl. VAT
+  """
   shippingFeeIncVat: Decimal!
 
-  """Order sum"""
+  """
+  Order sum
+  """
   sum: Decimal!
 
-  """Order rows"""
+  """
+  Order rows
+  """
   rows: [CheckoutOrderRowType]
 
-  """Market ID."""
+  """
+  Market ID.
+  """
   marketId: String!
 }
 
 type CheckoutOrderRowType {
-  """Article number"""
+  """
+  Article number
+  """
   articleNumber: String
 
-  """Brand name"""
+  """
+  Brand name
+  """
   brand: String
 
-  """Categories"""
+  """
+  Categories
+  """
   categories: [String]
 
-  """Campaign IDs"""
+  """
+  Campaign IDs
+  """
   campaignIds: [String]
 
-  """Campaign names"""
+  """
+  Campaign names
+  """
   campaignNames: [String]
 
-  """Discount excl. VAT"""
+  """
+  Discount excl. VAT
+  """
   discountExVat: Decimal!
 
-  """Discount incl. VAT"""
+  """
+  Discount incl. VAT
+  """
   discountIncVat: Decimal!
 
-  """Discount rate"""
+  """
+  Discount rate
+  """
   discountRate: Float!
 
-  """ExternalId"""
+  """
+  ExternalId
+  """
   externalId: String
 
-  """GTIN"""
+  """
+  GTIN
+  """
   gtin: String
 
-  """Product image URL"""
+  """
+  Product image URL
+  """
   imageUrl: String
 
-  """Height"""
+  """
+  Height
+  """
   height: Int!
 
-  """Length"""
+  """
+  Length
+  """
   length: Int!
 
-  """Width"""
+  """
+  Width
+  """
   width: Int!
 
-  """Weight"""
+  """
+  Weight
+  """
   weight: Int!
 
-  """Message"""
+  """
+  Message
+  """
   message: String
 
-  """Name"""
+  """
+  Name
+  """
   name: String
 
-  """Quantity"""
+  """
+  Quantity
+  """
   quantity: Int!
 
-  """SKU"""
+  """
+  SKU
+  """
   sku: String
 
-  """Variant"""
+  """
+  Variant
+  """
   variant: String
 
-  """Price excl. VAT"""
+  """
+  Price excl. VAT
+  """
   priceExVat: Decimal!
 
-  """Price incl. VAT"""
+  """
+  Price incl. VAT
+  """
   priceIncVat: Decimal!
 
-  """ProductId"""
+  """
+  ProductId
+  """
   productId: Int!
 
-  """ProductUrl"""
+  """
+  ProductUrl
+  """
   productUrl: String
 
-  """ProductPriceCampaignId"""
+  """
+  ProductPriceCampaignId
+  """
   productPriceCampaignId: Int
 
-  """Product price list ID"""
+  """
+  Product price list ID
+  """
   productPriceListId: Int
 }
 
 type CheckoutDataType {
-  """HTML-snippet"""
+  """
+  HTML-snippet
+  """
   htmlSnippet: String
 
-  """True if this is a new checkout session"""
+  """
+  True if this is a new checkout session
+  """
   newCheckoutSession: Boolean!
 
-  """Indicates if the purchase has been completed. This may not be available for all payment types"""
+  """
+  Indicates if the purchase has been completed. This may not be available for all payment types
+  """
   completed: Boolean
 
-  """Order details"""
+  """
+  Order details
+  """
   order: CheckoutOrderType
 
-  """The total number of purchases that the customer has done including this one"""
+  """
+  The total number of purchases that the customer has done including this one
+  """
   nthPurchase: Int!
 
-  """The order details represented as a cart object."""
+  """
+  The order details represented as a cart object.
+  """
   cart: CartType
 }
 
-"""Type containing page information"""
+"""
+Type containing page information
+"""
 type PageInfoType {
-  """Page ID"""
+  """
+  Page ID
+  """
   id: Int!
 
-  """Alias"""
+  """
+  Alias
+  """
   alias: String!
 
-  """Full path to the page"""
+  """
+  Full path to the page
+  """
   canonicalUrl: String
 
-  """Alternative full paths to the page"""
-  alternativeCanonicalUrls: [String]
-    @deprecated(reason: "Use AlternativeUrls instead.")
+  """
+  Alternative full paths to the page
+  """
+  alternativeCanonicalUrls: [String] @deprecated(reason: "Use AlternativeUrls instead.")
 
-  """Alternative urls to the page"""
+  """
+  Alternative urls to the page
+  """
   alternativeUrls: [AlternativeUrlType]
 
-  """Background image"""
+  """
+  Background image
+  """
   backgroundImage: String
 
-  """Logo"""
+  """
+  Logo
+  """
   logo: String
 
-  """Name"""
+  """
+  Name
+  """
   name: String!
 
-  """Whether the Name-field should be hidden"""
+  """
+  Whether the Name-field should be hidden
+  """
   hideTitle: Boolean!
 
-  """Whether the descriptions should be hidden"""
+  """
+  Whether the descriptions should be hidden
+  """
   hideDescription: Boolean!
 
-  """Primary description"""
+  """
+  Primary description
+  """
   primaryDescription: String
 
-  """Primary image"""
+  """
+  Primary image
+  """
   primaryImage: String
 
-  """Secondary description"""
+  """
+  Secondary description
+  """
   secondaryDescription: String
 
-  """Page metadata"""
+  """
+  Page metadata
+  """
   meta: MetadataType
 
-  """Page sub-categories"""
+  """
+  Page sub-categories
+  """
   subCategories: [CategoryType]
 }
 
-"""Type containing CMS page information"""
+"""
+Type containing CMS page information
+"""
 type PageWidgetPageType {
-  """Collection ID"""
+  """
+  Collection ID
+  """
   id: Int!
 
-  """Name"""
+  """
+  Name
+  """
   name: String!
 
-  """Title"""
+  """
+  Title
+  """
   title: String
 
-  """Alias"""
+  """
+  Alias
+  """
   alias: String
 
-  """Active From"""
+  """
+  Active From
+  """
   activeFrom: DateTime
 
-  """Active To"""
+  """
+  Active To
+  """
   activeTo: DateTime
 
-  """List of tags"""
+  """
+  List of tags
+  """
   tags: [String]
 
-  """Collection metadata"""
+  """
+  Collection metadata
+  """
   meta: MetadataType
 
-  """The url to this cms page"""
+  """
+  The url to this cms page
+  """
   canonicalUrl: String
 }
 
-"""Type containing widget collection information"""
+"""
+Type containing widget collection information
+"""
 type PageWidgetCollectionType {
-  """Collection ID"""
+  """
+  Collection ID
+  """
   id: Int!
 
-  """Name"""
+  """
+  Name
+  """
   name: String!
 
-  """Title"""
+  """
+  Title
+  """
   title: String
 
-  """Collection family name"""
+  """
+  Collection family name
+  """
   familyName: String
 
-  """List of tags"""
+  """
+  List of tags
+  """
   tags: [String]
 
-  """Collection metadata"""
+  """
+  Collection metadata
+  """
   meta: MetadataType
 
-  """Collection page area"""
+  """
+  Collection page area
+  """
   pageArea: PageAreaType
 
-  """Collection containers"""
+  """
+  Collection containers
+  """
   containers: [PageWidgetContainerType]
 }
 
-"""Type containing widget page area information"""
+"""
+Type containing widget page area information
+"""
 type PageAreaType {
-  """ID"""
+  """
+  ID
+  """
   id: Int!
 
-  """Name"""
+  """
+  Name
+  """
   name: String
 
-  """Index"""
+  """
+  Index
+  """
   index: Int!
 }
 
-"""Type containing widget container information"""
+"""
+Type containing widget container information
+"""
 type PageWidgetContainerType {
-  """ID"""
+  """
+  ID
+  """
   id: Int!
 
-  """Name"""
+  """
+  Name
+  """
   name: String!
 
-  """Sort order"""
+  """
+  Sort order
+  """
   sortOrder: Int!
 
-  """Widgets in this container"""
+  """
+  Widgets in this container
+  """
   widgets: [PageWidgetType]
 
-  """Container class names"""
+  """
+  Container class names
+  """
   classNames: [String]
 
-  """Container layout"""
+  """
+  Container layout
+  """
   layout: String!
 
-  """Container responsive mode"""
+  """
+  Container responsive mode
+  """
   responsiveMode: String!
 
-  """Container design"""
+  """
+  Container design
+  """
   design: String!
 }
 
-"""Type containing widget information"""
+"""
+Type containing widget information
+"""
 type PageWidgetType {
-  """ID"""
+  """
+  ID
+  """
   id: String!
 
-  """Name"""
+  """
+  Name
+  """
   name: String!
 
-  """Sort order"""
+  """
+  Sort order
+  """
   sortOrder: Int!
 
-  """Widget Type"""
+  """
+  Widget Type
+  """
   type: String!
 
-  """Size"""
+  """
+  Size
+  """
   size: String!
 
-  """Class names"""
+  """
+  Class names
+  """
   classNames: [String]
 
-  """Images"""
+  """
+  Images
+  """
   images: [PageWidgetImageType]
 
-  """Configuration"""
+  """
+  Configuration
+  """
   configuration: String!
 }
 
-"""Type containing widget image information"""
+"""
+Type containing widget image information
+"""
 type PageWidgetImageType {
-  """Filename"""
+  """
+  Filename
+  """
   fileName: String!
 
-  """Largest image size"""
+  """
+  Largest image size
+  """
   largestSize: PageWidgetImageSizeType
 
-  """Image sizes"""
+  """
+  Image sizes
+  """
   sizes: [PageWidgetImageSizeType]
 }
 
-"""Type containing widget image size information"""
+"""
+Type containing widget image size information
+"""
 type PageWidgetImageSizeType {
-  """Image width"""
+  """
+  Image width
+  """
   imageWidth: Int!
 
-  """Image height"""
+  """
+  Image height
+  """
   imageHeight: Int!
 
-  """Image ratio"""
+  """
+  Image ratio
+  """
   imageRatio: Float!
 }
 
-"""Customer type"""
+"""
+Customer type
+"""
 enum CustomerType {
-  """Private person"""
+  """
+  Private person
+  """
   PERSON
 
-  """Organization"""
+  """
+  Organization
+  """
   ORGANIZATION
 }
 
-"""Type for filtering widgets"""
+"""
+Type for filtering widgets
+"""
 input PageWidgetCollectionFilterInputType {
-  """Filter key"""
+  """
+  Filter key
+  """
   key: String
 
-  """Filter value"""
+  """
+  Filter value
+  """
   value: String
 }
 
@@ -2240,10 +3679,14 @@ type OrderType {
   shippingFee: PriceType
   vat: PriceType
 
-  """The amount taken from account balance"""
+  """
+  The amount taken from account balance
+  """
   fromBalance: Decimal!
 
-  """The amount taken from account balance. Formatted as a currency string."""
+  """
+  The amount taken from account balance. Formatted as a currency string.
+  """
   fromBalanceFormatted: String
   refunds: [RefundType]
   shippingDetails: [ShippingDetailType]
@@ -2317,16 +3760,24 @@ type UserType {
   memberType: String!
   memberId: Int!
 
-  """User balance per currency"""
+  """
+  User balance per currency
+  """
   balances: [UserBalanceType]
 
-  """Account balance"""
+  """
+  Account balance
+  """
   balance: Decimal! @deprecated(reason: "Use Balances instead")
 
-  """Account balance. Formatted as a currency string."""
+  """
+  Account balance. Formatted as a currency string.
+  """
   balanceFormatted: String @deprecated(reason: "Use Balances instead")
 
-  """Free-text field that can contain any additional metadata related to the customer."""
+  """
+  Free-text field that can contain any additional metadata related to the customer.
+  """
   metaData: String
 }
 
@@ -2340,7 +3791,9 @@ type UserBalanceType {
   currency: String!
   amount: Decimal!
 
-  """User balance amount. Formatted as a currency string."""
+  """
+  User balance amount. Formatted as a currency string.
+  """
   amountFormatted: String
 }
 
@@ -2373,31 +3826,54 @@ type MenuItemType {
   children: [MenuItemType]
 }
 
-"""The results of the reviews query."""
+"""
+The results of the reviews query.
+"""
 type ProductReviewResultType {
-  """The total count of results for the query"""
+  """
+  The total count of results for the query
+  """
   count: Long!
 
-  """The average rating for this product"""
+  """
+  The average rating for this product
+  """
   averageRating: Float!
 
-  """Results returned by the query"""
+  """
+  Results returned by the query
+  """
   reviews: [ProductReviewType]
 }
 
-"""Type containing all information about a product review"""
+"""
+Type containing all information about a product review
+"""
 type ProductReviewType {
-  """The product rating (1-5)"""
+  """
+  The product rating (1-5)
+  """
   rating: Int!
 
-  """The product review comment"""
+  """
+  The product review comment
+  """
   comment: String!
 
-  """The date and time for when the review was made"""
+  """
+  The date and time for when the review was made
+  """
   reviewDate: DateTime!
 
-  """Author of the review"""
+  """
+  Author of the review
+  """
   author: String!
+}
+
+type ValidateOrderConditionsResponseType {
+  isValid: Boolean!
+  message: String
 }
 
 type ValidateOrderCreationResponseType {
@@ -2442,177 +3918,285 @@ input AddressInputType {
 
 type Mutation {
   addToCart(
-    """The cart ID"""
+    """
+    The cart ID
+    """
     id: String!
 
     #
     item: CartItemInputType!
 
-    """If the the shipping fee on cart is allowed to take the value of an external shipping. Set to false if outside checkout."""
+    """
+    If the the shipping fee on cart is allowed to take the value of an external shipping. Set to false if outside checkout.
+    """
     allowExternalShippingFee: Boolean
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CartType
   addPackageToCart(
-    """The cart ID"""
+    """
+    The cart ID
+    """
     id: String!
 
-    """The product id of the package"""
+    """
+    The product id of the package
+    """
     packageId: Int!
 
-    """If the the shipping fee on cart is allowed to take the value of an external shipping. Set to false if outside checkout."""
+    """
+    If the the shipping fee on cart is allowed to take the value of an external shipping. Set to false if outside checkout.
+    """
     allowExternalShippingFee: Boolean
 
-    """All option selections for the package"""
+    """
+    All option selections for the package
+    """
     selections: [ProductPackageSelectionType]
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CartType
 
-  """Update the cart item"""
+  """
+  Update the cart item
+  """
   updateCartItem(
-    """The cart ID"""
+    """
+    The cart ID
+    """
     id: String!
 
-    """The item to be updated"""
+    """
+    The item to be updated
+    """
     item: CartItemInputType!
 
-    """If the the shipping fee on cart is allowed to take the value of an external shipping. Set to false if outside checkout."""
+    """
+    If the the shipping fee on cart is allowed to take the value of an external shipping. Set to false if outside checkout.
+    """
     allowExternalShippingFee: Boolean
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CartType
 
-  """Update the quantity of an entire cart group"""
+  """
+  Update the quantity of an entire cart group
+  """
   updateCartGroup(
-    """The cart ID"""
+    """
+    The cart ID
+    """
     id: String!
 
-    """The group key to be updated"""
+    """
+    The group key to be updated
+    """
     item: CartGroupInputType!
 
-    """If the the shipping fee on cart is allowed to take the value of an external shipping. Set to false if outside checkout."""
+    """
+    If the the shipping fee on cart is allowed to take the value of an external shipping. Set to false if outside checkout.
+    """
     allowExternalShippingFee: Boolean
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CartType
 
-  """Marks the cart as completed, and makes it read-only"""
+  """
+  Marks the cart as completed, and makes it read-only
+  """
   completeCart(
-    """The cart ID"""
+    """
+    The cart ID
+    """
     id: String!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CartType
 
-  """Set a promo code on the cart"""
+  """
+  Set a promo code on the cart
+  """
   setCartPromoCode(
-    """The cart ID"""
+    """
+    The cart ID
+    """
     id: String!
 
-    """The promo code to store on cart"""
+    """
+    The promo code to store on cart
+    """
     promoCode: String!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CartType
   createOrUpdateCheckout(
-    """The cart ID"""
+    """
+    The cart ID
+    """
     cartId: String!
 
-    """The choices made in checkout"""
+    """
+    The choices made in checkout
+    """
     checkout: CheckoutInputType
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CheckoutType
   placeOrder(
-    """The cart ID"""
+    """
+    The cart ID
+    """
     cartId: String!
 
-    """The choices made in checkout"""
+    """
+    The choices made in checkout
+    """
     checkout: CheckoutInputType!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): PlaceOrderResponseType
   updateUser(
-    """The user fields to update. Omitted fields or fields with null values will not be updated."""
+    """
+    The user fields to update. Omitted fields or fields with null values will not be updated.
+    """
     user: UserInputType!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): UserType
   requestPasswordReset(
     #
     email: String!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): Boolean
   commitReset(
@@ -2622,39 +4206,61 @@ type Mutation {
     #
     password: String!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): Boolean
   deleteUser(
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): Boolean
   subscribeToNewsletter(
-    """The subscribing email adress."""
+    """
+    The subscribing email adress.
+    """
     email: String!
 
-    """Custom tags that are sent along with the email to the newsletter provider."""
+    """
+    Custom tags that are sent along with the email to the newsletter provider.
+    """
     tags: [String]
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): Boolean
   monitorProductAvailability(
@@ -2664,51 +4270,81 @@ type Mutation {
     #
     skuId: Int!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): Boolean
   postProductReview(
-    """Product alias"""
+    """
+    Product alias
+    """
     alias: String!
 
-    """Rating, 1-5"""
+    """
+    Rating, 1-5
+    """
     rating: Int
 
-    """The review comment"""
+    """
+    The review comment
+    """
     comment: String
 
-    """Name of author"""
+    """
+    Name of author
+    """
     author: String!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): Boolean
   setCartShippingFee(
-    """The cart ID"""
+    """
+    The cart ID
+    """
     cartId: String!
 
-    """The shipping fee"""
+    """
+    The shipping fee
+    """
     shippingFee: Decimal!
 
-    """The channel ID. Will default to an existing value if it is not found."""
+    """
+    The channel ID. Will default to an existing value if it is not found.
+    """
     channelId: String
 
-    """The language ID. Will default to an existing value if it is not found."""
+    """
+    The language ID. Will default to an existing value if it is not found.
+    """
     languageId: String
 
-    """The market ID. Will default to an existing value if it is not found."""
+    """
+    The market ID. Will default to an existing value if it is not found.
+    """
     marketId: String
   ): CheckoutType
 }
@@ -2721,15 +4357,23 @@ input CartItemInputType {
   message: String
 }
 
-"""Type containing an option selection for a product package group"""
+"""
+Type containing an option selection for a product package group
+"""
 input ProductPackageSelectionType {
-  """The group id that the selection is made in"""
+  """
+  The group id that the selection is made in
+  """
   groupId: Int!
 
-  """The selected option id"""
+  """
+  The selected option id
+  """
   optionId: Int!
 
-  """The selected SKU"""
+  """
+  The selected SKU
+  """
   skuId: Int!
 }
 
@@ -2777,6 +4421,8 @@ input UserInputType {
   personalId: String
   customerType: CustomerType = PERSON
 
-  """Free-text field to store any data related to the customer."""
+  """
+  Free-text field to store any data related to the customer.
+  """
   metaData: String
 }

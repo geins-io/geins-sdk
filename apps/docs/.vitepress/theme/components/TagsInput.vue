@@ -140,10 +140,10 @@ export default {
       this.innerTags = [];
     },
     focusNewTag() {
-      if (this.readOnly || !this.$el.querySelector('.v3ti-new-tag')) {
+      if (this.readOnly || !this.$refs.inputTag) {
         return;
       }
-      this.$el.querySelector('.v3ti-new-tag').focus();
+      this.$refs.inputTag.focus();
     },
     handleInputFocus(event) {
       this.isInputActive = true;

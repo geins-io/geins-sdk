@@ -25,6 +25,7 @@ The validate options are the same as the options required to create an order. Th
 type CreateOrderOptions = {
   cartId: string;
   checkoutOptions: CheckoutInputType;
+  checkoutMarketId?: string;
 };
 ```
 

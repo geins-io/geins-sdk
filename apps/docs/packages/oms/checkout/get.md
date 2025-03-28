@@ -19,6 +19,7 @@ You can pass in options to make the checkout come with certain options. The opti
 - `paymentMethodId?` - The id of the payment method to be used for checkout
 - `shippingMethodId?` - The id of the shipping method to be used for checkout
 - `checkoutOptions?` - The options for the checkout process. This will contain all the necessary information when checking out. This is also used to override the default options for the checkout process.
+- `checkoutMarketId?` - The market id to get the checkout for. This is used when you have multiple markets and you want to get the checkout for a specific market. Especially usefull if you want to get the checkout for another market than the one set in your Geins settings. Will fallback to the default market if not set.
 
 ::: tip :bulb: Tip
 Use the `OMSSettings` to set the default payment, redirect URL's etc. This will make the checkout process easier since you don't have to pass in the `paymentMethodId` and `shippingMethodId` every time you want to get a checkout.
@@ -36,6 +37,7 @@ type GetCheckoutOptions = {
   paymentMethodId?: number;
   shippingMethodId?: number;
   checkoutOptions?: CheckoutInputType;
+  checkoutMarketId?: string;
 };
 
 /**

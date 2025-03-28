@@ -8,7 +8,7 @@ Don't use this if you are using an external checkout flow. This is only for cust
 
 ## Overview
 
-- Before order is created the checkout will be validated. 
+- Before order is created the checkout will be validated.
 - Validation will only ceckl
 - If the checkout is valid the order will be created.
 - A successful order creation will return the `CreateOrderResponseType` which contains all the necessary information next steps of the checkout process.
@@ -17,16 +17,17 @@ Don't use this if you are using an external checkout flow. This is only for cust
 The validation performed before creating the order is **not** the same as the validation performed by the [`validate method`](validate.md).
 :::
 
-
 ## Options
+
 The create order options are required to create an order. The options are as follows:
+
 ```typescript [@geins/types]
 type CreateOrderOptions = {
   cartId: string;
   checkoutOptions: CheckoutInputType;
+  checkoutMarketId?: string;
 };
 ```
-
 
 ## Return Object
 
@@ -37,7 +38,7 @@ export type CreateOrderResponseType = {
   created?: boolean;
   orderId?: string;
   publicId?: string;
-  message?: string;  
+  message?: string;
 };
 ```
 
@@ -50,14 +51,14 @@ export type CreateOrderResponseType = {
 
 ```typescript
 const myCheckoutOptions = getCheckoutOptions();
-const createOrderResult = await geinsOMS.checkout.createOrder({ 
-  cartId: 'cart-id', 
-  checkoutOptions: myCheckoutOptions
+const createOrderResult = await geinsOMS.checkout.createOrder({
+  cartId: 'cart-id',
+  checkoutOptions: myCheckoutOptions,
 });
 
-if(createOrderResult.created) {
-    console.log("Order created successfully:", createOrderResult);
+if (createOrderResult.created) {
+  console.log('Order created successfully:', createOrderResult);
 } else {
-    console.log("Order creation failed:", createOrderResult.message);
+  console.log('Order creation failed:', createOrderResult.message);
 }
 ```
