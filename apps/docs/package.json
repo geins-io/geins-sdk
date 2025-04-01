@@ -11,9 +11,9 @@
     "vite": "^5.4.12",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitepress-plugin-group-icons": "^1.3.3",
-    "@geins/core": "*",
-    "@geins/oms": "*",
-    "@geins/types": "*"
+    "@geins/core": "0.5.0-canary-f7d750a4e272c9503beed75eead4235de4a11c75",
+    "@geins/oms": "0.5.0-canary-f7d750a4e272c9503beed75eead4235de4a11c75",
+    "@geins/types": "0.5.0-canary-f7d750a4e272c9503beed75eead4235de4a11c75"
   },
   "scripts": {
     "dev": "vitepress dev",

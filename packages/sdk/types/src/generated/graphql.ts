@@ -2452,22 +2452,7 @@ export type GeinsUserType = {
   customerType?: GeinsCustomerType | null;
   gender?: GeinsGender | null;
   metaData?: string | null;
-  address?: {
-    firstName: string;
-    lastName: string;
-    company: string;
-    mobile: string;
-    phone: string;
-    careOf: string;
-    entryCode: string;
-    addressLine1: string;
-    addressLine2: string;
-    addressLine3: string;
-    zip: string;
-    city: string;
-    state: string;
-    country: string;
-  } | null;
+  address?: GeinsAddressType | null;
   balances?: Array<{
     currency: string;
     amount: number;

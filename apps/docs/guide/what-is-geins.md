@@ -32,15 +32,15 @@ The CMS package allows developers to manage and render content such as pages, me
 
 This package focuses on customer management, providing tools for handling authentication, registration, user profiles, and transaction histories. It’s vital for applications where user interaction and customer data management are primary concerns.
 
-### @geins/pim  <Badge type="info" text="TBA" />
+### @geins/pim <Badge type="info" text="TBA" />
 
 The PIM (Product Information Management) package is designed for managing product data, including product listings, details, and search functionality. This is especially useful for e-commerce sites requiring complex product management and search capabilities.
 
-### @geins/search  <Badge type="info" text="TBA" />
+### @geins/search <Badge type="info" text="TBA" />
 
 The Search package provides tools for implementing search functionality within your application. It includes features like faceted search, autocomplete, and search result rendering, making it easy to integrate powerful search capabilities.
 
-### @geins/oms  <Badge type="info" text="TBA" />
+### @geins/oms <Badge type="info" text="TBA" />
 
 Cart and order management are handled by the OMS (Order Management System) package. It provides tools for managing shopping carts, processing orders, and handling order fulfillment, making it essential for e-commerce applications.
 

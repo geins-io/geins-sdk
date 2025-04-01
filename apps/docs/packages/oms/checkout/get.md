@@ -109,6 +109,7 @@ This is a list of payment options that the user can choose from. This will also 
 enum PaymentOptionCheckoutType {
   STANDARD = 'STANDARD',
   EXTERNAL = 'EXTERNAL',
+  GEINS_PAY = 'GEINS_PAY',
 }
 
 type PaymentOptionType = {
