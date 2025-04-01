@@ -1,8 +1,9 @@
 import { GeinsPaymentType } from '../generated';
 
-declare enum PaymentOptionCheckoutType {
+export enum PaymentOptionCheckoutType {
   STANDARD = 'STANDARD',
   EXTERNAL = 'EXTERNAL',
+  GEINS_PAY = 'GEINS_PAY',
 }
 
 export type ShippingOptionType = {

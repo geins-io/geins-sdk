@@ -20,7 +20,7 @@
 .spinner-circle {
   width: 20px;
   height: 20px;
-  border: 2px solid var(--vp-c-white);
+  border: 2px solid var(--vp-c-text-1);
   border-top-color: transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;

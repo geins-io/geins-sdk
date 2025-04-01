@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { GeinsCore } from '@geins/core';
 import { GeinsOMS } from '@geins/oms';
-import type { GenerateCheckoutTokenOptions, CheckoutSettings, GeinsSettings } from '@geins/types';
-import { GeinsPaymentType } from '@geins/types';
+import type {
+  GenerateCheckoutTokenOptions,
+  CheckoutSettings,
+  GeinsSettings,
+  GeinsUserType,
+} from '@geins/types';
 import { ref, watch, computed, onMounted } from 'vue';
 import {
   cartValid,
@@ -12,10 +16,37 @@ import {
   type GeinsStorage,
 } from '../../utils';
 import GeinsFormGroup from './GeinsFormGroup.vue';
+import GeinsFormGrid from './GeinsFormGrid.vue';
+import GeinsFormContainer from './GeinsFormContainer.vue';
+import GeinsInput from './GeinsInput.vue';
+import GeinsButton from './GeinsButton.vue';
+import GeinsColorInput from './GeinsColorInput.vue';
+import GeinsLoading from './GeinsLoading.vue';
+import GeinsStatus from './GeinsStatus.vue';
 
 const checkoutToken = ref();
 const validationError = ref('');
 const cartId = ref('');
+const user = ref<GeinsUserType>({
+  id: 0,
+  email: '',
+  address: {
+    phone: '',
+    mobile: '',
+    company: '',
+    firstName: '',
+    lastName: '',
+    addressLine1: '',
+    addressLine2: '',
+    addressLine3: '',
+    zip: '',
+    careOf: '',
+    city: '',
+    state: '',
+    country: '',
+    entryCode: '',
+  },
+});
 
 enum LogoSize {
   xs = '1.5rem',
@@ -43,6 +74,7 @@ const paymentMethodOptions = [
 const checkoutSettings = ref<CheckoutSettings>({
   selectedPaymentMethodId: undefined,
   selectedShippingMethodId: undefined,
+  copyCart: true,
   customerType: undefined,
   redirectUrls: {
     success: '',
@@ -75,6 +107,7 @@ const geinsSettings = ref<GeinsSettings>();
 const payload = computed<GenerateCheckoutTokenOptions>(() => ({
   cartId: cartId.value,
   geinsSettings: geinsSettings.value,
+  user: user.value,
   ...checkoutSettings.value,
 }));
 
@@ -142,7 +175,6 @@ const parseToken = async () => {
     ...checkoutSettings.value,
     ...settings.checkoutSettings,
   };
-  console.log('🚀 ~ parseToken ~ checkoutSettings.value:', checkoutSettings.value);
 };
 
 onMounted(() => {
@@ -189,7 +221,15 @@ onMounted(() => {
             label="Cart ID"
             placeholder="Generate Cart ID above"
           />
-          <GeinsStatus class="status-circle" for="geins-cart" :only-status-circle="true" />
+          <GeinsStatus class="status-circle" :for="GeinsStorageParam.Cart" :only-status-circle="true" />
+        </GeinsFormGroup>
+      </GeinsFormGrid>
+      <GeinsFormGrid>
+        <GeinsFormGroup row-size="full">
+          <label for="copy-cart" class="checkbox">
+            <input type="checkbox" id="copy-cart" v-model="checkoutSettings.copyCart" />
+            <div class="checkbox-label">Clone cart</div>
+          </label>
         </GeinsFormGroup>
       </GeinsFormGrid>
       <h3>Checkout Settings</h3>
@@ -213,7 +253,7 @@ onMounted(() => {
             label="Shipping Method ID"
           />
         </GeinsFormGroup>
-        <GeinsFormGroup row-size="full">
+        <GeinsFormGroup row-size="half">
           <label for="customerType">Customer Type</label>
           <div class="select">
             <select id="customerType" v-model="checkoutSettings.customerType">
@@ -222,6 +262,16 @@ onMounted(() => {
               <option value="ORGANIZATION">Business</option>
             </select>
           </div>
+        </GeinsFormGroup>
+        <GeinsFormGroup v-if="user.address" row-size="half">
+          <GeinsInput
+            v-model="user.address.zip"
+            id="zip-code"
+            name="zip-code"
+            label="Zip Code"
+            placeholder="12345"
+            description="The zip code to be used for shipping"
+          />
         </GeinsFormGroup>
       </GeinsFormGrid>
       <h3>Urls</h3>
@@ -496,6 +546,52 @@ select:focus {
   border-color: var(--vp-c-brand);
   box-shadow: 0 0 0 2px var(--vp-c-brand-lighter);
 }
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--vp-c-text-1);
+  position: relative;
+  cursor: pointer;
+}
+
+.checkbox input[type='checkbox'] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkbox-label::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 4px;
+  background: var(--vp-c-bg);
+  margin-right: 10px;
+  transition: all 0.2s ease;
+}
+
+.checkbox input[type='checkbox']:checked + .checkbox-label::before {
+  background: #74e878;
+  border-color: #74e878;
+}
+
+.checkbox-label::after {
+  content: '✔';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  font-size: 9px;
+  color: #000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.checkbox input[type='checkbox']:checked + .checkbox-label::after {
+  opacity: 1;
+}
 
 .desc {
   font-size: 0.9rem;
@@ -530,7 +626,7 @@ select:focus {
 
 .token-title {
   font-size: 1rem;
-  color: var(--vp-c-white);
+  color: var(--vp-c-text-1);
   margin-bottom: 0.5rem;
 }
 

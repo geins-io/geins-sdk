@@ -1,5 +1,5 @@
 import { CustomerType, GeinsSettings } from '../common';
-import { GeinsUserType } from '../generated';
+import type { GeinsUserType } from '../generated';
 import type { CartType } from '../oms/cart';
 import type { AddressType, CheckoutRedirectsType, PaymentOptionType, ShippingOptionType } from '../shared';
 
