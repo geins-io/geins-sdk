@@ -79,7 +79,7 @@ const checkoutSettings = ref<CheckoutSettings>({
   redirectUrls: {
     success: '',
     cancel: '',
-    error: '',
+    continue: '',
     terms: '',
     privacy: '',
   },
@@ -278,34 +278,15 @@ onMounted(() => {
       <GeinsFormGrid v-if="checkoutSettings.redirectUrls">
         <GeinsFormGroup row-size="half">
           <GeinsInput
-            v-model="checkoutSettings.redirectUrls.success"
-            id="success-url"
-            name="success-url"
-            label="Success Url"
-            placeholder="https://example.com/thank-you"
-            description="Url to redirect to after successful checkout, if you don't want to use the default one."
-          />
-        </GeinsFormGroup>
-        <GeinsFormGroup row-size="half">
-          <GeinsInput
             v-model="checkoutSettings.redirectUrls.cancel"
             id="cancel-url"
             name="cancel-url"
             label="Cancel Url"
             placeholder="https://example.com/cart"
-            description="Url to redirect to if user cancels the checkout."
+            description="Url to go to if user cancels/exits the checkout. Will show a small arrow link next to the icon/logo"
           />
         </GeinsFormGroup>
-        <GeinsFormGroup row-size="half">
-          <GeinsInput
-            v-model="checkoutSettings.redirectUrls.error"
-            id="error-url"
-            name="error-url"
-            label="Error Url"
-            placeholder="https://example.com/error"
-            description="Url to redirect to if an error occurs during the checkout, if you want to use a custom one."
-          />
-        </GeinsFormGroup>
+
         <GeinsFormGroup row-size="half">
           <GeinsInput
             v-model="checkoutSettings.redirectUrls.continue"
@@ -323,7 +304,7 @@ onMounted(() => {
             name="terms-url"
             label="Terms Url"
             placeholder="https://example.com/terms"
-            description="Will display a Terms link on the checkout page."
+            description="Will display a Terms & Conditions link on the checkout page."
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -331,9 +312,19 @@ onMounted(() => {
             v-model="checkoutSettings.redirectUrls.privacy"
             id="privacy-url"
             name="privacy-url"
-            label="Privacy Url"
+            label="Privacy Policy Url"
             placeholder="https://example.com/privacy"
-            description="Will display a Privacy link on the checkout page."
+            description="Will display a Privacy Policy link on the checkout page."
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsInput
+            v-model="checkoutSettings.redirectUrls.success"
+            id="success-url"
+            name="success-url"
+            label="Success Url"
+            placeholder="https://example.com/thank-you"
+            description="Url to redirect to after successful checkout. Leave empty to use the default (recommended)"
           />
         </GeinsFormGroup>
       </GeinsFormGrid>
@@ -346,7 +337,7 @@ onMounted(() => {
             name="title"
             label="Title"
             placeholder="Checkout"
-            description="Optional title for the checkout page. A tip is to add your brand name here if you don't wanna use a logo."
+            description="Title of the checkout page. Will not be shown if you add a logo, but is always used for the meta title."
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -356,7 +347,7 @@ onMounted(() => {
             name="icon"
             label="Icon URL"
             placeholder="https://example.com/icon.png"
-            description="Used next to the logo or title. Will be shown in a circle as 48x48px"
+            description="Shown to the left of the logo/title if provided. Will be shown in a circle as 48x48px"
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -387,7 +378,7 @@ onMounted(() => {
             id="border-radius"
             name="border-radius"
             label="Border Radius"
-            placeholder="5px / 0.5rem"
+            placeholder="5px"
             description="Radius of UI elements"
           />
         </GeinsFormGroup>

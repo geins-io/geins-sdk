@@ -98,14 +98,7 @@ export class CheckoutDataResolver {
     if (!redirects) return {};
 
     const defaultUrls = this._settings.checkoutUrls || {};
-    const keys: (keyof CheckoutRedirectsType)[] = [
-      'terms',
-      'success',
-      'error',
-      'cancel',
-      'continue',
-      'privacy',
-    ];
+    const keys: (keyof CheckoutRedirectsType)[] = ['terms', 'success', 'cancel', 'continue', 'privacy'];
 
     return keys.reduce((acc, key) => {
       if (redirects[key] || defaultUrls[key]) acc[key] = redirects[key] || defaultUrls[key]!;
@@ -122,7 +115,6 @@ export class CheckoutDataResolver {
       privacy: 'termsPageUrl',
       cancel: 'checkoutPageUrl',
       continue: 'checkoutPageUrl',
-      error: 'checkoutPageUrl',
     };
 
     return Object.entries(redirects).reduce((acc, [key, value]) => {

@@ -44,5 +44,4 @@ export type CheckoutRedirectsType = {
   success?: string;
   cancel?: string;
   continue?: string;
-  error?: string;
 };
