@@ -42,6 +42,7 @@ const generateCart = async () => {
     loading.value = true;
     await addItemsToCart();
     const createdCart = await geinsOMS?.cart.get();
+
     cart.value.id = createdCart?.id || '';
     cart.value.skus = createdCart?.items?.map((item) => Number(item.skuId)) || [];
 

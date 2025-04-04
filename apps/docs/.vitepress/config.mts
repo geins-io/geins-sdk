@@ -86,7 +86,7 @@ export default withMermaid({
               link: '/guide/examples/graphql-client',
             },
             {
-              text: 'Generate checkout token',
+              text: 'Generate a Checkout Token',
               link: '/guide/examples/generate-checkout-token',
             },
             /* {
