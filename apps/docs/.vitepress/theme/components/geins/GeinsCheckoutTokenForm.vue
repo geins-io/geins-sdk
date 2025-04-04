@@ -6,10 +6,13 @@ import type {
   CheckoutSettings,
   GeinsSettings,
   GeinsUserType,
+  PaymentOptionType,
+  ShippingOptionType,
 } from '@geins/types';
-import { ref, watch, computed, onMounted } from 'vue';
+import { ref, watch, computed, onMounted, nextTick } from 'vue';
 import {
   cartValid,
+  settingsValid,
   getStoredSettings,
   storeSettings,
   GeinsStorageParam,
@@ -21,7 +24,6 @@ import GeinsFormContainer from './GeinsFormContainer.vue';
 import GeinsInput from './GeinsInput.vue';
 import GeinsButton from './GeinsButton.vue';
 import GeinsColorInput from './GeinsColorInput.vue';
-import GeinsLoading from './GeinsLoading.vue';
 import GeinsStatus from './GeinsStatus.vue';
 
 const checkoutToken = ref();
@@ -62,14 +64,8 @@ const logoSizeOptions = [
   { size: LogoSize.lg, label: 'L (48px height)' },
 ];
 
-const paymentMethodOptions = [
-  { id: 18, label: 'Manual Invoice' },
-  { id: 23, label: 'Klarna Checkout' },
-  { id: 24, label: 'Svea Checkout' },
-  { id: 25, label: 'Walley Checkout' },
-  { id: 26, label: 'Avarda Checkout' },
-  { id: 27, label: 'Geins Pay' },
-];
+const paymentMethodOptions = ref<PaymentOptionType[] | undefined>();
+const shippingMethodOptions = ref<ShippingOptionType[] | undefined>();
 
 const checkoutSettings = ref<CheckoutSettings>({
   selectedPaymentMethodId: undefined,
@@ -97,8 +93,8 @@ const checkoutSettings = ref<CheckoutSettings>({
       accent: '#131313',
       accentForeground: '#ffffff',
       border: '#ebebeb',
-      sale: '#11890c',
-      error: '#b80000',
+      sale: '#e60000',
+      error: '#b00020',
     },
   },
 });
@@ -111,21 +107,30 @@ const payload = computed<GenerateCheckoutTokenOptions>(() => ({
   ...checkoutSettings.value,
 }));
 
-watch(cartValid, (valid) => {
-  getCart();
+watch(cartValid, async (valid) => {
+  if (valid) {
+    await getCart();
+    await getCheckout();
+  }
+});
+
+watch(settingsValid, async (valid) => {
+  if (valid) {
+    await initGeins();
+  }
 });
 
 let geinsCore: GeinsCore | null = null;
 let geinsOMS: GeinsOMS | null = null;
 
-const getCart = () => {
+const getCart = async () => {
   const storedCart: GeinsStorage | null = getStoredSettings(GeinsStorageParam.Cart);
   if (storedCart?.geinsCart) {
     cartId.value = storedCart.geinsCart.id;
   }
 };
 
-const getStoredCheckout = () => {
+const getStoredCheckout = async () => {
   const stored: GeinsStorage | null = getStoredSettings(GeinsStorageParam.CheckoutToken);
   if (stored?.geinsCheckout) {
     checkoutToken.value = stored.geinsCheckout.token;
@@ -143,7 +148,6 @@ const generateToken = async () => {
   }
   try {
     loading.value = true;
-    console.log('🚀 ~ generateToken ~ payload.value:', payload.value);
 
     checkoutToken.value = await geinsOMS.createCheckoutToken(payload.value);
     const obj = {
@@ -159,14 +163,6 @@ const generateToken = async () => {
     }, 400);
   }
 };
-const successText = ref();
-const copyToken = () => {
-  navigator.clipboard.writeText(checkoutToken.value);
-  successText.value = 'Token copied to clipboard!';
-  setTimeout(() => {
-    successText.value = '';
-  }, 3000);
-};
 
 const parseToken = async () => {
   const settings = await GeinsOMS.parseCheckoutToken(checkoutToken.value);
@@ -177,31 +173,46 @@ const parseToken = async () => {
   };
 };
 
-onMounted(() => {
-  getCart();
-  getStoredCheckout();
+const getCheckout = async () => {
+  const checkout = await geinsOMS?.checkout.get({
+    cartId: cartId.value,
+    checkoutOptions: {
+      skipShippingValidation: true,
+    },
+  });
+
+  if (checkout) {
+    paymentMethodOptions.value = checkout.paymentOptions;
+    shippingMethodOptions.value = checkout.shippingOptions;
+    if (paymentMethodOptions.value && !checkoutSettings.value.selectedPaymentMethodId) {
+      checkoutSettings.value.selectedPaymentMethodId = paymentMethodOptions.value[0].id;
+    }
+    if (shippingMethodOptions.value && !checkoutSettings.value.selectedShippingMethodId) {
+      checkoutSettings.value.selectedShippingMethodId = shippingMethodOptions.value[0].id;
+    }
+  }
+};
+
+const initGeins = async () => {
   const storedSettings: GeinsStorage | null = getStoredSettings(GeinsStorageParam.Settings);
   if (storedSettings?.geinsSettings) {
     geinsSettings.value = storedSettings.geinsSettings;
     geinsCore = new GeinsCore(storedSettings.geinsSettings);
     geinsOMS = new GeinsOMS(geinsCore);
   }
+};
+
+onMounted(async () => {
+  await getStoredCheckout();
+  await getCart();
+  await initGeins();
+  await getCheckout();
 });
 </script>
 <template>
   <form class="token-form" @submit.prevent="generateToken">
     <GeinsFormContainer>
-      <div v-if="checkoutToken" class="token">
-        <p class="token-title">Your Checkout Token</p>
-        <div class="token-box">
-          <pre id="checkout-token">{{ checkoutToken }}</pre>
-          <button type="button" class="link" @click="copyToken">Copy</button>
-          <p v-if="successText" class="success">{{ successText }}</p>
-          <div class="spinner" v-if="loading">
-            <div class="spinner-circle"></div>
-          </div>
-        </div>
-      </div>
+      <GeinsToken v-if="checkoutToken" :checkout-token="checkoutToken" :loading="loading" />
       <p class="token-text">Already have a token and want to edit it? Paste it below:</p>
       <GeinsInput
         v-model="checkoutToken"
@@ -234,18 +245,37 @@ onMounted(() => {
       </GeinsFormGrid>
       <h3>Checkout Settings</h3>
       <GeinsFormGrid>
-        <GeinsFormGroup row-size="half">
-          <label for="payment-method-id">Payment Method</label>
+        <GeinsFormGroup v-if="paymentMethodOptions && paymentMethodOptions.length" row-size="half">
+          <label class="select-label" for="payment-method-id">Payment Method</label>
           <div class="select">
             <select v-model.number="checkoutSettings.selectedPaymentMethodId">
-              <option value="" selected>Select payment method</option>
+              <option :value="undefined" disabled selected>Select payment method</option>
               <option v-for="option in paymentMethodOptions" :value="option.id" :key="option.id">
-                {{ option.label }}
+                {{ option.displayName }}
               </option>
             </select>
           </div>
         </GeinsFormGroup>
-        <GeinsFormGroup row-size="half">
+        <GeinsFormGroup v-else row-size="half">
+          <GeinsInput
+            v-model.number="checkoutSettings.selectedPaymentMethodId"
+            id="payment-method-id"
+            name="payment-method-id"
+            label="Payment Method ID"
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup v-if="shippingMethodOptions && shippingMethodOptions.length" row-size="half">
+          <label class="select-label" for="shipping-method-id">Shipping Method</label>
+          <div class="select">
+            <select v-model.number="checkoutSettings.selectedShippingMethodId">
+              <option :value="undefined" disabled selected>Select shipping method</option>
+              <option v-for="option in shippingMethodOptions" :value="option.id" :key="option.id">
+                {{ option.displayName }}
+              </option>
+            </select>
+          </div>
+        </GeinsFormGroup>
+        <GeinsFormGroup v-else row-size="half">
           <GeinsInput
             v-model.number="checkoutSettings.selectedShippingMethodId"
             id="shipping-method-id"
@@ -254,12 +284,12 @@ onMounted(() => {
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
-          <label for="customerType">Customer Type</label>
+          <label class="select-label" for="customerType">Customer Type</label>
           <div class="select">
             <select id="customerType" v-model="checkoutSettings.customerType">
-              <option value="" selected>Select type</option>
-              <option value="PERSON">Individual</option>
-              <option value="ORGANIZATION">Business</option>
+              <option :value="undefined" disabled selected>Select type</option>
+              <option value="PERSON">Person</option>
+              <option value="ORGANIZATION">Organization</option>
             </select>
           </div>
         </GeinsFormGroup>
@@ -362,7 +392,7 @@ onMounted(() => {
         </GeinsFormGroup>
         <GeinsFormGroup v-if="checkoutSettings.branding.styles" row-size="half">
           <GeinsFormGroup row-size="full">
-            <label for="logoSize">Logo Size</label>
+            <label class="select-label" for="logoSize">Logo Size</label>
             <div class="select">
               <select id="logoSize" v-model="checkoutSettings.branding.styles.logoSize">
                 <option v-for="option in logoSizeOptions" :value="option.size" :key="option.size">
@@ -468,15 +498,7 @@ onMounted(() => {
           />
         </GeinsFormGroup>
       </GeinsFormGrid>
-      <div v-if="checkoutToken" class="token">
-        <p class="token-title">Your Checkout Token</p>
-        <div class="token-box">
-          <pre id="checkout-token">{{ checkoutToken }}</pre>
-          <button type="button" class="link" @click="copyToken">Copy</button>
-          <p v-if="successText" class="success">{{ successText }}</p>
-          <GeinsLoading v-if="loading" />
-        </div>
-      </div>
+      <GeinsToken v-if="checkoutToken" :checkout-token="checkoutToken" :loading="loading" />
       <GeinsButton type="submit">Generate Checkout Token</GeinsButton>
     </GeinsFormContainer>
   </form>
@@ -510,6 +532,12 @@ h4 {
 
 .select {
   position: relative;
+}
+
+.select-label {
+  font-size: 0.9rem;
+  color: var(--vp-c-text-1);
+  margin-bottom: 0.2rem;
 }
 
 .select::after {
@@ -598,64 +626,5 @@ select:focus {
 
 .token-input {
   margin-bottom: 20px;
-}
-
-.token {
-  border-radius: 6px;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.token-box {
-  border: 1px solid var(--vp-c-success-1);
-  border-radius: 6px;
-  background: var(--vp-c-bg);
-  padding: 1rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.token-title {
-  font-size: 1rem;
-  color: var(--vp-c-text-1);
-  margin-bottom: 0.5rem;
-}
-
-.token .success {
-  font-size: 0.7rem;
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--vp-c-bg);
-  margin: 0;
-  z-index: 10;
-}
-
-.token pre {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--vp-c-success-1);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: calc(100% - 60px);
-  margin: 0;
-}
-
-.link {
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  padding-left: 20px;
-  padding-right: 10px;
-  background: var(--vp-c-bg);
 }
 </style>
