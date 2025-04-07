@@ -12,6 +12,7 @@ import updateSilentCart from './cart/update-silent.gql';
 import updateCart from './cart/update.gql';
 import createOrUpdateCheckout from './checkout/create-update.gql';
 import getCheckoutSummary from './checkout/get-summary.gql';
+import validateOrder from './checkout/validate-order.gql';
 import validateCheckout from './checkout/validate.gql';
 import createOrder from './order/create.gql';
 import getOrder from './order/get.gql';
@@ -32,6 +33,7 @@ const queries = {
   checkoutCreate: createOrUpdateCheckout,
   checkoutValidate: validateCheckout,
   checkoutSummaryGet: getCheckoutSummary,
+  checkoutOrderValidate: validateOrder,
   orderCreate: createOrder,
   orderGet: getOrder,
 };

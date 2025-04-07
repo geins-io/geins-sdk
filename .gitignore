@@ -6,7 +6,6 @@
 .temp
 
 # apps
-apps/
 apps/*/dist
 
 # node / nuxt / vite / rollup
@@ -15,6 +14,7 @@ apps/*/dist
 .nuxt
 node_modules
 dist
+cache
 
 # vscode
 .vscode
@@ -22,6 +22,7 @@ dist
 # vitepress docs
 docs/.vitepress/dist
 docs/.vitepress/cache
+docs/.vitepress/.temp
 
 # environment
 .env

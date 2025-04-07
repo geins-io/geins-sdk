@@ -118,7 +118,7 @@ onMounted(() => {
         </GeinsFormGroup>
 
         <GeinsFormGroup row-size="one-forth">
-          <GeinsInput label="Market ID" id="market" name="market" v-model="settings.market" placeholder="1" />
+          <GeinsInput label="Market" id="market" name="market" v-model="settings.market" placeholder="us" />
         </GeinsFormGroup>
 
         <GeinsFormGroup row-size="one-forth">

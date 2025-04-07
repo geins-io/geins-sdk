@@ -6,6 +6,7 @@ import {
   OMSSettings,
   RuntimeContext,
 } from '@geins/core';
+import { CustomerType } from '@geins/types';
 import { CartService } from './services/cartService';
 import { CheckoutService } from './services/checkoutService';
 import { OrderService } from './services/orderService';
@@ -107,6 +108,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
       availablePaymentMethodIds: options?.availablePaymentMethodIds,
       availableShippingMethodIds: options?.availableShippingMethodIds,
       redirectUrls: options?.redirectUrls ?? this._omsSettings.checkoutUrls ?? undefined,
+      customerType: options?.customerType ?? CustomerType.PERSON,
       branding: options?.branding,
       geinsSettings: this._geinsSettings,
     } as GenerateCheckoutTokenOptions;

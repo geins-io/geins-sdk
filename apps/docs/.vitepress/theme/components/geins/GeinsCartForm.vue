@@ -16,11 +16,14 @@ const cart = ref<GeinsStorageCart>({
   skus: [],
 });
 
+const loading = ref(false);
+
 let geinsCore: GeinsCore | null = null;
 let geinsOMS: GeinsOMS | null = null;
 
 const addItemsToCart = async () => {
   try {
+    await geinsOMS?.cart.items.clear();
     for (const sku of cart.value.skus) {
       const skuId = Number(sku);
       await geinsOMS?.cart.items.add({ skuId, quantity: 1 });
@@ -36,8 +39,10 @@ const generateCart = async () => {
     return;
   }
   try {
+    loading.value = true;
     await addItemsToCart();
     const createdCart = await geinsOMS?.cart.get();
+
     cart.value.id = createdCart?.id || '';
     cart.value.skus = createdCart?.items?.map((item) => Number(item.skuId)) || [];
 
@@ -46,13 +51,17 @@ const generateCart = async () => {
   } catch (error) {
     console.error('Failed to generate cart.', error);
     // validationError.value = 'Failed to generate cart.';
+  } finally {
+    loading.value = false;
   }
 };
 
 const removeCart = async () => {
+  loading.value = true;
   await geinsOMS?.cart.remove();
   cart.value = { id: '', skus: [] };
   storeSettings(false, cart.value, GeinsStorageParam.Cart);
+  loading.value = false;
 };
 
 onMounted(() => {
@@ -70,8 +79,11 @@ onMounted(() => {
 <template>
   <form @submit.prevent="generateCart">
     <GeinsFormContainer>
-      <div v-if="cart.id" class="label">Cart ID</div>
-      <div v-if="cart.id" class="cart-id">{{ cart.id }}</div>
+      <div v-if="cart.id || loading" class="label">Cart ID</div>
+      <div v-if="cart.id || loading" class="cart-id">
+        {{ cart.id }}
+        <GeinsLoading v-if="loading" />
+      </div>
       <GeinsFormGrid>
         <GeinsFormGroup row-size="full">
           <TagsInput
@@ -98,6 +110,7 @@ onMounted(() => {
   color: var(--vp-c-text-1);
 }
 .cart-id {
+  position: relative;
   font-size: 1.2rem;
   text-align: center;
   border: 1px solid var(--vp-c-divider);
@@ -106,6 +119,10 @@ onMounted(() => {
   border-radius: 5px;
   background: var(--vp-c-bg);
   margin-bottom: 20px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .link {
   text-decoration: underline;

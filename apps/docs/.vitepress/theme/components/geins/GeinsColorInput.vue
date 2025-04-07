@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { defineEmits } from 'vue';
 
 const props = defineProps<{
   label: string;
-  modelValue: string;
+  modelValue: string | undefined;
   id: string;
   name: string;
   description?: string;
 }>();
 
-const value = ref(props.modelValue);
+const value = ref(props.modelValue || '');
 const emit = defineEmits(['update:modelValue']);
 
 watch(value, (newValue) => {
@@ -20,7 +19,7 @@ watch(value, (newValue) => {
 watch(
   () => props.modelValue,
   (newValue) => {
-    value.value = newValue;
+    value.value = newValue || '';
   },
 );
 </script>

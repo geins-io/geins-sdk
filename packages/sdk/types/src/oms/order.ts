@@ -1,5 +1,5 @@
-import type { AddressType, PriceType } from '../shared';
 import type { CartType } from '../oms/cart';
+import type { AddressType, PriceType } from '../shared';
 
 export type ShippingDetailType = {
   id?: string;
@@ -63,6 +63,11 @@ export type OrderSummaryType = {
   fromBalanceFormatted?: string;
   refunds?: RefundType[];
   shippingDetails?: ShippingDetailType[];
+};
+
+export type ValidateOrderConditionsResponseType = {
+  isValid: boolean;
+  message: string;
 };
 
 export type ValidateOrderCreationResponseType = {

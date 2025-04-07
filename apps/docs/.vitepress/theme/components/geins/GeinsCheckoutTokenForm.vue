@@ -1,28 +1,81 @@
 <script setup lang="ts">
 import { GeinsCore } from '@geins/core';
 import { GeinsOMS } from '@geins/oms';
-import type { GenerateCheckoutTokenOptions, CheckoutSettings, GeinsSettings } from '@geins/types';
-import { ref, watch, computed, onMounted } from 'vue';
+import type {
+  GenerateCheckoutTokenOptions,
+  CheckoutSettings,
+  GeinsSettings,
+  GeinsUserType,
+  PaymentOptionType,
+  ShippingOptionType,
+} from '@geins/types';
+import { ref, watch, computed, onMounted, nextTick } from 'vue';
 import {
   cartValid,
+  settingsValid,
   getStoredSettings,
   storeSettings,
   GeinsStorageParam,
   type GeinsStorage,
 } from '../../utils';
 import GeinsFormGroup from './GeinsFormGroup.vue';
+import GeinsFormGrid from './GeinsFormGrid.vue';
+import GeinsFormContainer from './GeinsFormContainer.vue';
+import GeinsInput from './GeinsInput.vue';
+import GeinsButton from './GeinsButton.vue';
+import GeinsColorInput from './GeinsColorInput.vue';
+import GeinsStatus from './GeinsStatus.vue';
 
 const checkoutToken = ref();
 const validationError = ref('');
 const cartId = ref('');
+const user = ref<GeinsUserType>({
+  id: 0,
+  email: '',
+  address: {
+    phone: '',
+    mobile: '',
+    company: '',
+    firstName: '',
+    lastName: '',
+    addressLine1: '',
+    addressLine2: '',
+    addressLine3: '',
+    zip: '',
+    careOf: '',
+    city: '',
+    state: '',
+    country: '',
+    entryCode: '',
+  },
+});
+
+enum LogoSize {
+  xs = '1.5rem',
+  sm = '2rem',
+  md = '2.5rem',
+  lg = '3rem',
+}
+
+const logoSizeOptions = [
+  { size: LogoSize.xs, label: 'XS (24px height)' },
+  { size: LogoSize.sm, label: 'S (32px height)' },
+  { size: LogoSize.md, label: 'M (40px height)' },
+  { size: LogoSize.lg, label: 'L (48px height)' },
+];
+
+const paymentMethodOptions = ref<PaymentOptionType[] | undefined>();
+const shippingMethodOptions = ref<ShippingOptionType[] | undefined>();
+
 const checkoutSettings = ref<CheckoutSettings>({
   selectedPaymentMethodId: undefined,
   selectedShippingMethodId: undefined,
+  copyCart: true,
   customerType: undefined,
   redirectUrls: {
     success: '',
     cancel: '',
-    error: '',
+    continue: '',
     terms: '',
     privacy: '',
   },
@@ -31,7 +84,7 @@ const checkoutSettings = ref<CheckoutSettings>({
     icon: '',
     logo: '',
     styles: {
-      fontSize: '',
+      logoSize: LogoSize.sm,
       radius: '',
       background: '#f7f7f7',
       foreground: '#131313',
@@ -39,8 +92,9 @@ const checkoutSettings = ref<CheckoutSettings>({
       cardForeground: '#131313',
       accent: '#131313',
       accentForeground: '#ffffff',
-      border: '#ffffff',
-      sale: '#b70000',
+      border: '#ebebeb',
+      sale: '#e60000',
+      error: '#b00020',
     },
   },
 });
@@ -49,24 +103,34 @@ const geinsSettings = ref<GeinsSettings>();
 const payload = computed<GenerateCheckoutTokenOptions>(() => ({
   cartId: cartId.value,
   geinsSettings: geinsSettings.value,
+  user: user.value,
   ...checkoutSettings.value,
 }));
 
-watch(cartValid, (valid) => {
-  getCart();
+watch(cartValid, async (valid) => {
+  if (valid) {
+    await getCart();
+    await getCheckout();
+  }
+});
+
+watch(settingsValid, async (valid) => {
+  if (valid) {
+    await initGeins();
+  }
 });
 
 let geinsCore: GeinsCore | null = null;
 let geinsOMS: GeinsOMS | null = null;
 
-const getCart = () => {
+const getCart = async () => {
   const storedCart: GeinsStorage | null = getStoredSettings(GeinsStorageParam.Cart);
   if (storedCart?.geinsCart) {
     cartId.value = storedCart.geinsCart.id;
   }
 };
 
-const getStoredCheckout = () => {
+const getStoredCheckout = async () => {
   const stored: GeinsStorage | null = getStoredSettings(GeinsStorageParam.CheckoutToken);
   if (stored?.geinsCheckout) {
     checkoutToken.value = stored.geinsCheckout.token;
@@ -84,6 +148,7 @@ const generateToken = async () => {
   }
   try {
     loading.value = true;
+
     checkoutToken.value = await geinsOMS.createCheckoutToken(payload.value);
     const obj = {
       token: checkoutToken.value,
@@ -98,40 +163,66 @@ const generateToken = async () => {
     }, 400);
   }
 };
-const successText = ref();
-const copyToken = () => {
-  navigator.clipboard.writeText(checkoutToken.value);
-  successText.value = 'Token copied to clipboard!';
-  setTimeout(() => {
-    successText.value = '';
-  }, 3000);
+
+const parseToken = async () => {
+  const settings = await GeinsOMS.parseCheckoutToken(checkoutToken.value);
+  cartId.value = settings.cartId;
+  checkoutSettings.value = {
+    ...checkoutSettings.value,
+    ...settings.checkoutSettings,
+  };
 };
 
-onMounted(() => {
-  getCart();
-  getStoredCheckout();
+const getCheckout = async () => {
+  const checkout = await geinsOMS?.checkout.get({
+    cartId: cartId.value,
+    checkoutOptions: {
+      skipShippingValidation: true,
+    },
+  });
+
+  if (checkout) {
+    paymentMethodOptions.value = checkout.paymentOptions;
+    shippingMethodOptions.value = checkout.shippingOptions;
+    if (paymentMethodOptions.value && !checkoutSettings.value.selectedPaymentMethodId) {
+      checkoutSettings.value.selectedPaymentMethodId = paymentMethodOptions.value[0].id;
+    }
+    if (shippingMethodOptions.value && !checkoutSettings.value.selectedShippingMethodId) {
+      checkoutSettings.value.selectedShippingMethodId = shippingMethodOptions.value[0].id;
+    }
+  }
+};
+
+const initGeins = async () => {
   const storedSettings: GeinsStorage | null = getStoredSettings(GeinsStorageParam.Settings);
   if (storedSettings?.geinsSettings) {
     geinsSettings.value = storedSettings.geinsSettings;
     geinsCore = new GeinsCore(storedSettings.geinsSettings);
     geinsOMS = new GeinsOMS(geinsCore);
   }
+};
+
+onMounted(async () => {
+  await getStoredCheckout();
+  await getCart();
+  await initGeins();
+  await getCheckout();
 });
 </script>
 <template>
   <form class="token-form" @submit.prevent="generateToken">
     <GeinsFormContainer>
-      <div v-if="checkoutToken" class="token">
-        <p class="token-title">Your Checkout Token</p>
-        <div class="token-box">
-          <pre id="checkout-token">{{ checkoutToken }}</pre>
-          <button type="button" class="link" @click="copyToken">Copy</button>
-          <p v-if="successText" class="success">{{ successText }}</p>
-          <div class="spinner" v-if="loading">
-            <div class="spinner-circle"></div>
-          </div>
-        </div>
-      </div>
+      <GeinsToken v-if="checkoutToken" :checkout-token="checkoutToken" :loading="loading" />
+      <p class="token-text">Already have a token and want to edit it? Paste it below:</p>
+      <GeinsInput
+        v-model="checkoutToken"
+        id="checkout-token"
+        name="checkout-token"
+        label=""
+        placeholder="Paste token here"
+        class="token-input"
+        @input="parseToken"
+      />
       <GeinsFormGrid>
         <GeinsFormGroup row-size="full" class="cart-id-group">
           <GeinsInput
@@ -141,12 +232,31 @@ onMounted(() => {
             label="Cart ID"
             placeholder="Generate Cart ID above"
           />
-          <GeinsStatus class="status-circle" for="geins-cart" :only-status-circle="true" />
+          <GeinsStatus class="status-circle" :for="GeinsStorageParam.Cart" :only-status-circle="true" />
+        </GeinsFormGroup>
+      </GeinsFormGrid>
+      <GeinsFormGrid>
+        <GeinsFormGroup row-size="full">
+          <label for="copy-cart" class="checkbox">
+            <input type="checkbox" id="copy-cart" v-model="checkoutSettings.copyCart" />
+            <div class="checkbox-label">Clone cart</div>
+          </label>
         </GeinsFormGroup>
       </GeinsFormGrid>
       <h3>Checkout Settings</h3>
       <GeinsFormGrid>
-        <GeinsFormGroup row-size="half">
+        <GeinsFormGroup v-if="paymentMethodOptions && paymentMethodOptions.length" row-size="half">
+          <label class="select-label" for="payment-method-id">Payment Method</label>
+          <div class="select">
+            <select v-model.number="checkoutSettings.selectedPaymentMethodId">
+              <option :value="undefined" disabled selected>Select payment method</option>
+              <option v-for="option in paymentMethodOptions" :value="option.id" :key="option.id">
+                {{ option.displayName }}
+              </option>
+            </select>
+          </div>
+        </GeinsFormGroup>
+        <GeinsFormGroup v-else row-size="half">
           <GeinsInput
             v-model.number="checkoutSettings.selectedPaymentMethodId"
             id="payment-method-id"
@@ -154,7 +264,18 @@ onMounted(() => {
             label="Payment Method ID"
           />
         </GeinsFormGroup>
-        <GeinsFormGroup row-size="half">
+        <GeinsFormGroup v-if="shippingMethodOptions && shippingMethodOptions.length" row-size="half">
+          <label class="select-label" for="shipping-method-id">Shipping Method</label>
+          <div class="select">
+            <select v-model.number="checkoutSettings.selectedShippingMethodId">
+              <option :value="undefined" disabled selected>Select shipping method</option>
+              <option v-for="option in shippingMethodOptions" :value="option.id" :key="option.id">
+                {{ option.displayName }}
+              </option>
+            </select>
+          </div>
+        </GeinsFormGroup>
+        <GeinsFormGroup v-else row-size="half">
           <GeinsInput
             v-model.number="checkoutSettings.selectedShippingMethodId"
             id="shipping-method-id"
@@ -162,29 +283,29 @@ onMounted(() => {
             label="Shipping Method ID"
           />
         </GeinsFormGroup>
-        <GeinsFormGroup row-size="full">
-          <label for="customerType">Customer Type</label>
+        <GeinsFormGroup row-size="half">
+          <label class="select-label" for="customerType">Customer Type</label>
           <div class="select">
             <select id="customerType" v-model="checkoutSettings.customerType">
-              <option value="" selected>Select type</option>
-              <option value="PERSON">D2C</option>
-              <option value="COMPANY">B2B</option>
+              <option :value="undefined" disabled selected>Select type</option>
+              <option value="PERSON">Person</option>
+              <option value="ORGANIZATION">Organization</option>
             </select>
           </div>
+        </GeinsFormGroup>
+        <GeinsFormGroup v-if="user.address" row-size="half">
+          <GeinsInput
+            v-model="user.address.zip"
+            id="zip-code"
+            name="zip-code"
+            label="Zip Code"
+            placeholder="12345"
+            description="The zip code to be used for shipping"
+          />
         </GeinsFormGroup>
       </GeinsFormGrid>
       <h3>Urls</h3>
       <GeinsFormGrid v-if="checkoutSettings.redirectUrls">
-        <GeinsFormGroup row-size="half">
-          <GeinsInput
-            v-model="checkoutSettings.redirectUrls.success"
-            id="success-url"
-            name="success-url"
-            label="Success Url"
-            placeholder="https://example.com/thank-you"
-            description="Url to redirect to after successful checkout, if you don't want to use the default one."
-          />
-        </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
           <GeinsInput
             v-model="checkoutSettings.redirectUrls.cancel"
@@ -192,17 +313,18 @@ onMounted(() => {
             name="cancel-url"
             label="Cancel Url"
             placeholder="https://example.com/cart"
-            description="Url to redirect to if user cancels the checkout."
+            description="Url to go to if user cancels/exits the checkout. Will show a small arrow link next to the icon/logo"
           />
         </GeinsFormGroup>
+
         <GeinsFormGroup row-size="half">
           <GeinsInput
-            v-model="checkoutSettings.redirectUrls.error"
-            id="error-url"
-            name="error-url"
-            label="Error Url"
-            placeholder="https://example.com/error"
-            description="Url to redirect to if an error occurs during the checkout, if you want to use a custom one."
+            v-model="checkoutSettings.redirectUrls.continue"
+            id="continue-url"
+            name="continue-url"
+            label="Continue Url"
+            placeholder="https://example.com/continue"
+            description="If supplied, will show a button to continue shopping on confirmation page."
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -212,7 +334,7 @@ onMounted(() => {
             name="terms-url"
             label="Terms Url"
             placeholder="https://example.com/terms"
-            description="Will display a Terms link on the checkout page."
+            description="Will display a Terms & Conditions link on the checkout page."
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -220,9 +342,19 @@ onMounted(() => {
             v-model="checkoutSettings.redirectUrls.privacy"
             id="privacy-url"
             name="privacy-url"
-            label="Privacy Url"
+            label="Privacy Policy Url"
             placeholder="https://example.com/privacy"
-            description="Will display a Privacy link on the checkout page."
+            description="Will display a Privacy Policy link on the checkout page."
+          />
+        </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsInput
+            v-model="checkoutSettings.redirectUrls.success"
+            id="success-url"
+            name="success-url"
+            label="Success Url"
+            placeholder="https://example.com/thank-you"
+            description="Url to redirect to after successful checkout. Leave empty to use the default (recommended)"
           />
         </GeinsFormGroup>
       </GeinsFormGrid>
@@ -235,7 +367,7 @@ onMounted(() => {
             name="title"
             label="Title"
             placeholder="Checkout"
-            description="Optional title for the checkout page. A tip is to add your brand name here if you don't wanna use a logo."
+            description="Title of the checkout page. Will not be shown if you add a logo, but is always used for the meta title."
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -245,7 +377,7 @@ onMounted(() => {
             name="icon"
             label="Icon URL"
             placeholder="https://example.com/icon.png"
-            description="Used next to the logo or title. Will be shown in a circle as 48x48px"
+            description="Shown to the left of the logo/title if provided. Will be shown in a circle as 48x48px"
           />
         </GeinsFormGroup>
         <GeinsFormGroup row-size="half">
@@ -255,18 +387,20 @@ onMounted(() => {
             name="logo"
             label="Logo URL"
             placeholder="https://example.com/logo.svg"
-            description="Url for your logo. Will be shown 48px high with auto width."
+            description="Url for your logo. Choose size for your logo below."
           />
         </GeinsFormGroup>
         <GeinsFormGroup v-if="checkoutSettings.branding.styles" row-size="half">
-          <GeinsInput
-            v-model="checkoutSettings.branding.styles.fontSize"
-            id="brand-font-size"
-            name="brand-font-size"
-            label="Font Size"
-            placeholder="16px"
-            description="Font size of the body text"
-          />
+          <GeinsFormGroup row-size="full">
+            <label class="select-label" for="logoSize">Logo Size</label>
+            <div class="select">
+              <select id="logoSize" v-model="checkoutSettings.branding.styles.logoSize">
+                <option v-for="option in logoSizeOptions" :value="option.size" :key="option.size">
+                  {{ option.label }}
+                </option>
+              </select>
+            </div>
+          </GeinsFormGroup>
         </GeinsFormGroup>
         <GeinsFormGroup v-if="checkoutSettings.branding.styles" row-size="half">
           <GeinsInput
@@ -275,7 +409,7 @@ onMounted(() => {
             name="border-radius"
             label="Border Radius"
             placeholder="5px"
-            description="Radius of UI elements in pixels"
+            description="Radius of UI elements"
           />
         </GeinsFormGroup>
       </GeinsFormGrid>
@@ -354,18 +488,17 @@ onMounted(() => {
             description="Color used for sale prices in the cart"
           />
         </GeinsFormGroup>
+        <GeinsFormGroup row-size="half">
+          <GeinsColorInput
+            v-model="checkoutSettings.branding.styles.error"
+            id="brand-error"
+            name="brand-error"
+            label="Error Color"
+            description="Color used for error messages"
+          />
+        </GeinsFormGroup>
       </GeinsFormGrid>
-      <div v-if="checkoutToken" class="token">
-        <p class="token-title">Your Checkout Token</p>
-        <div class="token-box">
-          <pre id="checkout-token">{{ checkoutToken }}</pre>
-          <button type="button" class="link" @click="copyToken">Copy</button>
-          <p v-if="successText" class="success">{{ successText }}</p>
-          <div class="spinner" v-if="loading">
-            <div class="spinner-circle"></div>
-          </div>
-        </div>
-      </div>
+      <GeinsToken v-if="checkoutToken" :checkout-token="checkoutToken" :loading="loading" />
       <GeinsButton type="submit">Generate Checkout Token</GeinsButton>
     </GeinsFormContainer>
   </form>
@@ -401,6 +534,12 @@ h4 {
   position: relative;
 }
 
+.select-label {
+  font-size: 0.9rem;
+  color: var(--vp-c-text-1);
+  margin-bottom: 0.2rem;
+}
+
 .select::after {
   content: '▼';
   position: absolute;
@@ -426,6 +565,52 @@ select:focus {
   border-color: var(--vp-c-brand);
   box-shadow: 0 0 0 2px var(--vp-c-brand-lighter);
 }
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--vp-c-text-1);
+  position: relative;
+  cursor: pointer;
+}
+
+.checkbox input[type='checkbox'] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkbox-label::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 4px;
+  background: var(--vp-c-bg);
+  margin-right: 10px;
+  transition: all 0.2s ease;
+}
+
+.checkbox input[type='checkbox']:checked + .checkbox-label::before {
+  background: #74e878;
+  border-color: #74e878;
+}
+
+.checkbox-label::after {
+  content: '✔';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  font-size: 9px;
+  color: #000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.checkbox input[type='checkbox']:checked + .checkbox-label::after {
+  opacity: 1;
+}
 
 .desc {
   font-size: 0.9rem;
@@ -433,90 +618,13 @@ select:focus {
   margin-bottom: 20px;
 }
 
-.token {
-  border-radius: 6px;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.token-box {
-  border: 1px solid var(--vp-c-success-1);
-  border-radius: 6px;
-  background: var(--vp-c-bg);
-  padding: 1rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.token-title {
-  font-size: 1rem;
-  color: var(--vp-c-white);
-  margin-bottom: 0.5rem;
-}
-
-.token .success {
-  font-size: 0.7rem;
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--vp-c-bg);
-  margin: 0;
-  z-index: 10;
-}
-
-.token pre {
+.token-text {
   font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--vp-c-success-1);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: calc(100% - 60px);
-  margin: 0;
+  margin-bottom: 0px;
+  text-align: center;
 }
 
-.link {
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  padding-left: 20px;
-  padding-right: 10px;
-  background: var(--vp-c-bg);
-}
-
-.spinner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--vp-c-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.spinner-circle {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--vp-c-white);
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.token-input {
+  margin-bottom: 20px;
 }
 </style>

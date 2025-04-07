@@ -1,4 +1,4 @@
-import type { PriceType, CampaignRuleType, DiscountType } from './../shared';
+import type { CampaignRuleType, DiscountType, PriceType } from './../shared';
 
 export type AlternativeUrlType = {
   url: string;
@@ -6,17 +6,23 @@ export type AlternativeUrlType = {
 };
 
 export type ProductTextsType = {
-  shortDescription?: string;
-  longDescription?: string;
-  additionalInfo?: string;
+  text1?: string;
+  text2?: string;
+  text3?: string;
 };
 
 export type SkuType = {
   skuId: number;
-  skuCode: string;
-  price: PriceType;
-  stock: StockType;
-  attributes: AttributeType[];
+  productId?: number;
+  articleNumber?: string;
+  name?: string;
+  externalId?: string;
+  stock?: StockType;
+  gtin?: string;
+  dimensions?: DimensionsType;
+  shelf?: string;
+  incoming?: Date;
+  weight?: number;
 };
 
 export type BrandType = {

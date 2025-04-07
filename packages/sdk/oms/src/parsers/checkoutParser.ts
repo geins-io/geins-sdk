@@ -4,7 +4,12 @@ import type {
   CheckoutSummaryOrderType,
   CheckoutSummaryType,
 } from '@geins/core';
-import { CheckoutType, findObjectWithProperty, ValidateOrderCreationResponseType } from '@geins/core';
+import {
+  CheckoutType,
+  findObjectWithProperty,
+  ValidateOrderConditionsResponseType,
+  ValidateOrderCreationResponseType,
+} from '@geins/core';
 import { parseCart } from './cartParser';
 import { parseAddress, parseMoneyCurrencyString } from './sharedParsers';
 
@@ -239,5 +244,17 @@ export function parseValidateOrder(data: any): ValidateOrderCreationResponseType
     isValid: validateOrder.isValid,
     message: validateOrder.message,
     customerGroup: validateOrder.memberType,
+  };
+}
+
+export function parseValidateOrderConditions(data: any): ValidateOrderConditionsResponseType | undefined {
+  const validateOrder = findObjectWithProperty(data, '__typename', 'ValidateOrderCreationResponseType');
+  if (!validateOrder) {
+    return undefined;
+  }
+
+  return {
+    isValid: validateOrder.isValid,
+    message: validateOrder.message,
   };
 }

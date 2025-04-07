@@ -24,13 +24,17 @@ export class OrderService extends BaseApiService implements OrderServiceInterfac
     super(apiClient, geinsSettings);
   }
 
-  async get(args: { publicOrderId: string }): Promise<OrderSummaryType | undefined> {
+  async get(args: {
+    publicOrderId: string;
+    checkoutMarketId?: string;
+  }): Promise<OrderSummaryType | undefined> {
     if (!args.publicOrderId) {
       throw new Error('Missing publicOrderId');
     }
 
     const variables = {
       publicOrderId: args.publicOrderId,
+      marketId: args.checkoutMarketId || this._geinsSettings.market,
     };
 
     const options: any = {
