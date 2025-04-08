@@ -1,4 +1,9 @@
-![Geins logo](./docs/public/logo/geins-logo-black.png)
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./apps/docs/public/logo/geins-white.svg">
+    <img width="150px" alt="Geins logo" src="./apps/docs/public/logo/geins.svg">
+</picture>
+<br>
+<br>
 
 [![core-badge-version]][core-npm-url]
 [![cms-badge-version]][cms-npm-url]
