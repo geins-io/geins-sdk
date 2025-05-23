@@ -1,5 +1,18 @@
-# Applied Campaigns
+---
+title: Applied Campaigns
+description: How to work with applied campaigns in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - cart
+  - campaigns
+  - applied-campaigns
+  - cart-campaigns
+  - cart-item-campaigns
+  - cart-item-campaigns-applied
+---
 
+# Applied Campaigns
 
 This is information about the applied campaigns on the `cart`. Campaigns can either be applied automatically like a `cart campaign` or manually like a `promotion code`.
 

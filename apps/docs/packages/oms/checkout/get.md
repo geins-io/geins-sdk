@@ -1,3 +1,13 @@
+---
+title: Get Checkout
+description: How to get a checkout in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - checkout
+  - get-checkout
+---
+
 # Get Checkout
 
 To get a checkout, you need to provide a `cartId`. This means that you need to have a cart created before you can start the checkout process. The `cart` can not be empty or be of a status that is `completed`. The Get Checkout will return a `CheckoutType` which contains all the necessary information for the checkout process.

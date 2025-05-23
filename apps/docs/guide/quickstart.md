@@ -1,3 +1,12 @@
+---
+title: Quickstart
+description: How to get started with the Geins SDK
+tags:
+  - sdk
+  - quickstart  
+  - installation
+---
+
 # Quick start
 
 Jump right in with the following commands:

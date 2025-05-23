@@ -1,3 +1,12 @@
+---
+title: Cart Items
+description: How to work with the cart items in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - cart
+  - items
+---
 
 # Cart Items
 

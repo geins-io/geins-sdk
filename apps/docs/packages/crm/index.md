@@ -1,3 +1,11 @@
+---
+title: CRM Package
+description: How to work with the Geins CRM Package
+tags:
+  - sdk
+  - crm
+---
+
 # @geins/crm
 
 ## Introduction

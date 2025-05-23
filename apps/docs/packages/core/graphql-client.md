@@ -1,3 +1,12 @@
+---
+title: GraphQLClient
+description: How to work with the GraphQLClient in the Geins Core Package
+tags:
+  - sdk
+  - core
+  - graphql-client
+---
+
 # GraphQLClient
 
 The `GraphQLClient` allows you to execute custom GraphQL queries and mutations, giving you the flexibility to fetch and manipulate data as needed.

@@ -1,3 +1,14 @@
+---
+title: Generate a Checkout Token
+description: How to generate a checkout token using the Geins SDK
+tags:
+  - sdk
+  - checkout
+  - core
+  - oms
+  - types
+---
+
 # Generate a Checkout Token
 
 If you want to use [Geins Checkout](https://github.com/geins-io/geins-checkout), you will need to create a checkout token. This token will be used by the checkout to load the cart and checkout information. The token can also carry the look and feel of your brand during the checkout process.

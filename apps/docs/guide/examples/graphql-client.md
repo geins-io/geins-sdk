@@ -1,3 +1,14 @@
+---
+title: GraphQLClient
+description: How to get data from the Merchant API with the GraphQLClient
+tags:
+  - sdk
+  - graphql
+  - core
+  - types
+  - graphql-client
+---
+
 # Get data from the Merchant API with the GraphQLClient
 
 ## Accessing the GraphQLClient

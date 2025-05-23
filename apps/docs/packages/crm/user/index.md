@@ -1,3 +1,12 @@
+---
+title: User
+description: How to work with the user in the Geins CRM Package
+tags:
+  - sdk
+  - crm
+  - user
+---
+
 # User
 
 When a user is logged in, the user object is available in the CRM package. The user object provides methods for managing user profiles, groups, balances, transactions, and orders.

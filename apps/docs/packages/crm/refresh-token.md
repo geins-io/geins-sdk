@@ -1,3 +1,12 @@
+---
+title: Refresh Token
+description: How to work with the refresh token in the Geins CRM Package
+tags:
+  - sdk
+  - crm
+  - refresh-token
+---
+
 ## Refresh Token
 
 The refresh token is a critical component of the authentication flow in the Geins SDK. It allows users to maintain their authenticated state without needing to repeatedly log in. Here's a detailed explanation of its role and how to handle it:
