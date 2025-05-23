@@ -1,3 +1,13 @@
+---
+title: Checkout Configuration
+description: How to work with the checkout configuration in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - checkout
+  - configuration
+---
+
 # Checkout Configuration
 
 Use the `OMSSettings` to set the default payment, redirect URL's etc. This will make the checkout process easier since you don't have to pass in the `paymentMethodId` and `shippingMethodId` every time you want to get a checkout.

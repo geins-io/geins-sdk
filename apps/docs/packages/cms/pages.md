@@ -1,3 +1,12 @@
+---
+title: Pages
+description: How to work with pages in the Geins CMS
+tags:
+  - sdk
+  - cms
+  - pages
+---
+
 # Page
 
 The Page module in Geins CMS enables you to create, manage, and render content-rich pages within your application. Pages are central content elements that can hold various widgets and structured data, allowing for a customizable and flexible design.

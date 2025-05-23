@@ -1,3 +1,14 @@
+---
+title: User Profile
+description: How to work with user profile in the Geins CRM Package
+tags:
+  - sdk
+  - crm
+  - user
+  - profile
+  - user-profile
+---
+
 # User Profile
 
 The `User Profile` functionality in the Geins CRM package allows managing personal details about the user, such as name, email, address, and other contact information.

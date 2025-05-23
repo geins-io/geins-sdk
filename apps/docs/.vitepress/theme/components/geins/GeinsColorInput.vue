@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-
+import { defineEmits } from 'vue';
 const props = defineProps<{
   label: string;
   modelValue: string | undefined;
@@ -86,7 +86,7 @@ watch(
   box-shadow: 0 0 0 2px var(--vp-c-brand-lighter);
 }
 
-.input-group input[type='text']:focus + input[type='color'] {
+.input-group input[type='text']:focus+input[type='color'] {
   border-color: var(--vp-c-brand);
   box-shadow: 0 0 0 2px var(--vp-c-brand-lighter);
 }

@@ -1,3 +1,12 @@
+---
+title: Installation
+description: How to install the Geins SDK
+tags:
+  - sdk
+  - installation  
+  - quickstart
+---
+
 # Installation
 
 The Geins SDK is modular, allowing you to install only the packages you need. Each package in the SDK serves a specific purpose, such as managing customers, products, or content.

@@ -1,3 +1,13 @@
+---
+title: Registration
+description: How to register a new user in the Geins CRM Package
+tags:
+  - sdk
+  - crm
+  - registration
+  - user-registration
+---
+
 # Register New User
 
 ## Overview

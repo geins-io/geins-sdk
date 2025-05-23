@@ -1,3 +1,19 @@
+---
+title: JWT Token
+description: How to work with the JWT Token in the Geins CRM Package
+tags:
+  - sdk
+  - crm
+  - jwt-token
+  - user-token
+  - refresh-token
+  - user-max-age
+  - user-type
+  - user-username
+  - user-password
+  - user-email
+---
+
 # User Token
 
 ## Usage

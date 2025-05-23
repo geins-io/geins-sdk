@@ -1,3 +1,12 @@
+---
+title: Cart
+description: How to work with the cart in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - cart
+---
+
 # Cart
 
 The `CartService` in the Geins SDK Order Management System (OMS) package provides developers with tools to manage shopping carts efficiently. It supports adding, updating, and removing items, managing promotional codes, and configuring shipping details.

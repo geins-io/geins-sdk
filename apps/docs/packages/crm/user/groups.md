@@ -1,3 +1,13 @@
+---
+title: User Groups
+description: How to work with user groups in the Geins CRM Package
+tags:
+  - sdk
+  - crm
+  - user
+  - groups
+  - user-groups
+---
 # User Groups
 
 The `User Groups` functionality in Geins CRM package allows organizing users into groups, often for permissions or content visibility control. This feature is useful in applications with different access levels or roles.

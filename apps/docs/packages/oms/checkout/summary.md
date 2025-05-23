@@ -1,3 +1,13 @@
+---
+title: Checkout Summary
+description: How to work with the checkout summary in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - checkout
+  - summary
+--- 
+
 # Checkout Summary
 
 To get a summary of the checkout process, you need to provide an `orderId` and the payment method that was used. The summary will return a `CheckoutSummaryType` which contains all the necessary information to show the user a summary of the checkout process.

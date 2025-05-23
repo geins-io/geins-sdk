@@ -1,3 +1,12 @@
+---
+title: Events
+description: How to work with event listeners and emitters using the Geins SDK
+tags:
+  - sdk
+  - events
+  - core  
+---
+
 # Events
 
 This section demonstrates how to work with event listeners and emitters using the Geins SDK.

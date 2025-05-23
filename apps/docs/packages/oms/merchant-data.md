@@ -1,3 +1,11 @@
+---
+title: Merchant Data
+description: How to work with the merchant data in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - merchant-data
+---
 
 # Merchant Data
 

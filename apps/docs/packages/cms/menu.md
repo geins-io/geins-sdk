@@ -1,3 +1,12 @@
+---
+title: Menu
+description: How to work with menus in the Geins CMS
+tags:
+  - sdk
+  - cms
+  - menu
+---
+
 # Menu
 
 The Menu feature in Geins CMS enables you to create and manage navigational menus within your application. Menus can include multiple levels, organizing content into hierarchies that enhance user navigation and streamline content accessibility.

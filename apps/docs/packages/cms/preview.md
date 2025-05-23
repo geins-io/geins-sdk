@@ -1,3 +1,11 @@
+---
+title: Preview Content
+description: How to work with preview in the Geins CMS
+tags:
+  - sdk
+  - cms
+  - preview
+---
 # Preview
 
 The Preview functionality in Geins CMS allows developers and content managers to view unpublished content changes before they go live. This feature is essential for ensuring that content appears as expected in the production environment.

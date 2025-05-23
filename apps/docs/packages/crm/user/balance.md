@@ -1,3 +1,14 @@
+---
+title: User Balance
+description: How to work with user balance in the Geins CRM Package
+tags:
+  - sdk
+  - crm
+  - user
+  - balance
+  - user-balance
+---
+
 # User Balance
 
 The `User Balance` functionality in the Geins CRM package allows for tracking and managing the user's account balance. The balance reflects the amount of money available for the user to make purchases or receive refunds, and can be adjusted through transactions.

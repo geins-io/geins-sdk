@@ -1,3 +1,13 @@
+---
+title: Checkout Process
+description: How to work with the checkout process in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - checkout
+  - process
+---
+
 # Checkout Process
 
 ## Overview

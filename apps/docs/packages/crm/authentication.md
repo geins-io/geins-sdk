@@ -1,3 +1,26 @@
+---
+title: Authentication
+description: How to work with authentication in the Geins CRM Package
+tags:
+  - sdk
+  - crm
+  - authentication
+  - login
+  - logout
+  - user-token
+  - refresh-token
+  - user-max-age
+  - user-type
+  - user-username
+  - user-password  
+  - user-email
+  - user-newsletter
+  - user-customer-type
+  - user-create
+  - user-authorized
+  - user-refresh
+---
+  
 # Authentication
 
 Once a user is authenticated, the `@geins/crm` package provides a JWT token that attaches to the request headers for API calls. This tokens validation depends on the remeber me option. If the user selects the remember me option, the token will be valid for 30 days. Otherwise, the token will be valid for 1 hour.

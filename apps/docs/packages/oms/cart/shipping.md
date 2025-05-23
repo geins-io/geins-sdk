@@ -1,3 +1,13 @@
+---
+title: Cart Shipping Fee
+description: How to work with the cart shipping fee in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - cart
+  - shipping
+---
+
 # Cart Shipping Fee
 
 ## Use Manual Shipping Fees

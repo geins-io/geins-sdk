@@ -1,3 +1,19 @@
+---
+title: Promotion Code
+description: How to work with promotion code in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - cart
+  - promotions
+  - promotion-code
+  - promotion-code-applied
+  - promotion-code-removed
+  - promotion-code-applied-successfully
+  - promotion-code-removed-successfully
+  - promotion-code-applied-failed
+---
+
 # Promotion Code
 
 When activateting a promotion code on the cart, the prices will be `recalculated` with new prices and discounts. 

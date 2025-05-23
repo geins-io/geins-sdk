@@ -1,3 +1,14 @@
+---
+title: Order Flow
+description: How to work with the order flow in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - order
+  - order-flow
+  - checkout-flow
+--- 
+
 ## Geins Merchant API Order Flow
 
 This guide provides an example of how to work with carts and checkout in the Merchant API.
