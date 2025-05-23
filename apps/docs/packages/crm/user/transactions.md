@@ -1,3 +1,14 @@
+---
+title: User Transactions
+description: How to work with user transactions in the Geins CRM Package
+tags:
+  - sdk
+  - crm
+  - user
+  - transactions
+  - user-transactions
+---
+
 # User Transactions
 
 The `User Transactions` feature in the Geins CRM package is designed to keep track of all user-related transactions, including purchases, refunds, and balance adjustments.

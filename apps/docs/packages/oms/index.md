@@ -1,3 +1,11 @@
+---
+title: OMS Package
+description: How to work with the Geins OMS Package
+tags:
+  - sdk
+  - oms
+---
+
 # @geins/oms
 
 ## Introduction

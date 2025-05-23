@@ -1,3 +1,13 @@
+---
+title: Create Order
+description: How to create an order in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - checkout
+  - create-order
+---
+
 # Create Order
 
 To create an order into Geins you need a `cart` and the `checkout options`.

@@ -1,3 +1,12 @@
+---
+title: Cookies
+description: How to work with cookies in the Geins Core Package
+tags:
+  - sdk
+  - core
+  - cookies
+---
+
 # Cookies
 
 The `CookieService`, which offers a unified way to manage cookies within your application via the `GeinsCore` class.

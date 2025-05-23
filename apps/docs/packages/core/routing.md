@@ -1,3 +1,12 @@
+---
+title: Routing
+description: How to work with routing in the Geins Core Package
+tags:
+  - sdk
+  - core
+  - routing
+---
+
 # Routing
 
 The `RoutingService` class is designed to manage URL redirects and routing rules within your application. It fetches URL history from the Geins API and caches it, allowing your application to handle redirects efficiently and keep routing information up-to-date.

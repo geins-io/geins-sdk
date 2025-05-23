@@ -1,3 +1,13 @@
+---
+title: Validate Checkout
+description: How to validate the checkout in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - checkout
+  - validate
+---
+
 # Validate The Checkout
 
 Before you let the user checkout you have the option to validate the checkout.

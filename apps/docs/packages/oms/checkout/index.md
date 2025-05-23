@@ -1,3 +1,12 @@
+---
+title: Checkout
+description: How to work with the checkout in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - checkout
+--- 
+
 # Checkout
 
 The `CheckoutService` provides methods to interact with the checkout process. The checkout process is the process whe you retrive the cart and validate it before the payment.

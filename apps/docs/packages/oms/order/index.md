@@ -1,3 +1,13 @@
+---
+title: Order
+description: How to work with the order in the Geins OMS Package
+tags:
+  - sdk
+  - oms
+  - order
+  - order-service
+---
+
 # Order
 
 The `OrderService` provides method to interact with orders.

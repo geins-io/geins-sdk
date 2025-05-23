@@ -1,3 +1,12 @@
+---
+title: Content Areas
+description: How to work with content areas in the Geins CMS
+tags:
+  - sdk
+  - cms
+  - content-areas
+---
+
 # Content Areas
 
 Content Areas in the Geins CMS allow you to create dynamic, reusable sections of content that can be placed in various parts of your application templates. These areas support a range of customizable content, enabling developers to build modular, adaptable page structures.

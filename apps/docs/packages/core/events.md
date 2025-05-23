@@ -1,3 +1,12 @@
+---
+title: Events
+description: How to work with events in the Geins Core Package
+tags:
+  - sdk
+  - core
+  - events
+---
+
 # Events
 
 The Geins SDK provides a robust event management system that allows you to handle and respond to various events within your application seamlessly. This system is essential for building responsive and interactive applications, enabling real-time updates and efficient communication between different parts of your app.

@@ -1,3 +1,11 @@
+---
+title: CMS Package
+description: How to work with the Geins CMS
+tags:
+  - sdk
+  - cms
+---
+
 # @geins/cms
 
 The `@geins/cms` package provides a comprehensive content management system that enables developers to create, manage, and preview dynamic content in their applications. This package includes tools for handling content areas, menus, pages, and previewing unpublished content.

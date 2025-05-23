@@ -1,3 +1,13 @@
+---
+title: Password Management
+description: How to work with password management in the Geins CRM Package
+tags:
+  - sdk
+  - crm
+  - password
+  - password-management
+---
+
 # Password Management
 
 ### Change Password

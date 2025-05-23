@@ -1,3 +1,12 @@
+---
+title: Content & Widgets
+description: How to work with content and widgets in the Geins CMS
+tags:
+  - sdk
+  - cms
+  - content
+---
+
 # Content / Widgets
 
 ## Overview
