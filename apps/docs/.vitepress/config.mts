@@ -185,7 +185,7 @@ export default withMermaid({
                   ],
                 },
                 { text: 'Order', link: '/packages/oms/order' },
-                { text: 'Token', link: '/packages/oms/checkout-token' },
+                { text: 'Checkout Token', link: '/packages/oms/checkout-token' },
                 /*
                 { text: 'Token', link: '/packages/oms/checkout-token' },
                 { text: 'Using Geins Checkout', link: '/packages/oms/geins-checkout' },

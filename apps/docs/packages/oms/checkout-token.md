@@ -10,7 +10,7 @@ tags:
   - types
 ---
 
-# Generate a Checkout Token
+# Checkout Token
 
 If you want to use [Geins Checkout](https://github.com/geins-io/geins-checkout), you will need to create a checkout token. This token will be used by the checkout to load the cart and checkout information. The token can also carry the look and feel of your brand during the checkout process.
 
@@ -31,7 +31,7 @@ You might want to copy the cart before generating the token. This is useful if y
 | `redirectUrls`             | `CheckoutRedirectsType` | The redirect URLs for the checkout, see below for specifications.                                               |
 | `branding`                 | `CheckoutBrandingType`  | The branding options for the checkout, see below for specifications.                                            |
 
-### Checkout Token Option Types
+### Types
 
 ```typescript
 type GenerateCheckoutTokenOptions = {
@@ -71,7 +71,7 @@ enum CustomerType {
 | `styles.sale`             | `string` | Color used for sale prices in the cart.                                                                     | `'#e60000'`   |
 | `styles.error`            | `string` | Color used for error messages.                                                                              | `'#b00020'`   |
 
-### Branding Option Types
+### Types
 
 ```typescript
 type CheckoutBrandingType = {
@@ -106,7 +106,7 @@ type CheckoutStyleType = {
 | `privacy`  | `string` | Will display a Privacy Policy link on the checkout page.                                                                                                                   |
 | `success`  | `string` | URL to redirect to after successful checkout. Leave empty to use the default (recommended). If using a custom URL, you will need a custom implementation to complete cart. |
 
-### Types for Redirect URLs
+### Types
 
 ```typescript
 type CheckoutRedirectsType = {
