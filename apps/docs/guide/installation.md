@@ -3,7 +3,7 @@ title: Installation
 description: How to install the Geins SDK
 tags:
   - sdk
-  - installation
+  - installation  
   - quickstart
 ---
 
