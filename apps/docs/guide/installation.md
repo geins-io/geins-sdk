@@ -3,7 +3,7 @@ title: Installation
 description: How to install the Geins SDK
 tags:
   - sdk
-  - installation  
+  - installation
   - quickstart
 ---
 
@@ -46,7 +46,6 @@ Depending on your application’s needs, you can add the following packages:
 
 - `@geins/cms`: For content management (pages, menus, and widgets).
 - `@geins/crm`: For customer relationship management (user profiles, authentication, and transactions).
-
 
 To install additional packages:
 
@@ -98,10 +97,10 @@ After setting up `GeinsCore`, verify the installation by making a test API call:
 ```typescript
 geinsCore.channel
   .current()
-  .then(channel => {
+  .then((channel) => {
     console.log('Current channel:', channel);
   })
-  .catch(error => {
+  .catch((error) => {
     console.error('Error:', error);
   });
 ```

@@ -1,8 +1,8 @@
 // import { defineConfig } from 'vitepress'
 import { HeadConfig, loadEnv } from 'vitepress';
 import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons';
-import { withMermaid } from 'vitepress-plugin-mermaid';
 import llmstxt from 'vitepress-plugin-llms';
+import { withMermaid } from 'vitepress-plugin-mermaid';
 const env = loadEnv('', process.cwd());
 const scripts: HeadConfig[] = [];
 if (env.VITE_GA_ID) {
@@ -73,6 +73,10 @@ export default withMermaid({
               text: 'Setting up SDK Docs',
               link: '/guide/setting-up-sdk',
             },
+            {
+              text: 'Generate Checkout Token',
+              link: '/guide/checkout-token-generator',
+            },
           ],
         },
         {
@@ -87,7 +91,7 @@ export default withMermaid({
               link: '/guide/examples/graphql-client',
             },
             {
-              text: 'Generate a Checkout Token',
+              text: 'Working with Checkout Tokens',
               link: '/guide/examples/generate-checkout-token',
             },
             /* {
@@ -181,6 +185,7 @@ export default withMermaid({
                   ],
                 },
                 { text: 'Order', link: '/packages/oms/order' },
+                { text: 'Checkout Token', link: '/packages/oms/checkout-token' },
                 /*
                 { text: 'Token', link: '/packages/oms/checkout-token' },
                 { text: 'Using Geins Checkout', link: '/packages/oms/geins-checkout' },
@@ -210,7 +215,8 @@ export default withMermaid({
     },
   },
   vite: {
-    plugins: [groupIconVitePlugin(),
+    plugins: [
+      groupIconVitePlugin(),
       llmstxt({
         ignoreFiles: ['guide/examples/mermaid.md', 'guide/examples/markdown-examples.md', 'CHANGELOG.md'],
         title: 'Geins SDK - Geins Backend for Commerce',
