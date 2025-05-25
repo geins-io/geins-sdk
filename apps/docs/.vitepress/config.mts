@@ -91,7 +91,7 @@ export default withMermaid({
               link: '/guide/examples/graphql-client',
             },
             {
-              text: 'Generate a Checkout Token',
+              text: 'Working with Checkout Tokens',
               link: '/guide/examples/generate-checkout-token',
             },
             /* {
@@ -185,6 +185,7 @@ export default withMermaid({
                   ],
                 },
                 { text: 'Order', link: '/packages/oms/order' },
+                { text: 'Token', link: '/packages/oms/checkout-token' },
                 /*
                 { text: 'Token', link: '/packages/oms/checkout-token' },
                 { text: 'Using Geins Checkout', link: '/packages/oms/geins-checkout' },

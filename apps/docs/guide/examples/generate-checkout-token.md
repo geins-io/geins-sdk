@@ -1,9 +1,9 @@
-# Create a Checkout Token
+# Working with Checkout Tokens
 
 If you want to use [Geins Checkout](https://github.com/geins-io/geins-checkout), you will need to create a checkout token. This token will be used by the checkout to load the cart and checkout information. The token can also carry the look and feel of your brand during the checkout process.
 
 :::tip :bulb: TIP
-If you want to try the checkout out right now, you can use the [Checkout Token Generator](/guide/checkout-token-generator).
+If you want to try the checkout out right now, you can use the [Checkout Token Generator](/guide/checkout-token-generator)
 :::
 
 ## Generate with @geins/oms
