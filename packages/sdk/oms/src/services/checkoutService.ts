@@ -143,7 +143,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       const queryResult = await this.runMutation(options);
       return parseCheckout(queryResult, this._geinsSettings.locale);
     } catch (error) {
-      throw new Error('Error getting checkout');
+      throw new Error('Error getting checkout', { cause: error });
     }
   }
 
@@ -179,7 +179,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       const data = await this.runQuery(options);
       return parseValidateOrderConditions(data);
     } catch (e) {
-      throw new Error('Error validating order');
+      throw new Error('Error validating order', { cause: e });
     }
   }
 
@@ -213,7 +213,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       const data = await this.runQuery(options);
       return parseValidateOrderConditions(data);
     } catch (e) {
-      throw new Error('Error validating order');
+      throw new Error('Error validating order', { cause: e });
     }
   }
 
@@ -280,7 +280,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       return parseCheckoutSummary(data, this._geinsSettings.locale);
     } catch (e) {
       console.error('ERROR', e);
-      throw new Error(`Error getting summary`);
+      throw new Error(`Error getting summary`, { cause: e });
     }
   }
 

@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "target": "ES5",
+        "lib": ["ES5", "ES2022.Error"],
         "module": "ESNext",
         "moduleResolution": "node",
         "declaration": true,

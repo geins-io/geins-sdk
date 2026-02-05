@@ -1,14 +1,16 @@
-import { CookieService, AUTH_COOKIES, AUTH_COOKIES_MAX_AGE } from '@geins/core';
+import { CookieService, AUTH_COOKIES, AUTH_COOKIES_MAX_AGE, isServerContext } from '@geins/core';
 import type { AuthResponse, AuthCredentials, AuthTokens, AuthUser } from '@geins/types';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 import { AuthService } from './authService';
 
 export abstract class AuthClient {
-  protected _cookieService: CookieService;
+  protected _cookieService: CookieService | undefined;
   protected _refreshToken: string | undefined;
 
   constructor() {
-    this._cookieService = new CookieService();
+    if (!isServerContext()) {
+      this._cookieService = new CookieService();
+    }
   }
 
   // abstract methods
@@ -163,19 +165,19 @@ export abstract class AuthClient {
   }
 
   protected getCookieUser(): string {
-    return this._cookieService.get(AUTH_COOKIES.USER);
+    return this._cookieService?.get(AUTH_COOKIES.USER) ?? '';
   }
 
   protected getCookieRefreshToken(): string {
-    return this._cookieService.get(AUTH_COOKIES.REFRESH_TOKEN);
+    return this._cookieService?.get(AUTH_COOKIES.REFRESH_TOKEN) ?? '';
   }
 
   protected getCookieUserToken(): string {
-    return this._cookieService.get(AUTH_COOKIES.USER_AUTH);
+    return this._cookieService?.get(AUTH_COOKIES.USER_AUTH) ?? '';
   }
 
   protected getCookieMaxAge(): number {
-    const maxAge = this._cookieService.get(AUTH_COOKIES.USER_MAX_AGE);
+    const maxAge = this._cookieService?.get(AUTH_COOKIES.USER_MAX_AGE);
     if (!maxAge) {
       return AUTH_COOKIES_MAX_AGE.DEFAULT;
     }
@@ -196,7 +198,7 @@ export abstract class AuthClient {
 
   protected setCookieRefreshToken(token: string, maxAge?: number): void {
     const setMaxAge = maxAge || this.getCookieMaxAge() || AUTH_COOKIES_MAX_AGE.DEFAULT;
-    this._cookieService.set({
+    this._cookieService?.set({
       name: AUTH_COOKIES.REFRESH_TOKEN,
       payload: token,
       maxAge: setMaxAge,
@@ -205,7 +207,7 @@ export abstract class AuthClient {
 
   protected setCookieUserToken(token: string, maxAge: number): void {
     const setMaxAge = maxAge || this.getCookieMaxAge() || AUTH_COOKIES_MAX_AGE.DEFAULT;
-    this._cookieService.set({
+    this._cookieService?.set({
       name: AUTH_COOKIES.USER_AUTH,
       payload: token,
       maxAge: setMaxAge,
@@ -231,14 +233,14 @@ export abstract class AuthClient {
     }
     const setMaxAge = maxAge || this.getCookieMaxAge() || AUTH_COOKIES_MAX_AGE.DEFAULT;
 
-    this._cookieService.set({
+    this._cookieService?.set({
       name: AUTH_COOKIES.USER_MAX_AGE,
       payload: setMaxAge.toString(),
       maxAge: setMaxAge,
     });
 
     if (authUser?.username) {
-      this._cookieService.set({
+      this._cookieService?.set({
         name: AUTH_COOKIES.USER,
         payload: authUser.username,
         maxAge: setMaxAge,
@@ -246,7 +248,7 @@ export abstract class AuthClient {
     }
 
     if (authUser?.customerType) {
-      this._cookieService.set({
+      this._cookieService?.set({
         name: AUTH_COOKIES.USER_TYPE,
         payload: authUser.customerType,
         maxAge: setMaxAge,
@@ -275,7 +277,7 @@ export abstract class AuthClient {
 
   public clearAuthCookies(): void {
     Object.values(AUTH_COOKIES).forEach(cookieName => {
-      this._cookieService.remove(cookieName);
+      this._cookieService?.remove(cookieName);
     });
   }
 
@@ -289,25 +291,25 @@ export abstract class AuthClient {
     const spoofDate = spoofedUser?.spoofDate;
     const customerType = spoofedUser?.customerType || 'preview';
 
-    this._cookieService.set({
+    this._cookieService?.set({
       name: AUTH_COOKIES.USER,
       payload: username,
       maxAge,
     });
 
-    this._cookieService.set({
+    this._cookieService?.set({
       name: AUTH_COOKIES.USER_AUTH,
       payload: token,
       maxAge,
     });
 
-    this._cookieService.set({
+    this._cookieService?.set({
       name: AUTH_COOKIES.USER_TYPE,
       payload: customerType,
       maxAge,
     });
 
-    this._cookieService.set({
+    this._cookieService?.set({
       name: AUTH_COOKIES.USER_MAX_AGE,
       payload: maxAge.toString(),
       maxAge,

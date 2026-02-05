@@ -47,7 +47,7 @@ export class OrderService extends BaseApiService implements OrderServiceInterfac
       const data = await this.runQuery(options);
       return parseOrderSummary(data, this._geinsSettings.locale);
     } catch (e) {
-      throw new Error('Error getting order');
+      throw new Error('Error getting order', { cause: e });
     }
   }
 }
