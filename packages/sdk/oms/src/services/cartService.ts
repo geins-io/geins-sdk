@@ -315,7 +315,7 @@ export class CartService extends BaseApiService implements CartServiceInterface 
       const data = await this.runMutation(options);
       this.loadCartFromData(data);
     } catch (e: any) {
-      throw new Error('Error setting Merchant Data to cart');
+      throw new Error('Error setting Merchant Data to cart', { cause: e });
     }
     return true;
   }
@@ -418,7 +418,7 @@ export class CartService extends BaseApiService implements CartServiceInterface 
       const data = await this.runQuery(options);
       this.loadCartFromData(data);
     } catch (e) {
-      throw new Error('Error creating cart');
+      throw new Error('Error creating cart', { cause: e });
     }
     return this._cart;
   }
@@ -541,7 +541,7 @@ export class CartService extends BaseApiService implements CartServiceInterface 
       if (e.message.includes("Variable '$id' is invalid")) {
         return await this.create();
       } else {
-        throw new Error('Error getting cart');
+        throw new Error('Error getting cart', { cause: e });
       }
     }
 
@@ -569,7 +569,7 @@ export class CartService extends BaseApiService implements CartServiceInterface 
     }
 
     const hasPackages = this._cart?.items?.some((item) => {
-      return item.productPackage || null !== null;
+      return item.productPackage != null;
     });
 
     if (!hasPackages) {
@@ -648,7 +648,7 @@ export class CartService extends BaseApiService implements CartServiceInterface 
         this.loadCartFromData(data);
       }
     } catch (e) {
-      throw new Error('Error updating item');
+      throw new Error('Error updating item', { cause: e });
     }
     // check if item was added
     return this.itemsGet().then((items) => {
@@ -722,7 +722,7 @@ export class CartService extends BaseApiService implements CartServiceInterface 
       }
     } catch (e) {
       console.error('Error updating package', e);
-      throw new Error('Error updating package');
+      throw new Error('Error updating package', { cause: e });
     }
     return true;
   }

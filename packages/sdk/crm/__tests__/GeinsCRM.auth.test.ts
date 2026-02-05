@@ -1,5 +1,14 @@
 import { AUTH_COOKIES, CookieService, GeinsCore } from '@geins/core';
 import { AuthService, GeinsCRM } from '@geins/crm';
+
+// Mock isServerContext to return false so CookieService is instantiated in tests
+jest.mock('@geins/core', () => {
+  const actual = jest.requireActual('@geins/core');
+  return {
+    ...actual,
+    isServerContext: () => false,
+  };
+});
 import { AuthCredentials, AuthSettings } from '@geins/types';
 
 import { cleanObject, randomString, randomUserData } from '../../../../test/dataMock';

@@ -30,6 +30,12 @@ export interface CookieServiceConfig {
   secure?: boolean;
 
   /**
+   * Controls whether the cookie is sent with cross-site requests.
+   * Defaults to `'lax'`.
+   */
+  sameSite?: 'strict' | 'lax' | 'none';
+
+  /**
    * Sets the maximum age of the cookie in seconds.
    * Can be a number or a string representation of a number.
    */
@@ -58,7 +64,8 @@ export class CookieService {
   private path = '/';
   private domain = '';
   private secure = true;
-  private httpOnly = false;
+  private httpOnly = true;
+  private sameSite: 'strict' | 'lax' | 'none' = 'lax';
   private maxAge: number;
   private cookie = Cookie();
 
@@ -85,6 +92,10 @@ export class CookieService {
         this.httpOnly = config.httpOnly;
       }
 
+      if (config.sameSite !== undefined) {
+        this.sameSite = config.sameSite;
+      }
+
       if (config.maxAge !== undefined) {
         this.maxAge = this.parseMaxAge(config.maxAge);
       }
@@ -101,6 +112,7 @@ export class CookieService {
       domain: this.domain,
       secure: this.secure,
       httpOnly: this.httpOnly,
+      sameSite: this.sameSite,
       maxAge: this.maxAge,
     };
   }
@@ -119,6 +131,7 @@ export class CookieService {
       domain: config.domain,
       secure: config.secure,
       httpOnly: config.httpOnly,
+      sameSite: config.sameSite,
       maxAge: config.maxAge !== undefined ? this.parseMaxAge(config.maxAge) : undefined,
     };
   }

@@ -3,6 +3,7 @@ import type { AuthCredentials, AuthResponse } from '@geins/types';
 import { AuthClient } from './authClient';
 
 export class AuthClientProxy extends AuthClient {
+  private static readonly FETCH_TIMEOUT_MS = 10_000;
   private _authEndpointApp: string;
 
   constructor(authEndpointApp: string) {
@@ -33,6 +34,7 @@ export class AuthClientProxy extends AuthClient {
 
     const response = await fetch(`${this._authEndpointApp}${path}`, {
       ...options,
+      signal: AbortSignal.timeout(AuthClientProxy.FETCH_TIMEOUT_MS),
     });
 
     const result = await response.json();

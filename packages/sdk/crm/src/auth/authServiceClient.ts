@@ -2,6 +2,7 @@ import { AUTH_HEADERS, type AuthCredentials, type AuthSignature, type AuthUserTo
 import { digest } from './authHelpers';
 
 export class AuthServiceClient {
+  private static readonly FETCH_TIMEOUT_MS = 10_000;
   private authEndpoint: string;
   private signEndpoint: string;
 
@@ -40,6 +41,7 @@ export class AuthServiceClient {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ username }),
+      signal: AbortSignal.timeout(AuthServiceClient.FETCH_TIMEOUT_MS),
     };
     const response = await fetch(url, options);
     const text = await response.text();
@@ -61,6 +63,7 @@ export class AuthServiceClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      signal: AbortSignal.timeout(AuthServiceClient.FETCH_TIMEOUT_MS),
     });
     if (!response.ok) {
       throw new Error('Failed to verify challenge');
@@ -95,6 +98,7 @@ export class AuthServiceClient {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(requestBody),
+      signal: AbortSignal.timeout(AuthServiceClient.FETCH_TIMEOUT_MS),
     };
 
     const response = await fetch(url, requestOptions);
@@ -126,6 +130,7 @@ export class AuthServiceClient {
         'Content-Type': 'application/json',
         [`${AUTH_HEADERS.REFRESH_TOKEN}`]: refreshToken,
       },
+      signal: AbortSignal.timeout(AuthServiceClient.FETCH_TIMEOUT_MS),
     };
     const response = await fetch(url, requestOptions);
     if (!response.ok) {
@@ -173,6 +178,7 @@ export class AuthServiceClient {
         [`${AUTH_HEADERS.REFRESH_TOKEN}`]: refreshToken,
       },
       body: JSON.stringify(requestBody),
+      signal: AbortSignal.timeout(AuthServiceClient.FETCH_TIMEOUT_MS),
     };
 
     const response = await fetch(url, requestOptions);
@@ -214,6 +220,7 @@ export class AuthServiceClient {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(requestBody),
+      signal: AbortSignal.timeout(AuthServiceClient.FETCH_TIMEOUT_MS),
     };
 
     const response = await fetch(url, requestOptions);

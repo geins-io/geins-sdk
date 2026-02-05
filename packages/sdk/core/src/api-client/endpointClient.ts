@@ -1,5 +1,6 @@
 import { API_ENDPOINT_SLUG_HISTORY, API_ENDPOINT_URL_HISTORY } from '../constants';
 export class EndpointApiClient {
+  private static readonly FETCH_TIMEOUT_MS = 10_000;
   private apiKey: string;
 
   constructor(apiKey: string) {
@@ -18,7 +19,10 @@ export class EndpointApiClient {
           'Content-Type': 'application/json',
         },
       };
-      const response = await fetch(endpointUrl, options);
+      const response = await fetch(endpointUrl, {
+        ...options,
+        signal: AbortSignal.timeout(EndpointApiClient.FETCH_TIMEOUT_MS),
+      });
 
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);

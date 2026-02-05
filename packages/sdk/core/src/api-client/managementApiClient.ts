@@ -2,6 +2,7 @@ import type { ManagementApiCredentials } from '@geins/types';
 import { MANAGEMENT_API_URL } from '../constants/endpoints';
 
 export class ManagementApiClient {
+  private static readonly FETCH_TIMEOUT_MS = 10_000;
   private baseUrl: string;
   private apiKey: string;
   private authToken: string;
@@ -33,7 +34,10 @@ export class ManagementApiClient {
       body: JSON.stringify(data),
     };
 
-    const reponse = await fetch(endpointUrl, options).then((response) => {
+    const reponse = await fetch(endpointUrl, {
+      ...options,
+      signal: AbortSignal.timeout(ManagementApiClient.FETCH_TIMEOUT_MS),
+    }).then((response) => {
       return response.json();
     });
     return reponse;
