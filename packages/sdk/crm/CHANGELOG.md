@@ -1,5 +1,13 @@
 # @geins/crm
 
+## 0.5.1
+
+### Patch Changes
+
+- d6e1de5: SDK hardening: server-aware fetch policy, per-operation token override, fetch timeouts, error context preservation, GraphQLService error propagation, operator precedence fix, JWT decode security warnings
+- Updated dependencies [d6e1de5]
+  - @geins/core@0.5.1
+
 ## 0.5.0
 
 ### Minor Changes
