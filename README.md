@@ -44,6 +44,45 @@ This repository is a monorepo. The main directories are:
 
 Find detailed guides, examples, and API references in the [docs/](./docs) directory or visit the [online documentation](https://sdk.geins.dev/).
 
+## Branching & Release Strategy
+
+| Branch | Purpose | What happens on push |
+|--------|---------|---------------------|
+| `main` | Stable releases | Changesets action creates a release PR. Merging that PR publishes to npm under `latest` tag. |
+| `next` | Pre-release / canary | Automatically publishes canary snapshots to npm under `@canary` tag (e.g. `0.5.1-canary-abc1234`). |
+
+### Workflow
+
+1. Create feature branches from `next`
+2. PR into `next` — triggers canary release on merge
+3. When ready for stable release, merge `next` into `main`
+4. Changesets action opens a "chore: release packages" PR on `main`
+5. Merging that PR publishes final versions to npm
+
+### Versioning
+
+This repo uses [Changesets](https://github.com/changesets/changesets) for version management. All SDK packages (`@geins/types`, `@geins/core`, `@geins/cms`, `@geins/crm`, `@geins/oms`) are in a **fixed** version group — they always release together at the same version.
+
+To add a changeset for your work:
+
+```bash
+npx changeset
+```
+
+Or manually create a `.changeset/<name>.md` file:
+
+```markdown
+---
+'@geins/types': patch
+'@geins/core': patch
+'@geins/cms': patch
+'@geins/crm': patch
+'@geins/oms': patch
+---
+
+Description of changes
+```
+
 ## Contributing
 
 We welcome contributions! Please follow our [contribution guidelines](CONTRIBUTING.md).
