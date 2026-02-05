@@ -6,7 +6,7 @@ import { validSettings } from '../../../../test/globalSettings';
 describe('Channel', () => {
   let channel: Channel;
   beforeEach(() => {
-    channel = Channel.getInstance(validSettings);
+    channel = new Channel(validSettings);
   });
 
   it('should initialize channel correctly', () => {
@@ -29,8 +29,6 @@ describe('Channel', () => {
   });
 
   afterEach(() => {
-    Channel.destroy();
-    // Clean up mocks after each test
     jest.clearAllMocks();
   });
 });

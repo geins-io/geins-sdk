@@ -11,6 +11,7 @@ import {
 } from '@apollo/client/core';
 import { AUTH_COOKIES } from '../constants';
 import { CookieService } from '../services/cookieService';
+import { isServerContext } from '../utils';
 
 export enum FetchPolicyOptions {
   CACHE_FIRST = 'cache-first',
@@ -45,19 +46,24 @@ export interface GraphQLQueryOptions {
   variables?: any;
   requestOptions?: RequestOptions;
   log_to_console?: boolean;
+  userToken?: string;
 }
 
 export class MerchantApiClient {
   private _cookieService: CookieService | undefined;
   private _apolloClient: ApolloClient<NormalizedCacheObject>;
   private _userToken?: string;
-  fetchPolicy: FetchPolicy = FetchPolicyOptions.CACHE_FIRST;
+  fetchPolicy: FetchPolicy = isServerContext()
+    ? FetchPolicyOptions.NO_CACHE
+    : FetchPolicyOptions.CACHE_FIRST;
   pollInterval: number = 0;
 
   constructor(options: MerchantApiClientOptions) {
     const { apiUrl, apiKey, userToken, fetchPolicy } = options;
     this._apolloClient = this.createClient(apiUrl, apiKey);
-    this._cookieService = new CookieService();
+    if (!isServerContext()) {
+      this._cookieService = new CookieService();
+    }
     if (userToken) {
       this._userToken = userToken;
     }
@@ -136,7 +142,7 @@ export class MerchantApiClient {
     const { query, queryAsString, variables, requestOptions } = operationOptions;
     const queryDocument = query || gql(queryAsString || '');
     const options = requestOptions || {};
-    const token = this._userToken || this._cookieService?.get(AUTH_COOKIES.USER_AUTH);
+    const token = operationOptions.userToken || this._userToken || this._cookieService?.get(AUTH_COOKIES.USER_AUTH);
 
     if (!queryDocument) {
       throw new Error('Query is required');
@@ -171,10 +177,6 @@ export class MerchantApiClient {
     options: GraphQLQueryOptions,
   ): Promise<FetchResult<TData>> {
     const q = this.getOperationObject(OperationType.MUTATION, options);
-
-    try {
-      return this._apolloClient.mutate<TData, TVariables>(q);
-    } catch (error) {}
-    return {} as FetchResult<TData>;
+    return this._apolloClient.mutate<TData, TVariables>(q);
   }
 }

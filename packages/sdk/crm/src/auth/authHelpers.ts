@@ -1,3 +1,10 @@
+/**
+ * Parses JWT claims by decoding the payload segment (base64url).
+ *
+ * **Security warning:** This function does NOT verify the token signature.
+ * The returned claims MUST NOT be trusted for authorization decisions unless
+ * the token has been independently verified by the issuing authority.
+ */
 export function authClaimTokenParse(token: string): any {
   try {
     const base64Url = token.split('.')[1];

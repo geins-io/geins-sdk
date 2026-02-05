@@ -3,6 +3,11 @@ import crypto from 'crypto';
 /**
  * Decodes a JWT token and optionally verifies its signature.
  *
+ * **Security warning:** When called without `secretKey`, this function performs NO
+ * signature verification. The returned payload MUST NOT be trusted for authorization
+ * decisions unless the token has been independently verified by the issuing authority.
+ * Use the `secretKey` parameter or an external verification step before relying on claims.
+ *
  * @param token - The JWT token to decode.
  * @param secretKey - The secret key to verify the signature (optional).
  * @returns An object containing the decoded header and payload.

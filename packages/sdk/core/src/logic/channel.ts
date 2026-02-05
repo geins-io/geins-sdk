@@ -5,8 +5,6 @@ import { ChannelStore } from '../stores';
 import { buildEndpoints } from '../utils';
 import { SimpleCache } from '../utils/simpleCache';
 
-let instance: Channel | null = null;
-
 export class Channel {
   private channelId: string;
   private channelService: ChannelService | undefined;
@@ -50,24 +48,6 @@ export class Channel {
 
   private initChannelService() {
     this.channelService = new ChannelService(() => this._apiClient(), this.geinsSettings);
-  }
-
-  public static getInstance(geinsSettings: GeinsSettings) {
-    if (!instance) {
-      instance = new Channel(geinsSettings);
-    }
-    return instance;
-  }
-
-  public static destroy() {
-    if (!instance) {
-      return;
-    }
-    instance.cache.clear();
-    instance.store?.destroy();
-    instance.channelService = undefined;
-    instance._apiClient = () => undefined;
-    instance = null;
   }
 
   setKey(key: string, value: string): void {

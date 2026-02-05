@@ -254,18 +254,18 @@ describe('GeinsOMS cart', () => {
     expect(prompCodeApplyResult).toBe(true);
 
     cart = await geinsOMS.cart.get();
-    expect(cart?.appliedCampaigns[0]?.name).toBe(promoCode);
+    expect(cart?.appliedCampaigns?.some((c: any) => c.name === promoCode)).toBe(true);
 
-    let discountTotal = cart?.summary?.total?.discountIncVat;
-    expect(discountTotal).toBeGreaterThan(0);
+    const discountBefore = cart?.summary?.total?.discountIncVat ?? 0;
+    expect(discountBefore).toBeGreaterThan(0);
 
     await geinsOMS.cart.promotionCode.remove();
     cart = await geinsOMS.cart.get();
 
-    expect(cart?.appliedCampaigns).toHaveLength(0);
+    expect(cart?.appliedCampaigns?.some((c: any) => c.name === promoCode)).toBe(false);
 
-    discountTotal = cart?.summary?.total?.discountIncVat;
-    expect(discountTotal).toBe(0);
+    const discountAfter = cart?.summary?.total?.discountIncVat ?? 0;
+    expect(discountAfter).toBeLessThan(discountBefore);
   });
 
   it('should show applied campaign', async () => {

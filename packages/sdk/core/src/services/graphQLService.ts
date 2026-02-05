@@ -60,20 +60,14 @@ export class GraphQLService extends BaseApiService {
    * @param options - The options for the GraphQL query.
    * @returns A promise that resolves to the query result or null if an error occurs.
    */
-  async query<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
-    try {
-      const queryOptions = await this.verifyQueryOptions(options);
+  async query<T = any>(options: GraphQLQueryOptions): Promise<T> {
+    const queryOptions = await this.verifyQueryOptions(options);
 
-      if ((this.log_to_console || options.log_to_console) && this._geinsSettings.environment !== 'prod') {
-        console.log('[Geins] queryOptions:', queryOptions);
-      }
-      const result = this.cleanObject(await this.runQuery(queryOptions));
-      const parsedResult = this.parseResult(result);
-      return parsedResult as T;
-    } catch (error) {
-      console.error('Query error:', error);
-      return null;
+    if ((this.log_to_console || options.log_to_console) && this._geinsSettings.environment !== 'prod') {
+      console.log('[Geins] queryOptions:', queryOptions);
     }
+    const result = this.cleanObject(await this.runQuery(queryOptions));
+    return this.parseResult(result) as T;
   }
 
   /**
@@ -81,26 +75,20 @@ export class GraphQLService extends BaseApiService {
    * @param options - The options for the GraphQL mutation.
    * @returns A promise that resolves to the mutation result or null if an error occurs.
    */
-  async mutation<T = any>(options: GraphQLQueryOptions): Promise<T | null> {
-    try {
-      if ((this.log_to_console || options.log_to_console) && this._geinsSettings.environment !== 'prod') {
-        console.log('[Geins] mutation options:', options);
-      }
-
-      const result = await this.runMutation(options);
-      const parsedResult = this.parseResult(result);
-      return parsedResult as T;
-    } catch (error) {
-      console.error('Mutation error:', error);
-      return null;
+  async mutation<T = any>(options: GraphQLQueryOptions): Promise<T> {
+    if ((this.log_to_console || options.log_to_console) && this._geinsSettings.environment !== 'prod') {
+      console.log('[Geins] mutation options:', options);
     }
+
+    const result = await this.runMutation(options);
+    return this.parseResult(result) as T;
   }
   protected parseResult(result: any): any {
     if (result.data) {
       return result.data;
     }
     if (result.errors) {
-      console.error('GraphQL errors:', result.errors);
+      throw new Error('GraphQL errors', { cause: result.errors });
     }
     return null;
   }

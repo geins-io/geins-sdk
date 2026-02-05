@@ -1,7 +1,6 @@
 /*
   SERVER OR/AND CLIENT
 */
-import { CookieService } from '@geins/core';
 import type { AuthCredentials, AuthResponse } from '@geins/types';
 import { authClaimsTokenSerializeToObject } from './authHelpers';
 import { AuthServiceClient } from './authServiceClient';
@@ -12,12 +11,10 @@ export class AuthService {
   private signEndpoint: string;
   private authEndpoint: string;
   private client: AuthServiceClient | undefined;
-  private cookieService: CookieService;
 
   constructor(signEndpoint: string, authEndpoint: string) {
     this.signEndpoint = signEndpoint;
     this.authEndpoint = authEndpoint;
-    this.cookieService = new CookieService();
     this.initClient();
   }
   // initialize client
