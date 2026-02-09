@@ -4,21 +4,23 @@ export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K]
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> =
-  | T
-  | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export interface Scalars {
-  ID: { input: string | number; output: string | number };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
-  /** The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard. */
-  DateTime: { input: string; output: string };
-  Decimal: { input: number; output: number };
-  Guid: { input: string; output: string };
-  Long: { input: number; output: number };
+  ID: { input: string | number; output: string | number; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  /**
+   * The `DateTime` scalar type represents a date and time. `DateTime` expects
+   * timestamps to be formatted in accordance with the
+   * [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+   */
+  DateTime: { input: string; output: string; }
+  Decimal: { input: number; output: number; }
+  Guid: { input: string; output: string; }
+  Long: { input: number; output: number; }
 }
 
 export interface GeinsAddressInputTypeType {
@@ -39,19 +41,33 @@ export interface GeinsAddressInputTypeType {
 }
 
 export interface GeinsAddressTypeType {
+  /** The first line of the address. */
   addressLine1: Scalars['String']['output'];
+  /** The second line of the address. */
   addressLine2: Scalars['String']['output'];
+  /** The third line of the address. */
   addressLine3: Scalars['String']['output'];
+  /** The care of (c/o) name for the address. */
   careOf: Scalars['String']['output'];
+  /** The city of the address. */
   city: Scalars['String']['output'];
+  /** The company name associated with the address. */
   company: Scalars['String']['output'];
+  /** The country of the address. Can be either a valid english country name or ISO code */
   country: Scalars['String']['output'];
+  /** The entry code for the address. */
   entryCode: Scalars['String']['output'];
+  /** The first name of the address holder. */
   firstName: Scalars['String']['output'];
+  /** The last name of the address holder. */
   lastName: Scalars['String']['output'];
+  /** The mobile phone number associated with the address. */
   mobile: Scalars['String']['output'];
+  /** The phone number associated with the address. */
   phone: Scalars['String']['output'];
+  /** The state of the address. */
   state: Scalars['String']['output'];
+  /** The zip code of the address. */
   zip: Scalars['String']['output'];
 }
 
@@ -224,6 +240,8 @@ export interface GeinsCartItemTypeType {
   groupKey?: Maybe<Scalars['ID']['output']>;
   /** Cart item Id */
   id: Scalars['ID']['output'];
+  /** Indicates if the cart item is a free gift from a campaign */
+  isCampaignFreeGift: Scalars['Boolean']['output'];
   /** Custom message */
   message?: Maybe<Scalars['String']['output']>;
   /** Product */
@@ -276,6 +294,8 @@ export interface GeinsCartTypeType {
   isCompleted: Scalars['Boolean']['output'];
   /** The cart items */
   items?: Maybe<Array<Maybe<GeinsCartItemTypeType>>>;
+  /** Cart merchant data */
+  merchantData?: Maybe<Scalars['String']['output']>;
   /** Cart promo code */
   promoCode?: Maybe<Scalars['String']['output']>;
   /** The cart summary */
@@ -358,20 +378,48 @@ export interface GeinsCheckoutDataTypeType {
 }
 
 export interface GeinsCheckoutInputTypeType {
+  /** The consents accepted by the customer. */
   acceptedConsents?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /** The billing address for the order. */
   billingAddress?: InputMaybe<GeinsAddressInputTypeType>;
+  /**
+   * The URLs for the checkout process. These are optional and if not supplied,
+   * default values configured in the respective integration to the payment
+   * provider will be used. Placeholders that can be used in the URLs:
+   * {geins.cartid} - the cart id, {payment.uid} - the unique payment identifier
+   * (external order id). Note that some payment providers do not support this and
+   * others only accept https.
+   */
+  checkoutUrls?: InputMaybe<GeinsCheckoutUrlsInputTypeType>;
+  /** The type of customer. */
   customerType?: InputMaybe<GeinsCustomerType>;
+  /** The desired delivery date for the order. */
   desiredDeliveryDate?: InputMaybe<Scalars['DateTime']['input']>;
+  /** The email address of the customer. */
   email?: InputMaybe<Scalars['String']['input']>;
+  /** The external shipping fee for the order. */
   externalShippingFee?: InputMaybe<Scalars['Decimal']['input']>;
+  /** The external ID of the shipping method. */
   externalShippingId?: InputMaybe<Scalars['String']['input']>;
+  /** The identity number of the customer. */
   identityNumber?: InputMaybe<Scalars['String']['input']>;
+  /** Additional data from the merchant. */
   merchantData?: InputMaybe<Scalars['String']['input']>;
+  /** A message from the customer. */
   message?: InputMaybe<Scalars['String']['input']>;
+  /** The ID of the payment method. */
   paymentId?: InputMaybe<Scalars['Int']['input']>;
+  /** The pickup point for the order. */
   pickupPoint?: InputMaybe<Scalars['String']['input']>;
+  /** The shipping address for the order. */
   shippingAddress?: InputMaybe<GeinsAddressInputTypeType>;
+  /** The ID of the shipping method. */
   shippingId?: InputMaybe<Scalars['Int']['input']>;
+  /**
+   * When set to true, the submitted ShippingId will be set on the order regardless
+   * of it being available in the list of shipping options.
+   */
+  skipShippingValidation?: InputMaybe<Scalars['Boolean']['input']>;
 }
 
 export interface GeinsCheckoutOrderRowTypeType {
@@ -385,6 +433,8 @@ export interface GeinsCheckoutOrderRowTypeType {
   campaignNames?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Categories */
   categories?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** Currency ISO code */
+  currency?: Maybe<Scalars['String']['output']>;
   /** Discount excl. VAT */
   discountExVat: Scalars['Decimal']['output'];
   /** Discount incl. VAT */
@@ -430,65 +480,151 @@ export interface GeinsCheckoutOrderRowTypeType {
 }
 
 export interface GeinsCheckoutOrderTypeType {
+  /**
+   * Address Line 1
+   * @deprecated Use Billing Address instead
+   */
+  address1?: Maybe<Scalars['String']['output']>;
+  /**
+   * Address Line 2
+   * @deprecated Use Billing Address instead
+   */
+  address2?: Maybe<Scalars['String']['output']>;
+  /** Amount used from Balance */
+  balance: Scalars['Decimal']['output'];
+  /** Billing address */
+  billingAddress?: Maybe<GeinsAddressTypeType>;
   /** Campaign IDs */
   campaignIds?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Campaign names */
   campaignNames?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /**
+   * City
+   * @deprecated Use Billing Address instead
+   */
+  city?: Maybe<Scalars['String']['output']>;
+  /**
+   * Company
+   * @deprecated Use Billing Address instead
+   */
+  company?: Maybe<Scalars['String']['output']>;
+  /**
+   * Country
+   * @deprecated Use Billing Address instead
+   */
+  country?: Maybe<Scalars['String']['output']>;
   /** Currency */
   currency?: Maybe<Scalars['String']['output']>;
+  /** CustomerGroup ID */
+  customerGroupId: Scalars['Int']['output'];
+  /** Customer ID */
+  customerId: Scalars['Int']['output'];
+  /** Customer Type ID */
+  customerTypeId: Scalars['Int']['output'];
+  /** Desired Delivery Date */
+  desiredDeliveryDate?: Maybe<Scalars['DateTime']['output']>;
   /** Discount excl. VAT */
   discountExVat: Scalars['Decimal']['output'];
   /** Discount incl. VAT */
   discountIncVat: Scalars['Decimal']['output'];
-  /** E-mail */
+  /**
+   * E-mail
+   * @deprecated Use Billing Address instead
+   */
   email?: Maybe<Scalars['String']['output']>;
-  /** First name */
+  /** External Order ID */
+  externalOrderId?: Maybe<Scalars['String']['output']>;
+  /**
+   * First name
+   * @deprecated Use Billing Address instead
+   */
   firstName?: Maybe<Scalars['String']['output']>;
-  /** Item-value excl. VAT */
+  /** Gender */
+  gender: GeinsGenderType;
+  /** IP Address */
+  ipAddress?: Maybe<Scalars['String']['output']>;
+  /** Represents the total sum of the prices for all order rows, excluding VAT */
   itemValueExVat: Scalars['Decimal']['output'];
-  /** Item-value incl. VAT */
+  /** Represents the total sum of the prices for all order rows */
   itemValueIncVat: Scalars['Decimal']['output'];
-  /** Last name */
+  /** Locale */
+  languageId?: Maybe<Scalars['String']['output']>;
+  /**
+   * Last name
+   * @deprecated Use Billing Address instead
+   */
   lastName?: Maybe<Scalars['String']['output']>;
   /** Market ID. */
   marketId: Scalars['String']['output'];
   /** Order message */
   message?: Maybe<Scalars['String']['output']>;
+  /** Meta Data */
+  metaData?: Maybe<Scalars['String']['output']>;
   /** Order ID */
   orderId?: Maybe<Scalars['String']['output']>;
-  /** Order excl. VAT */
+  /** Order value excluding VAT (item value + fees - balance) */
   orderValueExVat: Scalars['Decimal']['output'];
-  /** Order incl. VAT */
+  /** Order value including VAT (item value + fees - balance) */
   orderValueIncVat: Scalars['Decimal']['output'];
-  /** Payment excl. VAT */
+  /** Organization Number */
+  organizationNumber?: Maybe<Scalars['String']['output']>;
+  /** Payment fee excl. VAT */
   paymentFeeExVat: Scalars['Decimal']['output'];
-  /** Payment incl. VAT */
+  /** Payment fee incl. VAT */
   paymentFeeIncVat: Scalars['Decimal']['output'];
+  /** Payment ID */
+  paymentId: Scalars['Int']['output'];
+  /** Personal ID */
+  personalId?: Maybe<Scalars['String']['output']>;
+  /**
+   * Phone number
+   * @deprecated Use Billing Address instead
+   */
+  phone?: Maybe<Scalars['String']['output']>;
+  /** Pickup Point */
+  pickupPoint?: Maybe<Scalars['String']['output']>;
+  /** Promo Code */
+  promoCode?: Maybe<Scalars['String']['output']>;
   /** Order rows */
   rows?: Maybe<Array<Maybe<GeinsCheckoutOrderRowTypeType>>>;
-  /** Secondary transaction ID */
+  /**
+   * Secondary transaction ID
+   * @deprecated Not used any more
+   */
   secondaryTransactionId?: Maybe<Scalars['String']['output']>;
-  /** Shipping excl. VAT */
+  /** Shipping address */
+  shippingAddress?: Maybe<GeinsAddressTypeType>;
+  /** Shipping fee excl. VAT */
   shippingFeeExVat: Scalars['Decimal']['output'];
-  /** Shipping incl. VAT */
+  /** Shipping fee incl. VAT */
   shippingFeeIncVat: Scalars['Decimal']['output'];
-  /** Order sum */
+  /** Shipping ID */
+  shippingId: Scalars['Int']['output'];
+  /** Order Status */
+  status?: Maybe<Scalars['String']['output']>;
+  /** Order sum. Amount to pay. */
   sum: Scalars['Decimal']['output'];
-  /** Transaction ID */
+  /** Payment Provider Transaction ID */
   transactionId?: Maybe<Scalars['String']['output']>;
-  /** Zip code */
+  /** User Agent */
+  userAgent?: Maybe<Scalars['String']['output']>;
+  /**
+   * Zip code
+   * @deprecated Use Billing Address instead
+   */
   zip?: Maybe<Scalars['String']['output']>;
 }
 
 export enum GeinsCheckoutStatus {
   CustomerBlacklistedType = 'CUSTOMER_BLACKLISTED',
-  OkType = 'OK',
+  OkType = 'OK'
 }
 
 export interface GeinsCheckoutTypeType {
   billingAddress?: Maybe<GeinsAddressTypeType>;
   cart?: Maybe<GeinsCartTypeType>;
   checkoutStatus?: Maybe<GeinsCheckoutStatus>;
+  /** @deprecated The consent module is not supported any more. */
   consents?: Maybe<Array<Maybe<GeinsConsentTypeType>>>;
   email?: Maybe<Scalars['String']['output']>;
   identityNumber?: Maybe<Scalars['String']['output']>;
@@ -496,6 +632,15 @@ export interface GeinsCheckoutTypeType {
   shippingAddress?: Maybe<GeinsAddressTypeType>;
   shippingData?: Maybe<Scalars['String']['output']>;
   shippingOptions?: Maybe<Array<Maybe<GeinsShippingOptionTypeType>>>;
+}
+
+export interface GeinsCheckoutUrlsInputTypeType {
+  /** The absolute URL to the Checkout page. */
+  checkoutPageUrl?: InputMaybe<Scalars['String']['input']>;
+  /** The absolute redirect URL. This is usually the URL to which the payment provider redirects after a successful payment. */
+  redirectUrl?: InputMaybe<Scalars['String']['input']>;
+  /** The absolute URL to the Terms page. */
+  termsPageUrl?: InputMaybe<Scalars['String']['input']>;
 }
 
 export interface GeinsConsentTypeType {
@@ -531,7 +676,7 @@ export enum GeinsCustomerType {
   /** Organization */
   OrganizationType = 'ORGANIZATION',
   /** Private person */
-  PersonType = 'PERSON',
+  PersonType = 'PERSON'
 }
 
 /** SKU dimensions */
@@ -545,9 +690,10 @@ export interface GeinsDimensionsTypeType {
 }
 
 export enum GeinsDiscountType {
+  ExternalType = 'EXTERNAL',
   NoneType = 'NONE',
   PriceCampaignType = 'PRICE_CAMPAIGN',
-  SalePriceType = 'SALE_PRICE',
+  SalePriceType = 'SALE_PRICE'
 }
 
 /** Type containing collection of filters */
@@ -560,8 +706,28 @@ export interface GeinsFilterCollectionTypeType {
 
 /** Filter options */
 export interface GeinsFilterInputTypeType {
-  /** A list of string values, that when specified will exclude products that are associated with one of the facets */
+  /**
+   * A list of article numbers to filter on. The maximum number of values is 600.
+   * If Product IDs filter is present, it takes priority and the article number
+   * filter will not be applied. When the article number filter is set, no other
+   * filters will be applied. The result is sorted in the exact same way as the
+   * input list regardless of what sort method has been set.
+   */
+  articleNumbers?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /** A list of brand IDs to filter on. When set, all matching brands will be added to the include filter. */
+  brandIds?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
+  /** A list of category IDs to filter on. When set, all matching categories will be added to the include filter. */
+  categoryIds?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
+  /** A list of discount campaign IDs to filter on. When set, all matching campaigns will be added to the include filter. */
+  discountCampaignIds?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
+  /** A list of string values, that when specified will exclude products that are associated with one of those values */
   exclude?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  /** A list of brand IDs to filter on. When set, all matching brands will be added to the exclude filter. */
+  excludeBrandIds?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
+  /** A list of category IDs to filter on. When set, all matching categories will be added to the exclude filter. */
+  excludeCategoryIds?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
+  /** A list of discount campaign IDs to filter on. When set, all matching campaigns will be added to the exclude filter. */
+  excludeDiscountCampaignIds?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
   /** A list of string values, that when specified will exclude products that are associated with one of the facets */
   excludeFacets?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   /** A list of string values, that when specified will only include products associated with those values */
@@ -572,9 +738,17 @@ export interface GeinsFilterInputTypeType {
   include?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   /** Include collapsed products */
   includeCollapsed?: InputMaybe<Scalars['Boolean']['input']>;
+  /** A value to control how values in the Include-field are combined logically. */
+  includeMode?: InputMaybe<GeinsIncludeMode>;
   /** Price filter */
   price?: InputMaybe<GeinsPriceFilterInputTypeType>;
-  /** A list of product ids to filter on */
+  /** Limits products to only those found in the price list with the specified identifier. */
+  priceListIdentifier?: InputMaybe<Scalars['String']['input']>;
+  /**
+   * A list of product IDs to filter on. The maximum number of values is 600. When
+   * the product IDs filter is set, no other filters will be applied. The result is
+   * sorted in the exact same way as the input list regardless of what sort method has been set.
+   */
   productIds?: InputMaybe<Array<InputMaybe<Scalars['Int']['input']>>>;
   /** Search text to filter by */
   searchText?: InputMaybe<Scalars['String']['input']>;
@@ -587,7 +761,7 @@ export enum GeinsFilterMode {
   /** Get the counts for the results, including the ones excluded by the groups */
   ByGroupType = 'BY_GROUP',
   /** Get the counts for the current filter results */
-  CurrentType = 'CURRENT',
+  CurrentType = 'CURRENT'
 }
 
 /** Filter group */
@@ -598,6 +772,8 @@ export interface GeinsFilterTypeType {
   group?: Maybe<Scalars['String']['output']>;
   /** Parameter group display name */
   label?: Maybe<Scalars['String']['output']>;
+  /** The display order of this filter group. Only supported for type Parameter */
+  order: Scalars['Int']['output'];
   /** Filter type. e.g. 'Parameter', 'Category', 'Sku' */
   type?: Maybe<Scalars['String']['output']>;
   /** Collection of facet values in this group */
@@ -624,10 +800,493 @@ export interface GeinsFilterValueTypeType {
   url?: Maybe<Scalars['String']['output']>;
 }
 
+export interface GeinsGeinsMerchantApiMutationType {
+  addPackageToCart?: Maybe<GeinsCartTypeType>;
+  addToCart?: Maybe<GeinsCartTypeType>;
+  /** Clears all items in the cart */
+  clearCart?: Maybe<GeinsCartTypeType>;
+  /** Clones the cart */
+  cloneCart?: Maybe<GeinsCartTypeType>;
+  commitReset?: Maybe<Scalars['Boolean']['output']>;
+  /** Marks the cart as completed, and makes it read-only */
+  completeCart?: Maybe<GeinsCartTypeType>;
+  createOrUpdateCheckout?: Maybe<GeinsCheckoutTypeType>;
+  deleteUser?: Maybe<Scalars['Boolean']['output']>;
+  monitorProductAvailability?: Maybe<Scalars['Boolean']['output']>;
+  placeOrder?: Maybe<GeinsPlaceOrderResponseTypeType>;
+  postProductReview?: Maybe<Scalars['Boolean']['output']>;
+  requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
+  /** Set custom merchant data on the cart */
+  setCartMerchantData?: Maybe<GeinsCartTypeType>;
+  /** Set a promo code on the cart */
+  setCartPromoCode?: Maybe<GeinsCartTypeType>;
+  setCartShippingFee?: Maybe<GeinsCheckoutTypeType>;
+  subscribeToNewsletter?: Maybe<Scalars['Boolean']['output']>;
+  /** Update the quantity of an entire cart group */
+  updateCartGroup?: Maybe<GeinsCartTypeType>;
+  /** Update the cart item */
+  updateCartItem?: Maybe<GeinsCartTypeType>;
+  updateUser?: Maybe<GeinsUserTypeType>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationAddPackageToCartArgsType {
+  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  packageId: Scalars['Int']['input'];
+  selections?: InputMaybe<Array<InputMaybe<GeinsProductPackageSelectionTypeType>>>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationAddToCartArgsType {
+  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  item: GeinsCartItemInputTypeType;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationClearCartArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationCloneCartArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  resetPromotions?: InputMaybe<Scalars['Boolean']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationCommitResetArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  password: Scalars['String']['input'];
+  resetKey: Scalars['String']['input'];
+}
+
+
+export interface GeinsGeinsMerchantApiMutationCompleteCartArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationCreateOrUpdateCheckoutArgsType {
+  cartId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  checkout?: InputMaybe<GeinsCheckoutInputTypeType>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationDeleteUserArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationMonitorProductAvailabilityArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  skuId: Scalars['Int']['input'];
+}
+
+
+export interface GeinsGeinsMerchantApiMutationPlaceOrderArgsType {
+  cartId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  checkout: GeinsCheckoutInputTypeType;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationPostProductReviewArgsType {
+  alias: Scalars['String']['input'];
+  author: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  comment?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  rating?: InputMaybe<Scalars['Int']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationRequestPasswordResetArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationSetCartMerchantDataArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  merchantData: Scalars['String']['input'];
+}
+
+
+export interface GeinsGeinsMerchantApiMutationSetCartPromoCodeArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  promoCode: Scalars['String']['input'];
+}
+
+
+export interface GeinsGeinsMerchantApiMutationSetCartShippingFeeArgsType {
+  cartId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  shippingFee: Scalars['Decimal']['input'];
+}
+
+
+export interface GeinsGeinsMerchantApiMutationSubscribeToNewsletterArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationUpdateCartGroupArgsType {
+  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  item: GeinsCartGroupInputTypeType;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationUpdateCartItemArgsType {
+  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  item: GeinsCartItemInputTypeType;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationUpdateUserArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  user: GeinsUserInputTypeType;
+}
+
+export interface GeinsGeinsMerchantApiQueryType {
+  /** Get all brands. */
+  brands?: Maybe<Array<Maybe<GeinsBrandListTypeType>>>;
+  /** Get all categories. */
+  categories?: Maybe<Array<Maybe<GeinsCategoryTypeType>>>;
+  /** Gets a category with the specified ID. Use either alias or categoryId. If both are provided, categoryId will be used. */
+  category?: Maybe<GeinsCategoryTypeType>;
+  /** Gets a channel with the specified ID. */
+  channel?: Maybe<GeinsChannelTypeType>;
+  /** Gets all available channels. */
+  channels?: Maybe<Array<Maybe<GeinsChannelTypeType>>>;
+  /**
+   * Gets checkout data with a html snippet, checkout order data for the specified
+   * order and the User. If the order was recently completed, the html snippet will
+   * contain the "Thank you"-content.
+   */
+  checkout?: Maybe<GeinsCheckoutDataTypeType>;
+  /** Gets all CMS pages. */
+  cmsPages?: Maybe<Array<Maybe<GeinsPageWidgetPageTypeType>>>;
+  /** Get the cart */
+  getCart?: Maybe<GeinsCartTypeType>;
+  /**
+   * Gets html snippet for the specified external order. If the order was recently
+   * completed, the html snippet will contain the "Thank you"-content.
+   * @deprecated Use Checkout instead
+   */
+  getCheckout?: Maybe<Scalars['String']['output']>;
+  /**
+   * Gets html snippet and checkout order data for the specified external order. If
+   * the order was recently completed, the html snippet will contain the "Thank you"-content.
+   * @deprecated Use Checkout instead
+   */
+  getCheckoutAndOrder?: Maybe<GeinsCheckoutAndOrderTypeType>;
+  /** Get a menu */
+  getMenuAtLocation?: Maybe<GeinsMenuTypeType>;
+  /** Get a specific order with details */
+  getOrder?: Maybe<GeinsOrderTypeType>;
+  /** Get a specific order with details via public id */
+  getOrderPublic?: Maybe<GeinsOrderTypeType>;
+  /** Get orders for the current user */
+  getOrders?: Maybe<Array<Maybe<GeinsOrderTypeType>>>;
+  /** Get the current user */
+  getUser?: Maybe<GeinsUserTypeType>;
+  /** Gets information about the specified list page. */
+  listPageInfo?: Maybe<GeinsPageInfoTypeType>;
+  /** Gets a product with the specified ID. Use either alias or productId. If both are provided, productId will be used. */
+  product?: Maybe<GeinsProductTypeType>;
+  /** Gets all products according to the values provided. */
+  products?: Maybe<GeinsProductsResultTypeType>;
+  /** Gets related products for the specified alias. */
+  relatedProducts?: Maybe<Array<Maybe<GeinsRelatedProductTypeType>>>;
+  /** Gets all products reviews to the values provided. */
+  reviews?: Maybe<GeinsProductReviewResultTypeType>;
+  /** Gets an alternate url for a given url. */
+  urlHistory?: Maybe<GeinsUrlHistoryTypeType>;
+  /**
+   * Validates the conditions required for placing an order, including product
+   * stock availability, customer balance, payment method selection, shipping
+   * method selection, and customer eligibility to complete the purchase.
+   */
+  validateOrderConditions?: Maybe<GeinsValidateOrderConditionsResponseTypeType>;
+  /** @deprecated Use ValidateOrderConditions instead */
+  validateOrderCreation?: Maybe<GeinsValidateOrderCreationResponseTypeType>;
+  /** Gets the page area and widgets from the specifed family. */
+  widgetArea?: Maybe<GeinsPageWidgetCollectionTypeType>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryBrandsArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryCategoriesArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  includeHidden?: InputMaybe<Scalars['Boolean']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  parentCategoryId?: InputMaybe<Scalars['Int']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryCategoryArgsType {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  categoryId?: InputMaybe<Scalars['Int']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryChannelArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryCheckoutArgsType {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  paymentType: GeinsPaymentType;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryCmsPagesArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  excludeTags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  includeTags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryGetCartArgsType {
+  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  forceRefresh?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  includeCompleted?: InputMaybe<Scalars['Boolean']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryGetCheckoutArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  paymentType: GeinsPaymentType;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryGetCheckoutAndOrderArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  paymentType: GeinsPaymentType;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryGetMenuAtLocationArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  customerGroupId?: InputMaybe<Scalars['Int']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  menuLocationId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryGetOrderArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  orderId: Scalars['Int']['input'];
+}
+
+
+export interface GeinsGeinsMerchantApiQueryGetOrderPublicArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  publicOrderId: Scalars['Guid']['input'];
+}
+
+
+export interface GeinsGeinsMerchantApiQueryGetOrdersArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryGetUserArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryListPageInfoArgsType {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryProductArgsType {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  productId?: InputMaybe<Scalars['Int']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryProductsArgsType {
+  brandAlias?: InputMaybe<Scalars['String']['input']>;
+  categoryAlias?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  discountCampaignAlias?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<GeinsFilterInputTypeType>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryRelatedProductsArgsType {
+  alias: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryReviewsArgsType {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryUrlHistoryArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryValidateOrderConditionsArgsType {
+  cartId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryValidateOrderCreationArgsType {
+  cartId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  checkout: GeinsCheckoutInputTypeType;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryWidgetAreaArgsType {
+  alias?: InputMaybe<Scalars['String']['input']>;
+  areaName?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  customerType?: InputMaybe<GeinsCustomerType>;
+  displaySetting?: InputMaybe<Scalars['String']['input']>;
+  family?: InputMaybe<Scalars['String']['input']>;
+  filters?: InputMaybe<Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  preview?: InputMaybe<Scalars['Boolean']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+}
+
 export enum GeinsGender {
   ManType = 'MAN',
+  UnsetType = 'UNSET',
   UnspecifiedType = 'UNSPECIFIED',
-  WomanType = 'WOMAN',
+  WomanType = 'WOMAN'
+}
+
+export enum GeinsGenderType {
+  FemaleType = 'FEMALE',
+  MaleType = 'MALE',
+  UnknownType = 'UNKNOWN'
 }
 
 /** Type containing Google taxonomy data */
@@ -660,6 +1319,13 @@ export interface GeinsGroupTypeType {
   sortOrder: Scalars['Int']['output'];
 }
 
+export enum GeinsIncludeMode {
+  /** Products must have a value from *all* groups provided in the Include field. This is the default mode. */
+  IntersectType = 'INTERSECT',
+  /** Products must have a value from *at least one* of the groups provided in the Include field. */
+  UnionType = 'UNION'
+}
+
 /** Type containing all information about the language-type */
 export interface GeinsLanguageTypeType {
   /** Two-letter ISO code */
@@ -670,7 +1336,11 @@ export interface GeinsLanguageTypeType {
   name: Scalars['String']['output'];
 }
 
-/** Type containing information about the lowest price during last 30 days and the legal comparison price (EU). Observe that discount is calculated against comparison price and not the regular price. */
+/**
+ * Type containing information about the lowest price during last 30 days and the
+ * legal comparison price (EU). Observe that discount is calculated against
+ * comparison price and not the regular price.
+ */
 export interface GeinsLowestPriceTypeType {
   /** The comparison price excluding VAT */
   comparisonPriceExVat: Scalars['Decimal']['output'];
@@ -769,163 +1439,12 @@ export interface GeinsMetadataTypeType {
   title?: Maybe<Scalars['String']['output']>;
 }
 
-export interface GeinsMutationType {
-  addPackageToCart?: Maybe<GeinsCartTypeType>;
-  addToCart?: Maybe<GeinsCartTypeType>;
-  commitReset?: Maybe<Scalars['Boolean']['output']>;
-  /** Marks the cart as completed, and makes it read-only */
-  completeCart?: Maybe<GeinsCartTypeType>;
-  createOrUpdateCheckout?: Maybe<GeinsCheckoutTypeType>;
-  deleteUser?: Maybe<Scalars['Boolean']['output']>;
-  monitorProductAvailability?: Maybe<Scalars['Boolean']['output']>;
-  placeOrder?: Maybe<GeinsPlaceOrderResponseTypeType>;
-  postProductReview?: Maybe<Scalars['Boolean']['output']>;
-  requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
-  /** Set a promo code on the cart */
-  setCartPromoCode?: Maybe<GeinsCartTypeType>;
-  setCartShippingFee?: Maybe<GeinsCheckoutTypeType>;
-  subscribeToNewsletter?: Maybe<Scalars['Boolean']['output']>;
-  /** Update the quantity of an entire cart group */
-  updateCartGroup?: Maybe<GeinsCartTypeType>;
-  /** Update the cart item */
-  updateCartItem?: Maybe<GeinsCartTypeType>;
-  updateUser?: Maybe<GeinsUserTypeType>;
-}
-
-export interface GeinsMutationAddPackageToCartArgsType {
-  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  packageId: Scalars['Int']['input'];
-  selections?: InputMaybe<Array<InputMaybe<GeinsProductPackageSelectionTypeType>>>;
-}
-
-export interface GeinsMutationAddToCartArgsType {
-  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  item: GeinsCartItemInputTypeType;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-export interface GeinsMutationCommitResetArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  password: Scalars['String']['input'];
-  resetKey: Scalars['String']['input'];
-}
-
-export interface GeinsMutationCompleteCartArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-export interface GeinsMutationCreateOrUpdateCheckoutArgsType {
-  cartId: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  checkout?: InputMaybe<GeinsCheckoutInputTypeType>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-export interface GeinsMutationDeleteUserArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-export interface GeinsMutationMonitorProductAvailabilityArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  skuId: Scalars['Int']['input'];
-}
-
-export interface GeinsMutationPlaceOrderArgsType {
-  cartId: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  checkout: GeinsCheckoutInputTypeType;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-export interface GeinsMutationPostProductReviewArgsType {
-  alias: Scalars['String']['input'];
-  author: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  comment?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  rating?: InputMaybe<Scalars['Int']['input']>;
-}
-
-export interface GeinsMutationRequestPasswordResetArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-export interface GeinsMutationSetCartPromoCodeArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  promoCode: Scalars['String']['input'];
-}
-
-export interface GeinsMutationSetCartShippingFeeArgsType {
-  cartId: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  shippingFee: Scalars['Decimal']['input'];
-}
-
-export interface GeinsMutationSubscribeToNewsletterArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-}
-
-export interface GeinsMutationUpdateCartGroupArgsType {
-  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  item: GeinsCartGroupInputTypeType;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-export interface GeinsMutationUpdateCartItemArgsType {
-  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  item: GeinsCartItemInputTypeType;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-export interface GeinsMutationUpdateUserArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  user: GeinsUserInputTypeType;
-}
-
 /** Type containing information for an option in a product package group */
 export interface GeinsOptionTypeType {
   /** 'true' if this option should be selected by default */
   isSelected: Scalars['Boolean']['output'];
+  /** The name of the option */
+  name?: Maybe<Scalars['String']['output']>;
   /** The option id */
   optionId: Scalars['Int']['output'];
   /** The product that this options refers to */
@@ -1013,9 +1532,9 @@ export interface GeinsPageInfoTypeType {
 
 /** Type for filtering widgets */
 export interface GeinsPageWidgetCollectionFilterInputTypeType {
-  /** Filter key */
+  /** Filter key. Possible values: SiteId, LanguageId, Product, Category, Brand, DiscountCampaign, CustomerType, Parameter */
   key?: InputMaybe<Scalars['String']['input']>;
-  /** Filter value */
+  /** Filter value. Id (int) or Alias */
   value?: InputMaybe<Scalars['String']['input']>;
 }
 
@@ -1125,6 +1644,8 @@ export interface GeinsPageWidgetTypeType {
 export interface GeinsParameterGroupTypeType {
   /** The parameter group name */
   name: Scalars['String']['output'];
+  /** The parameter group order */
+  order?: Maybe<Scalars['Int']['output']>;
   /** Parameter group ID */
   parameterGroupId?: Maybe<Scalars['Int']['output']>;
   /** List of parameters */
@@ -1139,16 +1660,23 @@ export interface GeinsParameterTypeType {
   description?: Maybe<Scalars['String']['output']>;
   /** The ID of the associated facet */
   facetId?: Maybe<Scalars['String']['output']>;
-  /** The internal identifier of the parameter. This value is the same for all languages and does not change if the parameter name changes. */
+  /**
+   * The internal identifier of the parameter. This value is the same for all
+   * languages and does not change if the parameter name changes.
+   */
   identifier?: Maybe<Scalars['String']['output']>;
   /** Parameter label */
   label?: Maybe<Scalars['String']['output']>;
   /** Parameter name */
   name?: Maybe<Scalars['String']['output']>;
+  /** The order of the parameter within the group */
+  order: Scalars['Int']['output'];
   /** ID of the associated parameter group */
   parameterGroupId: Scalars['Int']['output'];
   /** Parameter ID */
   parameterId: Scalars['Int']['output'];
+  /** The ID of the associated parameter value */
+  parameterValueId?: Maybe<Scalars['Int']['output']>;
   /** Whether this parameter should be shown within the product specifications */
   show: Scalars['Boolean']['output'];
   /** Whether this parameter should be shown within filter options */
@@ -1157,6 +1685,12 @@ export interface GeinsParameterTypeType {
   type?: Maybe<Scalars['String']['output']>;
   /** Parameter value */
   value?: Maybe<Scalars['String']['output']>;
+}
+
+export enum GeinsPaymentCheckout {
+  ExternalType = 'EXTERNAL',
+  GeinsPayType = 'GEINS_PAY',
+  StandardType = 'STANDARD'
 }
 
 export interface GeinsPaymentDetailsTypeType {
@@ -1177,6 +1711,8 @@ export interface GeinsPaymentDetailsTypeType {
 
 /** Type containing payment option information */
 export interface GeinsPaymentOptionTypeType {
+  /** Checkout type */
+  checkoutType?: Maybe<GeinsPaymentCheckout>;
   /** Display name */
   displayName?: Maybe<Scalars['String']['output']>;
   /** Fee excl. VAT */
@@ -1209,6 +1745,8 @@ export interface GeinsPaymentOptionTypeType {
 export enum GeinsPaymentType {
   /** Avarda */
   AvardaType = 'AVARDA',
+  /** GeinsPay */
+  GeinsPayType = 'GEINS_PAY',
   /** Klarna */
   KlarnaType = 'KLARNA',
   /** Standard */
@@ -1216,13 +1754,12 @@ export enum GeinsPaymentType {
   /** Svea */
   SveaType = 'SVEA',
   /** Walley */
-  WalleyType = 'WALLEY',
-  /** Geins Pay */
-  GeinsPayType = 'GEINS_PAY',
+  WalleyType = 'WALLEY'
 }
 
 export interface GeinsPlaceOrderResponseTypeType {
   orderId?: Maybe<Scalars['String']['output']>;
+  publicId?: Maybe<Scalars['String']['output']>;
   redirectUrl?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
 }
@@ -1285,6 +1822,8 @@ export interface GeinsPriceLogItemTypeType {
 
 /** Type containing price information */
 export interface GeinsPriceTypeType {
+  /** Currency information */
+  currency?: Maybe<GeinsCurrencyTypeType>;
   /** Discount amount excluding VAT */
   discountExVat: Scalars['Decimal']['output'];
   /** Discount (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34' */
@@ -1362,7 +1901,7 @@ export enum GeinsProductRelation {
   /** Product is related to this product */
   RelatedType = 'RELATED',
   /** Product is similar to this product */
-  SimilarType = 'SIMILAR',
+  SimilarType = 'SIMILAR'
 }
 
 /** The results of the reviews query. */
@@ -1426,7 +1965,7 @@ export interface GeinsProductTypeType {
   dimensions?: Maybe<GeinsDimensionsTypeType>;
   /** Product discount campaigns */
   discountCampaigns?: Maybe<Array<Maybe<GeinsCampaignRuleTypeType>>>;
-  /** Type of discount price: None, Sale or Campaign */
+  /** Type of discount price: None, SalePrice, PriceCampaign or External */
   discountType?: Maybe<GeinsDiscountType>;
   /** The date on which the product was first available (yyyy-mm-dd) */
   firstAvailableOn?: Maybe<Scalars['String']['output']>;
@@ -1485,256 +2024,6 @@ export interface GeinsProductsResultTypeType {
   filters?: Maybe<GeinsFilterCollectionTypeType>;
   /** Results returned by the query */
   products?: Maybe<Array<Maybe<GeinsProductTypeType>>>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryType {
-  /** Get all brands. */
-  brands?: Maybe<Array<Maybe<GeinsBrandListTypeType>>>;
-  /** Get all categories. */
-  categories?: Maybe<Array<Maybe<GeinsCategoryTypeType>>>;
-  /** Gets a category with the specified ID. */
-  category?: Maybe<GeinsCategoryTypeType>;
-  /** Gets a channel with the specified ID. */
-  channel?: Maybe<GeinsChannelTypeType>;
-  channels?: Maybe<Array<Maybe<GeinsChannelTypeType>>>;
-  /** Gets checkout data with a html snippet, checkout order data for the specified order and the User. If the order was recently completed, the html snippet will contain the "Thank you"-content. */
-  checkout?: Maybe<GeinsCheckoutDataTypeType>;
-  /** Gets all CMS pages. */
-  cmsPages?: Maybe<Array<Maybe<GeinsPageWidgetPageTypeType>>>;
-  /** Get the cart */
-  getCart?: Maybe<GeinsCartTypeType>;
-  /**
-   * Gets html snippet for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content.
-   * @deprecated Use Checkout instead
-   */
-  getCheckout?: Maybe<Scalars['String']['output']>;
-  /**
-   * Gets html snippet and checkout order data for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content.
-   * @deprecated Use Checkout instead
-   */
-  getCheckoutAndOrder?: Maybe<GeinsCheckoutAndOrderTypeType>;
-  /** Get a menu */
-  getMenuAtLocation?: Maybe<GeinsMenuTypeType>;
-  /** Get a specific order with details */
-  getOrder?: Maybe<GeinsOrderTypeType>;
-  /** Get a specific order with details via public id */
-  getOrderPublic?: Maybe<GeinsOrderTypeType>;
-  /** Get orders for the current user */
-  getOrders?: Maybe<Array<Maybe<GeinsOrderTypeType>>>;
-  /** Get the current user */
-  getUser?: Maybe<GeinsUserTypeType>;
-  /** Gets information about the specified list page. */
-  listPageInfo?: Maybe<GeinsPageInfoTypeType>;
-  /** Gets a product with the specified ID. */
-  product?: Maybe<GeinsProductTypeType>;
-  /** Gets all products according to the values provided. */
-  products?: Maybe<GeinsProductsResultTypeType>;
-  /** Gets related products for the specified alias. */
-  relatedProducts?: Maybe<Array<Maybe<GeinsRelatedProductTypeType>>>;
-  /** Gets all products reviews to the values provided. */
-  reviews?: Maybe<GeinsProductReviewResultTypeType>;
-  /** Gets an alternate url for a given url. */
-  urlHistory?: Maybe<GeinsUrlHistoryTypeType>;
-  validateOrderCreation?: Maybe<GeinsValidateOrderCreationResponseTypeType>;
-  /** Gets the page area and widgets from the specifed family. */
-  widgetArea?: Maybe<GeinsPageWidgetCollectionTypeType>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryBrandsArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryCategoriesArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  includeHidden?: InputMaybe<Scalars['Boolean']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  parentCategoryId?: InputMaybe<Scalars['Int']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryCategoryArgsType {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryChannelArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryCheckoutArgsType {
-  cartId?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  paymentType: GeinsPaymentType;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryCmsPagesArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  excludeTags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  includeTags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryGetCartArgsType {
-  allowExternalShippingFee?: InputMaybe<Scalars['Boolean']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  forceRefresh?: InputMaybe<Scalars['Boolean']['input']>;
-  id?: InputMaybe<Scalars['String']['input']>;
-  includeCompleted?: InputMaybe<Scalars['Boolean']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryGetCheckoutArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  paymentType: GeinsPaymentType;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryGetCheckoutAndOrderArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['String']['input'];
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  paymentType: GeinsPaymentType;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryGetMenuAtLocationArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  menuLocationId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryGetOrderArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  orderId: Scalars['Int']['input'];
-}
-
-/** Gets all available channels */
-export interface GeinsQueryGetOrderPublicArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  publicOrderId: Scalars['Guid']['input'];
-}
-
-/** Gets all available channels */
-export interface GeinsQueryGetOrdersArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryGetUserArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryListPageInfoArgsType {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  url?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryProductArgsType {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryProductsArgsType {
-  brandAlias?: InputMaybe<Scalars['String']['input']>;
-  categoryAlias?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  discountCampaignAlias?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<GeinsFilterInputTypeType>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  take?: InputMaybe<Scalars['Int']['input']>;
-  url?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryRelatedProductsArgsType {
-  alias: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryReviewsArgsType {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  take?: InputMaybe<Scalars['Int']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryUrlHistoryArgsType {
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  url?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryValidateOrderCreationArgsType {
-  cartId: Scalars['String']['input'];
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  checkout: GeinsCheckoutInputTypeType;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-}
-
-/** Gets all available channels */
-export interface GeinsQueryWidgetAreaArgsType {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  areaName?: InputMaybe<Scalars['String']['input']>;
-  channelId?: InputMaybe<Scalars['String']['input']>;
-  customerType?: InputMaybe<GeinsCustomerType>;
-  displaySetting?: InputMaybe<Scalars['String']['input']>;
-  family?: InputMaybe<Scalars['String']['input']>;
-  filters?: InputMaybe<Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>>;
-  languageId?: InputMaybe<Scalars['String']['input']>;
-  marketId?: InputMaybe<Scalars['String']['input']>;
-  preview?: InputMaybe<Scalars['Boolean']['input']>;
-  url?: InputMaybe<Scalars['String']['input']>;
 }
 
 /** Type containing product rating information */
@@ -1908,28 +2197,31 @@ export enum GeinsSortType {
   /** Sort by total stock balance, including oversellable, in descending order */
   TotalStockDescType = 'TOTAL_STOCK_DESC',
   /** Sort by votes */
-  VotesType = 'VOTES',
+  VotesType = 'VOTES'
 }
 
-/** Type containing information about SKU stock */
+/** Represents SKU stock information. */
 export interface GeinsStockTypeType {
-  /** The units available at this moment */
+  /** Number of units currently available in the warehouse. */
   inStock: Scalars['Int']['output'];
   /**
-   * Incoming date
+   * The date when new stock is arriving. (Deprecated: Use SkuType.Incoming or VariantType.Incoming instead)
    * @deprecated Use SkuType.Incoming or VariantType.Incoming instead
    */
   incoming?: Maybe<Scalars['DateTime']['output']>;
-  /** Over-sellable units */
+  /** Number of units that can be oversold. */
   oversellable: Scalars['Int']['output'];
   /**
-   * Shelf
+   * The shelf identifier for the stock. (Deprecated: Use SkuType.Shelf or VariantType.Shelf instead)
    * @deprecated Use SkuType.Shelf or VariantType.Shelf instead
    */
   shelf?: Maybe<Scalars['String']['output']>;
-  /** Amount of units that are always available */
+  /**
+   * Number of units that are always available for sale. This value is never
+   * lowered when goods are sold or increased when goods are returned.
+   */
   static?: Maybe<Scalars['Int']['output']>;
-  /** The total units available */
+  /** Total number of units available for sale. TotalStock = InStock + OverSellable + Static. */
   totalStock: Scalars['Int']['output'];
 }
 
@@ -1956,6 +2248,7 @@ export interface GeinsUserInputTypeType {
 }
 
 export interface GeinsUserTypeType {
+  /** The address of the user. */
   address?: Maybe<GeinsAddressTypeType>;
   /**
    * Account balance
@@ -1969,16 +2262,29 @@ export interface GeinsUserTypeType {
   balanceFormatted?: Maybe<Scalars['String']['output']>;
   /** User balance per currency */
   balances?: Maybe<Array<Maybe<GeinsUserBalanceTypeType>>>;
+  /** The customer type of the user. */
   customerType?: Maybe<GeinsCustomerType>;
+  /** The email address of the user. */
   email: Scalars['String']['output'];
+  /** The gender of the user. */
   gender?: Maybe<GeinsGender>;
+  /** The unique identifier of the user. */
   id: Scalars['Int']['output'];
+  /** The membership identifier of the user. */
   memberId: Scalars['Int']['output'];
+  /** The type of membership the user has. */
   memberType: Scalars['String']['output'];
   /** Free-text field that can contain any additional metadata related to the customer. */
   metaData?: Maybe<Scalars['String']['output']>;
+  /** Indicates if the user is subscribed to the newsletter. */
   newsletter?: Maybe<Scalars['Boolean']['output']>;
+  /** The personal identification number of the user. */
   personalId?: Maybe<Scalars['String']['output']>;
+}
+
+export interface GeinsValidateOrderConditionsResponseTypeType {
+  isValid: Scalars['Boolean']['output'];
+  message?: Maybe<Scalars['String']['output']>;
 }
 
 export interface GeinsValidateOrderCreationResponseTypeType {
@@ -2082,636 +2388,1799 @@ export interface GeinsVatGroupTypeType {
 }
 
 export type GeinsMenuType = {
-  id: string;
-  title?: string | null;
+  id: string,
+  title?: string | null,
   menuItems?: Array<{
-    id: string;
-    label?: string | null;
-    open: boolean;
-    hidden: boolean;
-    targetBlank: boolean;
-    type: string;
-    order: number;
-    title?: string | null;
-    canonicalUrl?: string | null;
-    value?: string | null;
+    id: string,
+    label?: string | null,
+    open: boolean,
+    hidden: boolean,
+    targetBlank: boolean,
+    type: string,
+    order: number,
+    title?: string | null,
+    canonicalUrl?: string | null,
+    value?: string | null,
     children?: Array<{
-      id: string;
-      label?: string | null;
-      open: boolean;
-      hidden: boolean;
-      targetBlank: boolean;
-      type: string;
-      order: number;
-      title?: string | null;
-      canonicalUrl?: string | null;
-      value?: string | null;
+      id: string,
+      label?: string | null,
+      open: boolean,
+      hidden: boolean,
+      targetBlank: boolean,
+      type: string,
+      order: number,
+      title?: string | null,
+      canonicalUrl?: string | null,
+      value?: string | null,
       children?: Array<{
-        id: string;
-        label?: string | null;
-        open: boolean;
-        hidden: boolean;
-        targetBlank: boolean;
-        type: string;
-        order: number;
-        title?: string | null;
-        canonicalUrl?: string | null;
-        value?: string | null;
-      } | null> | null;
-    } | null> | null;
-  } | null> | null;
+        id: string,
+        label?: string | null,
+        open: boolean,
+        hidden: boolean,
+        targetBlank: boolean,
+        type: string,
+        order: number,
+        title?: string | null,
+        canonicalUrl?: string | null,
+        value?: string | null
+      } | null> | null
+    } | null> | null
+  } | null> | null
 };
 
 export type GeinsMenuItemBaseType = {
-  id: string;
-  label?: string | null;
-  open: boolean;
-  hidden: boolean;
-  targetBlank: boolean;
-  type: string;
-  order: number;
-  title?: string | null;
-  canonicalUrl?: string | null;
-  value?: string | null;
+  id: string,
+  label?: string | null,
+  open: boolean,
+  hidden: boolean,
+  targetBlank: boolean,
+  type: string,
+  order: number,
+  title?: string | null,
+  canonicalUrl?: string | null,
+  value?: string | null,
   children?: Array<{
-    id: string;
-    label?: string | null;
-    open: boolean;
-    hidden: boolean;
-    targetBlank: boolean;
-    type: string;
-    order: number;
-    title?: string | null;
-    canonicalUrl?: string | null;
-    value?: string | null;
+    id: string,
+    label?: string | null,
+    open: boolean,
+    hidden: boolean,
+    targetBlank: boolean,
+    type: string,
+    order: number,
+    title?: string | null,
+    canonicalUrl?: string | null,
+    value?: string | null,
     children?: Array<{
-      id: string;
-      label?: string | null;
-      open: boolean;
-      hidden: boolean;
-      targetBlank: boolean;
-      type: string;
-      order: number;
-      title?: string | null;
-      canonicalUrl?: string | null;
-      value?: string | null;
-    } | null> | null;
-  } | null> | null;
+      id: string,
+      label?: string | null,
+      open: boolean,
+      hidden: boolean,
+      targetBlank: boolean,
+      type: string,
+      order: number,
+      title?: string | null,
+      canonicalUrl?: string | null,
+      value?: string | null
+    } | null> | null
+  } | null> | null
 };
 
 export type GeinsMenuItemType = {
-  id: string;
-  label?: string | null;
-  open: boolean;
-  hidden: boolean;
-  targetBlank: boolean;
-  type: string;
-  order: number;
-  title?: string | null;
-  canonicalUrl?: string | null;
-  value?: string | null;
+  id: string,
+  label?: string | null,
+  open: boolean,
+  hidden: boolean,
+  targetBlank: boolean,
+  type: string,
+  order: number,
+  title?: string | null,
+  canonicalUrl?: string | null,
+  value?: string | null
 };
 
 export type GeinsMetaType = {
-  title?: string | null;
-  description?: string | null;
+  title?: string | null,
+  description?: string | null
 };
 
 export type GeinsPageWidgetContainerType = {
-  id: number;
-  name: string;
-  sortOrder: number;
-  layout: string;
-  responsiveMode: string;
-  design: string;
+  id: number,
+  name: string,
+  sortOrder: number,
+  layout: string,
+  responsiveMode: string,
+  design: string,
   widgets?: Array<{
-    id: string;
-    name: string;
-    sortOrder: number;
-    type: string;
-    size: string;
-    configuration: string;
+    id: string,
+    name: string,
+    sortOrder: number,
+    type: string,
+    size: string,
+    configuration: string,
     images?: Array<{
-      fileName: string;
+      fileName: string,
       largestSize?: {
-        imageWidth: number;
-        imageHeight: number;
-      } | null;
-    } | null> | null;
-  } | null> | null;
+        imageWidth: number,
+        imageHeight: number
+      } | null
+    } | null> | null
+  } | null> | null
 };
 
 export type GeinsPageWidgetType = {
-  id: string;
-  name: string;
-  sortOrder: number;
-  type: string;
-  size: string;
-  configuration: string;
+  id: string,
+  name: string,
+  sortOrder: number,
+  type: string,
+  size: string,
+  configuration: string,
   images?: Array<{
-    fileName: string;
+    fileName: string,
     largestSize?: {
-      imageWidth: number;
-      imageHeight: number;
-    } | null;
-  } | null> | null;
+      imageWidth: number,
+      imageHeight: number
+    } | null
+  } | null> | null
 };
 
 export type GeinsChannelFieldsType = {
-  id: string;
-  name: string;
-  type: string;
-  url: string;
-  defaultLanguageId: string;
-  defaultMarketId: string;
+  id: string,
+  name: string,
+  type: string,
+  url: string,
+  defaultLanguageId: string,
+  defaultMarketId: string
 };
 
 export type GeinsMarketFieldsType = {
-  id: string;
-  alias?: string | null;
-  onlyDisplayInCheckout?: boolean | null;
-  virtual?: boolean | null;
-  groupKey: string;
+  id: string,
+  alias?: string | null,
+  onlyDisplayInCheckout?: boolean | null,
+  virtual?: boolean | null,
+  groupKey: string,
   allowedLanguages?: Array<{
-    id: string;
-    name: string;
-    code: string;
-  } | null> | null;
+    id: string,
+    name: string,
+    code: string
+  } | null> | null,
   country?: {
-    name: string;
-    code: string;
-  } | null;
+    name: string,
+    code: string
+  } | null,
   currency?: {
-    code: string;
-    symbol: string;
-  } | null;
+    code: string,
+    symbol: string
+  } | null
 };
 
 export type GeinsLanguageFieldsType = {
-  id: string;
-  name: string;
-  code: string;
+  id: string,
+  name: string,
+  code: string
 };
 
 export type GeinsCountryFieldsType = {
-  name: string;
-  code: string;
+  name: string,
+  code: string
 };
 
 export type GeinsCurrencyFieldsType = {
-  code: string;
-  symbol: string;
+  code: string,
+  symbol: string
 };
 
 export type GeinsCartType = {
-  id?: string | null;
-  promoCode?: string | null;
+  id?: string | null,
+  promoCode?: string | null,
   appliedCampaigns?: Array<{
-    name?: string | null;
-    hideTitle?: boolean | null;
-  } | null> | null;
+    name?: string | null,
+    hideTitle?: boolean | null
+  } | null> | null,
   items?: Array<{
-    quantity: number;
-    skuId: number;
+    quantity: number,
+    skuId: number,
     campaign?: {
       appliedCampaigns?: Array<{
-        name?: string | null;
-        hideTitle?: boolean | null;
-      } | null> | null;
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
       prices?: Array<{
-        quantity: number;
+        quantity: number,
         price?: {
-          isDiscounted: boolean;
-          sellingPriceIncVat: number;
-          sellingPriceExVat: number;
-          regularPriceIncVat: number;
-          regularPriceExVat: number;
-          vat: number;
-          discountPercentage: number;
-          regularPriceIncVatFormatted?: string | null;
-          sellingPriceIncVatFormatted?: string | null;
-          regularPriceExVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-        } | null;
-      } | null> | null;
-    } | null;
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null
+      } | null> | null
+    } | null,
     unitPrice?: {
-      isDiscounted: boolean;
-      sellingPriceIncVat: number;
-      sellingPriceExVat: number;
-      regularPriceIncVat: number;
-      regularPriceExVat: number;
-      vat: number;
-      discountPercentage: number;
-      regularPriceIncVatFormatted?: string | null;
-      sellingPriceIncVatFormatted?: string | null;
-      regularPriceExVatFormatted?: string | null;
-      sellingPriceExVatFormatted?: string | null;
-    } | null;
+      isDiscounted: boolean,
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      vat: number,
+      discountPercentage: number,
+      regularPriceIncVatFormatted?: string | null,
+      sellingPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null
+    } | null,
     product?: {
-      productId: number;
-      articleNumber?: string | null;
-      name?: string | null;
-      alias: string;
-      canonicalUrl?: string | null;
+      productId: number,
+      articleNumber?: string | null,
+      name?: string | null,
+      alias: string,
+      canonicalUrl?: string | null,
       brand?: {
-        name?: string | null;
-      } | null;
+        name?: string | null
+      } | null,
       productImages?: Array<{
-        fileName: string;
-      } | null> | null;
+        fileName: string
+      } | null> | null,
       primaryCategory?: {
-        name: string;
-      } | null;
+        name: string
+      } | null,
       skus?: Array<{
-        skuId: number;
-        name?: string | null;
+        skuId: number,
+        name?: string | null,
         stock?: {
-          inStock: number;
-          oversellable: number;
-          totalStock: number;
-          static?: number | null;
-          incoming?: string | null;
-        } | null;
-      } | null> | null;
+          inStock: number,
+          oversellable: number,
+          totalStock: number,
+          static?: number | null,
+          incoming?: string | null
+        } | null
+      } | null> | null,
       unitPrice?: {
-        isDiscounted: boolean;
-        sellingPriceIncVat: number;
-        sellingPriceExVat: number;
-        regularPriceIncVat: number;
-        regularPriceExVat: number;
-        vat: number;
-        discountPercentage: number;
-        regularPriceIncVatFormatted?: string | null;
-        sellingPriceIncVatFormatted?: string | null;
-        regularPriceExVatFormatted?: string | null;
-        sellingPriceExVatFormatted?: string | null;
-      } | null;
-    } | null;
+        isDiscounted: boolean,
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        vat: number,
+        discountPercentage: number,
+        regularPriceIncVatFormatted?: string | null,
+        sellingPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null
+      } | null
+    } | null,
     totalPrice?: {
-      isDiscounted: boolean;
-      sellingPriceIncVat: number;
-      sellingPriceExVat: number;
-      regularPriceIncVat: number;
-      regularPriceExVat: number;
-      vat: number;
-      discountPercentage: number;
-      regularPriceIncVatFormatted?: string | null;
-      sellingPriceIncVatFormatted?: string | null;
-      regularPriceExVatFormatted?: string | null;
-      sellingPriceExVatFormatted?: string | null;
-    } | null;
-  } | null> | null;
+      isDiscounted: boolean,
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      vat: number,
+      discountPercentage: number,
+      regularPriceIncVatFormatted?: string | null,
+      sellingPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null
+    } | null
+  } | null> | null,
   summary?: {
-    fixedAmountDiscountIncVat: number;
-    fixedAmountDiscountExVat: number;
+    fixedAmountDiscountIncVat: number,
+    fixedAmountDiscountExVat: number,
     balance?: {
-      pending: number;
-      pendingFormatted?: string | null;
-      totalSellingPriceExBalanceExVat: number;
-      totalSellingPriceExBalanceIncVat: number;
-      totalSellingPriceExBalanceIncVatFormatted?: string | null;
-    } | null;
+      pending: number,
+      pendingFormatted?: string | null,
+      totalSellingPriceExBalanceExVat: number,
+      totalSellingPriceExBalanceIncVat: number,
+      totalSellingPriceExBalanceIncVatFormatted?: string | null
+    } | null,
     subTotal?: {
-      regularPriceIncVatFormatted?: string | null;
-      regularPriceExVatFormatted?: string | null;
-      sellingPriceIncVatFormatted?: string | null;
-      sellingPriceExVatFormatted?: string | null;
-      sellingPriceExVat: number;
-      sellingPriceIncVat: number;
-      vat: number;
-    } | null;
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      sellingPriceExVat: number,
+      sellingPriceIncVat: number,
+      vat: number
+    } | null,
     shipping?: {
-      amountLeftToFreeShipping: number;
-      amountLeftToFreeShippingFormatted?: string | null;
-      feeExVatFormatted?: string | null;
-      feeIncVatFormatted?: string | null;
-      feeIncVat: number;
-      feeExVat: number;
-      isDefault: boolean;
-    } | null;
+      amountLeftToFreeShipping: number,
+      amountLeftToFreeShippingFormatted?: string | null,
+      feeExVatFormatted?: string | null,
+      feeIncVatFormatted?: string | null,
+      feeIncVat: number,
+      feeExVat: number,
+      isDefault: boolean
+    } | null,
     total?: {
-      isDiscounted: boolean;
-      sellingPriceIncVatFormatted?: string | null;
-      sellingPriceExVatFormatted?: string | null;
-      sellingPriceIncVat: number;
-      sellingPriceExVat: number;
-      discountIncVatFormatted?: string | null;
-      discountExVatFormatted?: string | null;
-      discountExVat: number;
-      discountIncVat: number;
-      vatFormatted?: string | null;
-      vat: number;
-    } | null;
-  } | null;
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      discountExVat: number,
+      discountIncVat: number,
+      vatFormatted?: string | null,
+      vat: number
+    } | null
+  } | null
 };
 
 export type GeinsPriceType = {
-  isDiscounted: boolean;
-  sellingPriceIncVat: number;
-  sellingPriceExVat: number;
-  regularPriceIncVat: number;
-  regularPriceExVat: number;
-  vat: number;
-  discountPercentage: number;
-  regularPriceIncVatFormatted?: string | null;
-  sellingPriceIncVatFormatted?: string | null;
-  regularPriceExVatFormatted?: string | null;
-  sellingPriceExVatFormatted?: string | null;
+  isDiscounted: boolean,
+  sellingPriceIncVat: number,
+  sellingPriceExVat: number,
+  regularPriceIncVat: number,
+  regularPriceExVat: number,
+  vat: number,
+  discountPercentage: number,
+  regularPriceIncVatFormatted?: string | null,
+  sellingPriceIncVatFormatted?: string | null,
+  regularPriceExVatFormatted?: string | null,
+  sellingPriceExVatFormatted?: string | null
 };
 
 export type GeinsStockType = {
-  inStock: number;
-  oversellable: number;
-  totalStock: number;
-  static?: number | null;
-  incoming?: string | null;
+  inStock: number,
+  oversellable: number,
+  totalStock: number,
+  static?: number | null,
+  incoming?: string | null
 };
 
 export type GeinsAddressType = {
-  firstName: string;
-  lastName: string;
-  company: string;
-  mobile: string;
-  phone: string;
-  careOf: string;
-  entryCode: string;
-  addressLine1: string;
-  addressLine2: string;
-  addressLine3: string;
-  zip: string;
-  city: string;
-  state: string;
-  country: string;
+  firstName: string,
+  lastName: string,
+  company: string,
+  mobile: string,
+  phone: string,
+  careOf: string,
+  entryCode: string,
+  addressLine1: string,
+  addressLine2: string,
+  addressLine3: string,
+  zip: string,
+  city: string,
+  state: string,
+  country: string
 };
 
 export type GeinsUserType = {
-  id: number;
-  email: string;
-  personalId?: string | null;
-  customerType?: GeinsCustomerType | null;
-  gender?: GeinsGender | null;
-  metaData?: string | null;
-  address?: GeinsAddressType | null;
+  id: number,
+  email: string,
+  personalId?: string | null,
+  customerType?: GeinsCustomerType | null,
+  gender?: GeinsGender | null,
+  metaData?: string | null,
+  address?: {
+    firstName: string,
+    lastName: string,
+    company: string,
+    mobile: string,
+    phone: string,
+    careOf: string,
+    entryCode: string,
+    addressLine1: string,
+    addressLine2: string,
+    addressLine3: string,
+    zip: string,
+    city: string,
+    state: string,
+    country: string
+  } | null,
   balances?: Array<{
-    currency: string;
-    amount: number;
-  } | null> | null;
+    currency: string,
+    amount: number
+  } | null> | null
 };
 
 export type GeinsUserBalanceType = {
-  currency: string;
-  amount: number;
+  currency: string,
+  amount: number
 };
 
-export type GeinsMenuAtLocationVariablesType =
-  | Exact<{
-      menuLocationId?: InputMaybe<Scalars['String']['input']>;
-      channelId?: InputMaybe<Scalars['String']['input']>;
-      languageId?: InputMaybe<Scalars['String']['input']>;
-      marketId?: InputMaybe<Scalars['String']['input']>;
-    }>
-  | undefined;
+export type GeinsOmsCartType = {
+  __typename: 'CartType',
+  id?: string | null,
+  isCompleted: boolean,
+  merchantData?: string | null,
+  promoCode?: string | null,
+  appliedCampaigns?: Array<{
+    __typename: 'CampaignRuleType',
+    campaignId: string,
+    name?: string | null,
+    hideTitle?: boolean | null
+  } | null> | null,
+  items?: Array<{
+    __typename: 'CartItemType',
+    id: string | number,
+    groupKey?: string | number | null,
+    skuId: number,
+    quantity: number,
+    message?: string | null,
+    productPackage?: {
+      __typename: 'ProductPackageCartItemType',
+      packageId: number,
+      packageName: string,
+      groupId: number,
+      optionId: number
+    } | null,
+    campaign?: {
+      __typename: 'CampaignType',
+      appliedCampaigns?: Array<{
+        __typename: 'CampaignRuleType',
+        campaignId: string,
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
+      prices?: Array<{
+        __typename: 'CampaignPriceType',
+        quantity: number,
+        price?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null> | null
+    } | null,
+    product?: {
+      __typename: 'ProductType',
+      productId: number,
+      articleNumber?: string | null,
+      name?: string | null,
+      alias: string,
+      canonicalUrl?: string | null,
+      brand?: {
+        __typename: 'BrandType',
+        name?: string | null
+      } | null,
+      productImages?: Array<{
+        __typename: 'ProductImageType',
+        fileName: string
+      } | null> | null,
+      primaryCategory?: {
+        __typename: 'CategoryType',
+        categoryId: number,
+        name: string,
+        order: number
+      } | null,
+      categories?: Array<{
+        __typename: 'CategoryType',
+        categoryId: number,
+        name: string,
+        order: number
+      } | null> | null,
+      skus?: Array<{
+        __typename: 'SkuType',
+        skuId: number,
+        name?: string | null,
+        stock?: {
+          __typename: 'StockType',
+          inStock: number,
+          oversellable: number,
+          totalStock: number,
+          static?: number | null
+        } | null
+      } | null> | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null,
+    unitPrice?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    totalPrice?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null
+  } | null> | null,
+  summary?: {
+    __typename: 'CartSummaryType',
+    fixedAmountDiscountIncVat: number,
+    fixedAmountDiscountExVat: number,
+    balance?: {
+      __typename: 'BalanceType',
+      pending: number,
+      pendingFormatted?: string | null,
+      totalSellingPriceExBalanceExVat: number,
+      totalSellingPriceExBalanceIncVat: number,
+      totalSellingPriceExBalanceIncVatFormatted?: string | null
+    } | null,
+    subTotal?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    shipping?: {
+      __typename: 'ShippingOptionType',
+      amountLeftToFreeShipping: number,
+      amountLeftToFreeShippingFormatted?: string | null,
+      feeExVatFormatted?: string | null,
+      feeIncVatFormatted?: string | null,
+      feeIncVat: number,
+      feeExVat: number,
+      isDefault: boolean
+    } | null,
+    total?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsCampaignRuleType = {
+  __typename: 'CampaignRuleType',
+  campaignId: string,
+  name?: string | null,
+  hideTitle?: boolean | null
+};
+
+export type GeinsProductPackageCartItemType = {
+  __typename: 'ProductPackageCartItemType',
+  packageId: number,
+  packageName: string,
+  groupId: number,
+  optionId: number
+};
+
+export type GeinsOmsPriceType = {
+  __typename: 'PriceType',
+  sellingPriceIncVat: number,
+  sellingPriceExVat: number,
+  regularPriceIncVat: number,
+  regularPriceExVat: number,
+  discountIncVat: number,
+  discountExVat: number,
+  discountPercentage: number,
+  vat: number,
+  isDiscounted: boolean,
+  sellingPriceIncVatFormatted?: string | null,
+  sellingPriceExVatFormatted?: string | null,
+  regularPriceIncVatFormatted?: string | null,
+  regularPriceExVatFormatted?: string | null,
+  discountIncVatFormatted?: string | null,
+  discountExVatFormatted?: string | null,
+  vatFormatted?: string | null,
+  currency?: {
+    __typename: 'CurrencyType',
+    code: string,
+    symbol: string,
+    rate: number,
+    name: string
+  } | null
+};
+
+export type GeinsOmsStockType = {
+  inStock: number,
+  oversellable: number,
+  totalStock: number,
+  static?: number | null
+};
+
+export type GeinsOmsCheckoutType = {
+  email?: string | null,
+  identityNumber?: string | null,
+  shippingData?: string | null,
+  cart?: {
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
+      product?: {
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
+        skus?: Array<{
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      totalPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
+    summary?: {
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      shipping?: {
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null,
+  consents?: Array<{
+    type: string,
+    checked: boolean
+  } | null> | null,
+  billingAddress?: {
+    firstName: string,
+    lastName: string,
+    company: string,
+    mobile: string,
+    phone: string,
+    careOf: string,
+    entryCode: string,
+    addressLine1: string,
+    addressLine2: string,
+    addressLine3: string,
+    zip: string,
+    city: string,
+    state: string,
+    country: string
+  } | null,
+  shippingAddress?: {
+    firstName: string,
+    lastName: string,
+    company: string,
+    mobile: string,
+    phone: string,
+    careOf: string,
+    entryCode: string,
+    addressLine1: string,
+    addressLine2: string,
+    addressLine3: string,
+    zip: string,
+    city: string,
+    state: string,
+    country: string
+  } | null,
+  shippingOptions?: Array<{
+    id: number,
+    displayName?: string | null,
+    logo?: string | null,
+    isSelected: boolean,
+    feeIncVatFormatted?: string | null,
+    feeExVatFormatted?: string | null
+  } | null> | null,
+  paymentOptions?: Array<{
+    id: number,
+    logo?: string | null,
+    displayName?: string | null,
+    checkoutType?: GeinsPaymentCheckout | null,
+    paymentType?: GeinsPaymentType | null,
+    paymentData?: string | null,
+    isSelected: boolean,
+    newCheckoutSession: boolean
+  } | null> | null
+};
+
+export type GeinsOmsAddressType = {
+  firstName: string,
+  lastName: string,
+  addressLine1: string,
+  addressLine2: string,
+  addressLine3: string,
+  entryCode: string,
+  careOf: string,
+  city: string,
+  state: string,
+  country: string,
+  zip: string,
+  company: string,
+  mobile: string,
+  phone: string
+};
+
+export type GeinsOrderSummaryType = {
+  id?: number | null,
+  customerId?: number | null,
+  createdAt?: string | null,
+  completedAt?: string | null,
+  currency?: string | null,
+  desiredDeliveryDate?: string | null,
+  message?: string | null,
+  status: string,
+  updatedAt?: string | null,
+  publicId: string | number,
+  fromBalance: number,
+  fromBalanceFormatted?: string | null,
+  billingAddress?: {
+    firstName: string,
+    lastName: string,
+    company: string,
+    mobile: string,
+    phone: string,
+    careOf: string,
+    entryCode: string,
+    addressLine1: string,
+    addressLine2: string,
+    addressLine3: string,
+    zip: string,
+    city: string,
+    state: string,
+    country: string
+  } | null,
+  shippingAddress?: {
+    firstName: string,
+    lastName: string,
+    company: string,
+    mobile: string,
+    phone: string,
+    careOf: string,
+    entryCode: string,
+    addressLine1: string,
+    addressLine2: string,
+    addressLine3: string,
+    zip: string,
+    city: string,
+    state: string,
+    country: string
+  } | null,
+  cart?: {
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
+      product?: {
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
+        skus?: Array<{
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      totalPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
+    summary?: {
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      shipping?: {
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null,
+  paymentDetails?: Array<{
+    id: number,
+    paymentId: number,
+    transactionId: string,
+    displayName: string,
+    name: string,
+    isPaid: boolean,
+    paymentDate?: string | null,
+    paymentFee: number,
+    paymentOption?: string | null,
+    reservationDate: string,
+    reservationNumber?: string | null,
+    shippingFee: number,
+    total: number
+  } | null> | null,
+  discount?: {
+    __typename: 'PriceType',
+    sellingPriceIncVat: number,
+    sellingPriceExVat: number,
+    regularPriceIncVat: number,
+    regularPriceExVat: number,
+    discountIncVat: number,
+    discountExVat: number,
+    discountPercentage: number,
+    vat: number,
+    isDiscounted: boolean,
+    sellingPriceIncVatFormatted?: string | null,
+    sellingPriceExVatFormatted?: string | null,
+    regularPriceIncVatFormatted?: string | null,
+    regularPriceExVatFormatted?: string | null,
+    discountIncVatFormatted?: string | null,
+    discountExVatFormatted?: string | null,
+    vatFormatted?: string | null,
+    currency?: {
+      __typename: 'CurrencyType',
+      code: string,
+      symbol: string,
+      rate: number,
+      name: string
+    } | null
+  } | null,
+  orderTotal?: {
+    __typename: 'PriceType',
+    sellingPriceIncVat: number,
+    sellingPriceExVat: number,
+    regularPriceIncVat: number,
+    regularPriceExVat: number,
+    discountIncVat: number,
+    discountExVat: number,
+    discountPercentage: number,
+    vat: number,
+    isDiscounted: boolean,
+    sellingPriceIncVatFormatted?: string | null,
+    sellingPriceExVatFormatted?: string | null,
+    regularPriceIncVatFormatted?: string | null,
+    regularPriceExVatFormatted?: string | null,
+    discountIncVatFormatted?: string | null,
+    discountExVatFormatted?: string | null,
+    vatFormatted?: string | null,
+    currency?: {
+      __typename: 'CurrencyType',
+      code: string,
+      symbol: string,
+      rate: number,
+      name: string
+    } | null
+  } | null,
+  paymentFee?: {
+    __typename: 'PriceType',
+    sellingPriceIncVat: number,
+    sellingPriceExVat: number,
+    regularPriceIncVat: number,
+    regularPriceExVat: number,
+    discountIncVat: number,
+    discountExVat: number,
+    discountPercentage: number,
+    vat: number,
+    isDiscounted: boolean,
+    sellingPriceIncVatFormatted?: string | null,
+    sellingPriceExVatFormatted?: string | null,
+    regularPriceIncVatFormatted?: string | null,
+    regularPriceExVatFormatted?: string | null,
+    discountIncVatFormatted?: string | null,
+    discountExVatFormatted?: string | null,
+    vatFormatted?: string | null,
+    currency?: {
+      __typename: 'CurrencyType',
+      code: string,
+      symbol: string,
+      rate: number,
+      name: string
+    } | null
+  } | null,
+  shippingFee?: {
+    __typename: 'PriceType',
+    sellingPriceIncVat: number,
+    sellingPriceExVat: number,
+    regularPriceIncVat: number,
+    regularPriceExVat: number,
+    discountIncVat: number,
+    discountExVat: number,
+    discountPercentage: number,
+    vat: number,
+    isDiscounted: boolean,
+    sellingPriceIncVatFormatted?: string | null,
+    sellingPriceExVatFormatted?: string | null,
+    regularPriceIncVatFormatted?: string | null,
+    regularPriceExVatFormatted?: string | null,
+    discountIncVatFormatted?: string | null,
+    discountExVatFormatted?: string | null,
+    vatFormatted?: string | null,
+    currency?: {
+      __typename: 'CurrencyType',
+      code: string,
+      symbol: string,
+      rate: number,
+      name: string
+    } | null
+  } | null,
+  vat?: {
+    __typename: 'PriceType',
+    sellingPriceIncVat: number,
+    sellingPriceExVat: number,
+    regularPriceIncVat: number,
+    regularPriceExVat: number,
+    discountIncVat: number,
+    discountExVat: number,
+    discountPercentage: number,
+    vat: number,
+    isDiscounted: boolean,
+    sellingPriceIncVatFormatted?: string | null,
+    sellingPriceExVatFormatted?: string | null,
+    regularPriceIncVatFormatted?: string | null,
+    regularPriceExVatFormatted?: string | null,
+    discountIncVatFormatted?: string | null,
+    discountExVatFormatted?: string | null,
+    vatFormatted?: string | null,
+    currency?: {
+      __typename: 'CurrencyType',
+      code: string,
+      symbol: string,
+      rate: number,
+      name: string
+    } | null
+  } | null,
+  refunds?: Array<{
+    id: number,
+    itemId: number,
+    articleNumber?: string | null,
+    createdAt: string,
+    reason?: string | null,
+    reasonCode?: number | null,
+    refundType?: string | null,
+    toBalance: boolean,
+    total: number,
+    vat: number
+  } | null> | null,
+  shippingDetails?: Array<{
+    id: number,
+    name: string,
+    parcelNumber?: string | null,
+    shippingDate?: string | null,
+    shippingId: number,
+    trackingLink?: string | null
+  } | null> | null
+};
+
+export type GeinsPaymentDetailsType = {
+  id: number,
+  paymentId: number,
+  transactionId: string,
+  displayName: string,
+  name: string,
+  isPaid: boolean,
+  paymentDate?: string | null,
+  paymentFee: number,
+  paymentOption?: string | null,
+  reservationDate: string,
+  reservationNumber?: string | null,
+  shippingFee: number,
+  total: number
+};
+
+export type GeinsRefundType = {
+  id: number,
+  itemId: number,
+  articleNumber?: string | null,
+  createdAt: string,
+  reason?: string | null,
+  reasonCode?: number | null,
+  refundType?: string | null,
+  toBalance: boolean,
+  total: number,
+  vat: number
+};
+
+export type GeinsShippingDetailsType = {
+  id: number,
+  name: string,
+  parcelNumber?: string | null,
+  shippingDate?: string | null,
+  shippingId: number,
+  trackingLink?: string | null
+};
+
+export type GeinsMenuAtLocationVariablesType = Exact<{
+  menuLocationId?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
 
 export type GeinsMenuAtLocationType = {
   getMenuAtLocation?: {
-    id: string;
-    title?: string | null;
+    id: string,
+    title?: string | null,
     menuItems?: Array<{
-      id: string;
-      label?: string | null;
-      open: boolean;
-      hidden: boolean;
-      targetBlank: boolean;
-      type: string;
-      order: number;
-      title?: string | null;
-      canonicalUrl?: string | null;
-      value?: string | null;
+      id: string,
+      label?: string | null,
+      open: boolean,
+      hidden: boolean,
+      targetBlank: boolean,
+      type: string,
+      order: number,
+      title?: string | null,
+      canonicalUrl?: string | null,
+      value?: string | null,
       children?: Array<{
-        id: string;
-        label?: string | null;
-        open: boolean;
-        hidden: boolean;
-        targetBlank: boolean;
-        type: string;
-        order: number;
-        title?: string | null;
-        canonicalUrl?: string | null;
-        value?: string | null;
+        id: string,
+        label?: string | null,
+        open: boolean,
+        hidden: boolean,
+        targetBlank: boolean,
+        type: string,
+        order: number,
+        title?: string | null,
+        canonicalUrl?: string | null,
+        value?: string | null,
         children?: Array<{
-          id: string;
-          label?: string | null;
-          open: boolean;
-          hidden: boolean;
-          targetBlank: boolean;
-          type: string;
-          order: number;
-          title?: string | null;
-          canonicalUrl?: string | null;
-          value?: string | null;
-        } | null> | null;
-      } | null> | null;
-    } | null> | null;
-  } | null;
+          id: string,
+          label?: string | null,
+          open: boolean,
+          hidden: boolean,
+          targetBlank: boolean,
+          type: string,
+          order: number,
+          title?: string | null,
+          canonicalUrl?: string | null,
+          value?: string | null
+        } | null> | null
+      } | null> | null
+    } | null> | null
+  } | null
 };
 
-export type GeinsWidgetAreaPageAliasVariablesType =
-  | Exact<{
-      family?: InputMaybe<Scalars['String']['input']>;
-      areaName?: InputMaybe<Scalars['String']['input']>;
-      alias?: InputMaybe<Scalars['String']['input']>;
-      displaySetting?: InputMaybe<Scalars['String']['input']>;
-      filters?: InputMaybe<
-        | Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>
-        | InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>
-      >;
-      preview?: InputMaybe<Scalars['Boolean']['input']>;
-      customerType?: InputMaybe<GeinsCustomerType>;
-      channelId?: InputMaybe<Scalars['String']['input']>;
-      languageId?: InputMaybe<Scalars['String']['input']>;
-      url?: InputMaybe<Scalars['String']['input']>;
-      marketId?: InputMaybe<Scalars['String']['input']>;
-    }>
-  | undefined;
+export type GeinsWidgetAreaPageAliasVariablesType = Exact<{
+  family?: InputMaybe<Scalars['String']['input']>;
+  areaName?: InputMaybe<Scalars['String']['input']>;
+  alias?: InputMaybe<Scalars['String']['input']>;
+  displaySetting?: InputMaybe<Scalars['String']['input']>;
+  filters?: InputMaybe<Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>> | InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>;
+  preview?: InputMaybe<Scalars['Boolean']['input']>;
+  customerType?: InputMaybe<GeinsCustomerType>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
 
 export type GeinsWidgetAreaPageAliasType = {
   widgetArea?: {
-    id: number;
-    name: string;
-    title?: string | null;
-    familyName?: string | null;
-    tags?: Array<string | null> | null;
+    id: number,
+    name: string,
+    title?: string | null,
+    familyName?: string | null,
+    tags?: Array<string | null> | null,
     meta?: {
-      title?: string | null;
-      description?: string | null;
-    } | null;
+      title?: string | null,
+      description?: string | null
+    } | null,
     pageArea?: {
-      id: number;
-      name?: string | null;
-      index: number;
-    } | null;
+      id: number,
+      name?: string | null,
+      index: number
+    } | null,
     containers?: Array<{
-      id: number;
-      name: string;
-      sortOrder: number;
-      layout: string;
-      responsiveMode: string;
-      design: string;
+      id: number,
+      name: string,
+      sortOrder: number,
+      layout: string,
+      responsiveMode: string,
+      design: string,
       widgets?: Array<{
-        id: string;
-        name: string;
-        sortOrder: number;
-        type: string;
-        size: string;
-        configuration: string;
+        id: string,
+        name: string,
+        sortOrder: number,
+        type: string,
+        size: string,
+        configuration: string,
         images?: Array<{
-          fileName: string;
+          fileName: string,
           largestSize?: {
-            imageWidth: number;
-            imageHeight: number;
-          } | null;
-        } | null> | null;
-      } | null> | null;
-    } | null> | null;
-  } | null;
+            imageWidth: number,
+            imageHeight: number
+          } | null
+        } | null> | null
+      } | null> | null
+    } | null> | null
+  } | null
 };
 
-export type GeinsWidgetAreaVariablesType =
-  | Exact<{
-      family?: InputMaybe<Scalars['String']['input']>;
-      areaName?: InputMaybe<Scalars['String']['input']>;
-      alias?: InputMaybe<Scalars['String']['input']>;
-      displaySetting?: InputMaybe<Scalars['String']['input']>;
-      filters?: InputMaybe<
-        | Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>
-        | InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>
-      >;
-      preview?: InputMaybe<Scalars['Boolean']['input']>;
-      customerType?: InputMaybe<GeinsCustomerType>;
-      channelId?: InputMaybe<Scalars['String']['input']>;
-      languageId?: InputMaybe<Scalars['String']['input']>;
-      url?: InputMaybe<Scalars['String']['input']>;
-      marketId?: InputMaybe<Scalars['String']['input']>;
-    }>
-  | undefined;
+export type GeinsWidgetAreaVariablesType = Exact<{
+  family?: InputMaybe<Scalars['String']['input']>;
+  areaName?: InputMaybe<Scalars['String']['input']>;
+  alias?: InputMaybe<Scalars['String']['input']>;
+  displaySetting?: InputMaybe<Scalars['String']['input']>;
+  filters?: InputMaybe<Array<InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>> | InputMaybe<GeinsPageWidgetCollectionFilterInputTypeType>>;
+  preview?: InputMaybe<Scalars['Boolean']['input']>;
+  customerType?: InputMaybe<GeinsCustomerType>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
 
 export type GeinsWidgetAreaType = {
   widgetArea?: {
-    tags?: Array<string | null> | null;
+    tags?: Array<string | null> | null,
     meta?: {
-      title?: string | null;
-      description?: string | null;
-    } | null;
+      title?: string | null,
+      description?: string | null
+    } | null,
     pageArea?: {
-      id: number;
-      name?: string | null;
-      index: number;
-    } | null;
+      id: number,
+      name?: string | null,
+      index: number
+    } | null,
     containers?: Array<{
-      id: number;
-      name: string;
-      sortOrder: number;
-      layout: string;
-      responsiveMode: string;
-      design: string;
+      id: number,
+      name: string,
+      sortOrder: number,
+      layout: string,
+      responsiveMode: string,
+      design: string,
       widgets?: Array<{
-        id: string;
-        name: string;
-        sortOrder: number;
-        type: string;
-        size: string;
-        configuration: string;
+        id: string,
+        name: string,
+        sortOrder: number,
+        type: string,
+        size: string,
+        configuration: string,
         images?: Array<{
-          fileName: string;
+          fileName: string,
           largestSize?: {
-            imageWidth: number;
-            imageHeight: number;
-          } | null;
-        } | null> | null;
-      } | null> | null;
-    } | null> | null;
-  } | null;
+            imageWidth: number,
+            imageHeight: number
+          } | null
+        } | null> | null
+      } | null> | null
+    } | null> | null
+  } | null
 };
 
-export type GeinsGetChannelVariablesType =
-  | Exact<{
-      channelId?: InputMaybe<Scalars['String']['input']>;
-    }>
-  | undefined;
+export type GeinsGetChannelVariablesType = Exact<{
+  channelId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
 
 export type GeinsGetChannelType = {
   channel?: {
-    id: string;
-    name: string;
-    type: string;
-    url: string;
-    defaultLanguageId: string;
-    defaultMarketId: string;
+    id: string,
+    name: string,
+    type: string,
+    url: string,
+    defaultLanguageId: string,
+    defaultMarketId: string,
     markets?: Array<{
-      id: string;
-      alias?: string | null;
-      onlyDisplayInCheckout?: boolean | null;
-      virtual?: boolean | null;
-      groupKey: string;
+      id: string,
+      alias?: string | null,
+      onlyDisplayInCheckout?: boolean | null,
+      virtual?: boolean | null,
+      groupKey: string,
       allowedLanguages?: Array<{
-        id: string;
-        name: string;
-        code: string;
-      } | null> | null;
+        id: string,
+        name: string,
+        code: string
+      } | null> | null,
       country?: {
-        name: string;
-        code: string;
-      } | null;
+        name: string,
+        code: string
+      } | null,
       currency?: {
-        code: string;
-        symbol: string;
-      } | null;
-    } | null> | null;
+        code: string,
+        symbol: string
+      } | null
+    } | null> | null,
     languages?: Array<{
-      id: string;
-      name: string;
-      code: string;
-    } | null> | null;
-  } | null;
+      id: string,
+      name: string,
+      code: string
+    } | null> | null
+  } | null
 };
 
-export type GeinsGetChannelsVariablesType = Exact<{ [key: string]: never }> | undefined;
+export type GeinsGetChannelsVariablesType = Exact<{ [key: string]: never; }> | undefined;
+
 
 export type GeinsGetChannelsType = {
   channels?: Array<{
-    id: string;
-    name: string;
-    type: string;
-    url: string;
-    defaultLanguageId: string;
-    defaultMarketId: string;
+    id: string,
+    name: string,
+    type: string,
+    url: string,
+    defaultLanguageId: string,
+    defaultMarketId: string,
     markets?: Array<{
-      id: string;
-      alias?: string | null;
-      onlyDisplayInCheckout?: boolean | null;
-      virtual?: boolean | null;
-      groupKey: string;
+      id: string,
+      alias?: string | null,
+      onlyDisplayInCheckout?: boolean | null,
+      virtual?: boolean | null,
+      groupKey: string,
       allowedLanguages?: Array<{
-        id: string;
-        name: string;
-        code: string;
-      } | null> | null;
+        id: string,
+        name: string,
+        code: string
+      } | null> | null,
       country?: {
-        name: string;
-        code: string;
-      } | null;
+        name: string,
+        code: string
+      } | null,
       currency?: {
-        code: string;
-        symbol: string;
-      } | null;
-    } | null> | null;
+        code: string,
+        symbol: string
+      } | null
+    } | null> | null,
     languages?: Array<{
-      id: string;
-      name: string;
-      code: string;
-    } | null> | null;
-  } | null> | null;
+      id: string,
+      name: string,
+      code: string
+    } | null> | null
+  } | null> | null
 };
 
 export type GeinsUserPasswordResetCommitVariablesType = Exact<{
@@ -2722,8 +4191,9 @@ export type GeinsUserPasswordResetCommitVariablesType = Exact<{
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
+
 export type GeinsUserPasswordResetCommitType = {
-  commitReset?: boolean | null;
+  commitReset?: boolean | null
 };
 
 export type GeinsUserRequestPasswordResetVariablesType = Exact<{
@@ -2733,252 +4203,254 @@ export type GeinsUserRequestPasswordResetVariablesType = Exact<{
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
+
 export type GeinsUserRequestPasswordResetType = {
-  requestPasswordReset?: boolean | null;
+  requestPasswordReset?: boolean | null
 };
 
-export type GeinsUserOrdersVariablesType =
-  | Exact<{
-      channelId?: InputMaybe<Scalars['String']['input']>;
-      languageId?: InputMaybe<Scalars['String']['input']>;
-      marketId?: InputMaybe<Scalars['String']['input']>;
-    }>
-  | undefined;
+export type GeinsUserOrdersVariablesType = Exact<{
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
 
 export type GeinsUserOrdersType = {
   getOrders?: Array<{
-    createdAt?: string | null;
-    id?: number | null;
-    status: string;
+    createdAt?: string | null,
+    id?: number | null,
+    status: string,
     cart?: {
-      id?: string | null;
-      promoCode?: string | null;
+      id?: string | null,
+      promoCode?: string | null,
       appliedCampaigns?: Array<{
-        name?: string | null;
-        hideTitle?: boolean | null;
-      } | null> | null;
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
       items?: Array<{
-        quantity: number;
-        skuId: number;
+        quantity: number,
+        skuId: number,
         campaign?: {
           appliedCampaigns?: Array<{
-            name?: string | null;
-            hideTitle?: boolean | null;
-          } | null> | null;
+            name?: string | null,
+            hideTitle?: boolean | null
+          } | null> | null,
           prices?: Array<{
-            quantity: number;
+            quantity: number,
             price?: {
-              isDiscounted: boolean;
-              sellingPriceIncVat: number;
-              sellingPriceExVat: number;
-              regularPriceIncVat: number;
-              regularPriceExVat: number;
-              vat: number;
-              discountPercentage: number;
-              regularPriceIncVatFormatted?: string | null;
-              sellingPriceIncVatFormatted?: string | null;
-              regularPriceExVatFormatted?: string | null;
-              sellingPriceExVatFormatted?: string | null;
-            } | null;
-          } | null> | null;
-        } | null;
+              isDiscounted: boolean,
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              vat: number,
+              discountPercentage: number,
+              regularPriceIncVatFormatted?: string | null,
+              sellingPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null
+            } | null
+          } | null> | null
+        } | null,
         unitPrice?: {
-          isDiscounted: boolean;
-          sellingPriceIncVat: number;
-          sellingPriceExVat: number;
-          regularPriceIncVat: number;
-          regularPriceExVat: number;
-          vat: number;
-          discountPercentage: number;
-          regularPriceIncVatFormatted?: string | null;
-          sellingPriceIncVatFormatted?: string | null;
-          regularPriceExVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-        } | null;
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null,
         product?: {
-          productId: number;
-          articleNumber?: string | null;
-          name?: string | null;
-          alias: string;
-          canonicalUrl?: string | null;
+          productId: number,
+          articleNumber?: string | null,
+          name?: string | null,
+          alias: string,
+          canonicalUrl?: string | null,
           brand?: {
-            name?: string | null;
-          } | null;
+            name?: string | null
+          } | null,
           productImages?: Array<{
-            fileName: string;
-          } | null> | null;
+            fileName: string
+          } | null> | null,
           primaryCategory?: {
-            name: string;
-          } | null;
+            name: string
+          } | null,
           skus?: Array<{
-            skuId: number;
-            name?: string | null;
+            skuId: number,
+            name?: string | null,
             stock?: {
-              inStock: number;
-              oversellable: number;
-              totalStock: number;
-              static?: number | null;
-              incoming?: string | null;
-            } | null;
-          } | null> | null;
+              inStock: number,
+              oversellable: number,
+              totalStock: number,
+              static?: number | null,
+              incoming?: string | null
+            } | null
+          } | null> | null,
           unitPrice?: {
-            isDiscounted: boolean;
-            sellingPriceIncVat: number;
-            sellingPriceExVat: number;
-            regularPriceIncVat: number;
-            regularPriceExVat: number;
-            vat: number;
-            discountPercentage: number;
-            regularPriceIncVatFormatted?: string | null;
-            sellingPriceIncVatFormatted?: string | null;
-            regularPriceExVatFormatted?: string | null;
-            sellingPriceExVatFormatted?: string | null;
-          } | null;
-        } | null;
+            isDiscounted: boolean,
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            vat: number,
+            discountPercentage: number,
+            regularPriceIncVatFormatted?: string | null,
+            sellingPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null
+          } | null
+        } | null,
         totalPrice?: {
-          isDiscounted: boolean;
-          sellingPriceIncVat: number;
-          sellingPriceExVat: number;
-          regularPriceIncVat: number;
-          regularPriceExVat: number;
-          vat: number;
-          discountPercentage: number;
-          regularPriceIncVatFormatted?: string | null;
-          sellingPriceIncVatFormatted?: string | null;
-          regularPriceExVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-        } | null;
-      } | null> | null;
+          isDiscounted: boolean,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          vat: number,
+          discountPercentage: number,
+          regularPriceIncVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null
+        } | null
+      } | null> | null,
       summary?: {
-        fixedAmountDiscountIncVat: number;
-        fixedAmountDiscountExVat: number;
+        fixedAmountDiscountIncVat: number,
+        fixedAmountDiscountExVat: number,
         balance?: {
-          pending: number;
-          pendingFormatted?: string | null;
-          totalSellingPriceExBalanceExVat: number;
-          totalSellingPriceExBalanceIncVat: number;
-          totalSellingPriceExBalanceIncVatFormatted?: string | null;
-        } | null;
+          pending: number,
+          pendingFormatted?: string | null,
+          totalSellingPriceExBalanceExVat: number,
+          totalSellingPriceExBalanceIncVat: number,
+          totalSellingPriceExBalanceIncVatFormatted?: string | null
+        } | null,
         subTotal?: {
-          regularPriceIncVatFormatted?: string | null;
-          regularPriceExVatFormatted?: string | null;
-          sellingPriceIncVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-          sellingPriceExVat: number;
-          sellingPriceIncVat: number;
-          vat: number;
-        } | null;
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          sellingPriceExVat: number,
+          sellingPriceIncVat: number,
+          vat: number
+        } | null,
         shipping?: {
-          amountLeftToFreeShipping: number;
-          amountLeftToFreeShippingFormatted?: string | null;
-          feeExVatFormatted?: string | null;
-          feeIncVatFormatted?: string | null;
-          feeIncVat: number;
-          feeExVat: number;
-          isDefault: boolean;
-        } | null;
+          amountLeftToFreeShipping: number,
+          amountLeftToFreeShippingFormatted?: string | null,
+          feeExVatFormatted?: string | null,
+          feeIncVatFormatted?: string | null,
+          feeIncVat: number,
+          feeExVat: number,
+          isDefault: boolean
+        } | null,
         total?: {
-          isDiscounted: boolean;
-          sellingPriceIncVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-          sellingPriceIncVat: number;
-          sellingPriceExVat: number;
-          discountIncVatFormatted?: string | null;
-          discountExVatFormatted?: string | null;
-          discountExVat: number;
-          discountIncVat: number;
-          vatFormatted?: string | null;
-          vat: number;
-        } | null;
-      } | null;
-    } | null;
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          discountExVat: number,
+          discountIncVat: number,
+          vatFormatted?: string | null,
+          vat: number
+        } | null
+      } | null
+    } | null,
     billingAddress?: {
-      firstName: string;
-      lastName: string;
-      company: string;
-      mobile: string;
-      phone: string;
-      careOf: string;
-      entryCode: string;
-      addressLine1: string;
-      addressLine2: string;
-      addressLine3: string;
-      zip: string;
-      city: string;
-      state: string;
-      country: string;
-    } | null;
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
     shippingAddress?: {
-      firstName: string;
-      lastName: string;
-      company: string;
-      mobile: string;
-      phone: string;
-      careOf: string;
-      entryCode: string;
-      addressLine1: string;
-      addressLine2: string;
-      addressLine3: string;
-      zip: string;
-      city: string;
-      state: string;
-      country: string;
-    } | null;
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
     shippingDetails?: Array<{
-      name: string;
-      trackingLink?: string | null;
-    } | null> | null;
+      name: string,
+      trackingLink?: string | null
+    } | null> | null,
     paymentDetails?: Array<{
-      displayName: string;
-    } | null> | null;
+      displayName: string
+    } | null> | null,
     refunds?: Array<{
-      id: number;
-      itemId: number;
-      createdAt: string;
-      reason?: string | null;
-      total: number;
-      vat: number;
-    } | null> | null;
-  } | null> | null;
+      id: number,
+      itemId: number,
+      createdAt: string,
+      reason?: string | null,
+      total: number,
+      vat: number
+    } | null> | null
+  } | null> | null
 };
 
-export type GeinsUserDeleteVariablesType = Exact<{ [key: string]: never }>;
+export type GeinsUserDeleteVariablesType = Exact<{ [key: string]: never; }>;
+
 
 export type GeinsUserDeleteType = {
-  deleteUser?: boolean | null;
+  deleteUser?: boolean | null
 };
 
-export type GeinsUserGetVariablesType = Exact<{ [key: string]: never }> | undefined;
+export type GeinsUserGetVariablesType = Exact<{ [key: string]: never; }> | undefined;
+
 
 export type GeinsUserGetType = {
   getUser?: {
-    id: number;
-    email: string;
-    personalId?: string | null;
-    customerType?: GeinsCustomerType | null;
-    gender?: GeinsGender | null;
-    metaData?: string | null;
+    id: number,
+    email: string,
+    personalId?: string | null,
+    customerType?: GeinsCustomerType | null,
+    gender?: GeinsGender | null,
+    metaData?: string | null,
     address?: {
-      firstName: string;
-      lastName: string;
-      company: string;
-      mobile: string;
-      phone: string;
-      careOf: string;
-      entryCode: string;
-      addressLine1: string;
-      addressLine2: string;
-      addressLine3: string;
-      zip: string;
-      city: string;
-      state: string;
-      country: string;
-    } | null;
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
     balances?: Array<{
-      currency: string;
-      amount: number;
-    } | null> | null;
-  } | null;
+      currency: string,
+      amount: number
+    } | null> | null
+  } | null
 };
 
 export type GeinsUserCreateVariablesType = Exact<{
@@ -2988,10 +4460,11 @@ export type GeinsUserCreateVariablesType = Exact<{
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
+
 export type GeinsUserCreateType = {
   updateUser?: {
-    email: string;
-  } | null;
+    email: string
+  } | null
 };
 
 export type GeinsUserUpdateVariablesType = Exact<{
@@ -3001,189 +4474,2772 @@ export type GeinsUserUpdateVariablesType = Exact<{
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
+
 export type GeinsUserUpdateType = {
   updateUser?: {
-    id: number;
-    email: string;
-    personalId?: string | null;
-    customerType?: GeinsCustomerType | null;
-    gender?: GeinsGender | null;
-    metaData?: string | null;
+    id: number,
+    email: string,
+    personalId?: string | null,
+    customerType?: GeinsCustomerType | null,
+    gender?: GeinsGender | null,
+    metaData?: string | null,
     address?: {
-      firstName: string;
-      lastName: string;
-      company: string;
-      mobile: string;
-      phone: string;
-      careOf: string;
-      entryCode: string;
-      addressLine1: string;
-      addressLine2: string;
-      addressLine3: string;
-      zip: string;
-      city: string;
-      state: string;
-      country: string;
-    } | null;
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
     balances?: Array<{
-      currency: string;
-      amount: number;
-    } | null> | null;
-  } | null;
+      currency: string,
+      amount: number
+    } | null> | null
+  } | null
 };
 
-export type GeinsGetCartVariablesType =
-  | Exact<{
-      id?: InputMaybe<Scalars['String']['input']>;
-      channelId?: InputMaybe<Scalars['String']['input']>;
-      languageId?: InputMaybe<Scalars['String']['input']>;
-      marketId?: InputMaybe<Scalars['String']['input']>;
-    }>
-  | undefined;
+export type GeinsAddToCartVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  item: GeinsCartItemInputTypeType;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsAddToCartType = {
+  addToCart?: {
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
+      product?: {
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
+        skus?: Array<{
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      totalPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
+    summary?: {
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      shipping?: {
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsAddPackageToCartVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  packageId: Scalars['Int']['input'];
+  selections?: InputMaybe<Array<InputMaybe<GeinsProductPackageSelectionTypeType>> | InputMaybe<GeinsProductPackageSelectionTypeType>>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsAddPackageToCartType = {
+  addPackageToCart?: {
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
+      product?: {
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
+        skus?: Array<{
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      totalPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
+    summary?: {
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      shipping?: {
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsCloneCartVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  resetPromotions?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsCloneCartType = {
+  cloneCart?: {
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
+      product?: {
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
+        skus?: Array<{
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      totalPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
+    summary?: {
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      shipping?: {
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsCompleteCartVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsCompleteCartType = {
+  completeCart?: {
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
+      product?: {
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
+        skus?: Array<{
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      totalPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
+    summary?: {
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      shipping?: {
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsCreateCartVariablesType = Exact<{
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsCreateCartType = {
+  getCart?: {
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
+      product?: {
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
+        skus?: Array<{
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      totalPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
+    summary?: {
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      shipping?: {
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsGetCartVariablesType = Exact<{
+  id?: InputMaybe<Scalars['String']['input']>;
+  forceRefresh?: InputMaybe<Scalars['Boolean']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
 
 export type GeinsGetCartType = {
   getCart?: {
-    id?: string | null;
-    promoCode?: string | null;
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
     appliedCampaigns?: Array<{
-      name?: string | null;
-      hideTitle?: boolean | null;
-    } | null> | null;
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
     items?: Array<{
-      quantity: number;
-      skuId: number;
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
       campaign?: {
+        __typename: 'CampaignType',
         appliedCampaigns?: Array<{
-          name?: string | null;
-          hideTitle?: boolean | null;
-        } | null> | null;
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
         prices?: Array<{
-          quantity: number;
+          __typename: 'CampaignPriceType',
+          quantity: number,
           price?: {
-            isDiscounted: boolean;
-            sellingPriceIncVat: number;
-            sellingPriceExVat: number;
-            regularPriceIncVat: number;
-            regularPriceExVat: number;
-            vat: number;
-            discountPercentage: number;
-            regularPriceIncVatFormatted?: string | null;
-            sellingPriceIncVatFormatted?: string | null;
-            regularPriceExVatFormatted?: string | null;
-            sellingPriceExVatFormatted?: string | null;
-          } | null;
-        } | null> | null;
-      } | null;
-      unitPrice?: {
-        isDiscounted: boolean;
-        sellingPriceIncVat: number;
-        sellingPriceExVat: number;
-        regularPriceIncVat: number;
-        regularPriceExVat: number;
-        vat: number;
-        discountPercentage: number;
-        regularPriceIncVatFormatted?: string | null;
-        sellingPriceIncVatFormatted?: string | null;
-        regularPriceExVatFormatted?: string | null;
-        sellingPriceExVatFormatted?: string | null;
-      } | null;
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
       product?: {
-        productId: number;
-        articleNumber?: string | null;
-        name?: string | null;
-        alias: string;
-        canonicalUrl?: string | null;
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
         brand?: {
-          name?: string | null;
-        } | null;
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
         productImages?: Array<{
-          fileName: string;
-        } | null> | null;
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
         primaryCategory?: {
-          name: string;
-        } | null;
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
         skus?: Array<{
-          skuId: number;
-          name?: string | null;
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
           stock?: {
-            inStock: number;
-            oversellable: number;
-            totalStock: number;
-            static?: number | null;
-            incoming?: string | null;
-          } | null;
-        } | null> | null;
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
         unitPrice?: {
-          isDiscounted: boolean;
-          sellingPriceIncVat: number;
-          sellingPriceExVat: number;
-          regularPriceIncVat: number;
-          regularPriceExVat: number;
-          vat: number;
-          discountPercentage: number;
-          regularPriceIncVatFormatted?: string | null;
-          sellingPriceIncVatFormatted?: string | null;
-          regularPriceExVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-        } | null;
-      } | null;
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
       totalPrice?: {
-        isDiscounted: boolean;
-        sellingPriceIncVat: number;
-        sellingPriceExVat: number;
-        regularPriceIncVat: number;
-        regularPriceExVat: number;
-        vat: number;
-        discountPercentage: number;
-        regularPriceIncVatFormatted?: string | null;
-        sellingPriceIncVatFormatted?: string | null;
-        regularPriceExVatFormatted?: string | null;
-        sellingPriceExVatFormatted?: string | null;
-      } | null;
-    } | null> | null;
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
     summary?: {
-      fixedAmountDiscountIncVat: number;
-      fixedAmountDiscountExVat: number;
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
       balance?: {
-        pending: number;
-        pendingFormatted?: string | null;
-        totalSellingPriceExBalanceExVat: number;
-        totalSellingPriceExBalanceIncVat: number;
-        totalSellingPriceExBalanceIncVatFormatted?: string | null;
-      } | null;
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
       subTotal?: {
-        regularPriceIncVatFormatted?: string | null;
-        regularPriceExVatFormatted?: string | null;
-        sellingPriceIncVatFormatted?: string | null;
-        sellingPriceExVatFormatted?: string | null;
-        sellingPriceExVat: number;
-        sellingPriceIncVat: number;
-        vat: number;
-      } | null;
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
       shipping?: {
-        amountLeftToFreeShipping: number;
-        amountLeftToFreeShippingFormatted?: string | null;
-        feeExVatFormatted?: string | null;
-        feeIncVatFormatted?: string | null;
-        feeIncVat: number;
-        feeExVat: number;
-        isDefault: boolean;
-      } | null;
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
       total?: {
-        isDiscounted: boolean;
-        sellingPriceIncVatFormatted?: string | null;
-        sellingPriceExVatFormatted?: string | null;
-        sellingPriceIncVat: number;
-        sellingPriceExVat: number;
-        discountIncVatFormatted?: string | null;
-        discountExVatFormatted?: string | null;
-        discountExVat: number;
-        discountIncVat: number;
-        vatFormatted?: string | null;
-        vat: number;
-      } | null;
-    } | null;
-  } | null;
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsSetCartMerchantDataVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  merchantData: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsSetCartMerchantDataType = {
+  setCartMerchantData?: {
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
+      product?: {
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
+        skus?: Array<{
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      totalPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
+    summary?: {
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      shipping?: {
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsSetCartPromoCodeVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  promoCode: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsSetCartPromoCodeType = {
+  setCartPromoCode?: {
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
+      product?: {
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
+        skus?: Array<{
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      totalPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
+    summary?: {
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      shipping?: {
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsSetCartShippingFeeVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  shippingFee: Scalars['Decimal']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsSetCartShippingFeeType = {
+  setCartShippingFee?: {
+    cart?: {
+      __typename: 'CartType',
+      id?: string | null,
+      isCompleted: boolean,
+      merchantData?: string | null,
+      promoCode?: string | null,
+      appliedCampaigns?: Array<{
+        __typename: 'CampaignRuleType',
+        campaignId: string,
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
+      items?: Array<{
+        __typename: 'CartItemType',
+        id: string | number,
+        groupKey?: string | number | null,
+        skuId: number,
+        quantity: number,
+        message?: string | null,
+        productPackage?: {
+          __typename: 'ProductPackageCartItemType',
+          packageId: number,
+          packageName: string,
+          groupId: number,
+          optionId: number
+        } | null,
+        campaign?: {
+          __typename: 'CampaignType',
+          appliedCampaigns?: Array<{
+            __typename: 'CampaignRuleType',
+            campaignId: string,
+            name?: string | null,
+            hideTitle?: boolean | null
+          } | null> | null,
+          prices?: Array<{
+            __typename: 'CampaignPriceType',
+            quantity: number,
+            price?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null
+          } | null> | null
+        } | null,
+        product?: {
+          __typename: 'ProductType',
+          productId: number,
+          articleNumber?: string | null,
+          name?: string | null,
+          alias: string,
+          canonicalUrl?: string | null,
+          brand?: {
+            __typename: 'BrandType',
+            name?: string | null
+          } | null,
+          productImages?: Array<{
+            __typename: 'ProductImageType',
+            fileName: string
+          } | null> | null,
+          primaryCategory?: {
+            __typename: 'CategoryType',
+            categoryId: number,
+            name: string,
+            order: number
+          } | null,
+          categories?: Array<{
+            __typename: 'CategoryType',
+            categoryId: number,
+            name: string,
+            order: number
+          } | null> | null,
+          skus?: Array<{
+            __typename: 'SkuType',
+            skuId: number,
+            name?: string | null,
+            stock?: {
+              __typename: 'StockType',
+              inStock: number,
+              oversellable: number,
+              totalStock: number,
+              static?: number | null
+            } | null
+          } | null> | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        totalPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null> | null,
+      summary?: {
+        __typename: 'CartSummaryType',
+        fixedAmountDiscountIncVat: number,
+        fixedAmountDiscountExVat: number,
+        balance?: {
+          __typename: 'BalanceType',
+          pending: number,
+          pendingFormatted?: string | null,
+          totalSellingPriceExBalanceExVat: number,
+          totalSellingPriceExBalanceIncVat: number,
+          totalSellingPriceExBalanceIncVatFormatted?: string | null
+        } | null,
+        subTotal?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        shipping?: {
+          __typename: 'ShippingOptionType',
+          amountLeftToFreeShipping: number,
+          amountLeftToFreeShippingFormatted?: string | null,
+          feeExVatFormatted?: string | null,
+          feeIncVatFormatted?: string | null,
+          feeIncVat: number,
+          feeExVat: number,
+          isDefault: boolean
+        } | null,
+        total?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsUpdateCartGroupVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  item: GeinsCartGroupInputTypeType;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsUpdateCartGroupType = {
+  updateCartGroup?: {
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
+    items?: Array<{
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
+      product?: {
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        brand?: {
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
+        productImages?: Array<{
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
+        primaryCategory?: {
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
+        skus?: Array<{
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
+          stock?: {
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      totalPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
+    summary?: {
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
+      balance?: {
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
+      subTotal?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      shipping?: {
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
+      total?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsUpdateSilentCartItemVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  item: GeinsCartItemInputTypeType;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsUpdateSilentCartItemType = {
+  updateCartItem?: {
+    __typename: 'CartType',
+    id?: string | null
+  } | null
 };
 
 export type GeinsUpdateCartItemVariablesType = Exact<{
@@ -3194,149 +7250,1526 @@ export type GeinsUpdateCartItemVariablesType = Exact<{
   marketId?: InputMaybe<Scalars['String']['input']>;
 }>;
 
+
 export type GeinsUpdateCartItemType = {
   updateCartItem?: {
-    id?: string | null;
-    promoCode?: string | null;
+    __typename: 'CartType',
+    id?: string | null,
+    isCompleted: boolean,
+    merchantData?: string | null,
+    promoCode?: string | null,
     appliedCampaigns?: Array<{
-      name?: string | null;
-      hideTitle?: boolean | null;
-    } | null> | null;
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
+    } | null> | null,
     items?: Array<{
-      quantity: number;
-      skuId: number;
+      __typename: 'CartItemType',
+      id: string | number,
+      groupKey?: string | number | null,
+      skuId: number,
+      quantity: number,
+      message?: string | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
       campaign?: {
+        __typename: 'CampaignType',
         appliedCampaigns?: Array<{
-          name?: string | null;
-          hideTitle?: boolean | null;
-        } | null> | null;
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
         prices?: Array<{
-          quantity: number;
+          __typename: 'CampaignPriceType',
+          quantity: number,
           price?: {
-            isDiscounted: boolean;
-            sellingPriceIncVat: number;
-            sellingPriceExVat: number;
-            regularPriceIncVat: number;
-            regularPriceExVat: number;
-            vat: number;
-            discountPercentage: number;
-            regularPriceIncVatFormatted?: string | null;
-            sellingPriceIncVatFormatted?: string | null;
-            regularPriceExVatFormatted?: string | null;
-            sellingPriceExVatFormatted?: string | null;
-          } | null;
-        } | null> | null;
-      } | null;
-      unitPrice?: {
-        isDiscounted: boolean;
-        sellingPriceIncVat: number;
-        sellingPriceExVat: number;
-        regularPriceIncVat: number;
-        regularPriceExVat: number;
-        vat: number;
-        discountPercentage: number;
-        regularPriceIncVatFormatted?: string | null;
-        sellingPriceIncVatFormatted?: string | null;
-        regularPriceExVatFormatted?: string | null;
-        sellingPriceExVatFormatted?: string | null;
-      } | null;
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
       product?: {
-        productId: number;
-        articleNumber?: string | null;
-        name?: string | null;
-        alias: string;
-        canonicalUrl?: string | null;
+        __typename: 'ProductType',
+        productId: number,
+        articleNumber?: string | null,
+        name?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
         brand?: {
-          name?: string | null;
-        } | null;
+          __typename: 'BrandType',
+          name?: string | null
+        } | null,
         productImages?: Array<{
-          fileName: string;
-        } | null> | null;
+          __typename: 'ProductImageType',
+          fileName: string
+        } | null> | null,
         primaryCategory?: {
-          name: string;
-        } | null;
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null,
+        categories?: Array<{
+          __typename: 'CategoryType',
+          categoryId: number,
+          name: string,
+          order: number
+        } | null> | null,
         skus?: Array<{
-          skuId: number;
-          name?: string | null;
+          __typename: 'SkuType',
+          skuId: number,
+          name?: string | null,
           stock?: {
-            inStock: number;
-            oversellable: number;
-            totalStock: number;
-            static?: number | null;
-            incoming?: string | null;
-          } | null;
-        } | null> | null;
+            __typename: 'StockType',
+            inStock: number,
+            oversellable: number,
+            totalStock: number,
+            static?: number | null
+          } | null
+        } | null> | null,
         unitPrice?: {
-          isDiscounted: boolean;
-          sellingPriceIncVat: number;
-          sellingPriceExVat: number;
-          regularPriceIncVat: number;
-          regularPriceExVat: number;
-          vat: number;
-          discountPercentage: number;
-          regularPriceIncVatFormatted?: string | null;
-          sellingPriceIncVatFormatted?: string | null;
-          regularPriceExVatFormatted?: string | null;
-          sellingPriceExVatFormatted?: string | null;
-        } | null;
-      } | null;
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
       totalPrice?: {
-        isDiscounted: boolean;
-        sellingPriceIncVat: number;
-        sellingPriceExVat: number;
-        regularPriceIncVat: number;
-        regularPriceExVat: number;
-        vat: number;
-        discountPercentage: number;
-        regularPriceIncVatFormatted?: string | null;
-        sellingPriceIncVatFormatted?: string | null;
-        regularPriceExVatFormatted?: string | null;
-        sellingPriceExVatFormatted?: string | null;
-      } | null;
-    } | null> | null;
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null,
     summary?: {
-      fixedAmountDiscountIncVat: number;
-      fixedAmountDiscountExVat: number;
+      __typename: 'CartSummaryType',
+      fixedAmountDiscountIncVat: number,
+      fixedAmountDiscountExVat: number,
       balance?: {
-        pending: number;
-        pendingFormatted?: string | null;
-        totalSellingPriceExBalanceExVat: number;
-        totalSellingPriceExBalanceIncVat: number;
-        totalSellingPriceExBalanceIncVatFormatted?: string | null;
-      } | null;
+        __typename: 'BalanceType',
+        pending: number,
+        pendingFormatted?: string | null,
+        totalSellingPriceExBalanceExVat: number,
+        totalSellingPriceExBalanceIncVat: number,
+        totalSellingPriceExBalanceIncVatFormatted?: string | null
+      } | null,
       subTotal?: {
-        regularPriceIncVatFormatted?: string | null;
-        regularPriceExVatFormatted?: string | null;
-        sellingPriceIncVatFormatted?: string | null;
-        sellingPriceExVatFormatted?: string | null;
-        sellingPriceExVat: number;
-        sellingPriceIncVat: number;
-        vat: number;
-      } | null;
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
       shipping?: {
-        amountLeftToFreeShipping: number;
-        amountLeftToFreeShippingFormatted?: string | null;
-        feeExVatFormatted?: string | null;
-        feeIncVatFormatted?: string | null;
-        feeIncVat: number;
-        feeExVat: number;
-        isDefault: boolean;
-      } | null;
+        __typename: 'ShippingOptionType',
+        amountLeftToFreeShipping: number,
+        amountLeftToFreeShippingFormatted?: string | null,
+        feeExVatFormatted?: string | null,
+        feeIncVatFormatted?: string | null,
+        feeIncVat: number,
+        feeExVat: number,
+        isDefault: boolean
+      } | null,
       total?: {
-        isDiscounted: boolean;
-        sellingPriceIncVatFormatted?: string | null;
-        sellingPriceExVatFormatted?: string | null;
-        sellingPriceIncVat: number;
-        sellingPriceExVat: number;
-        discountIncVatFormatted?: string | null;
-        discountExVatFormatted?: string | null;
-        discountExVat: number;
-        discountIncVat: number;
-        vatFormatted?: string | null;
-        vat: number;
-      } | null;
-    } | null;
-  } | null;
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsCreateOrUpdateCheckoutVariablesType = Exact<{
+  cartId: Scalars['String']['input'];
+  checkout?: InputMaybe<GeinsCheckoutInputTypeType>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsCreateOrUpdateCheckoutType = {
+  createOrUpdateCheckout?: {
+    email?: string | null,
+    identityNumber?: string | null,
+    shippingData?: string | null,
+    cart?: {
+      __typename: 'CartType',
+      id?: string | null,
+      isCompleted: boolean,
+      merchantData?: string | null,
+      promoCode?: string | null,
+      appliedCampaigns?: Array<{
+        __typename: 'CampaignRuleType',
+        campaignId: string,
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
+      items?: Array<{
+        __typename: 'CartItemType',
+        id: string | number,
+        groupKey?: string | number | null,
+        skuId: number,
+        quantity: number,
+        message?: string | null,
+        productPackage?: {
+          __typename: 'ProductPackageCartItemType',
+          packageId: number,
+          packageName: string,
+          groupId: number,
+          optionId: number
+        } | null,
+        campaign?: {
+          __typename: 'CampaignType',
+          appliedCampaigns?: Array<{
+            __typename: 'CampaignRuleType',
+            campaignId: string,
+            name?: string | null,
+            hideTitle?: boolean | null
+          } | null> | null,
+          prices?: Array<{
+            __typename: 'CampaignPriceType',
+            quantity: number,
+            price?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null
+          } | null> | null
+        } | null,
+        product?: {
+          __typename: 'ProductType',
+          productId: number,
+          articleNumber?: string | null,
+          name?: string | null,
+          alias: string,
+          canonicalUrl?: string | null,
+          brand?: {
+            __typename: 'BrandType',
+            name?: string | null
+          } | null,
+          productImages?: Array<{
+            __typename: 'ProductImageType',
+            fileName: string
+          } | null> | null,
+          primaryCategory?: {
+            __typename: 'CategoryType',
+            categoryId: number,
+            name: string,
+            order: number
+          } | null,
+          categories?: Array<{
+            __typename: 'CategoryType',
+            categoryId: number,
+            name: string,
+            order: number
+          } | null> | null,
+          skus?: Array<{
+            __typename: 'SkuType',
+            skuId: number,
+            name?: string | null,
+            stock?: {
+              __typename: 'StockType',
+              inStock: number,
+              oversellable: number,
+              totalStock: number,
+              static?: number | null
+            } | null
+          } | null> | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        totalPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null> | null,
+      summary?: {
+        __typename: 'CartSummaryType',
+        fixedAmountDiscountIncVat: number,
+        fixedAmountDiscountExVat: number,
+        balance?: {
+          __typename: 'BalanceType',
+          pending: number,
+          pendingFormatted?: string | null,
+          totalSellingPriceExBalanceExVat: number,
+          totalSellingPriceExBalanceIncVat: number,
+          totalSellingPriceExBalanceIncVatFormatted?: string | null
+        } | null,
+        subTotal?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        shipping?: {
+          __typename: 'ShippingOptionType',
+          amountLeftToFreeShipping: number,
+          amountLeftToFreeShippingFormatted?: string | null,
+          feeExVatFormatted?: string | null,
+          feeIncVatFormatted?: string | null,
+          feeIncVat: number,
+          feeExVat: number,
+          isDefault: boolean
+        } | null,
+        total?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null
+    } | null,
+    consents?: Array<{
+      type: string,
+      checked: boolean
+    } | null> | null,
+    billingAddress?: {
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
+    shippingAddress?: {
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
+    shippingOptions?: Array<{
+      id: number,
+      displayName?: string | null,
+      logo?: string | null,
+      isSelected: boolean,
+      feeIncVatFormatted?: string | null,
+      feeExVatFormatted?: string | null
+    } | null> | null,
+    paymentOptions?: Array<{
+      id: number,
+      logo?: string | null,
+      displayName?: string | null,
+      checkoutType?: GeinsPaymentCheckout | null,
+      paymentType?: GeinsPaymentType | null,
+      paymentData?: string | null,
+      isSelected: boolean,
+      newCheckoutSession: boolean
+    } | null> | null
+  } | null
+};
+
+export type GeinsCheckoutSummaryVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  paymentType: GeinsPaymentType;
+  checkoutMarket?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsCheckoutSummaryType = {
+  checkout?: {
+    htmlSnippet?: string | null,
+    completed?: boolean | null,
+    nthPurchase: number,
+    order?: {
+      status?: string | null,
+      orderId?: string | null,
+      transactionId?: string | null,
+      externalOrderId?: string | null,
+      marketId: string,
+      languageId?: string | null,
+      message?: string | null,
+      metaData?: string | null,
+      customerId: number,
+      customerTypeId: number,
+      customerGroupId: number,
+      organizationNumber?: string | null,
+      ipAddress?: string | null,
+      paymentId: number,
+      shippingId: number,
+      pickupPoint?: string | null,
+      desiredDeliveryDate?: string | null,
+      promoCode?: string | null,
+      campaignIds?: Array<string | null> | null,
+      campaignNames?: Array<string | null> | null,
+      currency?: string | null,
+      discountExVat: number,
+      discountIncVat: number,
+      itemValueExVat: number,
+      itemValueIncVat: number,
+      orderValueExVat: number,
+      orderValueIncVat: number,
+      paymentFeeExVat: number,
+      paymentFeeIncVat: number,
+      shippingFeeExVat: number,
+      shippingFeeIncVat: number,
+      sum: number,
+      billingAddress?: {
+        company: string,
+        firstName: string,
+        lastName: string,
+        zip: string,
+        phone: string,
+        addressLine1: string,
+        addressLine2: string,
+        city: string,
+        country: string,
+        mobile: string,
+        careOf: string
+      } | null,
+      shippingAddress?: {
+        company: string,
+        firstName: string,
+        lastName: string,
+        zip: string,
+        phone: string,
+        addressLine1: string,
+        addressLine2: string,
+        city: string,
+        country: string,
+        mobile: string,
+        careOf: string
+      } | null,
+      rows?: Array<{
+        articleNumber?: string | null,
+        brand?: string | null,
+        categories?: Array<string | null> | null,
+        campaignIds?: Array<string | null> | null,
+        campaignNames?: Array<string | null> | null,
+        discountExVat: number,
+        discountIncVat: number,
+        discountRate: number,
+        externalId?: string | null,
+        gtin?: string | null,
+        imageUrl?: string | null,
+        height: number,
+        length: number,
+        width: number,
+        weight: number,
+        message?: string | null,
+        name?: string | null,
+        quantity: number,
+        sku?: string | null,
+        variant?: string | null,
+        priceExVat: number,
+        priceIncVat: number,
+        currency?: string | null,
+        productId: number,
+        productUrl?: string | null,
+        productPriceCampaignId?: number | null,
+        productPriceListId?: number | null
+      } | null> | null
+    } | null
+  } | null
+};
+
+export type GeinsCheckoutVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  paymentType: GeinsPaymentType;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  checkoutMarket?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsCheckoutType = {
+  checkout?: {
+    htmlSnippet?: string | null,
+    completed?: boolean | null,
+    nthPurchase: number,
+    order?: {
+      orderId?: string | null,
+      transactionId?: string | null,
+      firstName?: string | null,
+      lastName?: string | null,
+      email?: string | null,
+      zip?: string | null,
+      currency?: string | null,
+      itemValueExVat: number,
+      itemValueIncVat: number
+    } | null,
+    cart?: {
+      __typename: 'CartType',
+      id?: string | null,
+      isCompleted: boolean,
+      merchantData?: string | null,
+      promoCode?: string | null,
+      appliedCampaigns?: Array<{
+        __typename: 'CampaignRuleType',
+        campaignId: string,
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
+      items?: Array<{
+        __typename: 'CartItemType',
+        id: string | number,
+        groupKey?: string | number | null,
+        skuId: number,
+        quantity: number,
+        message?: string | null,
+        productPackage?: {
+          __typename: 'ProductPackageCartItemType',
+          packageId: number,
+          packageName: string,
+          groupId: number,
+          optionId: number
+        } | null,
+        campaign?: {
+          __typename: 'CampaignType',
+          appliedCampaigns?: Array<{
+            __typename: 'CampaignRuleType',
+            campaignId: string,
+            name?: string | null,
+            hideTitle?: boolean | null
+          } | null> | null,
+          prices?: Array<{
+            __typename: 'CampaignPriceType',
+            quantity: number,
+            price?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null
+          } | null> | null
+        } | null,
+        product?: {
+          __typename: 'ProductType',
+          productId: number,
+          articleNumber?: string | null,
+          name?: string | null,
+          alias: string,
+          canonicalUrl?: string | null,
+          brand?: {
+            __typename: 'BrandType',
+            name?: string | null
+          } | null,
+          productImages?: Array<{
+            __typename: 'ProductImageType',
+            fileName: string
+          } | null> | null,
+          primaryCategory?: {
+            __typename: 'CategoryType',
+            categoryId: number,
+            name: string,
+            order: number
+          } | null,
+          categories?: Array<{
+            __typename: 'CategoryType',
+            categoryId: number,
+            name: string,
+            order: number
+          } | null> | null,
+          skus?: Array<{
+            __typename: 'SkuType',
+            skuId: number,
+            name?: string | null,
+            stock?: {
+              __typename: 'StockType',
+              inStock: number,
+              oversellable: number,
+              totalStock: number,
+              static?: number | null
+            } | null
+          } | null> | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        totalPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null> | null,
+      summary?: {
+        __typename: 'CartSummaryType',
+        fixedAmountDiscountIncVat: number,
+        fixedAmountDiscountExVat: number,
+        balance?: {
+          __typename: 'BalanceType',
+          pending: number,
+          pendingFormatted?: string | null,
+          totalSellingPriceExBalanceExVat: number,
+          totalSellingPriceExBalanceIncVat: number,
+          totalSellingPriceExBalanceIncVatFormatted?: string | null
+        } | null,
+        subTotal?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        shipping?: {
+          __typename: 'ShippingOptionType',
+          amountLeftToFreeShipping: number,
+          amountLeftToFreeShippingFormatted?: string | null,
+          feeExVatFormatted?: string | null,
+          feeIncVatFormatted?: string | null,
+          feeIncVat: number,
+          feeExVat: number,
+          isDefault: boolean
+        } | null,
+        total?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null
+    } | null
+  } | null
+};
+
+export type GeinsValidateOrderConditionsVariablesType = Exact<{
+  cartId: Scalars['String']['input'];
+  email?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsValidateOrderConditionsType = {
+  validateOrderConditions?: {
+    isValid: boolean,
+    message?: string | null
+  } | null
+};
+
+export type GeinsValidateOrderCreationVariablesType = Exact<{
+  cartId: Scalars['String']['input'];
+  checkout: GeinsCheckoutInputTypeType;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsValidateOrderCreationType = {
+  validateOrderCreation?: {
+    isValid: boolean,
+    message?: string | null,
+    memberType?: string | null
+  } | null
+};
+
+export type GeinsPlaceOrderVariablesType = Exact<{
+  cartId: Scalars['String']['input'];
+  checkout: GeinsCheckoutInputTypeType;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsPlaceOrderType = {
+  placeOrder?: {
+    orderId?: string | null,
+    publicId?: string | null,
+    status?: string | null
+  } | null
+};
+
+export type GeinsGetOrderPublicVariablesType = Exact<{
+  publicOrderId: Scalars['Guid']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsGetOrderPublicType = {
+  getOrderPublic?: {
+    id?: number | null,
+    customerId?: number | null,
+    createdAt?: string | null,
+    completedAt?: string | null,
+    currency?: string | null,
+    desiredDeliveryDate?: string | null,
+    message?: string | null,
+    status: string,
+    updatedAt?: string | null,
+    publicId: string | number,
+    fromBalance: number,
+    fromBalanceFormatted?: string | null,
+    billingAddress?: {
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
+    shippingAddress?: {
+      firstName: string,
+      lastName: string,
+      company: string,
+      mobile: string,
+      phone: string,
+      careOf: string,
+      entryCode: string,
+      addressLine1: string,
+      addressLine2: string,
+      addressLine3: string,
+      zip: string,
+      city: string,
+      state: string,
+      country: string
+    } | null,
+    cart?: {
+      __typename: 'CartType',
+      id?: string | null,
+      isCompleted: boolean,
+      merchantData?: string | null,
+      promoCode?: string | null,
+      appliedCampaigns?: Array<{
+        __typename: 'CampaignRuleType',
+        campaignId: string,
+        name?: string | null,
+        hideTitle?: boolean | null
+      } | null> | null,
+      items?: Array<{
+        __typename: 'CartItemType',
+        id: string | number,
+        groupKey?: string | number | null,
+        skuId: number,
+        quantity: number,
+        message?: string | null,
+        productPackage?: {
+          __typename: 'ProductPackageCartItemType',
+          packageId: number,
+          packageName: string,
+          groupId: number,
+          optionId: number
+        } | null,
+        campaign?: {
+          __typename: 'CampaignType',
+          appliedCampaigns?: Array<{
+            __typename: 'CampaignRuleType',
+            campaignId: string,
+            name?: string | null,
+            hideTitle?: boolean | null
+          } | null> | null,
+          prices?: Array<{
+            __typename: 'CampaignPriceType',
+            quantity: number,
+            price?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null
+          } | null> | null
+        } | null,
+        product?: {
+          __typename: 'ProductType',
+          productId: number,
+          articleNumber?: string | null,
+          name?: string | null,
+          alias: string,
+          canonicalUrl?: string | null,
+          brand?: {
+            __typename: 'BrandType',
+            name?: string | null
+          } | null,
+          productImages?: Array<{
+            __typename: 'ProductImageType',
+            fileName: string
+          } | null> | null,
+          primaryCategory?: {
+            __typename: 'CategoryType',
+            categoryId: number,
+            name: string,
+            order: number
+          } | null,
+          categories?: Array<{
+            __typename: 'CategoryType',
+            categoryId: number,
+            name: string,
+            order: number
+          } | null> | null,
+          skus?: Array<{
+            __typename: 'SkuType',
+            skuId: number,
+            name?: string | null,
+            stock?: {
+              __typename: 'StockType',
+              inStock: number,
+              oversellable: number,
+              totalStock: number,
+              static?: number | null
+            } | null
+          } | null> | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        totalPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null> | null,
+      summary?: {
+        __typename: 'CartSummaryType',
+        fixedAmountDiscountIncVat: number,
+        fixedAmountDiscountExVat: number,
+        balance?: {
+          __typename: 'BalanceType',
+          pending: number,
+          pendingFormatted?: string | null,
+          totalSellingPriceExBalanceExVat: number,
+          totalSellingPriceExBalanceIncVat: number,
+          totalSellingPriceExBalanceIncVatFormatted?: string | null
+        } | null,
+        subTotal?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        shipping?: {
+          __typename: 'ShippingOptionType',
+          amountLeftToFreeShipping: number,
+          amountLeftToFreeShippingFormatted?: string | null,
+          feeExVatFormatted?: string | null,
+          feeIncVatFormatted?: string | null,
+          feeIncVat: number,
+          feeExVat: number,
+          isDefault: boolean
+        } | null,
+        total?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null
+    } | null,
+    paymentDetails?: Array<{
+      id: number,
+      paymentId: number,
+      transactionId: string,
+      displayName: string,
+      name: string,
+      isPaid: boolean,
+      paymentDate?: string | null,
+      paymentFee: number,
+      paymentOption?: string | null,
+      reservationDate: string,
+      reservationNumber?: string | null,
+      shippingFee: number,
+      total: number
+    } | null> | null,
+    discount?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    orderTotal?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    paymentFee?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    shippingFee?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    vat?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    refunds?: Array<{
+      id: number,
+      itemId: number,
+      articleNumber?: string | null,
+      createdAt: string,
+      reason?: string | null,
+      reasonCode?: number | null,
+      refundType?: string | null,
+      toBalance: boolean,
+      total: number,
+      vat: number
+    } | null> | null,
+    shippingDetails?: Array<{
+      id: number,
+      name: string,
+      parcelNumber?: string | null,
+      shippingDate?: string | null,
+      shippingId: number,
+      trackingLink?: string | null
+    } | null> | null
+  } | null
 };
 
 /**
@@ -3359,20 +8792,20 @@ export type GeinsUpdateCartItemType = {
 
 /**
  * @typedef {Object} AddressType
- * @property {string} addressLine1
- * @property {string} addressLine2
- * @property {string} addressLine3
- * @property {string} careOf
- * @property {string} city
- * @property {string} company
- * @property {string} country
- * @property {string} entryCode
- * @property {string} firstName
- * @property {string} lastName
- * @property {string} mobile
- * @property {string} phone
- * @property {string} state
- * @property {string} zip
+ * @property {string} addressLine1 - The first line of the address.
+ * @property {string} addressLine2 - The second line of the address.
+ * @property {string} addressLine3 - The third line of the address.
+ * @property {string} careOf - The care of (c/o) name for the address.
+ * @property {string} city - The city of the address.
+ * @property {string} company - The company name associated with the address.
+ * @property {string} country - The country of the address. Can be either a valid english country name or ISO code
+ * @property {string} entryCode - The entry code for the address.
+ * @property {string} firstName - The first name of the address holder.
+ * @property {string} lastName - The last name of the address holder.
+ * @property {string} mobile - The mobile phone number associated with the address.
+ * @property {string} phone - The phone number associated with the address.
+ * @property {string} state - The state of the address.
+ * @property {string} zip - The zip code of the address.
  */
 
 /**
@@ -3494,6 +8927,7 @@ export type GeinsUpdateCartItemType = {
  * @property {CampaignType} [campaign] - Campaign
  * @property {string} [groupKey] - The key of the group that this cart item belong to
  * @property {string} id - Cart item Id
+ * @property {boolean} isCampaignFreeGift - Indicates if the cart item is a free gift from a campaign
  * @property {string} [message] - Custom message
  * @property {ProductType} [product] - Product
  * @property {ProductPackageCartItemType} [productPackage] - Contains package meta data if the cart item was part of package
@@ -3526,6 +8960,7 @@ export type GeinsUpdateCartItemType = {
  * @property {string} [id] - The cart ID
  * @property {boolean} isCompleted - If true, the cart can not be modified further
  * @property {Array<(CartItemType|null|undefined)>} [items] - The cart items
+ * @property {string} [merchantData] - Cart merchant data
  * @property {string} [promoCode] - Cart promo code
  * @property {CartSummaryType} [summary] - The cart summary
  */
@@ -3580,20 +9015,28 @@ export type GeinsUpdateCartItemType = {
 
 /**
  * @typedef {Object} CheckoutInputType
- * @property {Array<(string|null|undefined)>} [acceptedConsents]
- * @property {AddressInputType} [billingAddress]
- * @property {CustomerType} [customerType]
- * @property {DateTime} [desiredDeliveryDate]
- * @property {string} [email]
- * @property {Decimal} [externalShippingFee]
- * @property {string} [externalShippingId]
- * @property {string} [identityNumber]
- * @property {string} [merchantData]
- * @property {string} [message]
- * @property {number} [paymentId]
- * @property {string} [pickupPoint]
- * @property {AddressInputType} [shippingAddress]
- * @property {number} [shippingId]
+ * @property {Array<(string|null|undefined)>} [acceptedConsents] - The consents accepted by the customer.
+ * @property {AddressInputType} [billingAddress] - The billing address for the order.
+ * @property {CheckoutUrlsInputType} [checkoutUrls] - The URLs for the checkout process. These are optional and if not supplied,
+ * default values configured in the respective integration to the payment
+ * provider will be used. Placeholders that can be used in the URLs:
+ * {geins.cartid} - the cart id, {payment.uid} - the unique payment identifier
+ * (external order id). Note that some payment providers do not support this and
+ * others only accept https.
+ * @property {CustomerType} [customerType] - The type of customer.
+ * @property {DateTime} [desiredDeliveryDate] - The desired delivery date for the order.
+ * @property {string} [email] - The email address of the customer.
+ * @property {Decimal} [externalShippingFee] - The external shipping fee for the order.
+ * @property {string} [externalShippingId] - The external ID of the shipping method.
+ * @property {string} [identityNumber] - The identity number of the customer.
+ * @property {string} [merchantData] - Additional data from the merchant.
+ * @property {string} [message] - A message from the customer.
+ * @property {number} [paymentId] - The ID of the payment method.
+ * @property {string} [pickupPoint] - The pickup point for the order.
+ * @property {AddressInputType} [shippingAddress] - The shipping address for the order.
+ * @property {number} [shippingId] - The ID of the shipping method.
+ * @property {boolean} [skipShippingValidation] - When set to true, the submitted ShippingId will be set on the order regardless
+ * of it being available in the list of shipping options.
  */
 
 /**
@@ -3603,6 +9046,7 @@ export type GeinsUpdateCartItemType = {
  * @property {Array<(string|null|undefined)>} [campaignIds] - Campaign IDs
  * @property {Array<(string|null|undefined)>} [campaignNames] - Campaign names
  * @property {Array<(string|null|undefined)>} [categories] - Categories
+ * @property {string} [currency] - Currency ISO code
  * @property {Decimal} discountExVat - Discount excl. VAT
  * @property {Decimal} discountIncVat - Discount incl. VAT
  * @property {number} discountRate - Discount rate
@@ -3628,30 +9072,56 @@ export type GeinsUpdateCartItemType = {
 
 /**
  * @typedef {Object} CheckoutOrderType
+ * @property {string} [address1] - Address Line 1 - DEPRECATED: Use Billing Address instead
+ * @property {string} [address2] - Address Line 2 - DEPRECATED: Use Billing Address instead
+ * @property {Decimal} balance - Amount used from Balance
+ * @property {AddressType} [billingAddress] - Billing address
  * @property {Array<(string|null|undefined)>} [campaignIds] - Campaign IDs
  * @property {Array<(string|null|undefined)>} [campaignNames] - Campaign names
+ * @property {string} [city] - City - DEPRECATED: Use Billing Address instead
+ * @property {string} [company] - Company - DEPRECATED: Use Billing Address instead
+ * @property {string} [country] - Country - DEPRECATED: Use Billing Address instead
  * @property {string} [currency] - Currency
+ * @property {number} customerGroupId - CustomerGroup ID
+ * @property {number} customerId - Customer ID
+ * @property {number} customerTypeId - Customer Type ID
+ * @property {DateTime} [desiredDeliveryDate] - Desired Delivery Date
  * @property {Decimal} discountExVat - Discount excl. VAT
  * @property {Decimal} discountIncVat - Discount incl. VAT
- * @property {string} [email] - E-mail
- * @property {string} [firstName] - First name
- * @property {Decimal} itemValueExVat - Item-value excl. VAT
- * @property {Decimal} itemValueIncVat - Item-value incl. VAT
- * @property {string} [lastName] - Last name
+ * @property {string} [email] - E-mail - DEPRECATED: Use Billing Address instead
+ * @property {string} [externalOrderId] - External Order ID
+ * @property {string} [firstName] - First name - DEPRECATED: Use Billing Address instead
+ * @property {GenderType} gender - Gender
+ * @property {string} [ipAddress] - IP Address
+ * @property {Decimal} itemValueExVat - Represents the total sum of the prices for all order rows, excluding VAT
+ * @property {Decimal} itemValueIncVat - Represents the total sum of the prices for all order rows
+ * @property {string} [languageId] - Locale
+ * @property {string} [lastName] - Last name - DEPRECATED: Use Billing Address instead
  * @property {string} marketId - Market ID.
  * @property {string} [message] - Order message
+ * @property {string} [metaData] - Meta Data
  * @property {string} [orderId] - Order ID
- * @property {Decimal} orderValueExVat - Order excl. VAT
- * @property {Decimal} orderValueIncVat - Order incl. VAT
- * @property {Decimal} paymentFeeExVat - Payment excl. VAT
- * @property {Decimal} paymentFeeIncVat - Payment incl. VAT
+ * @property {Decimal} orderValueExVat - Order value excluding VAT (item value + fees - balance)
+ * @property {Decimal} orderValueIncVat - Order value including VAT (item value + fees - balance)
+ * @property {string} [organizationNumber] - Organization Number
+ * @property {Decimal} paymentFeeExVat - Payment fee excl. VAT
+ * @property {Decimal} paymentFeeIncVat - Payment fee incl. VAT
+ * @property {number} paymentId - Payment ID
+ * @property {string} [personalId] - Personal ID
+ * @property {string} [phone] - Phone number - DEPRECATED: Use Billing Address instead
+ * @property {string} [pickupPoint] - Pickup Point
+ * @property {string} [promoCode] - Promo Code
  * @property {Array<(CheckoutOrderRowType|null|undefined)>} [rows] - Order rows
- * @property {string} [secondaryTransactionId] - Secondary transaction ID
- * @property {Decimal} shippingFeeExVat - Shipping excl. VAT
- * @property {Decimal} shippingFeeIncVat - Shipping incl. VAT
- * @property {Decimal} sum - Order sum
- * @property {string} [transactionId] - Transaction ID
- * @property {string} [zip] - Zip code
+ * @property {string} [secondaryTransactionId] - Secondary transaction ID - DEPRECATED: Not used any more
+ * @property {AddressType} [shippingAddress] - Shipping address
+ * @property {Decimal} shippingFeeExVat - Shipping fee excl. VAT
+ * @property {Decimal} shippingFeeIncVat - Shipping fee incl. VAT
+ * @property {number} shippingId - Shipping ID
+ * @property {string} [status] - Order Status
+ * @property {Decimal} sum - Order sum. Amount to pay.
+ * @property {string} [transactionId] - Payment Provider Transaction ID
+ * @property {string} [userAgent] - User Agent
+ * @property {string} [zip] - Zip code - DEPRECATED: Use Billing Address instead
  */
 
 /**
@@ -3663,13 +9133,20 @@ export type GeinsUpdateCartItemType = {
  * @property {AddressType} [billingAddress]
  * @property {CartType} [cart]
  * @property {CheckoutStatus} [checkoutStatus]
- * @property {Array<(ConsentType|null|undefined)>} [consents]
+ * @property {Array<(ConsentType|null|undefined)>} [consents] - DEPRECATED: The consent module is not supported any more.
  * @property {string} [email]
  * @property {string} [identityNumber]
  * @property {Array<(PaymentOptionType|null|undefined)>} [paymentOptions]
  * @property {AddressType} [shippingAddress]
  * @property {string} [shippingData]
  * @property {Array<(ShippingOptionType|null|undefined)>} [shippingOptions]
+ */
+
+/**
+ * @typedef {Object} CheckoutUrlsInputType
+ * @property {string} [checkoutPageUrl] - The absolute URL to the Checkout page.
+ * @property {string} [redirectUrl] - The absolute redirect URL. This is usually the URL to which the payment provider redirects after a successful payment.
+ * @property {string} [termsPageUrl] - The absolute URL to the Terms page.
  */
 
 /**
@@ -3703,7 +9180,9 @@ export type GeinsUpdateCartItemType = {
  */
 
 /**
- * The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+ * The `DateTime` scalar type represents a date and time. `DateTime` expects
+ * timestamps to be formatted in accordance with the
+ * [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
  * @typedef {*} DateTime
  */
 
@@ -3720,7 +9199,7 @@ export type GeinsUpdateCartItemType = {
  */
 
 /**
- * @typedef {("NONE"|"PRICE_CAMPAIGN"|"SALE_PRICE")} DiscountType
+ * @typedef {("EXTERNAL"|"NONE"|"PRICE_CAMPAIGN"|"SALE_PRICE")} DiscountType
  */
 
 /**
@@ -3733,14 +9212,29 @@ export type GeinsUpdateCartItemType = {
 /**
  * Filter options
  * @typedef {Object} FilterInputType
- * @property {Array<(string|null|undefined)>} [exclude] - A list of string values, that when specified will exclude products that are associated with one of the facets
+ * @property {Array<(string|null|undefined)>} [articleNumbers] - A list of article numbers to filter on. The maximum number of values is 600.
+ * If Product IDs filter is present, it takes priority and the article number
+ * filter will not be applied. When the article number filter is set, no other
+ * filters will be applied. The result is sorted in the exact same way as the
+ * input list regardless of what sort method has been set.
+ * @property {Array<(number|null|undefined)>} [brandIds] - A list of brand IDs to filter on. When set, all matching brands will be added to the include filter.
+ * @property {Array<(number|null|undefined)>} [categoryIds] - A list of category IDs to filter on. When set, all matching categories will be added to the include filter.
+ * @property {Array<(number|null|undefined)>} [discountCampaignIds] - A list of discount campaign IDs to filter on. When set, all matching campaigns will be added to the include filter.
+ * @property {Array<(string|null|undefined)>} [exclude] - A list of string values, that when specified will exclude products that are associated with one of those values
+ * @property {Array<(number|null|undefined)>} [excludeBrandIds] - A list of brand IDs to filter on. When set, all matching brands will be added to the exclude filter.
+ * @property {Array<(number|null|undefined)>} [excludeCategoryIds] - A list of category IDs to filter on. When set, all matching categories will be added to the exclude filter.
+ * @property {Array<(number|null|undefined)>} [excludeDiscountCampaignIds] - A list of discount campaign IDs to filter on. When set, all matching campaigns will be added to the exclude filter.
  * @property {Array<(string|null|undefined)>} [excludeFacets] - A list of string values, that when specified will exclude products that are associated with one of the facets
  * @property {Array<(string|null|undefined)>} [facets] - A list of string values, that when specified will only include products associated with those values
  * @property {FilterMode} [filterMode] - Filter mode
  * @property {Array<(string|null|undefined)>} [include] - A list of string values, that when specified will only include products associated with those values
  * @property {boolean} [includeCollapsed] - Include collapsed products
+ * @property {IncludeMode} [includeMode] - A value to control how values in the Include-field are combined logically.
  * @property {PriceFilterInputType} [price] - Price filter
- * @property {Array<(number|null|undefined)>} [productIds] - A list of product ids to filter on
+ * @property {string} [priceListIdentifier] - Limits products to only those found in the price list with the specified identifier.
+ * @property {Array<(number|null|undefined)>} [productIds] - A list of product IDs to filter on. The maximum number of values is 600. When
+ * the product IDs filter is set, no other filters will be applied. The result is
+ * sorted in the exact same way as the input list regardless of what sort method has been set.
  * @property {string} [searchText] - Search text to filter by
  * @property {SortType} [sort] - Use this to sort the results in a particular way
  */
@@ -3756,6 +9250,7 @@ export type GeinsUpdateCartItemType = {
  * @property {string} filterId - ID for this filter type
  * @property {string} [group] - Parameter group name
  * @property {string} [label] - Parameter group display name
+ * @property {number} order - The display order of this filter group. Only supported for type Parameter
  * @property {string} [type] - Filter type. e.g. 'Parameter', 'Category', 'Sku'
  * @property {Array<(FilterValueType|null|undefined)>} [values] - Collection of facet values in this group
  */
@@ -3774,7 +9269,68 @@ export type GeinsUpdateCartItemType = {
  */
 
 /**
- * @typedef {("MAN"|"UNSPECIFIED"|"WOMAN")} Gender
+ * @typedef {Object} GeinsMerchantApiMutation
+ * @property {CartType} [addPackageToCart]
+ * @property {CartType} [addToCart]
+ * @property {CartType} [clearCart] - Clears all items in the cart
+ * @property {CartType} [cloneCart] - Clones the cart
+ * @property {boolean} [commitReset]
+ * @property {CartType} [completeCart] - Marks the cart as completed, and makes it read-only
+ * @property {CheckoutType} [createOrUpdateCheckout]
+ * @property {boolean} [deleteUser]
+ * @property {boolean} [monitorProductAvailability]
+ * @property {PlaceOrderResponseType} [placeOrder]
+ * @property {boolean} [postProductReview]
+ * @property {boolean} [requestPasswordReset]
+ * @property {CartType} [setCartMerchantData] - Set custom merchant data on the cart
+ * @property {CartType} [setCartPromoCode] - Set a promo code on the cart
+ * @property {CheckoutType} [setCartShippingFee]
+ * @property {boolean} [subscribeToNewsletter]
+ * @property {CartType} [updateCartGroup] - Update the quantity of an entire cart group
+ * @property {CartType} [updateCartItem] - Update the cart item
+ * @property {UserType} [updateUser]
+ */
+
+/**
+ * @typedef {Object} GeinsMerchantApiQuery
+ * @property {Array<(BrandListType|null|undefined)>} [brands] - Get all brands.
+ * @property {Array<(CategoryType|null|undefined)>} [categories] - Get all categories.
+ * @property {CategoryType} [category] - Gets a category with the specified ID. Use either alias or categoryId. If both are provided, categoryId will be used.
+ * @property {ChannelType} [channel] - Gets a channel with the specified ID.
+ * @property {Array<(ChannelType|null|undefined)>} [channels] - Gets all available channels.
+ * @property {CheckoutDataType} [checkout] - Gets checkout data with a html snippet, checkout order data for the specified
+ * order and the User. If the order was recently completed, the html snippet will
+ * contain the "Thank you"-content.
+ * @property {Array<(PageWidgetPageType|null|undefined)>} [cmsPages] - Gets all CMS pages.
+ * @property {CartType} [getCart] - Get the cart
+ * @property {string} [getCheckout] - Gets html snippet for the specified external order. If the order was recently
+ * completed, the html snippet will contain the "Thank you"-content. - DEPRECATED: Use Checkout instead
+ * @property {CheckoutAndOrderType} [getCheckoutAndOrder] - Gets html snippet and checkout order data for the specified external order. If
+ * the order was recently completed, the html snippet will contain the "Thank you"-content. - DEPRECATED: Use Checkout instead
+ * @property {MenuType} [getMenuAtLocation] - Get a menu
+ * @property {OrderType} [getOrder] - Get a specific order with details
+ * @property {OrderType} [getOrderPublic] - Get a specific order with details via public id
+ * @property {Array<(OrderType|null|undefined)>} [getOrders] - Get orders for the current user
+ * @property {UserType} [getUser] - Get the current user
+ * @property {PageInfoType} [listPageInfo] - Gets information about the specified list page.
+ * @property {ProductType} [product] - Gets a product with the specified ID. Use either alias or productId. If both are provided, productId will be used.
+ * @property {ProductsResultType} [products] - Gets all products according to the values provided.
+ * @property {Array<(RelatedProductType|null|undefined)>} [relatedProducts] - Gets related products for the specified alias.
+ * @property {ProductReviewResultType} [reviews] - Gets all products reviews to the values provided.
+ * @property {UrlHistoryType} [urlHistory] - Gets an alternate url for a given url.
+ * @property {ValidateOrderConditionsResponseType} [validateOrderConditions] - Validates the conditions required for placing an order, including product
+ * stock availability, customer balance, payment method selection, shipping
+ * method selection, and customer eligibility to complete the purchase.
+ * @property {ValidateOrderCreationResponseType} [validateOrderCreation] - DEPRECATED: Use ValidateOrderConditions instead
+ * @property {PageWidgetCollectionType} [widgetArea] - Gets the page area and widgets from the specifed family.
+ */
+
+/**
+ * @typedef {("MAN"|"UNSET"|"UNSPECIFIED"|"WOMAN")} Gender
+ */
+
+/**
+ * @typedef {("FEMALE"|"MALE"|"UNKNOWN")} GenderType
  */
 
 /**
@@ -3803,6 +9359,10 @@ export type GeinsUpdateCartItemType = {
  */
 
 /**
+ * @typedef {("INTERSECT"|"UNION")} IncludeMode
+ */
+
+/**
  * Type containing all information about the language-type
  * @typedef {Object} LanguageType
  * @property {string} code - Two-letter ISO code
@@ -3815,7 +9375,9 @@ export type GeinsUpdateCartItemType = {
  */
 
 /**
- * Type containing information about the lowest price during last 30 days and the legal comparison price (EU). Observe that discount is calculated against comparison price and not the regular price.
+ * Type containing information about the lowest price during last 30 days and the
+ * legal comparison price (EU). Observe that discount is calculated against
+ * comparison price and not the regular price.
  * @typedef {Object} LowestPriceType
  * @property {Decimal} comparisonPriceExVat - The comparison price excluding VAT
  * @property {string} [comparisonPriceExVatFormatted] - Comparison price (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
@@ -3888,29 +9450,10 @@ export type GeinsUpdateCartItemType = {
  */
 
 /**
- * @typedef {Object} Mutation
- * @property {CartType} [addPackageToCart]
- * @property {CartType} [addToCart]
- * @property {boolean} [commitReset]
- * @property {CartType} [completeCart] - Marks the cart as completed, and makes it read-only
- * @property {CheckoutType} [createOrUpdateCheckout]
- * @property {boolean} [deleteUser]
- * @property {boolean} [monitorProductAvailability]
- * @property {PlaceOrderResponseType} [placeOrder]
- * @property {boolean} [postProductReview]
- * @property {boolean} [requestPasswordReset]
- * @property {CartType} [setCartPromoCode] - Set a promo code on the cart
- * @property {CheckoutType} [setCartShippingFee]
- * @property {boolean} [subscribeToNewsletter]
- * @property {CartType} [updateCartGroup] - Update the quantity of an entire cart group
- * @property {CartType} [updateCartItem] - Update the cart item
- * @property {UserType} [updateUser]
- */
-
-/**
  * Type containing information for an option in a product package group
  * @typedef {Object} OptionType
  * @property {boolean} isSelected - 'true' if this option should be selected by default
+ * @property {string} [name] - The name of the option
  * @property {number} optionId - The option id
  * @property {ProductType} [product] - The product that this options refers to
  * @property {number} quantity - The quantity of items that is chosen if this option is selected
@@ -3975,8 +9518,8 @@ export type GeinsUpdateCartItemType = {
 /**
  * Type for filtering widgets
  * @typedef {Object} PageWidgetCollectionFilterInputType
- * @property {string} [key] - Filter key
- * @property {string} [value] - Filter value
+ * @property {string} [key] - Filter key. Possible values: SiteId, LanguageId, Product, Category, Brand, DiscountCampaign, CustomerType, Parameter
+ * @property {string} [value] - Filter value. Id (int) or Alias
  */
 
 /**
@@ -4052,6 +9595,7 @@ export type GeinsUpdateCartItemType = {
  * Type containing product parameter group information
  * @typedef {Object} ParameterGroupType
  * @property {string} name - The parameter group name
+ * @property {number} [order] - The parameter group order
  * @property {number} [parameterGroupId] - Parameter group ID
  * @property {Array<(ParameterType|null|undefined)>} [parameters] - List of parameters
  * @property {number} productId - Product ID associated with this parameter group
@@ -4062,15 +9606,22 @@ export type GeinsUpdateCartItemType = {
  * @typedef {Object} ParameterType
  * @property {string} [description] - Parameter description
  * @property {string} [facetId] - The ID of the associated facet
- * @property {string} [identifier] - The internal identifier of the parameter. This value is the same for all languages and does not change if the parameter name changes.
+ * @property {string} [identifier] - The internal identifier of the parameter. This value is the same for all
+ * languages and does not change if the parameter name changes.
  * @property {string} [label] - Parameter label
  * @property {string} [name] - Parameter name
+ * @property {number} order - The order of the parameter within the group
  * @property {number} parameterGroupId - ID of the associated parameter group
  * @property {number} parameterId - Parameter ID
+ * @property {number} [parameterValueId] - The ID of the associated parameter value
  * @property {boolean} show - Whether this parameter should be shown within the product specifications
  * @property {boolean} showFilter - Whether this parameter should be shown within filter options
  * @property {string} [type] - The parameter type
  * @property {string} [value] - Parameter value
+ */
+
+/**
+ * @typedef {("EXTERNAL"|"GEINS_PAY"|"STANDARD")} PaymentCheckout
  */
 
 /**
@@ -4093,6 +9644,7 @@ export type GeinsUpdateCartItemType = {
 /**
  * Type containing payment option information
  * @typedef {Object} PaymentOptionType
+ * @property {PaymentCheckout} [checkoutType] - Checkout type
  * @property {string} [displayName] - Display name
  * @property {Decimal} feeExVat - Fee excl. VAT
  * @property {string} [feeExVatFormatted] - Fee excl. VAT, formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
@@ -4110,12 +9662,13 @@ export type GeinsUpdateCartItemType = {
 
 /**
  * Payment types
- * @typedef {("AVARDA"|"KLARNA"|"STANDARD"|"SVEA"|"WALLEY")} PaymentType
+ * @typedef {("AVARDA"|"GEINS_PAY"|"KLARNA"|"STANDARD"|"SVEA"|"WALLEY")} PaymentType
  */
 
 /**
  * @typedef {Object} PlaceOrderResponseType
  * @property {string} [orderId]
+ * @property {string} [publicId]
  * @property {string} [redirectUrl]
  * @property {string} [status]
  */
@@ -4160,6 +9713,7 @@ export type GeinsUpdateCartItemType = {
 /**
  * Type containing price information
  * @typedef {Object} PriceType
+ * @property {CurrencyType} [currency] - Currency information
  * @property {Decimal} discountExVat - Discount amount excluding VAT
  * @property {string} [discountExVatFormatted] - Discount (excl. VAT), formatted with currency info. e.g. '299 kr', '123,45 SEK', '$12.34'
  * @property {Decimal} discountIncVat - Discount amount including VAT
@@ -4253,7 +9807,7 @@ export type GeinsUpdateCartItemType = {
  * @property {VariantType} [currentProductVariant] - The current variant selection
  * @property {DimensionsType} [dimensions] - The dimensions of the Product. Note that this can also be set on SKU level
  * @property {Array<(CampaignRuleType|null|undefined)>} [discountCampaigns] - Product discount campaigns
- * @property {DiscountType} [discountType] - Type of discount price: None, Sale or Campaign
+ * @property {DiscountType} [discountType] - Type of discount price: None, SalePrice, PriceCampaign or External
  * @property {string} [firstAvailableOn] - The date on which the product was first available (yyyy-mm-dd)
  * @property {string} [freightClass] - The Freightclass set for this product
  * @property {Array<(string|null|undefined)>} [images] - List of product images - DEPRECATED: Use ProductType.ProductImages instead.
@@ -4284,34 +9838,6 @@ export type GeinsUpdateCartItemType = {
  * @property {Long} count - The total count of results for the query
  * @property {FilterCollectionType} [filters] - The filters available for this query
  * @property {Array<(ProductType|null|undefined)>} [products] - Results returned by the query
- */
-
-/**
- * Gets all available channels
- * @typedef {Object} Query
- * @property {Array<(BrandListType|null|undefined)>} [brands] - Get all brands.
- * @property {Array<(CategoryType|null|undefined)>} [categories] - Get all categories.
- * @property {CategoryType} [category] - Gets a category with the specified ID.
- * @property {ChannelType} [channel] - Gets a channel with the specified ID.
- * @property {Array<(ChannelType|null|undefined)>} [channels]
- * @property {CheckoutDataType} [checkout] - Gets checkout data with a html snippet, checkout order data for the specified order and the User. If the order was recently completed, the html snippet will contain the "Thank you"-content.
- * @property {Array<(PageWidgetPageType|null|undefined)>} [cmsPages] - Gets all CMS pages.
- * @property {CartType} [getCart] - Get the cart
- * @property {string} [getCheckout] - Gets html snippet for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content. - DEPRECATED: Use Checkout instead
- * @property {CheckoutAndOrderType} [getCheckoutAndOrder] - Gets html snippet and checkout order data for the specified external order. If the order was recently completed, the html snippet will contain the "Thank you"-content. - DEPRECATED: Use Checkout instead
- * @property {MenuType} [getMenuAtLocation] - Get a menu
- * @property {OrderType} [getOrder] - Get a specific order with details
- * @property {OrderType} [getOrderPublic] - Get a specific order with details via public id
- * @property {Array<(OrderType|null|undefined)>} [getOrders] - Get orders for the current user
- * @property {UserType} [getUser] - Get the current user
- * @property {PageInfoType} [listPageInfo] - Gets information about the specified list page.
- * @property {ProductType} [product] - Gets a product with the specified ID.
- * @property {ProductsResultType} [products] - Gets all products according to the values provided.
- * @property {Array<(RelatedProductType|null|undefined)>} [relatedProducts] - Gets related products for the specified alias.
- * @property {ProductReviewResultType} [reviews] - Gets all products reviews to the values provided.
- * @property {UrlHistoryType} [urlHistory] - Gets an alternate url for a given url.
- * @property {ValidateOrderCreationResponseType} [validateOrderCreation]
- * @property {PageWidgetCollectionType} [widgetArea] - Gets the page area and widgets from the specifed family.
  */
 
 /**
@@ -4407,14 +9933,15 @@ export type GeinsUpdateCartItemType = {
  */
 
 /**
- * Type containing information about SKU stock
+ * Represents SKU stock information.
  * @typedef {Object} StockType
- * @property {number} inStock - The units available at this moment
- * @property {DateTime} [incoming] - Incoming date - DEPRECATED: Use SkuType.Incoming or VariantType.Incoming instead
- * @property {number} oversellable - Over-sellable units
- * @property {string} [shelf] - Shelf - DEPRECATED: Use SkuType.Shelf or VariantType.Shelf instead
- * @property {number} [static] - Amount of units that are always available
- * @property {number} totalStock - The total units available
+ * @property {number} inStock - Number of units currently available in the warehouse.
+ * @property {DateTime} [incoming] - The date when new stock is arriving. (Deprecated: Use SkuType.Incoming or VariantType.Incoming instead) - DEPRECATED: Use SkuType.Incoming or VariantType.Incoming instead
+ * @property {number} oversellable - Number of units that can be oversold.
+ * @property {string} [shelf] - The shelf identifier for the stock. (Deprecated: Use SkuType.Shelf or VariantType.Shelf instead) - DEPRECATED: Use SkuType.Shelf or VariantType.Shelf instead
+ * @property {number} [static] - Number of units that are always available for sale. This value is never
+ * lowered when goods are sold or increased when goods are returned.
+ * @property {number} totalStock - Total number of units available for sale. TotalStock = InStock + OverSellable + Static.
  */
 
 /**
@@ -4442,19 +9969,25 @@ export type GeinsUpdateCartItemType = {
 
 /**
  * @typedef {Object} UserType
- * @property {AddressType} [address]
+ * @property {AddressType} [address] - The address of the user.
  * @property {Decimal} balance - Account balance - DEPRECATED: Use Balances instead
  * @property {string} [balanceFormatted] - Account balance. Formatted as a currency string. - DEPRECATED: Use Balances instead
  * @property {Array<(UserBalanceType|null|undefined)>} [balances] - User balance per currency
- * @property {CustomerType} [customerType]
- * @property {string} email
- * @property {Gender} [gender]
- * @property {number} id
- * @property {number} memberId
- * @property {string} memberType
+ * @property {CustomerType} [customerType] - The customer type of the user.
+ * @property {string} email - The email address of the user.
+ * @property {Gender} [gender] - The gender of the user.
+ * @property {number} id - The unique identifier of the user.
+ * @property {number} memberId - The membership identifier of the user.
+ * @property {string} memberType - The type of membership the user has.
  * @property {string} [metaData] - Free-text field that can contain any additional metadata related to the customer.
- * @property {boolean} [newsletter]
- * @property {string} [personalId]
+ * @property {boolean} [newsletter] - Indicates if the user is subscribed to the newsletter.
+ * @property {string} [personalId] - The personal identification number of the user.
+ */
+
+/**
+ * @typedef {Object} ValidateOrderConditionsResponseType
+ * @property {boolean} isValid
+ * @property {string} [message]
  */
 
 /**

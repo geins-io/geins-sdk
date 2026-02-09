@@ -51,15 +51,12 @@ describe('GeinsOMS Shape', () => {
     expect(typeof oms.checkout.generateExternalCheckoutUrlParameters).toBe('function');
   });
 
-  it('cart service should expose methods', () => {
+  it('cart service should expose stateless methods', () => {
     expect(oms.cart.create).toBeDefined();
     expect(typeof oms.cart.create).toBe('function');
 
     expect(oms.cart.get).toBeDefined();
     expect(typeof oms.cart.get).toBe('function');
-
-    expect(oms.cart.refresh).toBeDefined();
-    expect(typeof oms.cart.refresh).toBe('function');
 
     expect(oms.cart.copy).toBeDefined();
     expect(typeof oms.cart.copy).toBe('function');
@@ -67,30 +64,26 @@ describe('GeinsOMS Shape', () => {
     expect(oms.cart.complete).toBeDefined();
     expect(typeof oms.cart.complete).toBe('function');
 
-    expect(oms.cart.remove).toBeDefined();
-    expect(typeof oms.cart.remove).toBe('function');
+    expect(oms.cart.addItem).toBeDefined();
+    expect(typeof oms.cart.addItem).toBe('function');
 
-    expect(oms.cart.merchantData).toBeDefined();
-    expect(typeof oms.cart.merchantData).toBe('object');
+    expect(oms.cart.updateItem).toBeDefined();
+    expect(typeof oms.cart.updateItem).toBe('function');
 
-    // items
-    expect(oms.cart.items).toBeDefined();
-    expect(typeof oms.cart.items).toBe('object');
+    expect(oms.cart.deleteItem).toBeDefined();
+    expect(typeof oms.cart.deleteItem).toBe('function');
 
-    expect(oms.cart.items.get).toBeDefined();
-    expect(typeof oms.cart.items.get).toBe('function');
+    expect(oms.cart.setPromotionCode).toBeDefined();
+    expect(typeof oms.cart.setPromotionCode).toBe('function');
 
-    expect(oms.cart.items.update).toBeDefined();
-    expect(typeof oms.cart.items.update).toBe('function');
+    expect(oms.cart.removePromotionCode).toBeDefined();
+    expect(typeof oms.cart.removePromotionCode).toBe('function');
 
-    expect(oms.cart.items.remove).toBeDefined();
-    expect(typeof oms.cart.items.remove).toBe('function');
+    expect(oms.cart.setShippingFee).toBeDefined();
+    expect(typeof oms.cart.setShippingFee).toBe('function');
 
-    expect(oms.cart.items.add).toBeDefined();
-    expect(typeof oms.cart.items.add).toBe('function');
-
-    expect(oms.cart.items.remove).toBeDefined();
-    expect(typeof oms.cart.items.remove).toBe('function');
+    expect(oms.cart.setMerchantData).toBeDefined();
+    expect(typeof oms.cart.setMerchantData).toBe('function');
   });
 
   it('order service should expose methods', () => {

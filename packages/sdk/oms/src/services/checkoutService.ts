@@ -1,4 +1,5 @@
-import { BaseApiService, FetchPolicyOptions, decodeJWT, encodeJWT, parseErrorMessage } from '@geins/core';
+import { BaseApiService, CheckoutError, FetchPolicyOptions, GeinsError, GeinsErrorCode, decodeJWT, encodeJWT, parseErrorMessage } from '@geins/core';
+import type { ApiClientGetter, GraphQLQueryOptions } from '@geins/core';
 
 import type {
   CheckoutInputType,
@@ -16,7 +17,6 @@ import type {
   ValidateOrderCreationResponseType,
 } from '@geins/core';
 
-import { GeinsOMS } from '../geinsOMS';
 import { queries } from '../graphql';
 import { parseCheckout, parseCheckoutSummary, parseOrder, parseValidateOrderConditions } from '../parsers';
 import { CheckoutDataResolver, UrlProcessor } from '../util';
@@ -108,17 +108,16 @@ export interface CheckoutServiceInterface {
 
 export class CheckoutService extends BaseApiService implements CheckoutServiceInterface {
   private readonly dataResolver;
-  private _settings!: OMSSettings;
+  private _settings: OMSSettings;
 
   constructor(
-    apiClient: any,
+    apiClient: ApiClientGetter,
     geinsSettings: GeinsSettings,
     _settings: OMSSettings,
-    private _parent?: GeinsOMS,
   ) {
     super(apiClient, geinsSettings);
     this._settings = _settings;
-    this.dataResolver = new CheckoutDataResolver(geinsSettings, _settings, _parent || ({} as GeinsOMS));
+    this.dataResolver = new CheckoutDataResolver(geinsSettings, _settings);
   }
 
   async get(args?: GetCheckoutOptions): Promise<CheckoutType | undefined> {
@@ -143,7 +142,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       const queryResult = await this.runMutation(options);
       return parseCheckout(queryResult, this._geinsSettings.locale);
     } catch (error) {
-      throw new Error('Error getting checkout', { cause: error });
+      throw new CheckoutError('Error getting checkout', GeinsErrorCode.CHECKOUT_FAILED, error);
     }
   }
 
@@ -151,16 +150,11 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     const resolvedArgs = { ...args };
 
     if (!resolvedArgs.cartId) {
-      if (this._parent?.cart.id) {
-        resolvedArgs.cartId = this._parent?.cart.id;
-      }
-      if (!resolvedArgs.cartId) {
-        throw new Error('Missing cartId');
-      }
+      throw new GeinsError('Missing cartId', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     if (!resolvedArgs.checkoutOptions) {
-      throw new Error('Missing checkout options');
+      throw new GeinsError('Missing checkout options', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     const variables = {
@@ -169,7 +163,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
     };
 
-    const options: any = {
+    const options: GraphQLQueryOptions = {
       query: queries.checkoutValidate,
       variables: this.createVariables(variables),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
@@ -179,7 +173,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       const data = await this.runQuery(options);
       return parseValidateOrderConditions(data);
     } catch (e) {
-      throw new Error('Error validating order', { cause: e });
+      throw new CheckoutError('Error validating order', GeinsErrorCode.CHECKOUT_FAILED, e);
     }
   }
 
@@ -189,12 +183,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     const resolvedArgs = { ...args };
 
     if (!resolvedArgs.cartId) {
-      if (this._parent?.cart.id) {
-        resolvedArgs.cartId = this._parent?.cart.id;
-      }
-      if (!resolvedArgs.cartId) {
-        throw new Error('Missing cartId');
-      }
+      throw new GeinsError('Missing cartId', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     const variables = {
@@ -203,7 +192,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       marketId: this._geinsSettings.market,
     };
 
-    const options: any = {
+    const options: GraphQLQueryOptions = {
       query: queries.checkoutValidate,
       variables: this.createVariables(variables),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
@@ -213,7 +202,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       const data = await this.runQuery(options);
       return parseValidateOrderConditions(data);
     } catch (e) {
-      throw new Error('Error validating order', { cause: e });
+      throw new CheckoutError('Error validating order', GeinsErrorCode.CHECKOUT_FAILED, e);
     }
   }
 
@@ -221,16 +210,11 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     const resolvedArgs = { ...args };
 
     if (!resolvedArgs.cartId) {
-      const parentCartId = this._parent?.cart.id;
-      if (parentCartId) {
-        resolvedArgs.cartId = parentCartId;
-      } else {
-        throw new Error('Missing cartId');
-      }
+      throw new GeinsError('Missing cartId', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     if (!resolvedArgs.checkoutOptions) {
-      throw new Error('Missing checkout options');
+      throw new GeinsError('Missing checkout options', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     const variables = {
@@ -239,7 +223,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
     };
 
-    const options: any = {
+    const options: GraphQLQueryOptions = {
       query: queries.orderCreate,
       variables: this.createVariables(variables),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
@@ -258,11 +242,11 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
 
   async summary(args: { orderId: string; paymentMethod: string }): Promise<CheckoutSummaryType | undefined> {
     if (!args.orderId) {
-      throw new Error('Missing orderId');
+      throw new GeinsError('Missing orderId', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     if (!args.paymentMethod) {
-      throw new Error('Missing paymentMethod');
+      throw new GeinsError('Missing paymentMethod', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     const variables = {
@@ -270,7 +254,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       paymentType: args.paymentMethod,
     };
 
-    const options: any = {
+    const options: GraphQLQueryOptions = {
       query: queries.checkoutSummaryGet,
       variables: this.createVariables(variables),
     };
@@ -279,8 +263,8 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       const data = await this.runQuery(options);
       return parseCheckoutSummary(data, this._geinsSettings.locale);
     } catch (e) {
-      console.error('ERROR', e);
-      throw new Error(`Error getting summary`, { cause: e });
+      // Error is re-thrown as CheckoutError below
+      throw new CheckoutError('Error getting summary', GeinsErrorCode.CHECKOUT_FAILED, e);
     }
   }
 
@@ -302,7 +286,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       },
       geinsSettings: resolvedArgs.geinsSettings,
     } as CheckoutTokenPayload;
-    return encodeJWT(obj);
+    return encodeJWT(obj as unknown as Record<string, unknown>);
   }
 
   generateExternalCheckoutUrlParameters(currentParameters: Map<string, string>): Map<string, string> {
@@ -314,10 +298,10 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     if (!decodedToken) {
       return undefined;
     }
-    return decodedToken.payload;
+    return decodedToken.payload as CheckoutTokenPayload;
   }
 
-  private generateVars(variables: any) {
+  private generateVars(variables: Record<string, unknown>) {
     return this.createVariables(variables);
   }
 }

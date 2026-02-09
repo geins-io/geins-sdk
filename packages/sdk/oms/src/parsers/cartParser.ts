@@ -1,6 +1,7 @@
 import { findObjectWithProperty } from '@geins/core';
 import type {
   CampaignRuleType,
+  CampaignType,
   CartItemProductType,
   CartItemType,
   CartSummaryType,
@@ -8,9 +9,28 @@ import type {
   PriceType,
   ProductPackageCartItemType,
 } from '@geins/types';
+import type {
+  GeinsCampaignRuleTypeType,
+  GeinsCampaignTypeType,
+  GeinsCampaignPriceTypeType,
+  GeinsCartItemTypeType,
+  GeinsCartTypeType,
+  GeinsProductPackageCartItemTypeType,
+  GeinsProductTypeType,
+  GeinsSkuTypeType,
+  GeinsVatGroupTypeType,
+  GeinsCartSummaryTypeType,
+  GeinsProductImageTypeType,
+} from '@geins/types';
 import { ItemType } from '@geins/types';
 import { parseMoneyCurrencyString, parsePrice } from './sharedParsers';
 
+/**
+ * Groups cart items by groupKey into product package bundles and recalculates their prices.
+ * @param data - Flat array of cart items.
+ * @param locale - Locale string used for currency formatting.
+ * @returns Array of cart items with grouped items collapsed into package entries.
+ */
 export function groupCartItems(data: CartItemType[], locale: string): CartItemType[] {
   const items: CartItemType[] = [];
   const groupedItems: { [key: string]: CartItemType[] } = {};
@@ -69,7 +89,7 @@ function calculateProductPackagePrice(data: CartItemType, locale: string): Price
     sellingPriceIncVat += item.totalPrice?.sellingPriceIncVat ?? 0;
     sellingPriceExVat += item.totalPrice?.sellingPriceExVat ?? 0;
     regularPriceIncVat += item.totalPrice?.regularPriceIncVat ?? 0;
-    regularPriceExVat += item.totalPrice?.regularPriceIncVat ?? 0;
+    regularPriceExVat += item.totalPrice?.regularPriceExVat ?? 0;
     discountIncVat += item.totalPrice?.discountIncVat ?? 0;
     discountExVat += item.totalPrice?.discountExVat ?? 0;
     discountPercentage += item.totalPrice?.discountPercentage ?? 0;
@@ -124,17 +144,23 @@ function calculateProductPackagePrice(data: CartItemType, locale: string): Price
   };
 }
 
-export function parseCart(data: any, locale: string): CartType | undefined {
-  const cart = findObjectWithProperty(data, '__typename', 'CartType');
+/**
+ * Parses a raw GraphQL response into a normalized CartType.
+ * @param data - Raw data potentially containing a CartType.
+ * @param locale - Locale string used for currency formatting.
+ * @returns Parsed cart, or undefined if no CartType found.
+ */
+export function parseCart(data: unknown, locale: string): CartType | undefined {
+  const cart = findObjectWithProperty<GeinsCartTypeType>(data, '__typename', 'CartType');
   if (!cart) {
     return undefined;
   }
 
   return {
-    id: cart.id,
+    id: cart.id || '',
     items: parseCartItems(cart.items, locale),
     completed: cart.isCompleted,
-    promoCode: cart.promoCode,
+    promoCode: cart.promoCode ?? undefined,
     freeShipping: cart.freeShipping,
     fixedDiscount: cart.fixedDiscount,
     merchantData: parseMerchantData(cart.merchantData),
@@ -143,53 +169,53 @@ export function parseCart(data: any, locale: string): CartType | undefined {
   };
 }
 
-function parseCampaigns(data: any): CampaignRuleType[] {
+function parseCampaigns(
+  data: Array<GeinsCampaignRuleTypeType | null> | null | undefined,
+): CampaignRuleType[] {
   if (!data) {
     return [];
   }
-  return data.map((item: any) => {
+  return data.map((item) => {
     return {
-      campaignId: item.campaignId || '',
-      name: item.name || '',
-      hideTitle: item.hideTitle || false,
+      campaignId: item?.campaignId || '',
+      name: item?.name || '',
+      hideTitle: item?.hideTitle || false,
     };
   });
 }
 
-function parseMerchantData(data: any): any {
-  if (!data) {
-    return;
-  }
-  try {
-    return JSON.parse(data);
-  } catch (error) {
-    return data;
-  }
+function parseMerchantData(data: string | null | undefined): string | undefined {
+  return data ?? undefined;
 }
 
-function parseCartItems(data: any, locale: string): CartItemType[] {
+function parseCartItems(
+  data: Array<GeinsCartItemTypeType | null> | null | undefined,
+  locale: string,
+): CartItemType[] {
   if (!data) {
     return [];
   }
-  return data.map((item: any) => {
+  return data.map((item) => {
     return {
-      title: item.productPackage ? item.productPackage.packageName : item.product?.name,
-      type: item.productPackage ? ItemType.PACKAGE : ItemType.PRODUCT,
-      product: parseCartItemProduct(item.product, locale),
-      skuId: item.skuId,
-      id: item.id,
-      totalPrice: parsePrice(item.totalPrice, locale),
-      unitPrice: parsePrice(item.unitPrice, locale),
-      quantity: item.quantity,
-      campaign: item.campaign,
-      groupKey: item.groupKey,
-      productPackage: parseProductPackage(item.productPackage),
-      message: item.message,
+      title: item?.productPackage ? item.productPackage.packageName ?? undefined : item?.product?.name ?? undefined,
+      type: item?.productPackage ? ItemType.PACKAGE : ItemType.PRODUCT,
+      product: parseCartItemProduct(item?.product, locale),
+      skuId: item?.skuId,
+      id: item?.id != null ? String(item.id) : undefined,
+      totalPrice: parsePrice(item?.totalPrice, locale),
+      unitPrice: parsePrice(item?.unitPrice, locale),
+      quantity: item?.quantity ?? 0,
+      campaign: parseCartItemCampaign(item?.campaign, locale),
+      groupKey: item?.groupKey != null ? String(item.groupKey) : undefined,
+      productPackage: parseProductPackage(item?.productPackage),
+      message: item?.message ?? undefined,
     };
   });
 }
 
-function parseProductPackage(data: any): ProductPackageCartItemType | undefined {
+function parseProductPackage(
+  data: GeinsProductPackageCartItemTypeType | null | undefined,
+): ProductPackageCartItemType | undefined {
   if (!data) {
     return undefined;
   }
@@ -202,7 +228,37 @@ function parseProductPackage(data: any): ProductPackageCartItemType | undefined 
   };
 }
 
-function parseCartItemProduct(data: any, locale: string): CartItemProductType {
+function parseCartItemCampaign(
+  data: GeinsCampaignTypeType | null | undefined,
+  locale: string,
+): CampaignType | undefined {
+  if (!data) {
+    return undefined;
+  }
+
+  return {
+    appliedCampaigns: (data.appliedCampaigns ?? [])
+      .filter((c): c is GeinsCampaignRuleTypeType => c != null)
+      .map((c) => ({
+        campaignId: c.campaignId || '',
+        name: c.name ?? undefined,
+        hideTitle: c.hideTitle ?? undefined,
+      })),
+    prices: (data.prices ?? [])
+      .filter((p): p is GeinsCampaignPriceTypeType => p != null)
+      .map((p) => ({
+        quantity: p.quantity || 0,
+        discount: 0,
+        discountPercentage: 0,
+        price: parsePrice(p.price, locale),
+      })),
+  };
+}
+
+function parseCartItemProduct(
+  data: GeinsProductTypeType | null | undefined,
+  locale: string,
+): CartItemProductType {
   if (!data) {
     return {
       productId: '',
@@ -214,44 +270,47 @@ function parseCartItemProduct(data: any, locale: string): CartItemProductType {
       canonicalUrl: '',
       primaryCategory: { name: '' },
       skus: [],
-      unitPrice: parsePrice({}, locale),
+      unitPrice: parsePrice(undefined, locale),
     };
   }
 
   return {
-    productId: data.productId || '',
+    productId: String(data.productId),
     articleNumber: data.articleNumber || '',
     brand: {
       name: data.brand?.name || '',
     },
     name: data.name || '',
-    productImages: (data.productImages || []).map((image: any) => ({
-      fileName: image.fileName || '',
+    productImages: (data.productImages || []).map((image: GeinsProductImageTypeType | null) => ({
+      fileName: image?.fileName || '',
     })),
     alias: data.alias || '',
     canonicalUrl: data.canonicalUrl || '',
     primaryCategory: {
       name: data.primaryCategory?.name || '',
     },
-    skus: (data.skus || []).map((sku: any) => ({
-      skuId: sku.skuId || '',
-      name: sku.name || '',
+    skus: (data.skus || []).map((sku: GeinsSkuTypeType | null) => ({
+      skuId: String(sku?.skuId),
+      name: sku?.name || '',
       stock: {
-        inStock: sku.stock?.inStock || 0,
-        oversellable: sku.stock?.oversellable || 0,
-        totalStock: sku.stock?.totalStock || 0,
-        static: sku.stock?.static || 0,
+        inStock: sku?.stock?.inStock || 0,
+        oversellable: sku?.stock?.oversellable || 0,
+        totalStock: sku?.stock?.totalStock || 0,
+        static: sku?.stock?.static || 0,
       },
     })),
     unitPrice: parsePrice(data.unitPrice, locale),
   };
 }
 
-function parseCartSummary(data: any, locale: string): CartSummaryType {
+function parseCartSummary(
+  data: GeinsCartSummaryTypeType | null | undefined,
+  locale: string,
+): CartSummaryType {
   if (!data) {
     return {
-      total: parsePrice({}, locale),
-      subTotal: parsePrice({}, locale),
+      total: parsePrice(undefined, locale),
+      subTotal: parsePrice(undefined, locale),
       vats: [],
       fees: {
         paymentFeeIncVat: 0,
@@ -295,9 +354,9 @@ function parseCartSummary(data: any, locale: string): CartSummaryType {
     total: parsePrice(data.total, locale),
     subTotal: parsePrice(data.subTotal, locale),
     vats:
-      data.vats?.map((vat: any) => ({
-        rate: vat.rate || 0,
-        amount: vat.amount || 0,
+      data.vats?.map((vat: GeinsVatGroupTypeType | null) => ({
+        rate: vat?.rate || 0,
+        amount: vat?.amount || 0,
       })) || [],
     fees: {
       paymentFeeIncVat: data.fees?.paymentFeeIncVat || 0,
@@ -307,7 +366,7 @@ function parseCartSummary(data: any, locale: string): CartSummaryType {
     },
     balance: {
       pending: data.balance?.pending || 0,
-      pendingFormatted: parseMoneyCurrencyString(data.balance?.pendingFormatted, locale, currencyCode),
+      pendingFormatted: parseMoneyCurrencyString(data.balance?.pending, locale, currencyCode),
       totalSellingPriceExBalanceExVat: data.balance?.totalSellingPriceExBalanceExVat || 0,
       totalSellingPriceExBalanceIncVat: data.balance?.totalSellingPriceExBalanceIncVat || 0,
       totalSellingPriceExBalanceIncVatFormatted: parseMoneyCurrencyString(

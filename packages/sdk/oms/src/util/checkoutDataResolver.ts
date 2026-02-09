@@ -9,16 +9,18 @@ import type {
   OMSSettings,
 } from '@geins/core';
 import { CustomerType } from '@geins/core';
-import { GeinsOMS } from '../geinsOMS';
 import { CheckoutError } from '../util/checkoutError';
 import { UrlProcessor } from '../util/urlProcessor';
 
+/**
+ * Resolves and normalizes checkout-related data.
+ * No parent dependency — cartId must always be provided explicitly.
+ */
 export class CheckoutDataResolver {
   private readonly urlProcessor;
   constructor(
     private readonly _geinsSettings: GeinsSettings,
     private readonly _settings: OMSSettings,
-    private readonly _parent: GeinsOMS,
   ) {
     this.urlProcessor = new UrlProcessor();
   }
@@ -124,11 +126,10 @@ export class CheckoutDataResolver {
   }
 
   private resolveCartId(providedCartId?: string): string {
-    const cartId = providedCartId || this._parent?.cart.id;
-    if (!cartId) {
+    if (!providedCartId) {
       throw new CheckoutError('Missing cartId');
     }
-    return cartId;
+    return providedCartId;
   }
 
   private resolveGeinsSettings(providedSettings?: GeinsSettings): GeinsSettings {
@@ -140,10 +141,7 @@ export class CheckoutDataResolver {
   }
 
   private resolveUser(providedUser?: GeinsUserType): GeinsUserType | undefined {
-    if (!providedUser) {
-      return undefined;
-    }
-    return providedUser;
+    return providedUser ?? undefined;
   }
 
   private resolvePaymentAndShipping(args?: GetCheckoutOptions) {

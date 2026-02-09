@@ -28,14 +28,18 @@ export interface ContentImageType {
   largestSize: ContentImageSizeType;
 }
 
-export interface ContentType {
-  id: string;
+export interface ContentConfigType {
   name: string;
-  sortOrder: number;
+  displayName: string;
+  active: boolean;
   type: string;
   size: string;
-  configuration: string;
-  images: ContentImageType[];
+  sortOrder: number;
+}
+
+export interface ContentType {
+  config: ContentConfigType;
+  data: Record<string, unknown>;
 }
 
 export interface ContentContainerType {

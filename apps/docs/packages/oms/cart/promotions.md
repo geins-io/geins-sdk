@@ -6,41 +6,38 @@ tags:
   - oms
   - cart
   - promotions
-  - promotion-code
-  - promotion-code-applied
-  - promotion-code-removed
-  - promotion-code-applied-successfully
-  - promotion-code-removed-successfully
-  - promotion-code-applied-failed
 ---
 
 # Promotion Code
 
-When activateting a promotion code on the cart, the prices will be `recalculated` with new prices and discounts. 
+When applying a promotion code to the cart, prices are recalculated with new discounts.
 
 ## Apply
 
-Applies a promotion code to the cart, adjusting prices and discounts accordingly.
+Applies a promotion code to the cart and returns the updated cart with recalculated prices.
 
 ```typescript
-const result = await geinsOMS.cart.promotions.apply('PROMO_CODE');
-if(result === true){
-    console.log("Promotion code applied successfully");
-}
+const cart = await geinsOMS.cart.setPromotionCode(cartId, 'PROMO_CODE');
+console.log(`Discount: ${cart.summary.total.discountIncVat}`);
 ```
 
-::: info :nerd_face: Take note
-User can only have one promotion code applied at a time. If a new promotion code is applied, the previous one will be removed.
+::: info
+A user can only have one promotion code applied at a time. If a new promotion code is applied, the previous one is replaced.
 :::
 
 ## Remove
 
-Removes an existing promotion code from the cart, recalculating prices and discounts.
+Removes the promotion code from the cart and returns the updated cart.
 
 ```typescript
-const result = await geinsOMS.cart.promotions.remove();
-if(result === true){
-    console.log("Promotion code removed successfully");
-}
+const cart = await geinsOMS.cart.removePromotionCode(cartId);
 ```
 
+## Session Layer
+
+With `CartSession`, promotion codes are managed through the convenience API:
+
+```typescript
+await session.promotionCode.apply('PROMO_CODE');
+await session.promotionCode.remove();
+```

@@ -1,15 +1,16 @@
-import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
 import graphql from '@rollup/plugin-graphql';
+import resolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
 
 export default {
   input: 'src/index.ts',
   output: [
     {
       file: 'dist/index.cjs',
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'auto'
     },
     {
       file: 'dist/index.esm.js',
@@ -21,10 +22,10 @@ export default {
       preferBuiltins: true
     }),
     commonjs(),
-    typescript(),
+    typescript({ compilerOptions: { declaration: false, declarationDir: undefined } }),
     graphql(),
     terser()
   ],
-  external: ['@geins/core'],
+  external: ['@geins/core', '@geins/types'],
   treeshake: true
 };

@@ -71,3 +71,27 @@ jobs:
       #  if: steps.changesets.outputs.published == 'true'
       #  # You can do something when a publish happens.
       #  run: my-slack-bot send-notification --message "A new version of ${GITHUB_REPOSITORY} was published!"
+
+  deploy-docs:
+    name: Deploy Docs
+    needs: release
+    runs-on: ubuntu-latest
+    env:
+      VITE_GA_ID: ${{ secrets.VITE_GA_ID }}
+      VITE_CALARIFY_ID: ${{ secrets.VITE_CALARIFY_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+
+      - name: Build And Deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DOCS }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: 'upload'
+          app_location: '/'
+          app_build_command: 'npm run build:apps'
+          api_location: ''
+          output_location: 'apps/docs/.vitepress/dist'

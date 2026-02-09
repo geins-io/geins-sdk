@@ -1,2 +1,2 @@
-export * from './auth';
-export * from './geinsCRM';
+export { GeinsCRM } from './geinsCRM';
+export { CrmSession } from './sessions';

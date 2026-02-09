@@ -54,6 +54,10 @@ $ bun add -D @geins/oms
 
 ## Quick Start
 
+### Server-Side (Stateless)
+
+The core `CartService` is fully stateless — safe for server-side shared singletons. Every method takes a `cartId` and returns the full `CartType`.
+
 ```ts
 import { GeinsCore } from '@geins/core';
 import { GeinsOMS } from '@geins/oms';
@@ -61,13 +65,18 @@ import { GeinsOMS } from '@geins/oms';
 const geinsCore = new GeinsCore(mySettings);
 const geinsOMS = new GeinsOMS(geinsCore);
 
-// Add item with id 1234 to cart
-await geinsOMS.cart.items.add({ skuId: 1234 });
+// Create a cart
+const cart = await geinsOMS.cart.create();
 
-// Checkout
-const checkout = await geinsOMS.checkout.get();
+// Add item
+const updatedCart = await geinsOMS.cart.addItem(cart.id, {
+  skuId: 1234,
+  quantity: 1,
+});
 
-// Create options for checkout
+// Checkout — cartId is always explicit
+const checkout = await geinsOMS.checkout.get({ cartId: cart.id });
+
 const checkoutOptions = {
   paymentId: 1,
   email: 'john.doe@example.com',
@@ -82,34 +91,64 @@ const checkoutOptions = {
   },
 };
 
-// Validate checkout
 const validationResult = await geinsOMS.checkout.validate({
+  cartId: cart.id,
   checkoutOptions,
 });
 
-if (validationResult.isValid) {
-  // Create order
-  const order = await geinsOMS.checkout.create({
+if (validationResult?.isValid) {
+  const order = await geinsOMS.checkout.createOrder({
+    cartId: cart.id,
     checkoutOptions,
   });
-
   console.log('Order created:', order);
-} else {
-  console.error('Checkout validation failed:', validationResult.message);
 }
 ```
 
-## Overview
+### Client-Side (Session Layer)
 
-The `@geins/oms` package provides the features to help you manage shopping carts and checkout processes. This packages can be utilized in different contexts such as `clint-side`, `server-side`, or in `hybrid mode`.
+For browser apps, the `CartSession` wrapper adds cookie persistence and quantity convenience methods on top of the stateless core.
 
-### Settings
+```ts
+import { GeinsCore } from '@geins/core';
+import { GeinsOMS, CartSession } from '@geins/oms';
 
-`GeinsOMS` class takes in an options object that has the omsSettings property of the type `OMSSettings` that is used to configure the OMS on how to behave.
+const geinsCore = new GeinsCore(mySettings);
+const geinsOMS = new GeinsOMS(geinsCore);
+
+// Create a session — stores cartId in cookie
+const session = new CartSession(geinsOMS.cart, geinsCore.geinsSettings.locale);
+
+// Session remembers the cart across page loads
+await session.get(); // reads cartId from cookie, or creates new cart
+
+// Convenience methods handle quantity logic
+await session.items.add({ skuId: 1234 }); // increments if already in cart
+await session.items.remove({ skuId: 1234 }); // decrements quantity
+await session.promotionCode.apply('SUMMER20');
+```
+
+## Architecture
+
+```
+Stateless Core (server-safe)
+├── CartService    — cart.get(cartId), cart.addItem(cartId, input)
+├── CheckoutService — checkout.get({ cartId }), checkout.createOrder(...)
+└── OrderService   — order.get(orderId)
+
+Session Layer (browser convenience)
+└── CartSession    — cookie persistence, quantity increment/decrement
+```
+
+The stateless core holds **no per-request state** — it's safe to share as a singleton across concurrent requests in server environments like Nuxt, Next.js, or Express. The session layer is intended for browser-side use only (one instance per user session).
+
+## Settings
+
+`GeinsOMS` class takes in an options object with the `omsSettings` property of type `OMSSettings`:
 
 ```typescript
 type OMSSettings = {
-  context: RuntimeContext;
+  context?: RuntimeContext;
   merchantDataTemplate?: unknown;
   defaultPaymentId?: number;
   defaultShippingId?: number;
@@ -117,54 +156,18 @@ type OMSSettings = {
 };
 ```
 
-- `context`: The context in which the OMS is running. It can be `RuntimeContext.CLIENT`, `RuntimeContext.SERVER`, or `RuntimeContext.HYBRID`.
-- `merchantDataTemplate`: The template for the merchant data. It is an object that can be used to store additional data for the merchant. The data can be of any type and can be used to store additional information about the merchant.
-- `defaultPaymentId`: The default payment method id to be used for the checkout process.
-- `defaultShippingId`: The default shipping method id to be used for the checkout process.
-- `checkoutUrls`: The URLs to redirect the user to after the checkout process is completed. Read more about how `CheckoutRedirectsType` is used [here](./checkout/get.md#types).
-
-##### context
-
-The context in which the OMS is running. It can be `RuntimeContext.CLIENT`, `RuntimeContext.SERVER`, or `RuntimeContext.HYBRID`.
-
-##### merchantDataTemplate
-
-The template for the merchant data. It is an object that can be used to store additional data for the merchant. The data can be of any type and can be used to store additional information about the merchant.
-
-Read more about `merchantData` [here](./merchant-data.md).
-
-::: tip :bulb: Tip
-To get some type safety on the merchant data, you can create your own type and use it to define the `merchantDataTemplate` property.
-:::
-
-Example:
-
-```typescript
-type MyMerchantDataTemplate = {
-  extraData: string;
-  extraNumber?: number;
-};
-const myTemplate: MyMerchantDataTemplate = {
-  extraData: '',
-  extraNumber: 0,
-};
-
-const mySettings: OMSSettings = {
-  context: RuntimeContext.HYBRID, // will eg. set cookies if `window` is available
-  merchantDataTemplate: myTemplate,
-};
-
-const geinsOMS = new GeinsOMS(geinsCore, myOSettings);
-```
+- `defaultPaymentId`: The default payment method ID for checkout.
+- `defaultShippingId`: The default shipping method ID for checkout.
+- `checkoutUrls`: URLs to redirect the user to after the checkout process.
 
 ### Cart
 
-Cart is a class that provides functionalities to manage shopping carts. It includes features such as cart creation, item management, and promotion code handling.
+Cart is a stateless service that provides methods to manage shopping carts. Every mutation takes a `cartId` and returns the full updated `CartType`.
 
 Read more about `Cart` [here](./cart/index.md)
 
 ### Checkout
 
-Checkout is a class that provides functionalities to manage the checkout process. It includes features such as order creation, payment handling, and order confirmation.
+Checkout handles the checkout process — validation, order creation, token generation.
 
 Read more about `Checkout` [here](./checkout/index.md).

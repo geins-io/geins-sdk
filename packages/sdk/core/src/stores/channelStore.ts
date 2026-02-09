@@ -24,7 +24,7 @@ export class ChannelStore implements IStore {
     }
   }
 
-  async getKey(from: string): Promise<any> {
+  async getKey(from: string): Promise<string | null> {
     if (this.store !== undefined) {
       return this.store.get(from);
     }

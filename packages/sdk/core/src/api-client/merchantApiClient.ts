@@ -1,5 +1,6 @@
 import {
   ApolloClient,
+  ApolloLink,
   ApolloQueryResult,
   DocumentNode,
   FetchPolicy,
@@ -8,10 +9,18 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
   OperationVariables,
+  createHttpLink,
 } from '@apollo/client/core';
-import { AUTH_COOKIES } from '../constants';
-import { CookieService } from '../services/cookieService';
-import { isServerContext } from '../utils';
+import { RetryLink } from '@apollo/client/link/retry';
+import { GeinsLogLevel } from '@geins/types';
+import type { GeinsSettings, GeinsRetryConfig } from '@geins/types';
+import { isServerContext, Logger } from '../utils';
+import { createRequestIdLink } from './links/requestIdLink';
+import { createIdempotencyLink } from './links/idempotencyLink';
+import { createLoggingLink } from './links/loggingLink';
+import { createTimeoutLink } from './links/timeoutLink';
+import { createInterceptorLink } from './links/interceptorLink';
+import { createTelemetryLink, TelemetryCollector } from './links/telemetryLink';
 
 export enum FetchPolicyOptions {
   CACHE_FIRST = 'cache-first',
@@ -29,68 +38,59 @@ export enum OperationType {
 export interface RequestOptions {
   fetchPolicy?: FetchPolicyOptions;
   pollInterval?: number;
-  context?: any;
-  [key: string]: any;
+  context?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 export interface MerchantApiClientOptions {
   apiUrl: string;
   apiKey: string;
   fetchPolicy?: FetchPolicy;
-  userToken?: string;
+  settings?: GeinsSettings;
 }
 
 export interface GraphQLQueryOptions {
   query?: DocumentNode | string | undefined;
   queryAsString?: string | undefined;
-  variables?: any;
+  variables?: Record<string, unknown>;
   requestOptions?: RequestOptions;
   log_to_console?: boolean;
   userToken?: string;
 }
 
+/**
+ * Apollo-based GraphQL client for the Geins Merchant API.
+ * Configures the link chain (request ID, idempotency, logging, retry, etc.)
+ * and exposes {@link runQuery} / {@link runMutation} for executing operations.
+ */
 export class MerchantApiClient {
-  private _cookieService: CookieService | undefined;
   private _apolloClient: ApolloClient<NormalizedCacheObject>;
-  private _userToken?: string;
+  private _telemetry: TelemetryCollector | null = null;
   fetchPolicy: FetchPolicy = isServerContext()
     ? FetchPolicyOptions.NO_CACHE
     : FetchPolicyOptions.CACHE_FIRST;
   pollInterval: number = 0;
 
   constructor(options: MerchantApiClientOptions) {
-    const { apiUrl, apiKey, userToken, fetchPolicy } = options;
-    this._apolloClient = this.createClient(apiUrl, apiKey);
-    if (!isServerContext()) {
-      this._cookieService = new CookieService();
-    }
-    if (userToken) {
-      this._userToken = userToken;
-    }
+    const { apiUrl, apiKey, fetchPolicy, settings } = options;
+    this._apolloClient = this.createClient(apiUrl, apiKey, settings);
     if (fetchPolicy) {
       this.fetchPolicy = fetchPolicy;
     }
   }
 
-  public updateToken(newToken?: string) {
-    this._userToken = newToken;
-  }
-  public get userToken() {
-    return this._userToken;
-  }
-
-  createClient(apiUrl: string, apiKey: string) {
+  createClient(apiUrl: string, apiKey: string, settings?: GeinsSettings) {
     const cache = new InMemoryCache({
       typePolicies: {
         CartType: {
           fields: {
             items: {
-              merge(existing, incoming) {
+              merge(_existing: unknown, incoming: unknown) {
                 return incoming;
               },
             },
             appliedCampaigns: {
-              merge(existing, incoming) {
+              merge(_existing: unknown, incoming: unknown) {
                 return incoming;
               },
             },
@@ -99,20 +99,113 @@ export class MerchantApiClient {
       },
     });
 
+    const link = this.createLinkChain(apiUrl, apiKey, settings);
+
     return new ApolloClient({
+      link,
+      cache,
+    });
+  }
+
+  private createLinkChain(apiUrl: string, apiKey: string, settings?: GeinsSettings): ApolloLink {
+    const requestConfig = settings?.requestConfig;
+    const links: ApolloLink[] = [];
+
+    // 1. RequestIdLink — always on (also sets x-sdk-version)
+    links.push(createRequestIdLink());
+
+    // 2. IdempotencyLink — always on (only sets header on mutations)
+    links.push(createIdempotencyLink());
+
+    // 3. LoggingLink — always on (Logger gates output via logLevel)
+    const logger = new Logger(settings?.logLevel ?? GeinsLogLevel.NONE);
+    links.push(createLoggingLink(logger));
+
+    // 4. InterceptorLink — only if interceptors configured
+    if (requestConfig?.interceptors) {
+      links.push(createInterceptorLink(requestConfig.interceptors));
+    }
+
+    // 5. TimeoutLink — only if timeoutMs > 0
+    const timeoutMs = requestConfig?.timeoutMs ?? 0;
+    if (timeoutMs > 0) {
+      links.push(createTimeoutLink(timeoutMs));
+    }
+
+    // 6. TelemetryLink — only if telemetry config provided and not disabled
+    if (requestConfig?.telemetry) {
+      this._telemetry = new TelemetryCollector(requestConfig.telemetry);
+      links.push(createTelemetryLink(this._telemetry));
+    }
+
+    // 7. RetryLink — only if retry config provided and not disabled
+    if (requestConfig?.retry) {
+      links.push(this.createRetryLink(requestConfig.retry));
+    }
+
+    // 8. HttpLink — terminating link
+    const httpLink = createHttpLink({
       uri: apiUrl,
-      cache: cache,
       headers: {
         Accept: 'application/json',
         'x-apikey': apiKey,
       },
     });
+    links.push(httpLink);
+
+    return ApolloLink.from(links);
   }
 
+  private createRetryLink(retryConfig: GeinsRetryConfig): RetryLink {
+    const {
+      maxRetries = 3,
+      initialDelayMs = 300,
+      maxDelayMs = 10000,
+      jitter = true,
+    } = retryConfig;
+
+    return new RetryLink({
+      delay: {
+        initial: initialDelayMs,
+        max: maxDelayMs,
+        jitter,
+      },
+      attempts: {
+        max: maxRetries + 1, // RetryLink counts the initial attempt
+        retryIf: (error: unknown) => {
+          if (!error) return false;
+
+          const err = error as Record<string, unknown>;
+          const response = err.response as Record<string, unknown> | undefined;
+          const statusCode = (err.statusCode as number | undefined) ?? (response?.status as number | undefined);
+
+          // 429 — rate limited, always retry
+          if (statusCode === 429) return true;
+
+          // No status code — network error (DNS, connection refused), retry
+          if (!statusCode) return true;
+
+          // 5xx — server error, retry
+          if (statusCode >= 500) return true;
+
+          // 4xx (except 429) — client error, don't retry
+          return false;
+        },
+      },
+    });
+  }
+
+  /** Returns the underlying Apollo Client instance. */
   getClient(): ApolloClient<NormalizedCacheObject> | undefined {
     return this._apolloClient;
   }
 
+  /** Telemetry collector instance, or `null` when telemetry is disabled. */
+  get telemetry(): TelemetryCollector | null {
+    return this._telemetry;
+  }
+
+  /** Clear the Apollo in-memory cache and refetch all active queries. */
   public clearCacheAndRefetchQueries() {
     this._apolloClient.resetStore();
   }
@@ -138,45 +231,45 @@ export class MerchantApiClient {
     return FetchPolicyOptions.NETWORK_ONLY;
   }
 
-  private getOperationObject(operationType: OperationType, operationOptions: GraphQLQueryOptions) {
-    const { query, queryAsString, variables, requestOptions } = operationOptions;
-    const queryDocument = query || gql(queryAsString || '');
-    const options = requestOptions || {};
-    const token = operationOptions.userToken || this._userToken || this._cookieService?.get(AUTH_COOKIES.USER_AUTH);
-
-    if (!queryDocument) {
-      throw new Error('Query is required');
-    }
-
-    const operationObj: any = {
-      [operationType]: queryDocument,
-      variables,
-      fetchPolicy: this.getFetchPolicy(operationType, options.fetchPolicy),
-      pollInterval: options.pollInterval || this.pollInterval,
+  private buildContext(userToken?: string): Record<string, unknown> | undefined {
+    if (!userToken) return undefined;
+    return {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
     };
-
-    if (token) {
-      operationObj.context = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-    }
-
-    return operationObj;
   }
 
-  async runQuery<TData = any, TVariables extends OperationVariables = OperationVariables>(
+  /** Execute a GraphQL query against the Merchant API. */
+  async runQuery<TData = unknown, TVariables extends OperationVariables = OperationVariables>(
     options: GraphQLQueryOptions,
   ): Promise<ApolloQueryResult<TData>> {
-    const q = this.getOperationObject(OperationType.QUERY, options);
-    return this._apolloClient.query<TData, TVariables>(q);
+    const { query: queryDoc, queryAsString, variables, requestOptions, userToken } = options;
+    const queryDocument = (queryDoc || gql(queryAsString || '')) as DocumentNode;
+    const opts = requestOptions || {};
+
+    return this._apolloClient.query<TData, TVariables>({
+      query: queryDocument,
+      variables: variables as TVariables,
+      fetchPolicy: this.getFetchPolicy(OperationType.QUERY, opts.fetchPolicy),
+      pollInterval: opts.pollInterval || this.pollInterval,
+      context: this.buildContext(userToken),
+    });
   }
 
-  async runMutation<TData = any, TVariables extends OperationVariables = OperationVariables>(
+  /** Execute a GraphQL mutation against the Merchant API. */
+  async runMutation<TData = unknown, TVariables extends OperationVariables = OperationVariables>(
     options: GraphQLQueryOptions,
   ): Promise<FetchResult<TData>> {
-    const q = this.getOperationObject(OperationType.MUTATION, options);
-    return this._apolloClient.mutate<TData, TVariables>(q);
+    const { query: queryDoc, queryAsString, variables, requestOptions, userToken } = options;
+    const mutation = (queryDoc || gql(queryAsString || '')) as DocumentNode;
+    const opts = requestOptions || {};
+
+    return this._apolloClient.mutate<TData, TVariables>({
+      mutation,
+      variables: variables as TVariables,
+      fetchPolicy: this.getFetchPolicy(OperationType.MUTATION, opts.fetchPolicy) as 'network-only' | 'no-cache',
+      context: this.buildContext(userToken),
+    });
   }
 }

@@ -1,3 +1,8 @@
+/**
+ * Type-safe container for cart merchant data.
+ * If constructed with a template, only template keys are accepted (strict mode).
+ * Without a template, any key-value pair is allowed (flexible mode).
+ */
 export class MerchantData<T> {
   private _data: T | Record<string, any>;
   private readonly _templateKeys: Set<keyof T> | null;
@@ -28,7 +33,7 @@ export class MerchantData<T> {
         if (this.isKeyValid(key)) {
           validData[key] = newData[key];
         } else {
-          console.warn(`Key "${key}" is not in the original template and will be ignored.`);
+          // Key is silently ignored in strict mode (template keys only)
         }
       }
       this._data = { ...this._data, ...validData } as T;

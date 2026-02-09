@@ -13,7 +13,7 @@ mutation setCartPromoCode(
     languageId: $languageId
     marketId: $marketId
   ) {
-    ...Cart
+    ...OmsCart
     __typename
   }
 }

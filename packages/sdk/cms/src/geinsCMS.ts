@@ -1,6 +1,10 @@
 import { GeinsCore, BasePackage } from '@geins/core';
 import { MenuService, ContentPageService, ContentAreaService } from './services';
 
+/**
+ * CMS package providing access to menus, content pages, and content areas.
+ * Exposes service accessors: {@link menu}, {@link page}, and {@link area}.
+ */
 class GeinsCMS extends BasePackage {
   private _menu!: MenuService;
   private _page!: ContentPageService;
@@ -8,27 +12,35 @@ class GeinsCMS extends BasePackage {
 
   constructor(core: GeinsCore) {
     super(core);
-    const { client, geinsSettings } = core;
-    this._geinsSettings = geinsSettings;
-    this._apiClient = () => client ?? undefined;
-    this.initServices();
   }
 
-  private async initServices(): Promise<void> {
-    this._menu = new MenuService(() => this._apiClient(), this._geinsSettings);
-    this._page = new ContentPageService(() => this._apiClient(), this._geinsSettings);
-    this._area = new ContentAreaService(() => this._apiClient(), this._geinsSettings);
+  destroy(): void {
+    this._menu?.destroy();
+    this._page?.destroy();
+    this._area?.destroy();
   }
 
+  /** Menu service — fetch navigation menus by location or ID. */
   get menu(): MenuService {
+    if (!this._menu) {
+      this._menu = new MenuService(this._apiClient, this._geinsSettings);
+    }
     return this._menu;
   }
 
+  /** Content area service — fetch widget containers by family and area name. */
   get area(): ContentAreaService {
+    if (!this._area) {
+      this._area = new ContentAreaService(this._apiClient, this._geinsSettings);
+    }
     return this._area;
   }
 
+  /** Content page service — fetch CMS pages with widgets by alias or ID. */
   get page(): ContentPageService {
+    if (!this._page) {
+      this._page = new ContentPageService(this._apiClient, this._geinsSettings);
+    }
     return this._page;
   }
 }

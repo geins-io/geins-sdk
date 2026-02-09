@@ -1,6 +1,14 @@
-import { ContentAreaType, ContentPageType, GeinsMenuItemTypeType, ContentContainerType } from '@geins/core';
+import { ContentAreaType, ContentPageType, GeinsMenuItemTypeType, ContentContainerType, ContentType, GeinsError, GeinsErrorCode, sdkLogger } from '@geins/core';
+import type {
+  GeinsMenuItemBaseType,
+  GeinsPageWidgetCollectionTypeType,
+  GeinsPageWidgetContainerTypeType,
+  GeinsPageWidgetTypeType,
+  GeinsMetadataTypeType,
+} from '@geins/core';
 
-export function parseMenuItem(item: any): GeinsMenuItemTypeType {
+/** Maps a raw menu item to a structured menu type, recursively parsing children. */
+export function parseMenuItem(item: GeinsMenuItemBaseType): GeinsMenuItemTypeType {
   return {
     id: item.id,
     label: item.label,
@@ -11,18 +19,26 @@ export function parseMenuItem(item: any): GeinsMenuItemTypeType {
     open: item.open,
     hidden: item.hidden,
     targetBlank: item.targetBlank,
-    children: item.children ? item.children.map((child: any) => parseMenuItem(child)) : [],
+    children: item.children ? item.children.map((child) => parseMenuItem(child!)) : [],
   };
 }
 
-export function parseContentArea(result: any): ContentAreaType {
+/**
+ * Parses a widget area result into a content area with meta, tags, and containers.
+ * @param result - Raw query result containing a widget area.
+ * @returns Parsed content area; returns empty containers/tags if no area is found.
+ * @throws {GeinsError} If the result structure is invalid.
+ */
+export function parseContentArea(result: {
+  data?: { widgetArea?: GeinsPageWidgetCollectionTypeType };
+}): ContentAreaType {
   if (!result || !result.data) {
-    throw new Error('Invalid result structure for content area');
+    throw new GeinsError('Invalid result structure for content area', GeinsErrorCode.PARSE_ERROR);
   }
   const area = result.data.widgetArea;
 
   if (!area) {
-    console.warn('No area found');
+    sdkLogger.warn('No area found');
     return {
       meta: {},
       tags: [],
@@ -30,18 +46,28 @@ export function parseContentArea(result: any): ContentAreaType {
     };
   }
 
-  const parsedResult = {
+  return {
     meta: area.meta ? parseMetaData(area.meta) : {},
-    tags: area.tags,
-    containers: area.containers.map((item: any) => parseContainer(item)),
+    tags: area.tags ? area.tags.filter((t): t is string => t != null) : [],
+    containers: area.containers
+      ? area.containers
+          .filter((c): c is GeinsPageWidgetContainerTypeType => c != null)
+          .map((item) => parseContainer(item))
+      : [],
   };
-
-  return parsedResult as ContentAreaType;
 }
 
-export function parseContentPage(result: any): ContentPageType {
+/**
+ * Parses a widget area result into a full content page with page area, meta, tags, and containers.
+ * @param result - Raw query result containing a widget area.
+ * @returns Parsed content page; returns a default empty page if no page is found.
+ * @throws {GeinsError} If the result structure is invalid.
+ */
+export function parseContentPage(result: {
+  data?: { widgetArea?: GeinsPageWidgetCollectionTypeType };
+}): ContentPageType {
   if (!result || !result.data) {
-    throw new Error('Invalid result structure for content page');
+    throw new GeinsError('Invalid result structure for content page', GeinsErrorCode.PARSE_ERROR);
   }
 
   const parsedResult: ContentPageType = {
@@ -57,43 +83,55 @@ export function parseContentPage(result: any): ContentPageType {
 
   const page = result.data.widgetArea;
   if (!page) {
-    console.warn('No page found');
+    sdkLogger.warn('No page found');
     return parsedResult;
   }
 
-  parsedResult.id = page.id;
+  parsedResult.id = String(page.id);
   parsedResult.name = page.name;
-  parsedResult.title = page.title;
-  parsedResult.pageArea = page.pageArea;
-  parsedResult.familyName = page.familyName;
+  parsedResult.title = page.title ?? undefined;
+  parsedResult.pageArea = page.pageArea
+    ? { id: String(page.pageArea.id), name: page.pageArea.name ?? undefined, index: page.pageArea.index }
+    : {};
+  parsedResult.familyName = page.familyName ?? undefined;
   parsedResult.meta = page.meta ? parseMetaData(page.meta) : {};
-  parsedResult.tags = page.tags;
-  parsedResult.containers = page.containers.map((item: any) => parseContainer(item));
+  parsedResult.tags = page.tags ? page.tags.filter((t): t is string => t != null) : [];
+  parsedResult.containers = page.containers
+    ? page.containers
+        .filter((c): c is GeinsPageWidgetContainerTypeType => c != null)
+        .map((item) => parseContainer(item))
+    : [];
 
-  return parsedResult as ContentPageType;
+  return parsedResult;
 }
 
-export function parseContainer(container: any): ContentContainerType {
-  const parsedContainer = {
-    id: container.id,
+/** Parses a widget container into a content container, mapping child widgets to content items. */
+export function parseContainer(container: GeinsPageWidgetContainerTypeType): ContentContainerType {
+  return {
+    id: String(container.id),
     name: container.name,
     sortOrder: container.sortOrder,
     layout: container.layout,
     responsiveMode: container.responsiveMode,
     design: container.design,
-    content: container.widgets.map((content: any) => parseContent(content)),
+    content: container.widgets
+      ? container.widgets
+          .filter((w): w is GeinsPageWidgetTypeType => w != null)
+          .map((content) => parseContent(content))
+      : [],
   };
-  return parsedContainer;
 }
 
-export function parseMetaData(meta: any) {
+/** Extracts title and description from metadata, converting nulls to undefined. */
+export function parseMetaData(meta: GeinsMetadataTypeType) {
   return {
-    title: meta.title,
-    description: meta.description,
+    title: meta.title ?? undefined,
+    description: meta.description ?? undefined,
   };
 }
 
-export function parseContent(content: any) {
+/** Parses a widget into a content item with config and type-specific data. Promotes `active` and `displayName` from data to config. */
+export function parseContent(content: GeinsPageWidgetTypeType): ContentType {
   const parsedContent = {
     config: {
       name: content.name,
@@ -103,7 +141,7 @@ export function parseContent(content: any) {
       size: content.size,
       sortOrder: content.sortOrder,
     },
-    data: {},
+    data: {} as Record<string, unknown>,
   };
 
   if (content.type) {
@@ -114,12 +152,12 @@ export function parseContent(content: any) {
     }
 
     if (data.active) {
-      parsedContent.config.active = data.active;
+      parsedContent.config.active = data.active as boolean;
       delete data.active;
     }
 
     if (data.displayName) {
-      parsedContent.config.displayName = data.displayName;
+      parsedContent.config.displayName = data.displayName as string;
       delete data.displayName;
     }
   }
@@ -127,23 +165,28 @@ export function parseContent(content: any) {
   return parsedContent;
 }
 
-export function parseContentData(type: string, data: any) {
+/**
+ * Parses raw content data by widget type, injecting `name` and `active` fields.
+ * @returns Parsed data record; returns empty object if data is missing.
+ */
+export function parseContentData(type: string, data: string): Record<string, unknown> {
   if (!data) {
-    console.warn('No data found for type', type);
+    sdkLogger.warn(`No data found for type ${type}`);
     return {};
   }
 
   const parsedData = parseContentDataByType(type, data);
-  const parsedContentData = {
-    name: data.name,
-    active: data.active || false,
+  const parsedContentData: Record<string, unknown> = {
+    name: parsedData.name,
+    active: parsedData.active || false,
     ...parsedData,
   };
 
   return parsedContentData;
 }
 
-export function parseContentDataByType(type: string, data: any) {
+/** Dispatches content data parsing to the appropriate type-specific parser. Falls back to {@link parseJsonSafe}. */
+export function parseContentDataByType(type: string, data: string): Record<string, unknown> {
   switch (type) {
     case 'TextPageWidget':
       return parseContentDataText(data);
@@ -164,27 +207,29 @@ export function parseContentDataByType(type: string, data: any) {
   }
 }
 
-export function parseJsonSafe(data: any) {
+/** Safely parses a JSON string. Returns an empty object on parse failure. */
+export function parseJsonSafe(data: string): Record<string, unknown> {
   try {
-    return JSON.parse(data);
+    return JSON.parse(data) as Record<string, unknown>;
   } catch (e) {
     return {};
   }
 }
 
-export function parseContentDataJson(data: any) {
-  let parsedData: any = {};
-  let jsonData: any = {};
+/** Parses a JSON widget's data, merging the nested `json` attribute into the top-level result. Returns empty object on parse failure. */
+export function parseContentDataJson(data: string): Record<string, unknown> {
+  let parsedData: Record<string, unknown> = {};
+  let jsonData: Record<string, unknown> = {};
 
   try {
-    parsedData = JSON.parse(data);
+    parsedData = JSON.parse(data) as Record<string, unknown>;
   } catch (e) {
-    console.error('Error parsing data', e);
+    sdkLogger.error(`Error parsing data: ${e}`);
   }
   try {
-    jsonData = JSON.parse(parsedData.json);
+    jsonData = JSON.parse(parsedData.json as string) as Record<string, unknown>;
   } catch (e) {
-    console.error('Error parsing json attribute from content data', e);
+    sdkLogger.error(`Error parsing json attribute from content data: ${e}`);
   }
   if (parsedData.json) {
     delete parsedData.json;
@@ -192,49 +237,55 @@ export function parseContentDataJson(data: any) {
   return { ...parsedData, ...jsonData };
 }
 
-export function parseContentDataText(data: any) {
+/** Parses text widget data from a JSON string. Returns empty object on parse failure. */
+export function parseContentDataText(data: string): Record<string, unknown> {
   try {
-    return JSON.parse(data);
+    return JSON.parse(data) as Record<string, unknown>;
   } catch (e) {
     return {};
   }
 }
 
-export function parseContentDataHtml(data: any) {
+/** Parses HTML widget data from a JSON string. Returns empty object on parse failure. */
+export function parseContentDataHtml(data: string): Record<string, unknown> {
   try {
-    return JSON.parse(data);
+    return JSON.parse(data) as Record<string, unknown>;
   } catch (e) {
     return {};
   }
 }
 
-export function parseContentDataProductList(data: any) {
+/** Parses product list widget data from a JSON string. Returns empty object on parse failure. */
+export function parseContentDataProductList(data: string): Record<string, unknown> {
   try {
-    return JSON.parse(data);
+    return JSON.parse(data) as Record<string, unknown>;
   } catch (e) {
     return {};
   }
 }
 
-export function parseContentDataImage(data: any) {
+/** Parses image widget data from a JSON string. Returns empty object on parse failure. */
+export function parseContentDataImage(data: string): Record<string, unknown> {
   try {
-    return JSON.parse(data);
+    return JSON.parse(data) as Record<string, unknown>;
   } catch (e) {
     return {};
   }
 }
 
-export function parseContentDataBanner(data: any) {
+/** Parses banner widget data from a JSON string. Returns empty object on parse failure. */
+export function parseContentDataBanner(data: string): Record<string, unknown> {
   try {
-    return JSON.parse(data);
+    return JSON.parse(data) as Record<string, unknown>;
   } catch (e) {
     return {};
   }
 }
 
-export function parseContentDataButtons(data: any) {
+/** Parses buttons widget data from a JSON string. Returns empty object on parse failure. */
+export function parseContentDataButtons(data: string): Record<string, unknown> {
   try {
-    return JSON.parse(data);
+    return JSON.parse(data) as Record<string, unknown>;
   } catch (e) {
     return {};
   }

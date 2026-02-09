@@ -14,5 +14,5 @@ export default {
       format: 'esm',
     },
   ],
-  plugins: [resolve(), commonjs(), typescript()],
+  plugins: [resolve(), commonjs(), typescript({ compilerOptions: { declaration: false, declarationDir: undefined } })],
 };

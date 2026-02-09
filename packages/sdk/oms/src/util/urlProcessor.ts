@@ -1,6 +1,7 @@
 import type { CheckoutRedirectsType } from '@geins/core';
 import { CHECKOUT_PARAMETERS, extractParametersFromUrl } from '@geins/core';
 
+/** Processes checkout redirect URLs, merging custom parameters with default checkout parameters. */
 export class UrlProcessor {
   static generateParameters(currentParameters: Map<string, string>): Map<string, string> {
     const mergedMap = new Map(CHECKOUT_PARAMETERS);

@@ -1,5 +1,6 @@
 import type { PriceType, ShippingOptionType, PaymentOptionType } from '../shared';
-import type { ProductType, StockType } from '../pim/product';
+import type { StockType } from '../pim/product';
+import type { CampaignRuleType } from '../shared/campaign';
 import type { CampaignType } from '../pim/campaign';
 
 export type CartType = {
@@ -7,11 +8,11 @@ export type CartType = {
   items: CartItemType[];
   freeShipping: boolean;
   readonly completed: boolean;
-  readonly merchantData?: any;
+  readonly merchantData?: string;
   readonly promoCode?: string;
   readonly fixedDiscount: number;
-  readonly appliedCampaigns: any[];
-  readonly summary: any;
+  readonly appliedCampaigns: CampaignRuleType[];
+  readonly summary: CartSummaryType;
 };
 
 export type CartItemInputType = {
@@ -55,7 +56,7 @@ export type CartItemType = {
   groupKey?: string;
   type?: ItemType;
   title?: string;
-  product?: ProductType;
+  product?: CartItemProductType;
   skuId?: number;
   quantity: number;
   campaign?: CampaignType;

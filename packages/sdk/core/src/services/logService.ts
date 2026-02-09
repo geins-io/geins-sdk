@@ -206,30 +206,30 @@ export class LogService {
   }
 
   public static isServer(): boolean {
-    return typeof window === 'undefined';
+    return typeof globalThis === 'object' && !('window' in globalThis);
   }
 
-  public static trace(...args: any[]): void {
+  public static trace(...args: unknown[]): void {
     LogService.log('trace', args);
   }
 
-  public static debug(...args: any[]): void {
+  public static debug(...args: unknown[]): void {
     LogService.log('debug', args);
   }
 
-  public static info(...args: any[]): void {
+  public static info(...args: unknown[]): void {
     LogService.log('info', args);
   }
 
-  public static warn(...args: any[]): void {
+  public static warn(...args: unknown[]): void {
     LogService.log('warn', args);
   }
 
-  public static error(...args: any[]): void {
+  public static error(...args: unknown[]): void {
     LogService.log('error', args);
   }
 
-  private static log(logLevel: LogLevel, args: any[]): void {
+  private static log(logLevel: LogLevel, args: unknown[]): void {
     const { methodName, fileName, className, framework, fileType } = LogService.getCallerInfoExtended();
 
     LogService.output(logLevel, methodName, fileName, className, framework, fileType, args);
@@ -242,7 +242,7 @@ export class LogService {
     className: string,
     framework: string | null,
     fileType: LogFileMeta | null,
-    args: any[],
+    args: unknown[],
   ): void {
     const typeMeta = logTypes[logLevel];
     const fileTypeInfo = fileType ? ` (${fileType.name})` : '';
@@ -291,15 +291,15 @@ export class LogService {
     framework: string | null;
     fileType: LogFileMeta | null;
   } {
-    let error: any = {};
+    let error: Error | undefined;
 
     try {
       throw new Error('');
-    } catch (e) {
-      error = e;
+    } catch (e: unknown) {
+      error = e instanceof Error ? e : undefined;
     }
 
-    if (!error.stack) {
+    if (!error?.stack) {
       return {
         methodName: 'anonymous',
         fileName: 'unknown',

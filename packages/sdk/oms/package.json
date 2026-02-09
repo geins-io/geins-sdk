@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "license": "MIT",
+  "sideEffects": false,
   "files": [
     "dist"
   ],
@@ -17,15 +18,17 @@
     }
   },
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c && tsc --emitDeclarationOnly --outDir dist",
     "prepublishOnly": "yarn build",
     "lint": "eslint --fix .",
     "link": "yarn link"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@geins/core": "*"
   },
   "devDependencies": {
+    "@geins/core": "*",
+    "@geins/types": "*",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-typescript": "^12.1.0",

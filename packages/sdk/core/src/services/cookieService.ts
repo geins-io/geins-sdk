@@ -1,65 +1,37 @@
 import { type CookieSerializeOptions } from 'cookie';
 import Cookie from 'cookie-universal';
 
-/**
- * Configuration options for setting cookies.
- */
+/** Configuration options for setting cookies. */
 export interface CookieServiceConfig {
-  /**
-   * Indicates if the cookie is HTTP only.
-   * If `true`, the cookie is inaccessible to client-side scripts.
-   */
+  /** If `true`, the cookie is inaccessible to client-side scripts. */
   httpOnly?: boolean;
 
-  /**
-   * Specifies the domain for which the cookie is valid.
-   * If not specified, defaults to the host portion of the current document URL.
-   */
+  /** Domain for which the cookie is valid. Defaults to the current document host. */
   domain?: string;
 
-  /**
-   * Specifies the URL path that must exist in the requested URL for the browser to send the Cookie header.
-   * Defaults to `'/'`.
-   */
+  /** URL path required for the browser to send the cookie. Defaults to `'/'`. */
   path?: string;
 
-  /**
-   * Indicates if the cookie should only be transmitted over secure protocols like HTTPS.
-   * If `true`, the cookie will only be sent over secure connections.
-   */
+  /** If `true`, the cookie is only sent over HTTPS. */
   secure?: boolean;
 
-  /**
-   * Controls whether the cookie is sent with cross-site requests.
-   * Defaults to `'lax'`.
-   */
+  /** Controls cross-site cookie behaviour. Defaults to `'lax'`. */
   sameSite?: 'strict' | 'lax' | 'none';
 
-  /**
-   * Sets the maximum age of the cookie in seconds.
-   * Can be a number or a string representation of a number.
-   */
-  maxAge?: number | string; // maxAge can be a number or string here
+  /** Maximum age of the cookie in seconds. */
+  maxAge?: number | string;
 }
 
-/**
- * Represents a cookie with a name and payload, extending the cookie configuration options.
- */
+/** A cookie with a name and payload, extending the cookie configuration options. */
 export interface CookieType extends CookieServiceConfig {
-  /**
-   * The name of the cookie.
-   */
+  /** The name of the cookie. */
   name: string;
 
-  /**
-   * The value or data stored in the cookie.
-   */
+  /** The value stored in the cookie. */
   payload: string;
 }
 
-/**
- * Service for managing cookies.
- */
+/** Service for managing cookies. */
 export class CookieService {
   private path = '/';
   private domain = '';
@@ -71,7 +43,7 @@ export class CookieService {
 
   /**
    * Creates an instance of CookieService.
-   * @param {CookieServiceConfig} [config] - Optional configuration for the cookie service.
+   * @param config - Optional configuration for the cookie service.
    */
   constructor(config?: CookieServiceConfig) {
     this.maxAge = 0;
@@ -104,7 +76,7 @@ export class CookieService {
 
   /**
    * Retrieves the current cookie configuration.
-   * @returns {CookieServiceConfig} - The current configuration settings.
+   * @returns The current configuration settings.
    */
   protected getConfig(): CookieServiceConfig {
     return {
@@ -138,7 +110,7 @@ export class CookieService {
 
   /**
    * Retrieves all cookies.
-   * @returns {Record<string, string>} - An object containing all cookies.
+   * @returns An object containing all cookies.
    */
   public getAll(): Record<string, string> {
     return this.cookie.getAll() as Record<string, string>;
@@ -146,8 +118,8 @@ export class CookieService {
 
   /**
    * Retrieves the value of a specific cookie.
-   * @param {string} cookieName - The name of the cookie to retrieve.
-   * @returns {string} - The value of the cookie, or an empty string if not found.
+   * @param cookieName - The name of the cookie to retrieve.
+   * @returns The value of the cookie, or an empty string if not found.
    */
   public get(cookieName: string): string {
     return this.cookie.get(cookieName) || '';
@@ -155,7 +127,7 @@ export class CookieService {
 
   /**
    * Removes a specific cookie.
-   * @param {string} cookieName - The name of the cookie to remove.
+   * @param cookieName - The name of the cookie to remove.
    */
   public remove(cookieName: string): void {
     this.cookie.remove(cookieName);
@@ -163,8 +135,8 @@ export class CookieService {
 
   /**
    * Sets a cookie with the specified options.
-   * @param {CookieType} cookie - The cookie to set, including name and payload.
-   * @param {CookieServiceConfig} [config] - Optional configuration for setting the cookie.
+   * @param cookie - The cookie to set, including name and payload.
+   * @param config - Optional configuration for setting the cookie.
    */
   public set(cookie: CookieType, config?: CookieServiceConfig): void {
     const baseConfig = this.getConfig();

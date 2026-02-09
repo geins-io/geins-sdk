@@ -3,17 +3,21 @@ import { GeinsOMS } from '@geins/oms';
 import { randomCheckoutData } from '../../../../test/dataMock';
 import { omsSettings, validSettings } from '../../../../test/globalSettings';
 
-describe('GeinsOMS checkout', () => {
+describe('GeinsOMS checkout (stateless)', () => {
   let geinsOMS: GeinsOMS;
-  const PAYEMENT_METHOD_ID = 18;
+  let cartId: string;
+  const PAYMENT_METHOD_ID = 18;
 
   beforeEach(async () => {
     const geinsCore = new GeinsCore(validSettings);
     geinsOMS = new GeinsOMS(geinsCore);
-    await geinsOMS.cart.items.add({ skuId: omsSettings.skus.skuId1, quantity: 1 });
-    expect(geinsOMS.cart.id).toBeDefined();
 
-    // Reset mocks before each test
+    // Create a cart and add an item, store the cartId
+    let cart = await geinsOMS.cart.create();
+    cart = await geinsOMS.cart.addItem(cart.id, { skuId: omsSettings.skus.skuId1, quantity: 1 });
+    cartId = cart.id;
+    expect(cartId).toBeDefined();
+
     jest.clearAllMocks();
   });
 
@@ -32,36 +36,35 @@ describe('GeinsOMS checkout', () => {
   });
 
   it('should create a token and then parse it', async () => {
-    const token = await geinsOMS.checkout.createToken();
+    const token = await geinsOMS.checkout.createToken({ cartId });
     expect(token).toBeDefined();
     const parsedToken = await GeinsOMS.parseCheckoutToken(token as string);
     expect(parsedToken).toBeDefined();
     expect(parsedToken).toHaveProperty('cartId');
     expect(parsedToken).toHaveProperty('checkoutSettings');
     expect(parsedToken).toHaveProperty('geinsSettings');
-    expect(parsedToken?.cartId).toBe(geinsOMS.cart.id);
+    expect(parsedToken?.cartId).toBe(cartId);
   });
 
   it('should get a checkout', async () => {
-    const checkout = await geinsOMS.checkout.get();
+    const checkout = await geinsOMS.checkout.get({ cartId });
     expect(checkout).toBeDefined();
   });
 
-  it('should get have a selected payment', async () => {
-    const checkout = await geinsOMS.checkout.get({ paymentMethodId: PAYEMENT_METHOD_ID });
+  it('should have a selected payment', async () => {
+    const checkout = await geinsOMS.checkout.get({ cartId, paymentMethodId: PAYMENT_METHOD_ID });
     expect(checkout).toBeDefined();
     const paymentOptions = checkout?.paymentOptions;
     expect(paymentOptions).toEqual(
-      expect.arrayContaining([expect.objectContaining({ id: PAYEMENT_METHOD_ID, isSelected: true })]),
+      expect.arrayContaining([expect.objectContaining({ id: PAYMENT_METHOD_ID, isSelected: true })]),
     );
   });
 
-  it('should validate checkout checkout', async () => {
-    // needed to get the checkout before validate
-    const checkoutOptions = randomCheckoutData(PAYEMENT_METHOD_ID);
-    await geinsOMS.checkout.get({ checkoutOptions });
+  it('should validate checkout', async () => {
+    const checkoutOptions = randomCheckoutData(PAYMENT_METHOD_ID);
+    await geinsOMS.checkout.get({ cartId, checkoutOptions });
 
-    const validateResult = await geinsOMS.checkout.validate({ checkoutOptions });
+    const validateResult = await geinsOMS.checkout.validate({ cartId, checkoutOptions });
     expect(validateResult).toBeDefined();
     if (validateResult?.isValid === false) {
       console.error('Validation error:', validateResult);
@@ -69,18 +72,18 @@ describe('GeinsOMS checkout', () => {
     expect(validateResult?.isValid).toBe(true);
   });
 
-  it('should get not validate checkout', async () => {
+  it('should not validate checkout with missing payment', async () => {
     const checkoutOptions = randomCheckoutData();
-    await geinsOMS.checkout.get({ checkoutOptions });
-    const validateResult = await geinsOMS.checkout.validate({ checkoutOptions });
+    await geinsOMS.checkout.get({ cartId, checkoutOptions });
+    const validateResult = await geinsOMS.checkout.validate({ cartId, checkoutOptions });
     expect(validateResult).toBeDefined();
     expect(validateResult?.isValid).toBe(false);
   });
 
   it('should create an order', async () => {
-    const checkoutOptions = randomCheckoutData(PAYEMENT_METHOD_ID);
+    const checkoutOptions = randomCheckoutData(PAYMENT_METHOD_ID);
     const orderCreateResult = await geinsOMS.checkout.createOrder({
-      cartId: geinsOMS.cart.id,
+      cartId,
       checkoutOptions,
     });
 

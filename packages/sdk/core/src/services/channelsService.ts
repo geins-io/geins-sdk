@@ -1,5 +1,7 @@
 import type { GeinsChannelTypeType, GeinsSettings } from '@geins/types';
+import type { ApiClientGetter } from '../base/baseApiService';
 import { BaseApiService } from '../base/baseApiService';
+import type { GraphQLQueryOptions } from '../api-client/merchantApiClient';
 import { queries } from '../graphql';
 import { parseChannelsResult } from '../parsers/channelParser';
 import { SimpleCache } from '../utils/simpleCache';
@@ -7,7 +9,7 @@ import { SimpleCache } from '../utils/simpleCache';
 export class ChannelsService extends BaseApiService {
   private cache: SimpleCache<GeinsChannelTypeType[]>;
 
-  constructor(client: any, geinsSettings: GeinsSettings) {
+  constructor(client: ApiClientGetter, geinsSettings: GeinsSettings) {
     super(client, geinsSettings);
     this.cache = new SimpleCache<GeinsChannelTypeType[]>(30 * 60 * 1000); // 30 minutes cache
   }
@@ -19,7 +21,7 @@ export class ChannelsService extends BaseApiService {
     if (cachedChannels) {
       return cachedChannels;
     }
-    const options: any = {
+    const options: GraphQLQueryOptions = {
       query: queries.channels,
       variables: {},
     };
@@ -29,7 +31,7 @@ export class ChannelsService extends BaseApiService {
     }
     return channels;
   }
-  protected parseResult(result: any): GeinsChannelTypeType[] | undefined {
-    return parseChannelsResult(result);
+  protected parseResult(result: unknown): GeinsChannelTypeType[] | undefined {
+    return parseChannelsResult(result as { data?: { channels?: GeinsChannelTypeType[] } });
   }
 }

@@ -1,4 +1,5 @@
 import { GeinsLogLevel } from '@geins/types';
+/** Level-gated logger that wraps console methods. Output is suppressed below the configured {@link GeinsLogLevel}. */
 export class Logger {
   private currentLogLevel: GeinsLogLevel;
 
@@ -43,3 +44,9 @@ export class Logger {
     }
   }
 }
+
+/** Shared SDK-internal logger. Silent in test environments, WARN level otherwise. */
+const defaultLevel = typeof process !== 'undefined' && process.env?.NODE_ENV === 'test'
+  ? GeinsLogLevel.NONE
+  : GeinsLogLevel.WARN;
+export const sdkLogger = new Logger(defaultLevel);

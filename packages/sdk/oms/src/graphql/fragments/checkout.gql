@@ -1,9 +1,9 @@
 #import "./cart.gql"
 #import "./address.gql"
 
-fragment Checkout on CheckoutType {
+fragment OmsCheckout on CheckoutType {
   cart {
-    ...Cart
+    ...OmsCart
   }
   consents {
     type
@@ -12,10 +12,10 @@ fragment Checkout on CheckoutType {
   email
   identityNumber
   billingAddress {
-    ...Address
+    ...OmsAddress
   }
   shippingAddress {
-    ...Address
+    ...OmsAddress
   }
   shippingData
   shippingOptions {

@@ -12,19 +12,24 @@ tags:
 
 ## Use Manual Shipping Fees
 
-You can manually set the shipping fee for a cart using the `setShippingFee` method. This method allows you to specify the shipping fee amount and currency for a cart. This is only applicable if Geins is set to use manual shipping fees. 
+You can manually set the shipping fee for a cart using `setShippingFee`. This is only applicable if Geins is configured to use manual shipping fees.
 
-::: info :nerd_face: Take note
-
-The shipping fee is not automatically calculated by Geins. You must manually set the shipping fee for each cart. This is only for refrence purpose. The real shipping fee will be calculated by the Geins system.
-
+::: info
+The shipping fee set here is for reference purposes. The actual shipping fee is calculated by the Geins system during checkout.
 :::
 
-### Setting the shipping fee for a cart:
+### Setting the shipping fee
 
-Setting the shipping fee for a cart is done using the `set` method on the `shippingFee` object. This method allows you to set the shipping fee for a cart.
+```typescript
+const cart = await geinsOMS.cart.setShippingFee(cartId, 59);
+```
 
-```typescript 
-  const cart = geinsOMS.cart;
-  await cart.shipping.shippingFee = 59;
+Returns the full updated `CartType` with the new fee applied.
+
+### Session Layer
+
+With `CartSession`:
+
+```typescript
+await session.shippingFee.set(59);
 ```

@@ -22,6 +22,22 @@ export default {
     '^.+\\.(gql|graphql)$': '@graphql-tools/jest-transform',
   },
   setupFiles: ['<rootDir>/jest.setup.cjs'],
+  // Coverage only runs when invoked with --coverage
+  collectCoverage: false,
+  collectCoverageFrom: [
+    'packages/sdk/*/src/**/*.ts',
+    '!packages/sdk/*/src/**/*.d.ts',
+    '!packages/sdk/*/src/**/index.ts',
+    '!packages/sdk/types/src/generated/**',
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 45,
+      functions: 40,
+      lines: 50,
+      statements: 50,
+    },
+  },
   globals: {
     graphql: {
       noDescription: true,
