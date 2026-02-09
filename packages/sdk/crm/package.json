@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "license": "MIT",
+  "sideEffects": false,
   "files": [
     "dist"
   ],
@@ -17,13 +18,13 @@
     }
   },
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c && tsc --emitDeclarationOnly --outDir dist",
     "prepublishOnly": "yarn build",
     "lint": "eslint --fix .",
     "link": "yarn link"
   },
-  "dependencies": {
-    "@geins/core": "*"
+  "peerDependencies": {
+    "@geins/core": ">=0.6.0"
   },
   "devDependencies": {
     "@geins/eslint-config": "0.2.1",

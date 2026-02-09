@@ -99,10 +99,10 @@ export type RatingType = {
 };
 
 export type StockType = {
-  inStock: boolean;
-  oversellable: boolean;
+  inStock: number;
+  oversellable: number;
   totalStock: number;
-  static: boolean;
+  static: number;
 };
 
 export type MetadataType = {

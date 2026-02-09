@@ -1,10 +1,9 @@
-import { BasePackage, buildEndpoints, GeinsCore } from '@geins/core';
+import { BasePackage, buildEndpoints, GeinsCore, GeinsError, GeinsErrorCode } from '@geins/core';
 import {
   AuthClientConnectionModes,
   AuthCredentials,
   AuthResponse,
   AuthSettings,
-  AuthTokens,
   GeinsCustomerType,
   GeinsEventType,
   GeinsUserInputTypeType,
@@ -15,6 +14,11 @@ import { AuthClientDirect, AuthClientProxy } from './auth';
 import { PasswordResetService, UserOrdersService, UserService } from './services';
 import type { AuthInterface, UserInterface } from './types';
 
+/**
+ * Stateless CRM package.
+ * No stored tokens or user state — all auth/user state flows through method parameters.
+ * Cookie persistence is handled by CrmSession (session layer).
+ */
 class GeinsCRM extends BasePackage {
   private _authClient: AuthClientDirect | AuthClientProxy;
   private _userService!: UserService;
@@ -36,7 +40,7 @@ class GeinsCRM extends BasePackage {
       );
       this._authClient = new AuthClientDirect(endpoints.authSign, endpoints.auth);
     } else {
-      throw new Error('Invalid client connection mode');
+      throw new GeinsError('Invalid client connection mode', GeinsErrorCode.INVALID_ARGUMENT);
     }
   }
 
@@ -47,89 +51,46 @@ class GeinsCRM extends BasePackage {
     this._userOrdersService?.destroy();
   }
 
-  private async initUserService(): Promise<void> {
-    this._userService = new UserService(() => this._apiClient(), this._geinsSettings);
-
+  private get userService(): UserService {
     if (!this._userService) {
-      throw new Error('Failed to initialize user service');
+      this._userService = new UserService(() => this._apiClient(), this._geinsSettings);
     }
+    return this._userService;
   }
 
-  private async initPasswordService(): Promise<void> {
-    this._passwordResetService = new PasswordResetService(() => this._apiClient(), this._geinsSettings);
+  private get passwordResetService(): PasswordResetService {
     if (!this._passwordResetService) {
-      throw new Error('Failed to initialize password reset service');
+      this._passwordResetService = new PasswordResetService(() => this._apiClient(), this._geinsSettings);
     }
+    return this._passwordResetService;
   }
 
-  private async initUserOrderService(): Promise<void> {
-    this._userOrdersService = new UserOrdersService(() => this._apiClient(), this._geinsSettings);
+  private get userOrdersService(): UserOrdersService {
     if (!this._userOrdersService) {
-      throw new Error('Failed to initialize user order service');
+      this._userOrdersService = new UserOrdersService(() => this._apiClient(), this._geinsSettings);
     }
+    return this._userOrdersService;
   }
 
-  public setAuthTokens(tokens: AuthTokens): void {
-    if (tokens?.token) {
-      this.core.setUserToken(tokens?.token);
-    }
-    if (tokens?.refreshToken) {
-      this._authClient.setRefreshToken(tokens.refreshToken);
-    }
-  }
-
-  public clearAuthAndUser(): void {
-    this.core?.setUserToken(undefined);
-    this._authClient?.clearAuth();
-    this._apiClient()?.clearCacheAndRefetchQueries();
-  }
-
-  public spoofUser(token: string): string {
-    this._authClient.logout();
-    return this._authClient.spoofPreviewUser(token);
-  }
-
+  /**
+   * Stateless auth interface.
+   * All methods require tokens to be passed explicitly.
+   */
   get auth(): AuthInterface {
-    if (!this._authClient) {
-      throw new Error('AuthClient is not initialized');
-    }
     return {
-      get: this.authGetUser.bind(this),
-      login: this.authLogin.bind(this),
-      logout: this.authLogout.bind(this),
-      refresh: this.authRefresh.bind(this),
-      authorized: this.authAuthorized.bind(this),
+      login: (credentials: AuthCredentials) => this.authLogin(credentials),
+      logout: () => this._authClient.logout(),
+      refresh: (refreshToken: string) => this._authClient.refresh(refreshToken),
+      getUser: (refreshToken: string, userToken?: string) => this._authClient.getUser(refreshToken, userToken),
+      authorized: async (refreshToken: string) => {
+        const response = await this._authClient.getUser(refreshToken);
+        return response?.succeeded ?? false;
+      },
     };
-  }
-
-  private handleAuthResponse(authResponse: AuthResponse | undefined, clearAuthOnFail: boolean = true): void {
-    if (authResponse?.succeeded && authResponse.tokens?.token) {
-      this.setAuthTokens(authResponse.tokens);
-    } else if (clearAuthOnFail) {
-      this.clearAuthAndUser();
-    }
-  }
-
-  private async authAuthorized(refreshToken?: string): Promise<boolean> {
-    // check if refreshToken is argument
-    if (refreshToken) {
-      this._authClient.setRefreshToken(refreshToken);
-    }
-
-    // try to to get user with refreshToken
-    const authResponse = await this._authClient.getUser(refreshToken);
-    this.handleAuthResponse(authResponse);
-
-    return authResponse?.succeeded ?? false;
   }
 
   private async authLogin(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
     const authResponse = await this._authClient.login(credentials);
-    this.handleAuthResponse(authResponse);
-
-    if (authResponse?.succeeded) {
-      this._apiClient()?.clearCacheAndRefetchQueries();
-    }
 
     try {
       this.pushEvent(
@@ -149,70 +110,35 @@ class GeinsCRM extends BasePackage {
     return authResponse;
   }
 
-  private async authLogout(): Promise<AuthResponse | undefined> {
-    this.clearAuthAndUser();
-    try {
-      this.pushEvent({ subject: GeinsEventType.USER_LOGOUT, payload: {} }, GeinsEventType.USER_LOGOUT);
-    } catch (error) {
-      console.warn('Failed to push USER_LOGOUT event:', error);
-    }
-
-    return this._authClient.logout();
-  }
-
-  private async authRefresh(refreshToken?: string): Promise<AuthResponse | undefined> {
-    const authResponse = await this._authClient.refresh(refreshToken);
-    this.handleAuthResponse(authResponse);
-
-    return authResponse;
-  }
-
-  private async authGetUser(refreshToken?: string, userToken?: string): Promise<AuthResponse | undefined> {
-    const authResponse = await this._authClient.getUser(refreshToken, userToken);
-    this.handleAuthResponse(authResponse);
-
-    return authResponse;
-  }
-
+  /**
+   * Stateless user interface.
+   * All read/write methods require a userToken for authorization.
+   */
   get user(): UserInterface {
-    if (!this._authClient) {
-      throw new Error('AuthClient is not initialized');
-    }
     return {
-      get: this.userGet.bind(this),
-      update: this.userUpdate.bind(this),
-      create: this.userRegisterAndCreate.bind(this),
-      remove: this.userRemove.bind(this),
+      get: (userToken: string) => this.userGet(userToken),
+      update: (user: GeinsUserInputTypeType, userToken: string) => this.userUpdate(user, userToken),
+      create: (credentials: AuthCredentials, user?: GeinsUserInputTypeType) =>
+        this.userRegisterAndCreate(credentials, user),
+      remove: (userToken: string) => this.userRemove(userToken),
       password: {
-        change: this.userChangePassword.bind(this),
-        requestReset: this.userPasswordResetRequest.bind(this),
-        commitReset: this.userPasswordResetCommit.bind(this),
+        change: (credentials: AuthCredentials, refreshToken: string) =>
+          this._authClient.changePassword(credentials, refreshToken),
+        requestReset: (email: string) => this.userPasswordResetRequest(email),
+        commitReset: (resetKey: string, password: string) => this.userPasswordResetCommit(resetKey, password),
       },
       orders: {
-        get: this.userOrders.bind(this),
+        get: (userToken: string) => this.userOrders(userToken),
       },
     };
   }
 
-  private async userGet(): Promise<GeinsUserType | undefined> {
-    if (!this._userService) {
-      await this.initUserService();
-    }
-
-    // check if core has token
-    const userTokenFromCore = this.getCore().getUserToken();
-    if (!userTokenFromCore) {
-      return undefined;
-    }
-    return this._userService?.get();
+  private async userGet(userToken: string): Promise<GeinsUserType | undefined> {
+    return this.userService.get(userToken);
   }
 
-  private async userUpdate(user: GeinsUserInputTypeType): Promise<any> {
-    if (!this._userService) {
-      await this.initUserService();
-    }
-
-    // Unwrap the Proxy
+  private async userUpdate(user: GeinsUserInputTypeType, userToken: string): Promise<GeinsUserType | undefined> {
+    // Unwrap potential Proxy objects
     const unwrappedUser: GeinsUserInputTypeType = JSON.parse(JSON.stringify(user));
 
     try {
@@ -224,89 +150,54 @@ class GeinsCRM extends BasePackage {
       console.warn('Failed to push USER_UPDATE event:', error);
     }
 
-    return this._userService?.update(user);
+    return this.userService.update(user, userToken);
   }
 
   private async userRegisterAndCreate(
     credentials: AuthCredentials,
     user?: GeinsUserInputTypeType,
   ): Promise<AuthResponse | undefined> {
-    // logout user if already logged in
-    await this.authLogout();
-
-    // user will be registered and logged in
     const authResponse = await this._authClient.register(credentials);
-    this.handleAuthResponse(authResponse);
 
-    if (!authResponse?.succeeded) {
+    if (!authResponse?.succeeded || !authResponse.tokens?.token) {
       return authResponse;
     }
 
+    const token = authResponse.tokens.token;
+
     if (user) {
-      const userResult = await this.userUpdate(user);
-      if (!userResult) {
-        throw new Error('Failed to update user with information');
-      }
+      await this.userUpdate(user, token);
     } else {
-      const registerUserAs: GeinsUserInputTypeType = {
-        newsletter: false,
-        customerType: GeinsCustomerType.PersonType,
-      };
-
-      const userResult = await this.userCreate(registerUserAs);
-
-      if (!userResult) {
-        throw new Error('Failed to create user in MC');
-      }
+      await this.userService.create(
+        { newsletter: false, customerType: GeinsCustomerType.PersonType },
+        token,
+      );
     }
 
-    const { refreshToken, token } = authResponse?.tokens || {};
-    return this._authClient.getUser(refreshToken, token);
+    return this._authClient.getUser(authResponse.tokens.refreshToken!, token);
   }
 
-  private async userCreate(user: GeinsUserInputTypeType): Promise<any> {
-    if (!this._userService) {
-      await this.initUserService();
+  private async userRemove(userToken: string): Promise<boolean> {
+    try {
+      this.pushEvent({ subject: GeinsEventType.USER_DELETE, payload: {} }, GeinsEventType.USER_DELETE);
+    } catch (error) {
+      console.warn('Failed to push USER_DELETE event:', error);
     }
-
-    return this._userService?.create(user);
+    return this.userService.delete(userToken);
   }
 
-  private async userRemove(): Promise<any> {
-    this.pushEvent({ subject: GeinsEventType.USER_DELETE, payload: {} }, GeinsEventType.USER_DELETE);
-    if (!this._userService) {
-      await this.initUserService();
-    }
-
-    return this._userService?.delete();
+  private async userOrders(userToken: string): Promise<GeinsUserOrdersType | undefined> {
+    return this.userOrdersService.get(userToken);
   }
 
-  private async userOrders(): Promise<GeinsUserOrdersType | undefined> {
-    if (!this._userOrdersService) {
-      await this.initUserOrderService();
-    }
-    return this._userOrdersService?.get();
+  private async userPasswordResetRequest(email: string): Promise<boolean> {
+    const result = await this.passwordResetService.request(email);
+    return !!result;
   }
 
-  private async userChangePassword(credentials: AuthCredentials): Promise<AuthResponse | undefined> {
-    const authResponse = await this._authClient.changePassword(credentials);
-    this.handleAuthResponse(authResponse, false);
-
-    return authResponse;
-  }
-
-  private async userPasswordResetRequest(email: string): Promise<any> {
-    if (!this._passwordResetService) {
-      await this.initPasswordService();
-    }
-    return this._passwordResetService?.request(email);
-  }
-
-  private async userPasswordResetCommit(resetKey: string, password: string): Promise<any> {
-    if (!this._passwordResetService) {
-      await this.initPasswordService();
-    }
-    return this._passwordResetService?.commit(resetKey, password);
+  private async userPasswordResetCommit(resetKey: string, password: string): Promise<boolean> {
+    const result = await this.passwordResetService.commit(resetKey, password);
+    return !!result;
   }
 }
 

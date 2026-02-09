@@ -3,7 +3,7 @@
 #import "./stock.gql"
 #import "./campaign-rule.gql"
 
-fragment Cart on CartType {
+fragment OmsCart on CartType {
   id
   isCompleted
   merchantData
@@ -29,7 +29,7 @@ fragment Cart on CartType {
       }
       prices {
         price {
-          ...Price
+          ...OmsPrice
           __typename
         }
         quantity
@@ -68,23 +68,23 @@ fragment Cart on CartType {
         skuId
         name
         stock {
-          ...Stock
+          ...OmsStock
           __typename
         }
         __typename
       }
       unitPrice {
-        ...Price
+        ...OmsPrice
         __typename
       }
       __typename
     }
     unitPrice {
-      ...Price
+      ...OmsPrice
       __typename
     }
     totalPrice {
-      ...Price
+      ...OmsPrice
       __typename
     }
     __typename
@@ -101,7 +101,7 @@ fragment Cart on CartType {
       __typename
     }
     subTotal {
-      ...Price
+      ...OmsPrice
       __typename
     }
     shipping {
@@ -115,7 +115,7 @@ fragment Cart on CartType {
       __typename
     }
     total {
-      ...Price
+      ...OmsPrice
       __typename
     }
     __typename

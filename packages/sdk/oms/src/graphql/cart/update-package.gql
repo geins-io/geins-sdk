@@ -7,7 +7,7 @@ mutation updateCartGroup(
   $marketId: String
 ) {
   updateCartGroup(id: $id, item: $item, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
-    ...Cart
+    ...OmsCart
     __typename
   }
 }

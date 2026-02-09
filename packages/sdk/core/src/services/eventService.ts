@@ -3,6 +3,7 @@ import { BroadcastChannel } from 'broadcast-channel';
 import EventEmitter from 'eventemitter3';
 import { isServerContext } from '../utils';
 
+/** In-process event bus with BroadcastChannel support for cross-tab communication. */
 export class EventService {
   private eventName: string = 'geins-event';
   private emitter = new EventEmitter();
@@ -18,50 +19,39 @@ export class EventService {
 
   private addBroadcastListener() {
     if (this.broadcast) {
-      this.broadcast.onmessage = (data: any) => {
-        this.emitter.emit(data.eventName, data.eventMessage);
+      this.broadcast.onmessage = (data: unknown) => {
+        const msg = data as { eventName: string; eventMessage: GeinsEventMessage };
+        this.emitter.emit(msg.eventName, msg.eventMessage);
       };
     }
   }
 
-  /**
-   * Add a persistent event listener.
-   */
-  listenerAdd(handler: (data: any) => void, eventName: string = this.eventName): void {
+  /** Subscribe to events. Fires on every matching event until removed. */
+  listenerAdd(handler: (data: GeinsEventMessage) => void, eventName: string = this.eventName): void {
     this.emitter.on(eventName, handler);
   }
 
-  /**
-   * Add a one-time event listener.
-   */
-  listenerOnce(handler: (data: any) => void, eventName: string = this.eventName): void {
+  /** Subscribe to a single occurrence of an event, then auto-remove. */
+  listenerOnce(handler: (data: GeinsEventMessage) => void, eventName: string = this.eventName): void {
     this.emitter.once(eventName, handler);
   }
 
-  /**
-   * Remove all listeners for an event.
-   */
+  /** Remove all listeners for the given event name. */
   listenerRemove(eventName: string = this.eventName): void {
     this.emitter.removeAllListeners(eventName);
   }
 
-  /**
-   * Get the number of listeners for an event.
-   */
+  /** Get the number of listeners for an event. */
   listenerCount(eventName: string = this.eventName): number {
     return this.emitter.listenerCount(eventName);
   }
 
-  /**
-   * Get all listeners for an event.
-   */
-  listenersGet(eventName: string = this.eventName): any[] {
+  /** Get all listeners for an event. */
+  listenersGet(eventName: string = this.eventName): ((...args: unknown[]) => void)[] {
     return this.emitter.listeners(eventName);
   }
 
-  /**
-   * Emit an event and broadcast it to other tabs.
-   */
+  /** Emit an event locally and broadcast it to other browser tabs via BroadcastChannel. */
   push(eventMessage: GeinsEventMessage, eventName: string = this.eventName): void {
     this.emitter.emit(eventName, eventMessage);
     if ((eventMessage.broadcast ?? true) && this.broadcast) {

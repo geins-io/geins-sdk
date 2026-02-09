@@ -1,29 +1,33 @@
-//import type { GeinsUserRequestPasswordResetType } from '@geins/types';
-import { BaseApiService, logWrite, GeinsUserInputTypeType } from '@geins/core';
+import { BaseApiService } from '@geins/core';
+import type { GraphQLQueryOptions } from '@geins/core';
 import { mutations } from '../graphql';
 import { digest } from '../auth/authHelpers';
+
+/** Service for requesting and committing password resets. */
 export class PasswordResetService extends BaseApiService {
-  private async generateVars(variables: any) {
-    return this.createVariables(variables);
-  }
-  async request(email: string): Promise<any> {
-    const variables = {
-      email,
-    };
-    const options = {
+  /**
+   * Sends a password reset email to the given address.
+   * @param email - The user's email address.
+   */
+  async request(email: string): Promise<unknown> {
+    const options: GraphQLQueryOptions = {
       query: mutations.pwResetRequest,
-      variables: await this.generateVars(variables),
+      variables: this.createVariables({ email }),
     };
     return this.runMutation(options);
   }
 
-  async commit(resetKey: string, password: string): Promise<any> {
+  /**
+   * Commits a password reset using the reset key and new password.
+   * The password is hashed before being sent to the API.
+   * @param resetKey - The reset key from the password reset email.
+   * @param password - The new plaintext password (will be digested).
+   */
+  async commit(resetKey: string, password: string): Promise<unknown> {
     const pwd = await digest(password);
-    const variables = { resetKey, password: pwd };
-    const vars = await this.generateVars(variables);
-    const options = {
+    const options: GraphQLQueryOptions = {
       query: mutations.pwResetCommit,
-      variables: vars,
+      variables: this.createVariables({ resetKey, password: pwd }),
     };
     return this.runMutation(options);
   }

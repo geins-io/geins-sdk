@@ -9,200 +9,244 @@ tags:
 
 # Cart
 
-The `CartService` in the Geins SDK Order Management System (OMS) package provides developers with tools to manage shopping carts efficiently. It supports adding, updating, and removing items, managing promotional codes, and configuring shipping details.
+The `CartService` in the Geins SDK OMS package is a **stateless service** for managing shopping carts. Every method takes a `cartId` (where applicable) and returns the full `CartType`. It holds no per-request state, making it safe for server-side shared singletons.
 
-The `Cart` is a singleton object created during the initialization of the `@geins/oms` package. It represents a collection of user-selected items, along with metadata like applied campaigns, promotion codes, and shipping details.
+For browser-side convenience (cookie persistence, quantity increment/decrement), use the `CartSession` wrapper.
 
 ## Overview
 
-The `CartService` is a comprehensive utility within the Geins SDK OMS package for managing shopping carts. Its key responsibilities include:
+The `CartService` provides:
 
-- **Cart Lifecycle Management**: 
-  - **Creation**: Create a new cart when required.
-  - **Fetching**: Retrieve an existing cart using its unique `cartId`.
-  - **Refreshing**: Update the cart with the latest data from the backend.
-  - **Removal**: Clear the cart and remove its `cartId` from storage.
+- **Cart Lifecycle**: Create, fetch, complete, and copy carts.
+- **Item Management**: Add, update, and delete items.
+- **Promotion Codes**: Apply and remove promotional codes.
+- **Shipping Fees**: Configure shipping charges.
+- **Merchant Data**: Store custom metadata on the cart.
+- **Cart Copying**: Create new carts based on existing ones.
+- **Cart Completion**: Mark carts as read-only after checkout.
 
-- **Item Management**:
-  - Add, update, remove, or delete items from the cart.
-  - Group and manage item packages within the cart.
-  - Support for adjusting item quantities.
-
-- **Promotion Codes**:
-  - Apply promotional codes to the cart.
-  - Remove existing promotional codes.
-  - Handle recalculations for discounts.
-
-- **Campaign Management**:
-  - Integrate eligible and activated campaigns for the cart.
-  - Display applied campaigns and related metadata.
-
-- **Shipping Fees**:
-  - Configure and manage shipping-related charges.
-  - Validate and recalculate cart totals based on shipping fees.
-
-- **Merchant Data**:
-  - Add and modify custom merchant-specific data stored within the cart.
-  - Provide flexibility for client-specific requirements.
-
-- **Context Awareness**:
-  - Operate seamlessly in both server and client environments.
-  - Automatically handle `cartId` storage via cookies (on the client).
-
-- **Cart Copying**:
-  - Create a new cart based on an existing one.
-  - Optionally reset promotions or load the copied cart.
-
-- **Cart Completion**:
-  - Mark a cart as completed to make it read-only, ensuring immutability post-checkout.
-
-This holistic approach makes the `CartService` a powerful tool for managing carts across various e-commerce scenarios.
-
+## Stateless API
 
 ```typescript
 const geinsOMS = new GeinsOMS(geinsCore);
-const cart = geinsOMS.cart;
+const cart = geinsOMS.cart; // CartService instance (stateless)
 ```
 
-
-## Features
-
-The `Cart` is alive in 30 days from the last touchpoint. The touchpoint is any operation on the cart like adding, updating, or removing items.
-
-### Context awareness
-
-The `CartService` is aware of the context in which it is being used. It can be used in the following contexts:
-
-- **Server** Handles server-side operations for the cart, ensuring security and efficiency during interactions with the backend.
-- **Client** Manages client-side aspects of the cart, such as caching and local updates before syncing with the server.
-
-For eg: if you are using the `CartService` in a server environment. You need to use get the cart with your stored `cart id`. If you are using the `CartService` in a client environment `cartId` will be saved in a cookie.
-
-
-
-### Cart Management
-
-#### Id
-The `cartId` is a unique identifier for the cart. It is used to identify the cart when performing operations like adding, updating, or removing items. This identifier is generated when the cart is created and is stored in a cookie _(if context is client)_. Otherwise, you need to store the `cartId` in your application.
+All methods return the full `CartType`:
 
 ```typescript
-const cart = geinsOMS.cart;
-const cartId = cart.id;
+type CartType = {
+  id: string;
+  items: CartItemType[];
+  freeShipping: boolean;
+  readonly completed: boolean;
+  readonly merchantData?: string;
+  readonly promoCode?: string;
+  readonly fixedDiscount: number;
+  readonly appliedCampaigns: CampaignRuleType[];
+  readonly summary: CartSummaryType;
+};
 ```
 
+## Cart Management
 
-#### Create
-A cart will be created when the user adds the first item to the cart. The cart will be stored in the backend and the `cartId` will be saved in a cookie. If a cart already exists in the backend a new cart will be created and the `cartId` will be saved in a cookie _(if context is client)_.
+### Create
 
-To create a cart manually, you can use the `create` method:
+Creates a new cart and returns it with a generated ID.
 
 ```typescript
-const cart = geinsOMS.cart;
-const createdCart = await cart.create();
-if (createdCart) {     
-  console.log(`Cart created successfully with id: ${createdCart.id}`);
-}
+const cart = await geinsOMS.cart.create();
+console.log(`Cart created with id: ${cart.id}`);
 ```
 
-This method returns the created cart object with the `CartType`:
+### Get
+
+Fetches an existing cart by ID.
+
 ```typescript
-  type CartType = {
-    id: string;
-    items: CartItemType[];
-    freeShipping: boolean;
-    readonly merchantData?: any;
-    readonly promoCode?: string;
-    readonly fixedDiscount: number;
-    readonly appliedCampaigns: any[];
-    readonly summary: any;
+const cart = await geinsOMS.cart.get(cartId);
+console.log(`Cart has ${cart.items.length} items`);
+```
+
+### Complete
+
+Marks a cart as completed (read-only). A completed cart cannot be modified.
+
+```typescript
+const cart = await geinsOMS.cart.complete(cartId);
+console.log(`Cart completed: ${cart.completed}`); // true
+```
+
+::: warning
+Make sure not to complete a cart before the user has finished the checkout process. A completed cart cannot be modified.
+:::
+
+### Copy
+
+Creates a new cart based on an existing one. Returns the new cart.
+
+```typescript
+const newCart = await geinsOMS.cart.copy(cartId, { resetPromotions: true });
+console.log(`Copied cart ID: ${newCart.id}`);
+```
+
+::: tip
+Use this in combination with merchant data to add features like "share cart as wishlist" to your application.
+:::
+
+## Item Methods
+
+All item methods take `cartId` as the first argument and return the full updated `CartType`.
+
+### Add Item
+
+```typescript
+const cart = await geinsOMS.cart.addItem(cartId, {
+  skuId: 1234,
+  quantity: 1,
+});
+```
+
+### Update Item
+
+Sets an item to an exact quantity:
+
+```typescript
+const cart = await geinsOMS.cart.updateItem(cartId, {
+  skuId: 1234,
+  quantity: 3,
+  message: 'Gift wrapping please',
+});
+```
+
+### Delete Item
+
+Removes an item entirely (by item ID):
+
+```typescript
+const cart = await geinsOMS.cart.deleteItem(cartId, itemId);
+```
+
+See the [Items](./items.md) page for full details.
+
+## Modifier Methods
+
+### Promotion Code
+
+```typescript
+// Apply
+const cart = await geinsOMS.cart.setPromotionCode(cartId, 'SUMMER20');
+
+// Remove
+const cart = await geinsOMS.cart.removePromotionCode(cartId);
+```
+
+### Shipping Fee
+
+```typescript
+const cart = await geinsOMS.cart.setShippingFee(cartId, 59);
+```
+
+### Merchant Data
+
+```typescript
+const data = JSON.stringify({ extraData: 'test', extraNumber: 123 });
+const cart = await geinsOMS.cart.setMerchantData(cartId, data);
+```
+
+## Session Layer (Browser)
+
+For browser apps, `CartSession` wraps the stateless `CartService` with pluggable storage, event emission, typed errors, and convenience methods.
+
+### Basic Usage
+
+```typescript
+import { CartSession } from '@geins/oms';
+
+const session = new CartSession(geinsOMS.cart, locale);
+
+// Reads cartId from storage, or creates a new cart
+await session.get();
+
+// Convenience: increments quantity if item already exists
+await session.items.add({ skuId: 1234 });
+
+// Convenience: decrements quantity
+await session.items.remove({ skuId: 1234 });
+
+// Direct access to cached cart
+const items = session.items.get();
+
+// Clear session (removes storage and cache)
+session.remove();
+```
+
+### Session Options
+
+```typescript
+import { CartSession } from '@geins/oms';
+import { MemoryStorage } from '@geins/core';
+
+const session = new CartSession(geinsOMS.cart, locale, {
+  storage: new MemoryStorage(),  // or CookieStorageAdapter (default)
+  events: geinsCore.events,      // optional — enables cart events
+});
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `storage` | `StorageInterface` | `CookieStorageAdapter` | Where cart ID is persisted |
+| `events` | `EventService` | `undefined` | Enables cart state change events |
+
+### Events
+
+When an `EventService` is provided, the session emits events using `GeinsEventType`:
+
+| Event | When |
+|-------|------|
+| `CART_ADD` | Item added |
+| `CART_REMOVE` | Item removed or deleted |
+| `CART_UPDATE` | Item quantity updated |
+| `CART_CLEAR` | All items cleared |
+
+Parent event `CART` is also emitted alongside each specific event.
+
+```typescript
+import { GeinsEventType } from '@geins/types';
+
+geinsCore.events.listenerAdd((data) => {
+  console.log('Cart changed:', data);
+}, GeinsEventType.CART);
+```
+
+### Associate User
+
+Link an anonymous cart to a user identity after login:
+
+```typescript
+await cartSession.associateUser({
+  userId: authResponse.user.userId,
+  username: authResponse.user.username,
+  customerType: authResponse.user.customerType,
+});
+```
+
+This stores user info in the cart's merchant data, preserving any existing merchant data.
+
+### Error Handling
+
+Cart operations throw typed `CartError` on failure:
+
+```typescript
+import { CartError } from '@geins/core';
+
+try {
+  await session.items.add({ skuId: 1234 });
+} catch (error) {
+  if (error instanceof CartError) {
+    console.error(error.code, error.message);
   }
-```
-
-This is the structure of the `Cart` object. And not the same as the `CartService`. The `CartService` is a service that provides methods to interact with the cart.
-
-
-
-#### Get
-
-The `CartService` provides a method to get the cart. This method fetches the cart data from the backend and updates the cart object.
-
-```typescript
-const cart = geinsOMS.cart;
-const fetchedCart = await cart.get(cartId);
-if (fetchedCart) {     
-  console.log(`Cart fetched successfully with id: ${fetchedCart.id}`);
 }
 ```
 
-This needs to be perfomed before any operation on the cart like adding, updating, or removing items other wise you will get a new cart or in some operations you will get an error.
-
-::: info :nerd_face: Take note
-This:
-```typescript
-const cart = geinsOMS.cart;
-```
-is not the same as:
-```typescript
-const cart = geinsOMS.cart.get(cartId);
-```
-:::
-
-
-#### Refresh
-
-The `CartService` provides a method to refresh the cart. This method fetches the latest cart data from the backend and updates the cart object.
-
-```typescript
-const cart = geinsOMS.cart;
-
-// load the cart
-await cart.get(cartId);  
-
-const refreshedCart = await cart.refresh();
-if (refreshedCart) {     
-  console.log(`Cart refreshed successfully with id: ${refreshedCart.id}`);
-}
-```
-
-After refreshing the cart it will live for another 30 days. This is useful when you want to keep the cart alive for a longer period of time.
-
-
-#### Remove
-
-Use the remove method to remove the cart from your application. This method will however not remove the `cart` from Geins.
-
-```typescript
-await geinsOMS.cart.remove();   
-```
-
-This method will remove the cart and the `cartId` will be removed from the cookie _(if context is client)_. This is to be used when you need a completely new cart. If you want to remove all items from the cart you can use the `clear` method on `items` instead.
-
-
-#### Complete
-
-This method is used to complete the cart, a completed cart is read only and can not be modified.
-
-```typescript
-await geinsOMS.cart.complete();  
-```
-
-::: warning :warning: Warning
-Make sure not to set cart as complete before the user has finished the checkout process. A cart marked as complete can not be modified.
-:::
-
-
-#### Copy
-
-This method is used to copy the cart. This is useful when you want to create a new cart with the same items as the current cart. 
-
-
-```typescript
-const myCartId = 'xxxx-xxx-xxx-xxx-xxx-xx';
-const newCartId = await geinsOMS.cart.copy({id: myCartId, resetPromotions: true});
-```
-
-Read JSdoc for more information on the `copy` method.
-
-::: tip :bulb: Tip
-Use this method in combination with `merchant data` to add features like `share cart as wishlist` to your application.
-:::
+The session layer is **not safe for server-side shared singletons** — use one instance per browser session.

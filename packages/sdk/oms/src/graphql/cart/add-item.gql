@@ -7,7 +7,7 @@ mutation addToCart(
   $marketId: String
 ) {
   addToCart(id: $id, item: $item, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
-    ...Cart
+    ...OmsCart
     __typename
   }
 }

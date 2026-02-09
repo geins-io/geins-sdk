@@ -13,6 +13,7 @@ export interface GeinsEndpoints {
 }
 
 export interface GeinsBaseApiVars {
+  [key: string]: unknown;
   channelId?: string | null;
   marketId?: string | null;
   languageId?: string | null;

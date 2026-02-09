@@ -1,14 +1,9 @@
 import type { PriceType } from '../shared';
+import type { CampaignRuleType } from '../shared/campaign';
 
 export type CampaignType = {
   appliedCampaigns: CampaignRuleType[];
   prices: CampaignPriceType[];
-};
-
-export type CampaignRuleType = {
-  campaignId: string;
-  name?: string;
-  hideTitle?: boolean;
 };
 
 export type CampaignPriceType = {
@@ -16,11 +11,4 @@ export type CampaignPriceType = {
   discount: number;
   discountPercentage: number;
   price: PriceType;
-};
-
-export type ProductPackageCartItemType = {
-  packageId: number;
-  packageName: string;
-  groupId: number;
-  optionId: number;
 };

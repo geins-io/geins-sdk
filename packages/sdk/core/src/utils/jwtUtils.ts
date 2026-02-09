@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { GeinsError, GeinsErrorCode } from '../errors/geinsError';
 
 /**
  * Decodes a JWT token and optionally verifies its signature.
@@ -13,14 +14,14 @@ import crypto from 'crypto';
  * @returns An object containing the decoded header and payload.
  * @throws An error if the token is invalid or the signature verification fails (when secretKey is provided).
  */
-export function decodeJWT(token: string, secretKey?: string): { header: any; payload: any } {
+export function decodeJWT(token: string, secretKey?: string): { header: Record<string, unknown>; payload: Record<string, unknown> } {
   if (!token) {
-    throw new Error('Token is required.');
+    throw new GeinsError('Token is required.', GeinsErrorCode.INVALID_ARGUMENT);
   }
 
   const parts = token.split('.');
   if ((parts.length !== 3 && secretKey) || (parts.length !== 2 && !secretKey)) {
-    throw new Error('Invalid JWT token format.');
+    throw new GeinsError('Invalid JWT token format.', GeinsErrorCode.PARSE_ERROR);
   }
 
   const [header, payload, signature] = parts;
@@ -51,7 +52,7 @@ export function decodeJWT(token: string, secretKey?: string): { header: any; pay
       .replace(/\//g, '_');
 
     if (computedSignature !== signature) {
-      throw new Error('Invalid token signature.');
+      throw new GeinsError('Invalid token signature.', GeinsErrorCode.AUTH_FAILED);
     }
   }
 
@@ -65,9 +66,9 @@ export function decodeJWT(token: string, secretKey?: string): { header: any; pay
  * @param secretKey - The secret key used to sign the token (optional).
  * @returns The encoded JWT token.
  */
-export function encodeJWT(payload: Record<string, any>, secretKey?: string): string {
+export function encodeJWT(payload: Record<string, unknown>, secretKey?: string): string {
   if (!payload || typeof payload !== 'object') {
-    throw new Error('Payload must be a valid object.');
+    throw new GeinsError('Payload must be a valid object.', GeinsErrorCode.INVALID_ARGUMENT);
   }
 
   const base64UrlEncode = (data: string): string =>

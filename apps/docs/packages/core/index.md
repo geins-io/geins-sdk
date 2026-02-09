@@ -61,10 +61,12 @@ export type GeinsSettings = {
   locale: string;
   market: string;
   environment?: Environment;
+  logLevel?: GeinsLogLevel;
+  requestConfig?: GeinsRequestConfig;
 };
 ```
 
-These settings include authentication details and application-specific configurations like channel and locale.
+These settings include authentication details, application-specific configurations like channel and locale, and optional request pipeline configuration.
 
 ### Initializing GeinsCore
 
@@ -167,6 +169,172 @@ geinsCore.channel.current().then(channel => {
 geinsCore.channel.all().then(channels => {
   console.log('All channels:', channels);
 });
+```
+
+## Request Configuration
+
+The SDK supports optional request pipeline features for production robustness. These are configured via the `requestConfig` property on `GeinsSettings`.
+
+### Retry with Exponential Backoff
+
+Automatically retry failed requests caused by network errors or server errors (5xx). Client errors (4xx) are not retried except for rate limiting (429).
+
+```typescript
+const geinsCore = new GeinsCore({
+  // ...required settings
+  requestConfig: {
+    retry: {
+      maxRetries: 3,        // default: 3
+      initialDelayMs: 300,  // default: 300
+      maxDelayMs: 10000,    // default: 10000
+      jitter: true,         // default: true
+    },
+  },
+});
+```
+
+Set `retry: false` to explicitly disable retries.
+
+### Request Timeout
+
+Set a maximum time for requests. If a request exceeds this duration, it fails with a `TimeoutError`.
+
+```typescript
+const geinsCore = new GeinsCore({
+  // ...required settings
+  requestConfig: {
+    timeoutMs: 30000, // 30 seconds, 0 to disable
+  },
+});
+```
+
+### Request/Response Interceptors
+
+Hook into the request lifecycle for logging, metrics, or custom header injection.
+
+```typescript
+const geinsCore = new GeinsCore({
+  // ...required settings
+  requestConfig: {
+    interceptors: {
+      onRequest: (ctx) => {
+        // ctx.headers is mutable — add custom headers here
+        ctx.headers['x-trace-id'] = myTraceId;
+        console.log(`[${ctx.requestId}] ${ctx.operationName}`);
+      },
+      onResponse: (ctx) => {
+        console.log(`[${ctx.requestId}] completed in ${ctx.durationMs}ms`);
+      },
+      onError: (ctx) => {
+        console.error(`[${ctx.requestId}] failed: ${ctx.error.message}`);
+      },
+    },
+  },
+});
+```
+
+The `onRequest` interceptor supports both synchronous and asynchronous callbacks.
+
+### Telemetry
+
+Built-in request metrics — track request count, success/error rates, latency percentiles, and more. Metrics are collected automatically and flushed on a configurable interval.
+
+```typescript
+const geinsCore = new GeinsCore({
+  // ...required settings
+  requestConfig: {
+    telemetry: {
+      onMetrics: (snapshot) => {
+        console.log(`Requests: ${snapshot.totalRequests}`);
+        console.log(`Errors: ${snapshot.errorCount}`);
+        console.log(`p95 latency: ${snapshot.p95DurationMs}ms`);
+      },
+      flushIntervalMs: 60000, // default: 60s
+    },
+  },
+});
+
+// Or pull metrics on demand:
+const snapshot = geinsCore.telemetry?.snapshot();
+```
+
+Set `telemetry: false` to explicitly disable.
+
+### Request IDs and SDK Version
+
+Every request automatically gets two headers — no configuration needed:
+- `x-request-id` — unique UUID for log correlation (also on error objects)
+- `x-sdk-version` — the SDK version for server-side debugging
+
+### Idempotency Keys
+
+Every mutation automatically gets an `x-idempotency-key` header with a unique UUID. This prevents duplicate side effects when mutations are retried (e.g., adding the same item to a cart twice during a retry). Queries are not affected. Always enabled, no configuration needed.
+
+### Error Types
+
+The request pipeline introduces specific error classes that extend `GeinsError`:
+
+| Error | When |
+|-------|------|
+| `TimeoutError` | Request exceeds `timeoutMs` |
+| `RateLimitError` | Server returns HTTP 429 |
+| `RetryExhaustedError` | All retry attempts failed |
+| `NetworkRequestError` | Base class for all network errors |
+
+```typescript
+import { TimeoutError, RetryExhaustedError } from '@geins/core';
+
+try {
+  await geinsOMS.cart.get(cartId);
+} catch (error) {
+  if (error instanceof TimeoutError) {
+    console.log(`Request ${error.requestId} timed out after ${error.timeoutMs}ms`);
+  }
+  if (error instanceof RetryExhaustedError) {
+    console.log(`Request ${error.requestId} failed after ${error.attempts} attempts`);
+  }
+}
+```
+
+## Pagination
+
+The Geins API uses offset-based pagination (`skip`/`take`/`count`). The SDK provides helpers to iterate through paginated results automatically.
+
+### Async Iterator
+
+Use `paginate()` to iterate page-by-page:
+
+```typescript
+import { paginate } from '@geins/core';
+
+const pages = paginate(async (skip, take) => {
+  const result = await geinsCore.graphql.query({
+    query: productsQuery,
+    variables: { skip, take, channelId, languageId, marketId },
+  });
+  return { items: result.products.products, count: result.products.count };
+}, { take: 20 });
+
+for await (const page of pages) {
+  console.log(`Got ${page.items.length} of ${page.count} (hasMore: ${page.hasMore})`);
+  // process page.items
+}
+```
+
+### Fetch All
+
+Use `paginateAll()` to fetch every page and return a flat array:
+
+```typescript
+import { paginateAll } from '@geins/core';
+
+const allProducts = await paginateAll(async (skip, take) => {
+  const result = await geinsCore.graphql.query({
+    query: productsQuery,
+    variables: { skip, take, channelId, languageId, marketId },
+  });
+  return { items: result.products.products, count: result.products.count };
+}, { take: 50 });
 ```
 
 ## Integration with Other Packages

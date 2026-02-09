@@ -1,4 +1,5 @@
 import { GeinsLogLevel } from '@geins/types';
+/** Level-gated logger that wraps console methods. Output is suppressed below the configured {@link GeinsLogLevel}. */
 export class Logger {
   private currentLogLevel: GeinsLogLevel;
 

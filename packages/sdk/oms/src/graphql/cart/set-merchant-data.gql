@@ -13,7 +13,7 @@ mutation setCartMerchantData(
     languageId: $languageId
     marketId: $marketId
   ) {
-    ...Cart
+    ...OmsCart
     __typename
   }
 }

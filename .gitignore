@@ -24,6 +24,9 @@ docs/.vitepress/dist
 docs/.vitepress/cache
 docs/.vitepress/.temp
 
+# test coverage
+coverage
+
 # environment
 .env
 

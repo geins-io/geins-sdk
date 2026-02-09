@@ -1,45 +1,62 @@
 import type { AddressType, CurrencyType, PriceType } from '@geins/core';
 import { findObjectWithProperty } from '@geins/core';
+import type { GeinsAddressTypeType, GeinsPriceTypeType, GeinsCurrencyTypeType } from '@geins/types';
 
-export function parseAddress(data: any): AddressType | undefined {
-  const address = findObjectWithProperty(data, '__typename', 'AddressType');
+/**
+ * Parses an address from a raw GraphQL response by locating an AddressType object.
+ * @param data - Raw data potentially containing an AddressType.
+ * @returns Parsed address, or undefined if not found.
+ */
+export function parseAddress(data: unknown): AddressType | undefined {
+  const address = findObjectWithProperty<GeinsAddressTypeType>(data, '__typename', 'AddressType');
 
   if (!address) {
     return undefined;
   }
 
   return {
-    firstName: address.firstName,
-    lastName: address.lastName,
-    addressLine1: address.addressLine1,
-    addressLine2: address.addressLine2,
-    addressLine3: address.addressLine3,
-    entryCode: address.entryCode,
-    careOf: address.careOf,
-    city: address.city,
-    state: address.state,
-    country: address.country,
-    zip: address.zip,
-    company: address.company,
-    mobile: address.mobile,
-    phone: address.phone,
+    firstName: address.firstName ?? undefined,
+    lastName: address.lastName ?? undefined,
+    addressLine1: address.addressLine1 ?? undefined,
+    addressLine2: address.addressLine2 ?? undefined,
+    addressLine3: address.addressLine3 ?? undefined,
+    entryCode: address.entryCode ?? undefined,
+    careOf: address.careOf ?? undefined,
+    city: address.city ?? undefined,
+    state: address.state ?? undefined,
+    country: address.country ?? undefined,
+    zip: address.zip ?? undefined,
+    company: address.company ?? undefined,
+    mobile: address.mobile ?? undefined,
+    phone: address.phone ?? undefined,
   };
 }
 
-export function parseCurrency(data: any): CurrencyType | undefined {
+/**
+ * Parses a Geins currency object into a normalized CurrencyType.
+ * @param data - Raw currency data.
+ * @returns Parsed currency, or undefined if data is null/undefined.
+ */
+export function parseCurrency(data: GeinsCurrencyTypeType | null | undefined): CurrencyType | undefined {
   if (!data) {
     return undefined;
   }
 
   return {
-    name: data?.name || '',
-    symbol: data?.symbol || '',
-    code: data?.code || '',
-    rate: data?.rate || 0,
+    name: data.name || '',
+    symbol: data.symbol || '',
+    code: data.code || '',
+    rate: data.rate || 0,
   };
 }
 
-export function parsePrice(data: any, locale: string): PriceType {
+/**
+ * Parses a Geins price object into a normalized PriceType with formatted currency strings.
+ * @param data - Raw price data.
+ * @param locale - Locale string used for currency formatting.
+ * @returns Parsed price with all fields defaulting to zero/empty if data is null.
+ */
+export function parsePrice(data: GeinsPriceTypeType | null | undefined, locale: string): PriceType {
   const price: PriceType = {
     sellingPriceIncVat: 0,
     sellingPriceExVat: 0,
@@ -63,7 +80,7 @@ export function parsePrice(data: any, locale: string): PriceType {
     return price;
   }
 
-  price.currency = parseCurrency(data.currency);
+  price.currency = parseCurrency(data.currency ?? undefined);
   price.sellingPriceIncVat = data.sellingPriceIncVat || 0;
   price.sellingPriceExVat = data.sellingPriceExVat || 0;
   price.regularPriceIncVat = data.regularPriceIncVat || 0;
@@ -112,7 +129,14 @@ export function parsePrice(data: any, locale: string): PriceType {
   return price;
 }
 
-export function parseMoneyCurrencyString(data: any, locale: string, currency: string): string {
+/**
+ * Formats a number as a locale-specific currency string.
+ * @param data - Numeric value to format.
+ * @param locale - Locale string for formatting.
+ * @param currency - ISO currency code.
+ * @returns Formatted currency string, or empty string if any input is missing.
+ */
+export function parseMoneyCurrencyString(data: number | null | undefined, locale: string, currency: string): string {
   if (!data || !currency || !locale) {
     return '';
   }

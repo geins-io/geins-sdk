@@ -7,54 +7,83 @@ import type {
 import {
   CheckoutType,
   findObjectWithProperty,
+  PaymentOptionCheckoutType,
   ValidateOrderConditionsResponseType,
   ValidateOrderCreationResponseType,
 } from '@geins/core';
+import type { PaymentOptionType, ShippingOptionType } from '@geins/core';
+import {
+  GeinsPaymentCheckout,
+} from '@geins/types';
+import type {
+  GeinsCheckoutDataTypeType,
+  GeinsCheckoutOrderTypeType,
+  GeinsCheckoutOrderRowTypeType,
+  GeinsCheckoutTypeType,
+  GeinsPaymentOptionTypeType,
+  GeinsShippingOptionTypeType,
+  GeinsValidateOrderCreationResponseTypeType,
+} from '@geins/types';
 import { parseCart } from './cartParser';
 import { parseAddress, parseMoneyCurrencyString } from './sharedParsers';
 
-export function parseCheckoutSummary(data: any, locale: string): CheckoutSummaryType | undefined {
-  const checkoutSummary = findObjectWithProperty(data, '__typename', 'CheckoutDataType');
+/**
+ * Parses a raw GraphQL response into a CheckoutSummaryType.
+ * @param data - Raw data potentially containing a CheckoutDataType.
+ * @param locale - Locale string used for currency formatting.
+ * @returns Parsed checkout summary, or undefined if not found.
+ */
+export function parseCheckoutSummary(data: unknown, locale: string): CheckoutSummaryType | undefined {
+  const checkoutSummary = findObjectWithProperty<GeinsCheckoutDataTypeType>(data, '__typename', 'CheckoutDataType');
   if (!checkoutSummary) {
     return undefined;
   }
   return {
-    htmlSnippet: checkoutSummary.htmlSnippet,
+    htmlSnippet: checkoutSummary.htmlSnippet ?? undefined,
     order: parseCheckoutSummaryOrder(checkoutSummary.order, locale),
     nthPurchase: checkoutSummary.nthPurchase,
   };
 }
 
-export function parseCheckoutSummaryOrder(data: any, locale: string): CheckoutSummaryOrderType | undefined {
-  const order = findObjectWithProperty(data, '__typename', 'CheckoutOrderType');
+/**
+ * Parses a checkout order object into a normalized CheckoutSummaryOrderType.
+ * @param data - Raw checkout order data.
+ * @param locale - Locale string used for currency formatting.
+ * @returns Parsed checkout summary order, or undefined if not found.
+ */
+export function parseCheckoutSummaryOrder(
+  data: GeinsCheckoutOrderTypeType | null | undefined,
+  locale: string,
+): CheckoutSummaryOrderType | undefined {
+  const order = findObjectWithProperty<GeinsCheckoutOrderTypeType>(data, '__typename', 'CheckoutOrderType');
   if (!order) {
     return undefined;
   }
   return {
-    status: order.status,
-    orderId: order.orderId,
-    transactionId: order.transactionId,
+    status: order.status ?? undefined,
+    orderId: order.orderId ?? undefined,
+    transactionId: order.transactionId ?? undefined,
 
     marketId: order.marketId,
-    languageId: order.languageId,
+    languageId: order.languageId ?? undefined,
 
-    message: order.message,
-    merchantData: order.merchantData,
+    message: order.message ?? undefined,
+    merchantData: order.metaData ?? undefined,
 
     customerId: order.customerId,
     customerTypeId: order.customerTypeId,
     customerGroupId: order.customerGroupId,
-    organizationNumber: order.organizationNumber,
-    ipAddress: order.ipAddress,
+    organizationNumber: order.organizationNumber ?? undefined,
+    ipAddress: order.ipAddress ?? undefined,
 
     paymentId: order.paymentId,
     shippingId: order.shippingId,
-    pickupPoint: order.pickupPoint,
-    desiredDeliveryDate: order.desiredDeliveryDate,
+    pickupPoint: order.pickupPoint ?? undefined,
+    desiredDeliveryDate: order.desiredDeliveryDate ?? undefined,
 
-    promoCode: order.promoCode,
-    appliedCampaignIds: order.campaignIds,
-    appliedCampaigns: order.campaignNames,
+    promoCode: order.promoCode ?? undefined,
+    appliedCampaignIds: order.campaignIds?.filter((s): s is string => s != null) ?? undefined,
+    appliedCampaigns: order.campaignNames?.filter((s): s is string => s != null) ?? undefined,
 
     total: parseCheckoutSummaryOrderTotal(order, locale),
     billingAddress: parseAddress(order.billingAddress),
@@ -63,8 +92,14 @@ export function parseCheckoutSummaryOrder(data: any, locale: string): CheckoutSu
   };
 }
 
+/**
+ * Computes the order total including row-level discounts and formats currency strings.
+ * @param data - Raw checkout order data containing totals and rows.
+ * @param locale - Locale string used for currency formatting.
+ * @returns Parsed order totals with formatted strings, or undefined if data is falsy.
+ */
 export function parseCheckoutSummaryOrderTotal(
-  data: any,
+  data: GeinsCheckoutOrderTypeType,
   locale: string,
 ): CheckoutSummaryOrderTotalType | undefined {
   const total = { ...data };
@@ -72,44 +107,55 @@ export function parseCheckoutSummaryOrderTotal(
     return undefined;
   }
 
+  let discountExVat = total.discountExVat ?? 0;
+  let discountIncVat = total.discountIncVat ?? 0;
+
   if (data.rows) {
-    data.rows.forEach((row: any) => {
+    data.rows.forEach((row: GeinsCheckoutOrderRowTypeType | null) => {
       if (row && row.discountExVat) {
-        total.discountExVat = (total.discountExVat || 0) + (row.discountExVat || 0);
-        total.discountIncVat = (total.discountIncVat || 0) + (row.discountIncVat || 0);
+        discountExVat = discountExVat + (row.discountExVat || 0);
+        discountIncVat = discountIncVat + (row.discountIncVat || 0);
       }
     });
   }
 
+  const currency = total.currency ?? '';
+
   return {
     itemValueExVat: total.itemValueExVat,
-    itemValueExVatFormatted: parseMoneyCurrencyString(total.itemValueExVat, locale, total.currency),
+    itemValueExVatFormatted: parseMoneyCurrencyString(total.itemValueExVat, locale, currency),
     itemValueIncVat: total.itemValueIncVat,
-    itemValueIncVatFormatted: parseMoneyCurrencyString(total.itemValueIncVat, locale, total.currency),
+    itemValueIncVatFormatted: parseMoneyCurrencyString(total.itemValueIncVat, locale, currency),
     orderValueExVat: total.orderValueExVat,
-    orderValueExVatFormatted: parseMoneyCurrencyString(total.orderValueExVat, locale, total.currency),
+    orderValueExVatFormatted: parseMoneyCurrencyString(total.orderValueExVat, locale, currency),
     orderValueIncVat: total.orderValueIncVat,
-    orderValueIncVatFormatted: parseMoneyCurrencyString(total.orderValueIncVat, locale, total.currency),
+    orderValueIncVatFormatted: parseMoneyCurrencyString(total.orderValueIncVat, locale, currency),
     paymentFeeExVat: total.paymentFeeExVat,
-    paymentFeeExVatFormatted: parseMoneyCurrencyString(total.paymentFeeExVat, locale, total.currency),
+    paymentFeeExVatFormatted: parseMoneyCurrencyString(total.paymentFeeExVat, locale, currency),
     paymentFeeIncVat: total.paymentFeeIncVat,
-    paymentFeeIncVatFormatted: parseMoneyCurrencyString(total.paymentFeeIncVat, locale, total.currency),
+    paymentFeeIncVatFormatted: parseMoneyCurrencyString(total.paymentFeeIncVat, locale, currency),
     shippingFeeExVat: total.shippingFeeExVat,
-    shippingFeeExVatFormatted: parseMoneyCurrencyString(total.shippingFeeExVat, locale, total.currency),
+    shippingFeeExVatFormatted: parseMoneyCurrencyString(total.shippingFeeExVat, locale, currency),
     shippingFeeIncVat: total.shippingFeeIncVat,
-    shippingFeeIncVatFormatted: parseMoneyCurrencyString(total.shippingFeeIncVat, locale, total.currency),
-    discountExVat: total.discountExVat,
-    discountExVatFormatted: parseMoneyCurrencyString(total.discountExVat, locale, total.currency),
-    discountIncVat: total.discountIncVat,
-    discountIncVatFormatted: parseMoneyCurrencyString(total.discountIncVat, locale, total.currency),
+    shippingFeeIncVatFormatted: parseMoneyCurrencyString(total.shippingFeeIncVat, locale, currency),
+    discountExVat: discountExVat,
+    discountExVatFormatted: parseMoneyCurrencyString(discountExVat, locale, currency),
+    discountIncVat: discountIncVat,
+    discountIncVatFormatted: parseMoneyCurrencyString(discountIncVat, locale, currency),
     sum: total.sum,
-    sumFormatted: parseMoneyCurrencyString(total.sum, locale, total.currency),
-    currency: total.currency,
+    sumFormatted: parseMoneyCurrencyString(total.sum, locale, currency),
+    currency: total.currency ?? undefined,
   };
 }
 
+/**
+ * Parses and combines checkout order rows, merging duplicates by SKU/article/price key.
+ * @param data - Raw array of checkout order rows.
+ * @param locale - Locale string used for currency formatting.
+ * @returns Deduplicated order rows with aggregated quantities and prices, or undefined if data is null.
+ */
 export function parseCheckoutSummaryOrderRows(
-  data: any,
+  data: Array<GeinsCheckoutOrderRowTypeType | null> | null | undefined,
   locale: string,
 ): CheckoutSummaryOrderRowType[] | undefined {
   const rows = data;
@@ -117,7 +163,7 @@ export function parseCheckoutSummaryOrderRows(
     return undefined;
   }
   const combinedRows: { [key: string]: CheckoutSummaryOrderRowType } = {};
-  rows.forEach((row: any) => {
+  rows.forEach((row: GeinsCheckoutOrderRowTypeType | null) => {
     const parsedRow = parseCheckoutSummaryOrderRow(row, locale);
     if (!parsedRow) {
       return;
@@ -171,90 +217,186 @@ export function parseCheckoutSummaryOrderRows(
   return Object.values(combinedRows);
 }
 
+/**
+ * Parses a single checkout order row with product and price details.
+ * @param data - Raw checkout order row data.
+ * @param locale - Locale string used for currency formatting.
+ * @returns Parsed order row, or undefined if no CheckoutOrderRowType found.
+ */
 export function parseCheckoutSummaryOrderRow(
-  data: any,
+  data: GeinsCheckoutOrderRowTypeType | null | undefined,
   locale: string,
 ): CheckoutSummaryOrderRowType | undefined {
-  const row = findObjectWithProperty(data, '__typename', 'CheckoutOrderRowType');
+  const row = findObjectWithProperty<GeinsCheckoutOrderRowTypeType>(data, '__typename', 'CheckoutOrderRowType');
   if (!row) {
     return undefined;
   }
+  const currency = row.currency ?? '';
   return {
     quantity: row.quantity,
-    skuId: row.sku,
-    articleNumber: row.articleNumber,
-    gtin: row.gtin,
-    name: row.variant,
+    skuId: row.sku ?? undefined,
+    articleNumber: row.articleNumber ?? undefined,
+    gtin: row.gtin ?? undefined,
+    name: row.variant ?? undefined,
     weight: row.weight,
     height: row.height,
     length: row.length,
     width: row.width,
-    message: row.message,
+    message: row.message ?? undefined,
     product: {
-      name: row.name,
-      brand: row.brand,
-      imageUrl: row.imageUrl,
-      categories: row.categories,
+      name: row.name ?? undefined,
+      brand: row.brand ?? undefined,
+      imageUrl: row.imageUrl ?? undefined,
+      categories: row.categories?.filter((s): s is string => s != null) ?? undefined,
       productId: row.productId,
-      productUrl: row.productUrl,
+      productUrl: row.productUrl ?? undefined,
     },
     price: {
-      campaignIds: row.campaignIds,
-      campaignNames: row.campaignNames,
-      productPriceCampaignId: row.productPriceCampaignId,
-      productPriceListId: row.productPriceListId,
+      campaignIds: row.campaignIds?.filter((s): s is string => s != null) ?? undefined,
+      campaignNames: row.campaignNames?.filter((s): s is string => s != null) ?? undefined,
+      productPriceCampaignId: row.productPriceCampaignId != null ? String(row.productPriceCampaignId) : undefined,
+      productPriceListId: row.productPriceListId != null ? String(row.productPriceListId) : undefined,
       discountRate: row.discountRate,
       discountExVat: row.discountExVat,
-      discountExVatFormatted: parseMoneyCurrencyString(row.discountExVat, locale, row.currency),
+      discountExVatFormatted: parseMoneyCurrencyString(row.discountExVat, locale, currency),
       discountIncVat: row.discountIncVat,
-      discountIncVatFormatted: parseMoneyCurrencyString(row.discountIncVat, locale, row.currency),
+      discountIncVatFormatted: parseMoneyCurrencyString(row.discountIncVat, locale, currency),
       priceExVat: row.priceExVat,
-      priceExVatFormatted: parseMoneyCurrencyString(row.priceExVat, locale, row.currency),
+      priceExVatFormatted: parseMoneyCurrencyString(row.priceExVat, locale, currency),
       priceIncVat: row.priceIncVat,
-      priceIncVatFormatted: parseMoneyCurrencyString(row.priceIncVat, locale, row.currency),
-      currency: row.currency,
+      priceIncVatFormatted: parseMoneyCurrencyString(row.priceIncVat, locale, currency),
+      currency: row.currency ?? undefined,
     },
   };
 }
 
-export function parseCheckout(data: any, locale: string): CheckoutType | undefined {
-  const checkout = findObjectWithProperty(data, '__typename', 'CheckoutType');
+/**
+ * Parses a raw GraphQL response into a normalized CheckoutType with cart, addresses, and options.
+ * @param data - Raw data potentially containing a CheckoutType.
+ * @param locale - Locale string used for currency formatting.
+ * @returns Parsed checkout, or undefined if no CheckoutType found.
+ */
+export function parseCheckout(data: unknown, locale: string): CheckoutType | undefined {
+  const checkout = findObjectWithProperty<GeinsCheckoutTypeType>(data, '__typename', 'CheckoutType');
   if (!checkout) {
     return undefined;
   }
 
   return {
-    email: checkout.email,
-    identityNumber: checkout.identityNumber,
+    email: checkout.email ?? undefined,
+    identityNumber: checkout.identityNumber ?? undefined,
     cart: parseCart(checkout.cart, locale),
-    paymentOptions: checkout.paymentOptions,
-    shippingOptions: checkout.shippingOptions,
+    paymentOptions: parsePaymentOptions(checkout.paymentOptions),
+    shippingOptions: parseShippingOptions(checkout.shippingOptions),
     billingAddress: parseAddress(checkout.billingAddress),
     shippingAddress: parseAddress(checkout.shippingAddress),
   };
 }
 
-export function parseValidateOrder(data: any): ValidateOrderCreationResponseType | undefined {
-  const validateOrder = findObjectWithProperty(data, '__typename', 'ValidateOrderCreationResponseType');
+const paymentCheckoutTypeMap: Record<GeinsPaymentCheckout, PaymentOptionCheckoutType> = {
+  [GeinsPaymentCheckout.StandardType]: PaymentOptionCheckoutType.STANDARD,
+  [GeinsPaymentCheckout.ExternalType]: PaymentOptionCheckoutType.EXTERNAL,
+  [GeinsPaymentCheckout.GeinsPayType]: PaymentOptionCheckoutType.GEINS_PAY,
+};
+
+function toPaymentOptionCheckoutType(
+  value: GeinsPaymentCheckout | null | undefined,
+): PaymentOptionCheckoutType | undefined {
+  if (value == null) {
+    return undefined;
+  }
+  return paymentCheckoutTypeMap[value] ?? undefined;
+}
+
+function parsePaymentOptions(
+  data: Array<GeinsPaymentOptionTypeType | null> | null | undefined,
+): PaymentOptionType[] | undefined {
+  if (!data) {
+    return undefined;
+  }
+  return data
+    .filter((o): o is GeinsPaymentOptionTypeType => o != null)
+    .map((o) => ({
+      id: o.id,
+      name: o.name ?? undefined,
+      displayName: o.displayName ?? undefined,
+      logo: o.logo ?? undefined,
+      feeIncVat: o.feeIncVat,
+      feeExVat: o.feeExVat,
+      isDefault: o.isDefault,
+      isSelected: o.isSelected,
+      checkoutType: toPaymentOptionCheckoutType(o.checkoutType),
+      paymentType: o.paymentType ?? undefined,
+      paymentData: o.paymentData ?? undefined,
+    }));
+}
+
+function parseShippingOptions(
+  data: Array<GeinsShippingOptionTypeType | null> | null | undefined,
+): ShippingOptionType[] | undefined {
+  if (!data) {
+    return undefined;
+  }
+  return data
+    .filter((o): o is GeinsShippingOptionTypeType => o != null)
+    .map((o) => ({
+      id: o.id,
+      name: o.name ?? undefined,
+      displayName: o.displayName ?? undefined,
+      feeIncVat: o.feeIncVat,
+      feeExVat: o.feeExVat,
+      isDefault: o.isDefault,
+      isSelected: o.isSelected,
+      externalId: o.externalId ?? undefined,
+      shippingData: o.shippingData ?? undefined,
+      amountLeftToFreeShipping: o.amountLeftToFreeShipping,
+      logo: o.logo ?? undefined,
+      subOptions: parseShippingOptions(o.subOptions) ?? undefined,
+      amountLeftToFreeShippingFormatted: o.amountLeftToFreeShippingFormatted ?? undefined,
+      feeIncVatFormatted: o.feeIncVatFormatted ?? undefined,
+      feeExVatFormatted: o.feeExVatFormatted ?? undefined,
+    }));
+}
+
+/**
+ * Parses the order creation validation response.
+ * @param data - Raw data potentially containing a ValidateOrderCreationResponseType.
+ * @returns Validation result with isValid, message, and customerGroup, or undefined if not found.
+ */
+export function parseValidateOrder(data: unknown): ValidateOrderCreationResponseType | undefined {
+  const validateOrder = findObjectWithProperty<GeinsValidateOrderCreationResponseTypeType>(
+    data,
+    '__typename',
+    'ValidateOrderCreationResponseType',
+  );
   if (!validateOrder) {
     return undefined;
   }
 
   return {
     isValid: validateOrder.isValid,
-    message: validateOrder.message,
-    customerGroup: validateOrder.memberType,
+    message: validateOrder.message ?? undefined,
+    customerGroup: validateOrder.memberType ?? undefined,
   };
 }
 
-export function parseValidateOrderConditions(data: any): ValidateOrderConditionsResponseType | undefined {
-  const validateOrder = findObjectWithProperty(data, '__typename', 'ValidateOrderCreationResponseType');
+/**
+ * Parses the order conditions validation response.
+ * @param data - Raw data potentially containing a ValidateOrderCreationResponseType.
+ * @returns Validation result with isValid and message, or undefined if not found.
+ */
+export function parseValidateOrderConditions(data: unknown): ValidateOrderConditionsResponseType | undefined {
+  const validateOrder = findObjectWithProperty<GeinsValidateOrderCreationResponseTypeType>(
+    data,
+    '__typename',
+    'ValidateOrderCreationResponseType',
+  );
   if (!validateOrder) {
     return undefined;
   }
 
   return {
     isValid: validateOrder.isValid,
-    message: validateOrder.message,
+    message: validateOrder.message ?? '',
   };
 }

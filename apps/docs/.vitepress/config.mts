@@ -77,6 +77,18 @@ export default withMermaid({
               text: 'Generate Checkout Token',
               link: '/guide/checkout-token-generator',
             },
+            {
+              text: 'Server-Side Usage',
+              link: '/guide/server-usage',
+            },
+            {
+              text: 'Error Handling',
+              link: '/guide/error-handling',
+            },
+            {
+              text: 'TypeScript Usage',
+              link: '/guide/typescript',
+            },
           ],
         },
         {
@@ -222,6 +234,9 @@ export default withMermaid({
         title: 'Geins SDK - Geins Backend for Commerce',
       }),
     ],
+    ssr: {
+      noExternal: ['vue'],
+    },
   },
   mermaid: {},
 });

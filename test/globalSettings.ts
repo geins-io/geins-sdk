@@ -1,7 +1,6 @@
 // test/globalSettings.ts
 import 'node-fetch';
-import { AUTH_COOKIES, buildEndpoints } from '@geins/core';
-import { AuthService } from '@geins/crm';
+import { AUTH_STORAGE_KEYS } from '@geins/core';
 import { Environment, GeinsSettings, AuthCredentials } from '@geins/types';
 import dotenv from 'dotenv';
 
@@ -26,13 +25,13 @@ export const validUserCredentials: AuthCredentials = {
 };
 
 export const expectedCookiesAuthAll = [
-  AUTH_COOKIES.USER_MAX_AGE,
-  AUTH_COOKIES.REFRESH_TOKEN,
-  AUTH_COOKIES.USER_AUTH,
-  AUTH_COOKIES.USER,
-  AUTH_COOKIES.USER_TYPE,
+  AUTH_STORAGE_KEYS.USER_MAX_AGE,
+  AUTH_STORAGE_KEYS.REFRESH_TOKEN,
+  AUTH_STORAGE_KEYS.USER_AUTH,
+  AUTH_STORAGE_KEYS.USER,
+  AUTH_STORAGE_KEYS.USER_TYPE,
 ];
-export const expectedCookiesAuthTokens = [AUTH_COOKIES.REFRESH_TOKEN, AUTH_COOKIES.USER_AUTH];
+export const expectedCookiesAuthTokens = [AUTH_STORAGE_KEYS.REFRESH_TOKEN, AUTH_STORAGE_KEYS.USER_AUTH];
 
 export const cmsSettings = {
   area: {

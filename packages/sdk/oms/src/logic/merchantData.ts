@@ -1,3 +1,8 @@
+/**
+ * Type-safe container for cart merchant data.
+ * If constructed with a template, only template keys are accepted (strict mode).
+ * Without a template, any key-value pair is allowed (flexible mode).
+ */
 export class MerchantData<T> {
   private _data: T | Record<string, any>;
   private readonly _templateKeys: Set<keyof T> | null;
