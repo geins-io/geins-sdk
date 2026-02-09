@@ -1,6 +1,11 @@
-import { AUTH_HEADERS, type AuthCredentials, type AuthSignature, type AuthUserToken } from '@geins/core';
+import { AUTH_HEADERS, AuthError, GeinsError, GeinsErrorCode, type AuthCredentials, type AuthSignature, type AuthUserToken } from '@geins/core';
 import { digest } from './authHelpers';
 
+/**
+ * Low-level HTTP client for the Geins auth API.
+ * Handles the challenge–response authentication flow: request challenge → verify
+ * signature → submit credentials with signed payload.
+ */
 export class AuthServiceClient {
   private static readonly FETCH_TIMEOUT_MS = 10_000;
   private authEndpoint: string;
@@ -8,7 +13,7 @@ export class AuthServiceClient {
 
   constructor(authEndpoint: string, signEndpoint: string) {
     if (!authEndpoint || !signEndpoint) {
-      throw new Error('Both authEndpoint and signEndpoint are required');
+      throw new GeinsError('Both authEndpoint and signEndpoint are required', GeinsErrorCode.INVALID_ARGUMENT);
     }
     this.authEndpoint = authEndpoint;
     this.signEndpoint = signEndpoint;
@@ -27,7 +32,7 @@ export class AuthServiceClient {
   private extractRefreshTokenFromResponse(response: Response): string {
     const refreshTokenHeader = response.headers.get(AUTH_HEADERS.REFRESH_TOKEN);
     if (!refreshTokenHeader) {
-      throw new Error('Error');
+      throw new AuthError('Challenge request failed');
     }
     return refreshTokenHeader;
   }
@@ -46,12 +51,12 @@ export class AuthServiceClient {
     const response = await fetch(url, options);
     const text = await response.text();
     if (!text) {
-      throw new Error('Failed to request challenge: Empty response');
+      throw new AuthError('Failed to request challenge: Empty response');
     }
 
     const retval = JSON.parse(text);
     if (!retval?.sign) {
-      throw new Error('Failed to fetch sign');
+      throw new AuthError('Failed to fetch sign', GeinsErrorCode.AUTH_FAILED);
     }
     return retval.sign;
   }
@@ -66,11 +71,11 @@ export class AuthServiceClient {
       signal: AbortSignal.timeout(AuthServiceClient.FETCH_TIMEOUT_MS),
     });
     if (!response.ok) {
-      throw new Error('Failed to verify challenge');
+      throw new AuthError('Failed to verify challenge');
     }
     const text = await response.text();
     if (!text) {
-      throw new Error('Failed to verify challenge: Empty response');
+      throw new AuthError('Failed to verify challenge: Empty response');
     }
     return JSON.parse(text);
   }
@@ -103,14 +108,14 @@ export class AuthServiceClient {
 
     const response = await fetch(url, requestOptions);
     if (!response.ok) {
-      throw new Error(`Failed to fetch user token: ${response.statusText}`);
+      throw new AuthError(`Failed to fetch user token: ${response.statusText}`);
     }
 
     const refreshToken = this.extractRefreshTokenFromResponse(response);
 
     const userToken = await response.text();
     if (!userToken) {
-      throw new Error('Failed to fetch user token: Empty response');
+      throw new AuthError('Failed to fetch user token: Empty response');
     }
 
     const retval = JSON.parse(userToken);
@@ -134,14 +139,14 @@ export class AuthServiceClient {
     };
     const response = await fetch(url, requestOptions);
     if (!response.ok) {
-      throw new Error(`Failed to renew refresh token: ${response.statusText}`);
+      throw new AuthError(`Failed to renew refresh token: ${response.statusText}`);
     }
 
     const newRefreshToken = this.extractRefreshTokenFromResponse(response);
 
     const userToken = await response.text();
     if (!userToken) {
-      throw new Error('Failed to fetch user token: Empty response');
+      throw new AuthError('Failed to fetch user token: Empty response');
     }
 
     const retval = JSON.parse(userToken);
@@ -183,14 +188,14 @@ export class AuthServiceClient {
 
     const response = await fetch(url, requestOptions);
     if (!response.ok) {
-      throw new Error(`Failed to change password: ${response.statusText}`);
+      throw new AuthError(`Failed to change password: ${response.statusText}`);
     }
 
     refreshToken = this.extractRefreshTokenFromResponse(response);
 
     const userToken = await response.text();
     if (!userToken) {
-      throw new Error('Failed to change password: Empty response');
+      throw new AuthError('Failed to change password: Empty response');
     }
 
     const retval = JSON.parse(userToken);
@@ -225,14 +230,14 @@ export class AuthServiceClient {
 
     const response = await fetch(url, requestOptions);
     if (!response.ok) {
-      throw new Error(`Failed to register user: ${response.statusText}`);
+      throw new AuthError(`Failed to register user: ${response.statusText}`);
     }
 
     const refreshToken = this.extractRefreshTokenFromResponse(response);
 
     const userToken = await response.text();
     if (!userToken) {
-      throw new Error('Failed to register user: Empty response');
+      throw new AuthError('Failed to register user: Empty response');
     }
 
     const retval = JSON.parse(userToken);
@@ -257,7 +262,7 @@ export class AuthServiceClient {
 
   public async changePassword(credentials: AuthCredentials, refreshToken: string): Promise<AuthUserToken> {
     if (!credentials.newPassword) {
-      throw new Error('New password is required');
+      throw new GeinsError('New password is required', GeinsErrorCode.INVALID_ARGUMENT);
     }
     return this.performChangePassword(
       credentials.username,

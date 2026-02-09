@@ -1,4 +1,6 @@
 import { API_ENDPOINT_SLUG_HISTORY, API_ENDPOINT_URL_HISTORY } from '../constants';
+import { GeinsError, GeinsErrorCode } from '../errors/geinsError';
+/** HTTP client for Geins endpoint discovery APIs (URL/slug history). */
 export class EndpointApiClient {
   private static readonly FETCH_TIMEOUT_MS = 10_000;
   private apiKey: string;
@@ -25,7 +27,7 @@ export class EndpointApiClient {
       });
 
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
+        throw new GeinsError(`Request failed with status ${response.status}: ${response.statusText}`, GeinsErrorCode.NETWORK_ERROR);
       }
 
       return await response.json();

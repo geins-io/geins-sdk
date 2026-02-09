@@ -17,31 +17,31 @@ fragment OrderSummary on OrderType {
   updatedAt
   publicId
   billingAddress {
-    ...Address
+    ...OmsAddress
   }
   shippingAddress {
-    ...Address
+    ...OmsAddress
   }
   cart {
-    ...Cart
+    ...OmsCart
   }
   paymentDetails {
     ...PaymentDetails
   }
   discount {
-    ...Price
+    ...OmsPrice
   }
   orderTotal {
-    ...Price
+    ...OmsPrice
   }
   paymentFee {
-    ...Price
+    ...OmsPrice
   }
   shippingFee {
-    ...Price
+    ...OmsPrice
   }
   vat {
-    ...Price
+    ...OmsPrice
   }
   fromBalance
   fromBalanceFormatted

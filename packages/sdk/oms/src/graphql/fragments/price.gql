@@ -1,4 +1,4 @@
-fragment Price on PriceType {
+fragment OmsPrice on PriceType {
   sellingPriceIncVat
   sellingPriceExVat
   regularPriceIncVat

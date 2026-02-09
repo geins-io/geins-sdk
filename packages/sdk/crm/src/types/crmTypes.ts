@@ -6,41 +6,45 @@ import {
   GeinsUserOrdersType,
 } from '@geins/types';
 
+/**
+ * Stateless auth interface.
+ * All methods require tokens to be passed explicitly — no stored state.
+ */
 export interface AuthInterface {
-  get(refreshToken?: string, userToken?: string): Promise<AuthResponse | undefined>;
   login(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
   logout(): Promise<AuthResponse | undefined>;
-  refresh(refreshToken?: string): Promise<AuthResponse | undefined>;
-  authorized(refreshToken?: string): Promise<boolean>;
+  refresh(refreshToken: string): Promise<AuthResponse | undefined>;
+  getUser(refreshToken: string, userToken?: string): Promise<AuthResponse | undefined>;
+  authorized(refreshToken: string): Promise<boolean>;
 }
 
 /**
- * User interface
- * This interface is used to define the user service
+ * Stateless user interface.
+ * All read/write methods require a userToken for authorization.
  */
 export interface UserInterface {
-  get(): Promise<GeinsUserType | undefined>;
-  update(user: GeinsUserInputTypeType): Promise<any>;
+  get(userToken: string): Promise<GeinsUserType | undefined>;
+  update(user: GeinsUserInputTypeType, userToken: string): Promise<GeinsUserType | undefined>;
   create(credentials: AuthCredentials, user?: GeinsUserInputTypeType): Promise<AuthResponse | undefined>;
-  remove(): Promise<any>;
+  remove(userToken: string): Promise<boolean>;
   password: UserPasswordInterface;
   orders: UserOrdersInterface;
 }
 
 /**
- * User password interface
- * This interface is used to define the user password service
+ * User password interface.
+ * changePassword requires a refreshToken for re-authentication.
  */
 export interface UserPasswordInterface {
-  change(credentials: AuthCredentials): Promise<AuthResponse | undefined>;
-  requestReset(email: string): Promise<any>;
-  commitReset(resetKey: string, password: string): Promise<any>;
+  change(credentials: AuthCredentials, refreshToken: string): Promise<AuthResponse | undefined>;
+  requestReset(email: string): Promise<boolean>;
+  commitReset(resetKey: string, password: string): Promise<boolean>;
 }
 
 /**
- * User orders interface
- * This interface is used to define the user orders service
+ * User orders interface.
+ * Requires userToken to fetch orders for the authenticated user.
  */
 export interface UserOrdersInterface {
-  get(): Promise<GeinsUserOrdersType | undefined>;
+  get(userToken: string): Promise<GeinsUserOrdersType | undefined>;
 }

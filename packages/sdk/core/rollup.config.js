@@ -10,22 +10,22 @@ export default {
     {
       file: 'dist/index.cjs',
       format: 'cjs',
-      exports: 'auto',
+      exports: 'auto'
     },
     {
       file: 'dist/index.esm.js',
-      format: 'esm',
-    },
+      format: 'esm'
+    }
   ],
   plugins: [
     resolve({
-      preferBuiltins: true,
+      preferBuiltins: true
     }),
     commonjs(),
-    typescript(),
+    typescript({ compilerOptions: { declaration: false, declarationDir: undefined } }),
     graphql(),
-    terser(),
+    terser()
   ],
   external: ['@apollo/client', 'cookie-universal', '@cacheable/node-cache', 'broadcast-channel'],
-  treeshake: true,
+  treeshake: true
 };

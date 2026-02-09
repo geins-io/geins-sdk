@@ -1,143 +1,75 @@
-/**
- * Interface representing the authentication credentials required for user login.
- */
+/** Authentication credentials required for user login. */
 export interface AuthCredentials {
-  /**
-   * The username of the user attempting to authenticate.
-   */
+  /** The username of the user attempting to authenticate. */
   username: string;
 
-  /**
-   * The password of the user attempting to authenticate.
-   */
+  /** The password of the user attempting to authenticate. */
   password: string;
 
-  /**
-   * The new password for the user, used when updating or resetting a password.
-   * This field is optional.
-   */
+  /** New password, used when updating or resetting a password. */
   newPassword?: string;
 
-  /**
-   * A boolean indicating whether the user should be remembered on this device.
-   * Defaults to `false` if not provided.
-   */
+  /** Whether the user should be remembered on this device. Defaults to `false`. */
   rememberUser?: boolean;
 }
 
-/**
- * Interface representing the response from an authentication attempt.
- */
+/** Response from an authentication attempt. */
 export interface AuthResponse {
-  /**
-   * A boolean indicating whether the authentication attempt was successful.
-   */
+  /** Whether the authentication attempt was successful. */
   succeeded: boolean;
 
-  /**
-   * The authenticated user information, if the authentication was successful.
-   * This field is optional.
-   */
+  /** Authenticated user information, if successful. */
   user?: AuthUser;
 
-  /**
-   * The tokens provided upon successful authentication, used for session management.
-   * This field is optional.
-   */
+  /** Tokens provided upon successful authentication. */
   tokens?: AuthTokens;
 }
 
-/**
- * Interface representing the authentication tokens used for session management.
- */
+/** Authentication tokens used for session management. */
 export interface AuthTokens {
-  /**
-   * The primary token used for authenticating subsequent API requests.
-   * This field is optional.
-   */
+  /** Primary token for authenticating subsequent API requests. */
   token?: string;
 
-  /**
-   * The refresh token used to obtain a new primary token when the current one expires.
-   * This field is optional.
-   */
+  /** Refresh token used to obtain a new primary token when the current one expires. */
   refreshToken?: string;
 
-  /**
-   * The maximum age (in seconds) for the session before it expires.
-   * This field is optional.
-   */
+  /** Maximum session age in seconds before expiry. */
   maxAge?: number;
 
-  /**
-   * A boolean indicating whether the token has already expired.
-   * This field is optional.
-   */
+  /** Whether the token has already expired. */
   expired?: boolean;
 
-  /**
-   * The expiration timestamp (in milliseconds since Unix epoch) of the token.
-   * This field is optional.
-   */
+  /** Expiration timestamp in milliseconds since Unix epoch. */
   expires?: number;
 
-  /**
-   * The number of seconds until the token expires.
-   * This field is optional.
-   */
+  /** Seconds until the token expires. */
   expiresIn?: number;
 
-  /**
-   * A boolean indicating whether the token is about to expire soon.
-   * This field is optional.
-   */
+  /** Whether the token is about to expire soon. */
   expiresSoon?: boolean;
 }
 
-/**
- * Interface representing the authenticated user information.
- */
+/** Authenticated user information. */
 export interface AuthUser {
-  /**
-   * A boolean indicating whether the user is authenticated.
-   * This field is optional.
-   */
+  /** Whether the user is authenticated. */
   authenticated?: boolean;
 
-  /**
-   * The unique identifier of the authenticated user.
-   * This field is optional.
-   */
+  /** Unique identifier of the authenticated user. */
   userId?: string;
 
-  /**
-   * The username of the authenticated user.
-   * This field is optional.
-   */
+  /** Username of the authenticated user. */
   username?: string;
 
-  /**
-   * The type of customer (e.g., regular, premium) the authenticated user is.
-   * This field is optional.
-   */
+  /** Customer type (e.g., regular, premium). */
   customerType?: string;
 
-  /**
-   * The discount percentage (if any) available to the authenticated user.
-   * This field is optional.
-   */
+  /** Discount percentage available to the user. */
   memberDiscount?: string;
 
-  /**
-   * The type of membership (e.g., silver, gold) the authenticated user has.
-   * This field is optional.
-   */
+  /** Membership type (e.g., silver, gold). */
   memberType?: string;
 
-  /**
-   * The unique identifier of the membership the authenticated user holds.
-   * This field is optional.
-   */
+  /** Unique identifier of the user's membership. */
   memberId?: string;
 }
 
@@ -160,18 +92,10 @@ export enum AuthClientConnectionModes {
 
 export type AuthClientConnectionMode = keyof typeof AuthClientConnectionModes;
 
-/**
- * Authentication settings used by the client.
- */
+/** Authentication settings used by the client. */
 export interface AuthSettings {
-  /**
-   * The client connection mode used for authentication.
-   */
+  /** Client connection mode used for authentication. */
   clientConnectionMode: AuthClientConnectionMode;
-  /**
-   * The URL of the proxy server used for authentication.
-   * This field is optional.
-   * Defaults to `/api/auth` if not provided.
-   */
+  /** URL of the proxy server. Defaults to `/api/auth` if not provided. */
   proxyUrl?: string;
 }

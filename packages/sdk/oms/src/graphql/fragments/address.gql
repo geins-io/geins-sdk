@@ -1,4 +1,4 @@
-fragment Address on AddressType {
+fragment OmsAddress on AddressType {
   firstName
   lastName
   addressLine1

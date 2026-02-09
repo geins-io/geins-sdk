@@ -15,7 +15,7 @@ mutation addPackageToCart(
     languageId: $languageId
     marketId: $marketId
   ) {
-    ...Cart
+    ...OmsCart
     __typename
   }
 }

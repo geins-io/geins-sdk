@@ -7,7 +7,7 @@ import { ENDPOINTS } from '../constants';
  */
 
 export function isServerContext() {
-  return typeof window === 'undefined';
+  return typeof globalThis === 'object' && !('window' in globalThis);
 }
 /**
  * Builds the endpoints for the Geins API.
@@ -42,22 +42,28 @@ export function buildEndpoints(
  * @param propertyValue - The property value to search for.
  * @returns The object with the property or undefined.
  */
-export function findObjectWithProperty(obj: any, propertyName: string, propertyValue?: any): any | undefined {
+export function findObjectWithProperty<T = Record<string, unknown>>(
+  obj: unknown,
+  propertyName: string,
+  propertyValue?: unknown,
+): T | undefined {
   if (!obj || typeof obj !== 'object') {
     return undefined;
   }
 
-  if (propertyName in obj) {
+  const record = obj as Record<string, unknown>;
+
+  if (propertyName in record) {
     if (propertyValue === undefined) {
-      return obj;
+      return record as T;
     }
-    if (obj[propertyName] === propertyValue) {
-      return obj;
+    if (record[propertyName] === propertyValue) {
+      return record as T;
     }
   }
 
-  for (const key of Object.keys(obj)) {
-    const result = findObjectWithProperty(obj[key], propertyName, propertyValue);
+  for (const key of Object.keys(record)) {
+    const result = findObjectWithProperty<T>(record[key], propertyName, propertyValue);
     if (result) {
       return result;
     }
@@ -85,6 +91,7 @@ export function extractParametersFromUrl(url: string): { url: string; params: Ma
   return { url: baseUrl, params };
 }
 
+/** Extract the `.message` string from an Error, returning `''` when absent. */
 export function parseErrorMessage(data: Error): string {
   if (!data || !data.message) {
     return '';

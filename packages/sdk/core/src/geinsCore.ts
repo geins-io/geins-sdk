@@ -1,6 +1,8 @@
 import type { GeinsChannelTypeType, GeinsEndpoints, GeinsSettings } from '@geins/types';
 import { GeinsChannelInterface } from '@geins/types';
 import { MerchantApiClient } from './api-client';
+import { GeinsError, GeinsErrorCode } from './errors/geinsError';
+import type { TelemetryCollector } from './api-client/links/telemetryLink';
 import { Channel } from './logic';
 import { GraphQLService } from './services';
 import { ChannelsService } from './services/channelsService';
@@ -8,12 +10,16 @@ import { CookieService } from './services/cookieService';
 import { EventService } from './services/eventService';
 import { buildEndpoints, decodeJWT, encodeJWT, isServerContext } from './utils';
 
+/**
+ * Root entry point for the Geins SDK.
+ * Holds the API client, channel logic, event bus, and settings.
+ * Instantiate once per application and pass to domain packages (CRM, CMS, OMS).
+ */
 export class GeinsCore {
   // api client
-  private _endpointsUrls: any;
+  private _endpointsUrls: GeinsEndpoints | undefined;
   private _apiClient!: MerchantApiClient;
   private _geinsSettings: GeinsSettings;
-  private _userToken?: string | undefined;
 
   // exposed graphql service
   private _graphQLService!: GraphQLService;
@@ -30,15 +36,15 @@ export class GeinsCore {
 
   constructor(geinsSettings: GeinsSettings) {
     if (!geinsSettings.channel) {
-      throw new Error('Channel is required');
+      throw new GeinsError('Channel is required', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     if (!geinsSettings.apiKey) {
-      throw new Error('API Key is required');
+      throw new GeinsError('API Key is required', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     if (!geinsSettings.accountName) {
-      throw new Error('Account name is required');
+      throw new GeinsError('Account name is required', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     // Set default environment if not provided
@@ -71,13 +77,13 @@ export class GeinsCore {
   private initApiClient() {
     if (this._geinsSettings.apiKey && this._geinsSettings.accountName) {
       const options = {
-        apiUrl: this._endpointsUrls.main,
+        apiUrl: this._endpointsUrls!.main,
         apiKey: this._geinsSettings.apiKey,
-        userToken: this._userToken,
+        settings: this._geinsSettings,
       };
       this._apiClient = new MerchantApiClient(options);
     } else {
-      throw new Error('Failed to initialize API Client');
+      throw new GeinsError('Failed to initialize API Client', GeinsErrorCode.NOT_INITIALIZED);
     }
   }
 
@@ -85,12 +91,7 @@ export class GeinsCore {
     this._graphQLService = new GraphQLService(() => this.client, this._geinsSettings);
   }
 
-  /**
-   * Channels
-   * Methods:
-   * - current() gets the current channel for application set from the settings;
-   * - all() get all channels for the account;
-   */
+  /** Channel accessor — `current()` returns the configured channel, `all()` lists every channel on the account. */
   get channel(): GeinsChannelInterface {
     return {
       current: this.channelGet.bind(this),
@@ -103,7 +104,7 @@ export class GeinsCore {
       this._currentChannel = new Channel(this._geinsSettings);
     }
     if (!this._currentChannel) {
-      throw new Error('Failed to initialize channel');
+      throw new GeinsError('Failed to initialize channel', GeinsErrorCode.NOT_INITIALIZED);
     }
     return this._currentChannel?.get() ?? undefined;
   }
@@ -115,53 +116,25 @@ export class GeinsCore {
     return this._accountChannels.get() ?? undefined;
   }
 
-  /**
-   * Set the user token.
-   * @param userToken
-   */
-  public setUserToken(userToken?: string): void {
-    this._userToken = userToken;
-    if (this._apiClient) {
-      this._apiClient.updateToken(userToken);
-    }
-  }
-
-  /**
-   * Get the user token. Returns a token if user is authenticated.
-   * @returns string | undefined
-   */
-  public getUserToken(): string | undefined {
-    return this._userToken;
-  }
-
-  /**
-   * Endpoints for the current environment.
-   * - main: The main api endpoint used to query Geins.
-   * - auth: The auth endpoint.
-   * - authSign: The auth sign endpoint.
-   * - image: The base image url
-   */
+  /** Endpoints for the current environment: main (API), auth, authSign, and image base URL. */
   get endpoints(): GeinsEndpoints {
+    if (!this._endpointsUrls) {
+      throw new GeinsError('Endpoints are not set', GeinsErrorCode.NOT_INITIALIZED);
+    }
     return this._endpointsUrls;
   }
 
-  /**
-   * Returns the API Client instance.
-   */
+  /** Returns the API Client instance. */
   get client(): MerchantApiClient {
     if (!this._endpointsUrls) {
-      throw new Error('Endpoints are not set');
+      throw new GeinsError('Endpoints are not set', GeinsErrorCode.NOT_INITIALIZED);
     }
     if (!this._apiClient) {
       this.initApiClient();
     }
     return this._apiClient;
   }
-  /**
-   * Returns the GraphQL Client instance.
-   * @returns GraphQLClient
-   * Use to query Geins using GraphQL.
-   */
+  /** Returns the GraphQL Client instance. */
   get graphql(): GraphQLService {
     if (!this._graphQLService) {
       this.initGraphQLService();
@@ -169,47 +142,30 @@ export class GeinsCore {
     return this._graphQLService;
   }
 
-  /**
-   * Returns the GeinsSettings that was used to to instance the class.
-   */
+  /** Returns the GeinsSettings that was used to instance the class. */
   get geinsSettings(): GeinsSettings {
     return this._geinsSettings;
   }
 
-  /**
-   * Returns the EventService instance.
-   * @returns EventService
-   * @example
-   * const eventService = core.events;
-   * eventService.listenerAdd((data) => {
-   *  console.log(data);
-   * });
-   * eventService.push({
-   * subject: 'USER_LOGIN',
-   * payload: {
-   * user: 'luke.skywalker@tatooine.com',
-   * },
-   * broadcast: true,
-   * });
-   */
+  /** Returns the EventService instance. */
   get events(): EventService {
     return this._eventService;
   }
 
-  /**
-   * Returns the CookieService instance.
-   * @returns CookieService
-   * @example
-   * const cookieService = core.cookies;
-   * cookieService.set('cookieName', 'cookieValue');
-   * const cookieValue = cookieService.get('cookieName');
-   *
-   */
+  /** Returns the CookieService instance. */
   get cookies(): CookieService {
     if (!this._cookieService) {
       this._cookieService = new CookieService();
     }
     return this._cookieService;
+  }
+
+  /**
+   * Returns the TelemetryCollector if telemetry is enabled, or null.
+   * Use to get metrics snapshots or flush metrics on demand.
+   */
+  get telemetry(): TelemetryCollector | null {
+    return this._apiClient?.telemetry ?? null;
   }
 
   /**
@@ -219,7 +175,7 @@ export class GeinsCore {
    * @param options - Additional options for signing the JWT.
    * @returns The encoded JWT as a string.
    */
-  public static encodeJWT(payload: object, secretKey?: string): string {
+  public static encodeJWT(payload: Record<string, unknown>, secretKey?: string): string {
     return encodeJWT(payload, secretKey);
   }
   /**
@@ -230,7 +186,7 @@ export class GeinsCore {
    * @returns An object containing the decoded payload.
    * @throws An error if the token is invalid or the signature verification fails (when secretKey is provided).
    */
-  public static decodeJWT(token: string, secretKey?: string): any {
+  public static decodeJWT(token: string, secretKey?: string): Record<string, unknown> {
     const decoded = decodeJWT(token, secretKey);
     return decoded.payload;
   }

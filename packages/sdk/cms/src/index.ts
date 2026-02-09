@@ -1,1 +1,1 @@
-export * from './geinsCMS';
+export { GeinsCMS } from './geinsCMS';

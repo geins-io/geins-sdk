@@ -1,4 +1,4 @@
-fragment Stock on StockType {
+fragment OmsStock on StockType {
   inStock
   oversellable
   totalStock

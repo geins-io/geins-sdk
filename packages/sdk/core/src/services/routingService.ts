@@ -1,5 +1,6 @@
 import { EndpointApiClient } from '../api-client/endpointClient';
 import { IStore } from '../base/baseStore';
+import { GeinsError, GeinsErrorCode } from '../errors/geinsError';
 
 const ONE_HOUR_MS = 60 * 60 * 1000; // 1 hour in milliseconds
 const KEY_URL_HISTORY = 'urlHistory';
@@ -32,12 +33,12 @@ export class RoutingService {
   private constructor(apiKey: string, store: IStore) {
     if (!apiKey) {
       this.state = RoutingServiceState.ERROR;
-      throw new Error('API key is required');
+      throw new GeinsError('API key is required', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
     if (!store) {
       this.state = RoutingServiceState.ERROR;
-      throw new Error('Store is required');
+      throw new GeinsError('Store is required', GeinsErrorCode.NOT_INITIALIZED);
     }
 
     this.state = RoutingServiceState.INIT;
@@ -110,7 +111,7 @@ export class RoutingService {
   }
 
   private async fetchAndProcessUrlHistory(): Promise<void> {
-    const history = await this.apiClient.getUrlHistory();
+    const history = await this.apiClient.getUrlHistory() as Array<{ oldUrl?: string; newUrl?: string; deleted?: boolean }>;
     for (const item of history) {
       if (item.oldUrl && item.newUrl && !item.deleted) {
         await this.setKey(item.oldUrl, item.newUrl);

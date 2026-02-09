@@ -32,7 +32,7 @@ query checkout(
     nthPurchase
     cart {
       isCompleted
-      ...Cart
+      ...OmsCart
     }
   }
 }

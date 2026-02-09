@@ -1,82 +1,107 @@
-import type { GeinsUserType, GeinsSettings } from '@geins/types';
-import { BaseApiService, GeinsUserInputTypeType } from '@geins/core';
+import type { GeinsSettings, GeinsUserType, GeinsUserInputTypeType } from '@geins/types';
+import { BaseApiService, GeinsError, GeinsErrorCode } from '@geins/core';
+import type { ApiClientGetter, GraphQLQueryOptions } from '@geins/core';
 import { queries, mutations } from '../graphql';
+
+/** Service for CRUD operations on user profiles (get, create, update, delete). */
 export class UserService extends BaseApiService {
-  constructor(apiClient: any, geinsSettings: GeinsSettings) {
+  constructor(apiClient: ApiClientGetter, geinsSettings: GeinsSettings) {
     super(apiClient, geinsSettings);
   }
-  private async generateVars(variables: any) {
+
+  /** Enriches variables with default locale, market, and channel. */
+  private generateVars(variables: Record<string, unknown>): Record<string, unknown> {
     return this.createVariables(variables);
   }
 
-  private async generateMutationVars(variables: any) {
-    if (variables.user && variables.user.entityId) {
-      variables.user.personalId = variables.user.entityId;
-      delete variables.user.entityId;
+  /** Normalizes user mutation variables (maps entityId to personalId, coerces newsletter). */
+  private generateMutationVars(variables: Record<string, unknown>): Record<string, unknown> {
+    const user = variables.user as Record<string, unknown> | undefined;
+    if (user?.entityId) {
+      user.personalId = user.entityId;
+      delete user.entityId;
     }
-    if (variables.user) {
-      const newsletter = !!(variables.user.newsletter === 'true');
-      variables.user.newsletter = newsletter;
+    if (user) {
+      user.newsletter = !!(user.newsletter === 'true');
     }
     return this.createVariables(variables);
   }
 
-  async getRaw(): Promise<any> {
-    const vars = await this.generateVars({});
-    const options = {
+  /**
+   * Fetches the authenticated user's profile.
+   * @param userToken - The user's authentication token.
+   * @returns The user profile, or undefined if not found.
+   */
+  async get(userToken: string): Promise<GeinsUserType | undefined> {
+    const options: GraphQLQueryOptions = {
       query: queries.userGet,
-      variables: vars,
+      variables: this.generateVars({}),
+      userToken,
     };
-    return this.runQuery(options);
+    return this.runQueryParsed<GeinsUserType>(options);
   }
 
-  async get(): Promise<GeinsUserType | undefined> {
-    const options = {
-      query: queries.userGet,
-      variables: await this.generateVars({}),
-    };
-    const user = await this.runQueryParsed<GeinsUserType>(options);
-
-    return user;
-  }
-
-  async create(user: GeinsUserInputTypeType): Promise<any> {
-    const options = {
+  /**
+   * Registers a new user.
+   * @param user - The user data to register.
+   * @param userToken - The user's authentication token.
+   * @returns The created user profile, or undefined on failure.
+   */
+  async create(user: GeinsUserInputTypeType, userToken: string): Promise<GeinsUserType | undefined> {
+    const options: GraphQLQueryOptions = {
       query: mutations.userRegister,
-      variables: await this.generateMutationVars({ user }),
+      variables: this.generateMutationVars({ user }),
+      userToken,
     };
-    const result = this.runMutation(options);
-
-    return result;
+    const result = await this.runMutation(options);
+    return this.parseResult(result);
   }
 
-  async update(user: GeinsUserInputTypeType): Promise<GeinsUserType> {
-    const options = {
+  /**
+   * Updates an existing user's profile.
+   * @param user - The updated user data.
+   * @param userToken - The user's authentication token.
+   * @returns The updated user profile, or undefined on failure.
+   */
+  async update(user: GeinsUserInputTypeType, userToken: string): Promise<GeinsUserType | undefined> {
+    const options: GraphQLQueryOptions = {
       query: mutations.userUpdate,
-      variables: await this.generateMutationVars({ user }),
+      variables: this.generateMutationVars({ user }),
+      userToken,
     };
     const result = await this.runMutation(options);
-    return this.parseResult(result) as GeinsUserType;
+    return this.parseResult(result);
   }
 
-  async delete(): Promise<any> {
-    const options = {
+  /**
+   * Deletes the authenticated user's account.
+   * @param userToken - The user's authentication token.
+   * @returns True if the deletion succeeded.
+   */
+  async delete(userToken: string): Promise<boolean> {
+    const options: GraphQLQueryOptions = {
       query: mutations.userDelete,
-      variables: await this.generateVars({}),
+      variables: this.generateVars({}),
+      userToken,
     };
     const result = await this.runMutation(options);
-    return result;
+    return !!result;
   }
 
-  protected parseResult(data: any): GeinsUserType | undefined {
-    if (!data || !data.data) {
-      throw new Error('Invalid user data');
+  /**
+   * Extracts the user object from a getUser or updateUser response.
+   * @throws {GeinsError} If the response data is invalid.
+   */
+  protected parseResult(data: unknown): GeinsUserType | undefined {
+    const d = data as { data?: { getUser?: GeinsUserType; updateUser?: GeinsUserType } };
+    if (!d?.data) {
+      throw new GeinsError('Invalid user data', GeinsErrorCode.PARSE_ERROR);
     }
-    if (data.data.getUser) {
-      return data.data.getUser as GeinsUserType;
+    if (d.data.getUser) {
+      return d.data.getUser;
     }
-    if (data.data.updateUser) {
-      return this.cleanObject(data.data.updateUser) as GeinsUserType;
+    if (d.data.updateUser) {
+      return this.cleanObject(d.data.updateUser) as GeinsUserType;
     }
     return undefined;
   }

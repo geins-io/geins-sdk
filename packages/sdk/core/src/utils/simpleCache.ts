@@ -1,3 +1,4 @@
+/** TTL-based in-memory cache. Entries are lazily evicted on access after expiry. */
 export class SimpleCache<T> {
   private cache: Map<string, { value: T; expiry: number }> = new Map();
 
