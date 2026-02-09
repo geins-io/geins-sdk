@@ -45,5 +45,8 @@ export class Logger {
   }
 }
 
-/** Shared SDK-internal logger. Defaults to WARN level — only warnings and errors are emitted. */
-export const sdkLogger = new Logger(GeinsLogLevel.WARN);
+/** Shared SDK-internal logger. Silent in test environments, WARN level otherwise. */
+const defaultLevel = typeof process !== 'undefined' && process.env?.NODE_ENV === 'test'
+  ? GeinsLogLevel.NONE
+  : GeinsLogLevel.WARN;
+export const sdkLogger = new Logger(defaultLevel);
