@@ -104,7 +104,7 @@ class GeinsCRM extends BasePackage {
         GeinsEventType.USER_LOGIN,
       );
     } catch (error) {
-      console.warn('Failed to push USER_LOGIN event:', error);
+      // Event emission is best-effort — swallow failures silently
     }
 
     return authResponse;
@@ -147,7 +147,7 @@ class GeinsCRM extends BasePackage {
         GeinsEventType.USER_UPDATE,
       );
     } catch (error) {
-      console.warn('Failed to push USER_UPDATE event:', error);
+      // Event emission is best-effort — swallow failures silently
     }
 
     return this.userService.update(user, userToken);
@@ -181,7 +181,7 @@ class GeinsCRM extends BasePackage {
     try {
       this.pushEvent({ subject: GeinsEventType.USER_DELETE, payload: {} }, GeinsEventType.USER_DELETE);
     } catch (error) {
-      console.warn('Failed to push USER_DELETE event:', error);
+      // Event emission is best-effort — swallow failures silently
     }
     return this.userService.delete(userToken);
   }

@@ -66,4 +66,5 @@ export {
   isServerContext,
 } from './utils/helpers';
 export { decodeJWT, encodeJWT } from './utils/jwtUtils';
+export { Logger, sdkLogger } from './utils/logger';
 export { paginate, paginateAll } from './utils/paginator';

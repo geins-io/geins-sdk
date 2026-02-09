@@ -6,6 +6,7 @@ import type {
   GeinsMarketTypeType,
 } from '@geins/types';
 import { GeinsError, GeinsErrorCode } from '../errors/geinsError';
+import { sdkLogger } from '../utils/logger';
 
 /**
  * Parses a GraphQL response containing multiple channels.
@@ -21,7 +22,7 @@ export function parseChannelsResult(result: {
   }
   const channels = result.data.channels;
   if (!channels || channels.length === 0) {
-    console.warn('No channel found');
+    sdkLogger.warn('No channel found');
     return undefined;
   }
   return channels.map((channel) => parseChannel(channel)).filter(
@@ -43,7 +44,7 @@ export function parseChannelResult(result: {
   }
   const channel = result.data.channel;
   if (!channel) {
-    console.warn('No channel found');
+    sdkLogger.warn('No channel found');
     return undefined;
   }
   return parseChannel(channel);

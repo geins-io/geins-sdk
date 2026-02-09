@@ -44,3 +44,6 @@ export class Logger {
     }
   }
 }
+
+/** Shared SDK-internal logger. Defaults to WARN level — only warnings and errors are emitted. */
+export const sdkLogger = new Logger(GeinsLogLevel.WARN);

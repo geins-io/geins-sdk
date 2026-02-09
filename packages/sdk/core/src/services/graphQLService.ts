@@ -6,6 +6,7 @@ import type { ApiClientGetter } from '../base/baseApiService';
 import { GraphQLQueryOptions } from '../api-client/merchantApiClient';
 import { BaseApiService } from '../base/baseApiService';
 import { GeinsError, GeinsErrorCode } from '../errors/geinsError';
+import { sdkLogger } from '../utils/logger';
 
 /**
  * GraphQLService class provides methods to interact with a GraphQL API.
@@ -67,7 +68,7 @@ export class GraphQLService extends BaseApiService {
     const queryOptions = await this.verifyQueryOptions(options);
 
     if ((this.log_to_console || options.log_to_console) && this._geinsSettings.environment !== 'prod') {
-      console.log('[Geins] queryOptions:', queryOptions);
+      sdkLogger.debug(`[Geins] queryOptions: ${JSON.stringify(queryOptions)}`);
     }
     const raw = await this.runQuery(queryOptions);
     const result = this.cleanObject(raw as unknown as Record<string, unknown>);
@@ -81,7 +82,7 @@ export class GraphQLService extends BaseApiService {
    */
   async mutation<T = unknown>(options: GraphQLQueryOptions): Promise<T> {
     if ((this.log_to_console || options.log_to_console) && this._geinsSettings.environment !== 'prod') {
-      console.log('[Geins] mutation options:', options);
+      sdkLogger.debug(`[Geins] mutation options: ${JSON.stringify(options)}`);
     }
 
     const result = await this.runMutation(options);

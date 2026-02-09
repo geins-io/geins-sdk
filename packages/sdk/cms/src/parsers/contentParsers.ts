@@ -1,4 +1,4 @@
-import { ContentAreaType, ContentPageType, GeinsMenuItemTypeType, ContentContainerType, ContentType, GeinsError, GeinsErrorCode } from '@geins/core';
+import { ContentAreaType, ContentPageType, GeinsMenuItemTypeType, ContentContainerType, ContentType, GeinsError, GeinsErrorCode, sdkLogger } from '@geins/core';
 import type {
   GeinsMenuItemBaseType,
   GeinsPageWidgetCollectionTypeType,
@@ -38,7 +38,7 @@ export function parseContentArea(result: {
   const area = result.data.widgetArea;
 
   if (!area) {
-    console.warn('No area found');
+    sdkLogger.warn('No area found');
     return {
       meta: {},
       tags: [],
@@ -83,7 +83,7 @@ export function parseContentPage(result: {
 
   const page = result.data.widgetArea;
   if (!page) {
-    console.warn('No page found');
+    sdkLogger.warn('No page found');
     return parsedResult;
   }
 
@@ -171,7 +171,7 @@ export function parseContent(content: GeinsPageWidgetTypeType): ContentType {
  */
 export function parseContentData(type: string, data: string): Record<string, unknown> {
   if (!data) {
-    console.warn('No data found for type', type);
+    sdkLogger.warn(`No data found for type ${type}`);
     return {};
   }
 
@@ -224,12 +224,12 @@ export function parseContentDataJson(data: string): Record<string, unknown> {
   try {
     parsedData = JSON.parse(data) as Record<string, unknown>;
   } catch (e) {
-    console.error('Error parsing data', e);
+    sdkLogger.error(`Error parsing data: ${e}`);
   }
   try {
     jsonData = JSON.parse(parsedData.json as string) as Record<string, unknown>;
   } catch (e) {
-    console.error('Error parsing json attribute from content data', e);
+    sdkLogger.error(`Error parsing json attribute from content data: ${e}`);
   }
   if (parsedData.json) {
     delete parsedData.json;

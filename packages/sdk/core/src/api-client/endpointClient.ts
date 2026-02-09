@@ -1,5 +1,6 @@
 import { API_ENDPOINT_SLUG_HISTORY, API_ENDPOINT_URL_HISTORY } from '../constants';
 import { GeinsError, GeinsErrorCode } from '../errors/geinsError';
+import { sdkLogger } from '../utils/logger';
 /** HTTP client for Geins endpoint discovery APIs (URL/slug history). */
 export class EndpointApiClient {
   private static readonly FETCH_TIMEOUT_MS = 10_000;
@@ -32,7 +33,7 @@ export class EndpointApiClient {
 
       return await response.json();
     } catch (error) {
-      console.error(`Error fetching data from ${endpointUrl}:`, error);
+      sdkLogger.error(`Error fetching data from ${endpointUrl}`);
       throw error;
     }
   }

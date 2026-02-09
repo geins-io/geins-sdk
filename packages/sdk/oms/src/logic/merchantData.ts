@@ -33,7 +33,7 @@ export class MerchantData<T> {
         if (this.isKeyValid(key)) {
           validData[key] = newData[key];
         } else {
-          console.warn(`Key "${key}" is not in the original template and will be ignored.`);
+          // Key is silently ignored in strict mode (template keys only)
         }
       }
       this._data = { ...this._data, ...validData } as T;

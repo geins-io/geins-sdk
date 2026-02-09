@@ -263,7 +263,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       const data = await this.runQuery(options);
       return parseCheckoutSummary(data, this._geinsSettings.locale);
     } catch (e) {
-      console.error('ERROR', e);
+      // Error is re-thrown as CheckoutError below
       throw new CheckoutError('Error getting summary', GeinsErrorCode.CHECKOUT_FAILED, e);
     }
   }

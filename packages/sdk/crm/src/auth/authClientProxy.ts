@@ -46,7 +46,7 @@ export class AuthClientProxy extends AuthClient {
 
     const result = await response.json();
     if (!response.ok) {
-      console.error(result.message || 'API request failed');
+      // Error is thrown below — no need for separate logging
       throw new AuthError('API request failed');
     }
 
