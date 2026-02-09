@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@geins/core": "0.5.1",
-    "@geins/oms": "0.5.1",
-    "@geins/types": "0.5.1",
+    "@geins/core": "0.6.0",
+    "@geins/oms": "0.6.0",
+    "@geins/types": "0.6.0",
     "@mermaid-js/mermaid-mindmap": "^9.3.0",
     "canvas-confetti": "^1.9.3",
     "mermaid": "^11.3.0",
