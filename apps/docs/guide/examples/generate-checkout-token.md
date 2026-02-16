@@ -32,10 +32,12 @@ const geinsSettings: GeinsSettings = {
 
 // Initialize GeinsCore and GeinsOMS
 const geinsCore = new GeinsCore(geinsSettings);
-const geinsOMS = new GeinsOMS(geinsSettings);
+const geinsOMS = new GeinsOMS(geinsCore);
 
-// Get your cart
-const cart: CartType = await geinsOMS.cart.get();
+// Create a cart and add items
+const newCart = await geinsOMS.cart.create();
+await geinsOMS.cart.addItem(newCart.id, { skuId: 12345, quantity: 1 });
+const cart: CartType = await geinsOMS.cart.get(newCart.id);
 
 // Setup your checkout
 const checkoutTokenOptions: GenerateCheckoutTokenOptions = {
