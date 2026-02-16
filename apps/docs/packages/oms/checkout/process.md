@@ -54,15 +54,13 @@ Some external payment gateways expect you to render their summary.
 
 ## Complete cart and remove it from users session or client
 
-As a last step you can complete the cart to remove it from the system. This is optional but recommended to keep the system clean. Read more about [Complete Cart](/packages/oms/cart/#complete) and [Remove Cart](/packages/oms/cart/#remove)
+As a last step you can complete the cart to mark it as read-only. This is optional but recommended to keep the system clean. Read more about [Complete Cart](/packages/oms/cart/#complete)
 
 ## Example
 
 ```typescript
 // load cart if not already loaded
-await geinsOMS.cart.get(cartId);
+const cart = await geinsOMS.cart.get(cartId);
 // set cart as complete
-await geinsOMS.cart.complete();
-// remove cart from session
-await geinsOMS.cart.remove();
+await geinsOMS.cart.complete(cartId);
 ```

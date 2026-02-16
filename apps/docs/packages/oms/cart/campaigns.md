@@ -32,23 +32,20 @@ Use this to show the user the campaigns that have been applied to each item in t
 ### Cart
 Example:
 ```typescript
-
-const cart = await geinsOMS.cart.get();
+const cart = await geinsOMS.cart.get(cartId);
 // loop through the applied campaigns
 for (const campaign of cart?.appliedCampaigns ?? []) {
   console.log(campaign);
 }
-
 ```
 
 
 ### Cart Item
 Example:
 ```typescript
-
-const cartItems = await geinsOMS.cart.items.get();
-// loop through the applied campaigns
-for (const item of cartItems ?? []) {
+const cart = await geinsOMS.cart.get(cartId);
+// loop through the applied campaigns on each item
+for (const item of cart?.items ?? []) {
   for (const campaign of item?.campaign?.appliedCampaigns ?? []) {
     console.log(`item: ${item.id} has applied campaign:`, campaign);
   }

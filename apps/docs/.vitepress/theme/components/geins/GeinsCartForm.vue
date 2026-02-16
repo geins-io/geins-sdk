@@ -21,28 +21,27 @@ const loading = ref(false);
 let geinsCore: GeinsCore | null = null;
 let geinsOMS: GeinsOMS | null = null;
 
-const addItemsToCart = async () => {
-  try {
-    await geinsOMS?.cart.items.clear();
-    for (const sku of cart.value.skus) {
-      const skuId = Number(sku);
-      await geinsOMS?.cart.items.add({ skuId, quantity: 1 });
-    }
-  } catch (error) {
-    console.error('Failed to add items to cart.', error);
-    // validationError.value = 'Failed to add items to cart.';
-  }
-};
-
 const generateCart = async () => {
-  if (!settingsValid.value) {
+  if (!settingsValid.value || !geinsOMS) {
     return;
   }
   try {
     loading.value = true;
-    await addItemsToCart();
-    const createdCart = await geinsOMS?.cart.get();
 
+    // Create a fresh cart
+    const newCart = await geinsOMS.cart.create();
+    let cartId = newCart?.id || '';
+
+    // Add each SKU to the cart
+    for (const sku of cart.value.skus) {
+      const skuId = Number(sku);
+      if (cartId) {
+        await geinsOMS.cart.addItem(cartId, { skuId, quantity: 1 });
+      }
+    }
+
+    // Fetch the final cart state
+    const createdCart = await geinsOMS.cart.get(cartId);
     cart.value.id = createdCart?.id || '';
     cart.value.skus = createdCart?.items?.map((item) => Number(item.skuId)) || [];
 
@@ -50,7 +49,6 @@ const generateCart = async () => {
     storeSettings(valid, cart.value, GeinsStorageParam.Cart);
   } catch (error) {
     console.error('Failed to generate cart.', error);
-    // validationError.value = 'Failed to generate cart.';
   } finally {
     loading.value = false;
   }
@@ -58,7 +56,6 @@ const generateCart = async () => {
 
 const removeCart = async () => {
   loading.value = true;
-  await geinsOMS?.cart.remove();
   cart.value = { id: '', skus: [] };
   storeSettings(false, cart.value, GeinsStorageParam.Cart);
   loading.value = false;
