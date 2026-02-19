@@ -29,6 +29,7 @@ export {
 } from './constants/storageKeys';
 export { AUTH_HEADERS } from './constants/headerNames';
 export { CHECKOUT_PARAMETERS } from './constants/parameters';
+export { GEINS_IMAGE_FOLDER } from './constants/image';
 
 // Errors
 export { GeinsError, GeinsErrorCode } from './errors/geinsError';
@@ -65,6 +66,7 @@ export {
   parseErrorMessage,
   isServerContext,
 } from './utils/helpers';
+export { buildGeinsImageUrl, buildGeinsRawUrl, buildGeinsThumbnailUrl } from './utils/imageUrl';
 export { decodeJWT, encodeJWT } from './utils/jwtUtils';
 export { Logger, sdkLogger } from './utils/logger';
 export { paginate, paginateAll } from './utils/paginator';
