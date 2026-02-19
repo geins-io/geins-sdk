@@ -1,5 +1,11 @@
 # @geins/types
 
+## 0.6.1
+
+### Patch Changes
+
+- bf45029: Add image CDN utilities: `GEINS_IMAGE_FOLDER` constants, `GeinsImageType` type, and URL builder functions (`buildGeinsImageUrl`, `buildGeinsRawUrl`, `buildGeinsThumbnailUrl`).
+
 ## 0.6.0
 
 ### Minor Changes
