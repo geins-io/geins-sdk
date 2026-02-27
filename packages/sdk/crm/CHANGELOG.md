@@ -1,5 +1,11 @@
 # @geins/crm
 
+## 0.6.2
+
+### Patch Changes
+
+- 2759afa: Add 'pagewidget' to GeinsImageType for CMS widget images
+
 ## 0.6.1
 
 ### Patch Changes
