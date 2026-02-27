@@ -24,7 +24,7 @@ describe('buildGeinsImageUrl', () => {
   });
 
   it('should work for all image types', () => {
-    for (const type of ['product', 'category', 'brand', 'cms'] as const) {
+    for (const type of ['product', 'category', 'brand', 'cms', 'pagewidget'] as const) {
       const url = buildGeinsImageUrl(BASE, type, 'raw', 'img.jpg');
       expect(url).toBe(`https://monitor.commerce.services/${type}/raw/img.jpg`);
     }
