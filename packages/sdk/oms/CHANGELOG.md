@@ -1,5 +1,11 @@
 # @geins/oms
 
+## 0.7.0
+
+### Minor Changes
+
+- 27e45c5: Add FavoritesSession to @geins/crm for client-side favorites management with storage persistence and event emission
+
 ## 0.6.2
 
 ### Patch Changes
