@@ -1,5 +1,11 @@
 # @geins/cms
 
+## 0.8.0
+
+### Minor Changes
+
+- 7f188b8: Replace FavoritesSession with unified ListsSession for product lists and favorites management
+
 ## 0.7.0
 
 ### Minor Changes
