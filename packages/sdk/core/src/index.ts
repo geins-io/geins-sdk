@@ -26,6 +26,8 @@ export {
   AUTH_STORAGE_MAX_AGE,
   CART_STORAGE_KEYS,
   CART_STORAGE_MAX_AGE,
+  FAVORITES_STORAGE_KEYS,
+  FAVORITES_STORAGE_MAX_AGE,
 } from './constants/storageKeys';
 export { AUTH_HEADERS } from './constants/headerNames';
 export { CHECKOUT_PARAMETERS } from './constants/parameters';

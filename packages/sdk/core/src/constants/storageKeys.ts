@@ -25,3 +25,14 @@ export const CART_STORAGE_MAX_AGE = {
   /** 7 days */
   DEFAULT: 604800,
 } as const;
+
+/** Storage keys for favorites session data. */
+export const FAVORITES_STORAGE_KEYS = {
+  ITEMS: 'geins-favorites',
+} as const;
+
+/** Default max-age values (in seconds) for favorites storage entries. */
+export const FAVORITES_STORAGE_MAX_AGE = {
+  /** 30 days */
+  DEFAULT: 2592000,
+} as const;
