@@ -56,12 +56,18 @@ export enum GeinsEventType {
   /** Session expired — refresh failed, user must re-authenticate */
   SESSION_EXPIRED = 'SESSION_EXPIRED',
 
-  /** Parent event for all favorites-related events */
-  FAVORITES = 'FAVORITES',
-  /** Item added to favorites */
-  FAVORITES_ADD = 'FAVORITES_ADD',
-  /** Item removed from favorites */
-  FAVORITES_REMOVE = 'FAVORITES_REMOVE',
-  /** All favorites cleared */
-  FAVORITES_CLEAR = 'FAVORITES_CLEAR',
+  /** Parent event for all list-related events */
+  LIST = 'LIST',
+  /** A new list was created */
+  LIST_CREATE = 'LIST_CREATE',
+  /** A list was deleted */
+  LIST_DELETE = 'LIST_DELETE',
+  /** A list was updated (renamed, reordered, etc.) */
+  LIST_UPDATE = 'LIST_UPDATE',
+  /** An item was added to a list */
+  LIST_ADD_ITEM = 'LIST_ADD_ITEM',
+  /** An item was removed from a list */
+  LIST_REMOVE_ITEM = 'LIST_REMOVE_ITEM',
+  /** All items were cleared from a list */
+  LIST_CLEAR = 'LIST_CLEAR',
 }
