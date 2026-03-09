@@ -55,4 +55,13 @@ export enum GeinsEventType {
   SESSION_REFRESH = 'SESSION_REFRESH',
   /** Session expired — refresh failed, user must re-authenticate */
   SESSION_EXPIRED = 'SESSION_EXPIRED',
+
+  /** Parent event for all favorites-related events */
+  FAVORITES = 'FAVORITES',
+  /** Item added to favorites */
+  FAVORITES_ADD = 'FAVORITES_ADD',
+  /** Item removed from favorites */
+  FAVORITES_REMOVE = 'FAVORITES_REMOVE',
+  /** All favorites cleared */
+  FAVORITES_CLEAR = 'FAVORITES_CLEAR',
 }
