@@ -1,5 +1,6 @@
 import { UserService } from '../src/services/userService';
 import { GeinsError } from '@geins/core';
+import type { RequestContext } from '@geins/types';
 
 function createMockApiClient() {
   const mockClient = {
@@ -150,6 +151,38 @@ describe('UserService', () => {
 
       const result = await service.delete('token');
       expect(result).toBe(false);
+    });
+  });
+
+  describe('requestContext override', () => {
+    it('overrides languageId on get when requestContext is provided', async () => {
+      mockClient.runQuery.mockResolvedValue({ data: { getUser: { id: 1 } } });
+      const requestContext: RequestContext = { languageId: 'en-GB' };
+
+      await service.get('token', requestContext);
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('en-GB');
+    });
+
+    it('overrides marketId on get when requestContext is provided', async () => {
+      mockClient.runQuery.mockResolvedValue({ data: { getUser: { id: 1 } } });
+      const requestContext: RequestContext = { marketId: 'NO' };
+
+      await service.get('token', requestContext);
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.variables.marketId).toBe('NO');
+    });
+
+    it('uses SDK defaults when requestContext is omitted', async () => {
+      mockClient.runQuery.mockResolvedValue({ data: { getUser: { id: 1 } } });
+
+      await service.get('token');
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('sv-SE');
+      expect(callArgs.variables.marketId).toBe('SE');
     });
   });
 });

@@ -1,6 +1,7 @@
 import { MenuService } from '../src/services/menuService';
 import { GeinsError } from '@geins/core';
 import type { MenuType } from '@geins/types';
+import type { RequestContext } from '@geins/types';
 
 function createMockApiClient() {
   const mockClient = {
@@ -160,6 +161,45 @@ describe('MenuService', () => {
 
       const result = await service.getRaw({ menuLocationId: 'main' });
       expect(result).toEqual(rawResponse);
+    });
+  });
+
+  describe('requestContext override', () => {
+    it('overrides languageId when requestContext is provided', async () => {
+      mockClient.runQuery.mockResolvedValue({
+        data: { getMenuAtLocation: { id: 1, title: 'Menu', menuItems: [] } },
+      });
+      const requestContext: RequestContext = { languageId: 'en-GB' };
+
+      await service.get({ menuLocationId: 'main' }, requestContext);
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('en-GB');
+    });
+
+    it('overrides marketId and channelId when requestContext is provided', async () => {
+      mockClient.runQuery.mockResolvedValue({
+        data: { getMenuAtLocation: { id: 1, title: 'Menu', menuItems: [] } },
+      });
+      const requestContext: RequestContext = { marketId: 'NO', channelId: 'channel|no' };
+
+      await service.get({ menuLocationId: 'main' }, requestContext);
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.variables.marketId).toBe('NO');
+      expect(callArgs.variables.channelId).toBe('channel|no');
+    });
+
+    it('uses SDK defaults when requestContext is omitted', async () => {
+      mockClient.runQuery.mockResolvedValue({
+        data: { getMenuAtLocation: { id: 1, title: 'Menu', menuItems: [] } },
+      });
+
+      await service.get({ menuLocationId: 'main' });
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('sv-SE');
+      expect(callArgs.variables.marketId).toBe('SE');
     });
   });
 });

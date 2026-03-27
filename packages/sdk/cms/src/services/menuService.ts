@@ -1,4 +1,4 @@
-import type { MenuVariables, MenuItemType, MenuType, MenuServiceResult } from '@geins/types';
+import type { MenuVariables, MenuItemType, MenuType, MenuServiceResult, RequestContext } from '@geins/types';
 import type { GeinsMenuItemTypeType } from '@geins/types';
 import { BaseApiService, GeinsError, GeinsErrorCode } from '@geins/core';
 import type { GraphQLQueryOptions } from '@geins/core';
@@ -10,22 +10,23 @@ export class MenuService extends BaseApiService {
    * Validates and enriches menu variables with defaults.
    * @throws {GeinsError} If menuLocationId is missing.
    */
-  private async generateVars(variables: MenuVariables) {
+  private async generateVars(variables: MenuVariables, requestContext?: RequestContext) {
     if (!variables.menuLocationId) {
       throw new GeinsError('LocationId is required', GeinsErrorCode.INVALID_ARGUMENT);
     }
-    const vars = this.createVariables(variables);
+    const vars = this.createVariables({ ...variables, ...requestContext });
     return vars;
   }
 
   /**
    * Fetches a menu as raw GraphQL response data.
    * @param variables - Must include menuLocationId.
+   * @param requestContext - Optional per-request locale/market/channel overrides.
    */
-  async getRaw(variables: MenuVariables) {
+  async getRaw(variables: MenuVariables, requestContext?: RequestContext) {
     const options: GraphQLQueryOptions = {
       query: queries.menu,
-      variables: await this.generateVars(variables),
+      variables: await this.generateVars(variables, requestContext),
     };
     return await this.runQuery(options);
   }
@@ -33,11 +34,12 @@ export class MenuService extends BaseApiService {
   /**
    * Fetches a menu and returns a parsed {@link MenuType} with nested menu items.
    * @param variables - Must include menuLocationId.
+   * @param requestContext - Optional per-request locale/market/channel overrides.
    */
-  async get(variables: MenuVariables) {
+  async get(variables: MenuVariables, requestContext?: RequestContext) {
     const options: GraphQLQueryOptions = {
       query: queries.menu,
-      variables: await this.generateVars(variables),
+      variables: await this.generateVars(variables, requestContext),
     };
     return await this.runQueryParsed(options);
   }
