@@ -38,9 +38,17 @@ export abstract class BaseApiService {
 
   /**
    * Merges caller-provided variables with default languageId, marketId, and channelId from settings.
-   * @param vars - Variables to enrich with defaults.
+   *
+   * Per-request overrides: if `vars` already contains `languageId`, `marketId`, or `channelId`
+   * those values are used as-is and the SDK-level settings are ignored for that field.
+   * This mirrors the shape of {@link RequestContext} and allows callers to pass a
+   * `RequestContext` object directly as part of `vars` to override locale/market on a
+   * per-request basis without reinitialising the SDK.
+   *
+   * @param vars - Variables to enrich with defaults. Pre-existing `languageId`, `marketId`,
+   *   or `channelId` fields take precedence over the SDK-level settings.
    * @returns The enriched variables object.
-   * @throws {GeinsError} If locale or market is missing when not provided in vars.
+   * @throws {GeinsError} If locale or market is missing from both `vars` and the SDK settings.
    */
   protected createVariables(vars: Record<string, unknown>): Record<string, unknown> {
     const variables: Record<string, unknown> = { ...vars };
