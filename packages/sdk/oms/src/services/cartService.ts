@@ -4,6 +4,7 @@ import type {
   CartType,
   GeinsSettings,
   ProductPackageSelectionType,
+  RequestContext,
 } from '@geins/types';
 import { BaseApiService, CartError, FetchPolicyOptions, GeinsError, GeinsErrorCode } from '@geins/core';
 import type { ApiClientGetter, GraphQLQueryOptions } from '@geins/core';
@@ -23,10 +24,10 @@ export class CartService extends BaseApiService {
   // --- Lifecycle ---
 
   /** Create a new cart. Returns the full cart with its generated ID. */
-  async create(): Promise<CartType> {
+  async create(requestContext?: RequestContext): Promise<CartType> {
     const options: GraphQLQueryOptions = {
       query: queries.cartCreate,
-      variables: this.createVariables({}),
+      variables: this.createVariables({ ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
@@ -39,10 +40,10 @@ export class CartService extends BaseApiService {
   }
 
   /** Get an existing cart by ID. */
-  async get(cartId: string, forceRefresh = false): Promise<CartType> {
+  async get(cartId: string, forceRefresh = false, requestContext?: RequestContext): Promise<CartType> {
     const options: GraphQLQueryOptions = {
       query: queries.cartGet,
-      variables: this.createVariables({ id: cartId, forceRefresh }),
+      variables: this.createVariables({ id: cartId, forceRefresh, ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
@@ -56,17 +57,17 @@ export class CartService extends BaseApiService {
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : String(e);
       if (message.includes("Variable '$id' is invalid")) {
-        return this.create();
+        return this.create(requestContext);
       }
       throw new CartError('Error getting cart', GeinsErrorCode.CART_OPERATION_FAILED, e);
     }
   }
 
   /** Mark a cart as completed. Returns the completed cart. */
-  async complete(cartId: string): Promise<CartType> {
+  async complete(cartId: string, requestContext?: RequestContext): Promise<CartType> {
     const options: GraphQLQueryOptions = {
       query: queries.cartComplete,
-      variables: this.createVariables({ id: cartId }),
+      variables: this.createVariables({ id: cartId, ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
@@ -79,12 +80,12 @@ export class CartService extends BaseApiService {
   }
 
   /** Copy a cart. Returns the new cart. */
-  async copy(cartId: string, options?: { resetPromotions?: boolean }): Promise<CartType> {
+  async copy(cartId: string, options?: { resetPromotions?: boolean }, requestContext?: RequestContext): Promise<CartType> {
     const resetPromotions = options?.resetPromotions ?? true;
 
     const queryOptions: GraphQLQueryOptions = {
       query: queries.cartCopy,
-      variables: this.createVariables({ id: cartId, resetPromotions }),
+      variables: this.createVariables({ id: cartId, resetPromotions, ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
@@ -99,11 +100,11 @@ export class CartService extends BaseApiService {
   // --- Item mutations ---
 
   /** Add an item to the cart. If the item already exists, use {@link updateItem} to set the new quantity. */
-  async addItem(cartId: string, input: CartItemInputType): Promise<CartType> {
+  async addItem(cartId: string, input: CartItemInputType, requestContext?: RequestContext): Promise<CartType> {
     const item = this.normalizeItemInput(input);
     const options: GraphQLQueryOptions = {
       query: queries.cartAddItem,
-      variables: this.createVariables({ id: cartId, item }),
+      variables: this.createVariables({ id: cartId, item, ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
@@ -116,11 +117,11 @@ export class CartService extends BaseApiService {
   }
 
   /** Update an existing item's quantity in the cart. */
-  async updateItem(cartId: string, input: CartItemInputType): Promise<CartType> {
+  async updateItem(cartId: string, input: CartItemInputType, requestContext?: RequestContext): Promise<CartType> {
     const item = this.normalizeItemInput(input);
     const options: GraphQLQueryOptions = {
       query: queries.cartUpdateItem,
-      variables: this.createVariables({ id: cartId, item }),
+      variables: this.createVariables({ id: cartId, item, ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
@@ -133,8 +134,8 @@ export class CartService extends BaseApiService {
   }
 
   /** Delete an item from the cart (sets quantity to 0). */
-  async deleteItem(cartId: string, itemId: string): Promise<CartType> {
-    return this.updateItem(cartId, { id: itemId, quantity: 0 });
+  async deleteItem(cartId: string, itemId: string, requestContext?: RequestContext): Promise<CartType> {
+    return this.updateItem(cartId, { id: itemId, quantity: 0 }, requestContext);
   }
 
   // --- Package item mutations ---
@@ -144,10 +145,11 @@ export class CartService extends BaseApiService {
     cartId: string,
     packageId: number,
     selections: ProductPackageSelectionType[],
+    requestContext?: RequestContext,
   ): Promise<CartType> {
     const options: GraphQLQueryOptions = {
       query: queries.cartAddPackageItem,
-      variables: this.createVariables({ id: cartId, packageId, selections }),
+      variables: this.createVariables({ id: cartId, packageId, selections, ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
@@ -160,10 +162,10 @@ export class CartService extends BaseApiService {
   }
 
   /** Update a package item in the cart. */
-  async updatePackageItem(cartId: string, input: CartGroupInputType): Promise<CartType> {
+  async updatePackageItem(cartId: string, input: CartGroupInputType, requestContext?: RequestContext): Promise<CartType> {
     const options: GraphQLQueryOptions = {
       query: queries.cartUpdatePackageItem,
-      variables: this.createVariables({ id: cartId, item: input }),
+      variables: this.createVariables({ id: cartId, item: input, ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
@@ -178,10 +180,10 @@ export class CartService extends BaseApiService {
   // --- Modifiers ---
 
   /** Apply a promotion code to the cart. */
-  async setPromotionCode(cartId: string, code: string): Promise<CartType> {
+  async setPromotionCode(cartId: string, code: string, requestContext?: RequestContext): Promise<CartType> {
     const options: GraphQLQueryOptions = {
       query: queries.cartSetPromotionCode,
-      variables: this.createVariables({ id: cartId, promoCode: code }),
+      variables: this.createVariables({ id: cartId, promoCode: code, ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
@@ -194,15 +196,15 @@ export class CartService extends BaseApiService {
   }
 
   /** Remove the promotion code from the cart. */
-  async removePromotionCode(cartId: string): Promise<CartType> {
-    return this.setPromotionCode(cartId, '');
+  async removePromotionCode(cartId: string, requestContext?: RequestContext): Promise<CartType> {
+    return this.setPromotionCode(cartId, '', requestContext);
   }
 
   /** Set a shipping fee on the cart. */
-  async setShippingFee(cartId: string, fee: number): Promise<CartType> {
+  async setShippingFee(cartId: string, fee: number, requestContext?: RequestContext): Promise<CartType> {
     const options: GraphQLQueryOptions = {
       query: queries.cartSetShippingFee,
-      variables: this.createVariables({ id: cartId, shippingFee: fee }),
+      variables: this.createVariables({ id: cartId, shippingFee: fee, ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 
@@ -215,10 +217,10 @@ export class CartService extends BaseApiService {
   }
 
   /** Set merchant data on the cart. */
-  async setMerchantData(cartId: string, data: string): Promise<CartType> {
+  async setMerchantData(cartId: string, data: string, requestContext?: RequestContext): Promise<CartType> {
     const options: GraphQLQueryOptions = {
       query: queries.cartSetMerchantData,
-      variables: this.createVariables({ id: cartId, merchantData: data }),
+      variables: this.createVariables({ id: cartId, merchantData: data, ...requestContext }),
       requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
     };
 

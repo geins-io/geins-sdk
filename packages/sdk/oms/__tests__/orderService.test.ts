@@ -96,5 +96,28 @@ describe('OrderService', () => {
 
       await expect(service.get({ publicOrderId: 'PUB-1' })).rejects.toThrow(OrderError);
     });
+
+    it('spreads requestContext into createVariables', async () => {
+      mockClient.runQuery.mockResolvedValue({ data: {} });
+
+      await service.get(
+        { publicOrderId: 'PUB-1' },
+        { languageId: 'en-US', marketId: 'US' },
+      );
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('en-US');
+      expect(callArgs.variables.marketId).toBe('US');
+    });
+
+    it('uses default settings when requestContext is omitted', async () => {
+      mockClient.runQuery.mockResolvedValue({ data: {} });
+
+      await service.get({ publicOrderId: 'PUB-1' });
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('sv-SE');
+      expect(callArgs.variables.marketId).toBe('SE');
+    });
   });
 });

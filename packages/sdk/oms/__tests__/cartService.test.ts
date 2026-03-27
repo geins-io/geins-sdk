@@ -247,4 +247,70 @@ describe('CartService', () => {
       expect(callArgs.variables).toMatchObject({ id: 'cart-1', merchantData: data });
     });
   });
+
+  describe('requestContext override', () => {
+    const requestContext = { languageId: 'en-US', marketId: 'US', channelId: 'us-channel' };
+
+    it('addItem spreads requestContext into createVariables', async () => {
+      mockClient.runMutation.mockResolvedValue(
+        mockCartResponse({ items: [{ id: 1, skuId: 42, quantity: 1, product: { productId: 100, name: 'Shoe' } }] }),
+      );
+
+      await service.addItem('cart-1', { skuId: 42, quantity: 1 }, requestContext);
+
+      const callArgs = mockClient.runMutation.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('en-US');
+      expect(callArgs.variables.marketId).toBe('US');
+      expect(callArgs.variables.channelId).toBe('us-channel');
+    });
+
+    it('create spreads requestContext into createVariables', async () => {
+      mockClient.runMutation.mockResolvedValue(mockCartResponse());
+
+      await service.create(requestContext);
+
+      const callArgs = mockClient.runMutation.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('en-US');
+      expect(callArgs.variables.marketId).toBe('US');
+    });
+
+    it('get spreads requestContext into createVariables', async () => {
+      mockClient.runQuery.mockResolvedValue(mockCartResponse());
+
+      await service.get('cart-1', false, requestContext);
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('en-US');
+      expect(callArgs.variables.marketId).toBe('US');
+    });
+
+    it('uses default settings when requestContext is omitted', async () => {
+      mockClient.runMutation.mockResolvedValue(mockCartResponse());
+
+      await service.addItem('cart-1', { skuId: 42, quantity: 1 });
+
+      const callArgs = mockClient.runMutation.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('sv-SE');
+      expect(callArgs.variables.marketId).toBe('SE');
+    });
+
+    it('deleteItem passes requestContext through to updateItem', async () => {
+      mockClient.runMutation.mockResolvedValue(mockCartResponse());
+
+      await service.deleteItem('cart-1', 'item-1', requestContext);
+
+      const callArgs = mockClient.runMutation.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('en-US');
+      expect(callArgs.variables.marketId).toBe('US');
+    });
+
+    it('removePromotionCode passes requestContext through to setPromotionCode', async () => {
+      mockClient.runMutation.mockResolvedValue(mockCartResponse());
+
+      await service.removePromotionCode('cart-1', requestContext);
+
+      const callArgs = mockClient.runMutation.mock.calls[0][0];
+      expect(callArgs.variables.languageId).toBe('en-US');
+    });
+  });
 });
