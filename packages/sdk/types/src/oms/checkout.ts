@@ -1,7 +1,7 @@
 import { CustomerType, GeinsSettings } from '../common';
 import type { GeinsUserType } from '../generated';
 import type { CartType } from '../oms/cart';
-import type { AddressType, CheckoutRedirectsType, PaymentOptionType, ShippingOptionType } from '../shared';
+import type { AddressType, CheckoutRedirectsType, PaymentOptionType, ShippingOptionType, RequestContext } from '../shared';
 
 enum CheckoutStatus {
   OK = 'OK',
@@ -61,17 +61,20 @@ export type GetCheckoutOptions = {
   shippingMethodId?: number;
   checkoutOptions?: CheckoutInputType;
   checkoutMarketId?: number;
+  requestContext?: RequestContext;
 };
 
 export type ValidateOrderConditionsArgs = {
   cartId: string;
   email?: string;
+  requestContext?: RequestContext;
 };
 
 export type CreateOrderOptions = {
   cartId?: string;
   checkoutOptions: CheckoutInputType;
   checkoutMarketId?: string;
+  requestContext?: RequestContext;
 };
 
 export type CheckoutType = {

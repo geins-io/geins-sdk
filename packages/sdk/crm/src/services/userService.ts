@@ -1,4 +1,4 @@
-import type { GeinsSettings, GeinsUserType, GeinsUserInputTypeType } from '@geins/types';
+import type { GeinsSettings, GeinsUserType, GeinsUserInputTypeType, RequestContext } from '@geins/types';
 import { BaseApiService, GeinsError, GeinsErrorCode } from '@geins/core';
 import type { ApiClientGetter, GraphQLQueryOptions } from '@geins/core';
 import { queries, mutations } from '../graphql';
@@ -10,12 +10,12 @@ export class UserService extends BaseApiService {
   }
 
   /** Enriches variables with default locale, market, and channel. */
-  private generateVars(variables: Record<string, unknown>): Record<string, unknown> {
-    return this.createVariables(variables);
+  private generateVars(variables: Record<string, unknown>, requestContext?: RequestContext): Record<string, unknown> {
+    return this.createVariables({ ...variables, ...requestContext });
   }
 
   /** Normalizes user mutation variables (maps entityId to personalId, coerces newsletter). */
-  private generateMutationVars(variables: Record<string, unknown>): Record<string, unknown> {
+  private generateMutationVars(variables: Record<string, unknown>, requestContext?: RequestContext): Record<string, unknown> {
     const user = variables.user as Record<string, unknown> | undefined;
     if (user?.entityId) {
       user.personalId = user.entityId;
@@ -24,18 +24,19 @@ export class UserService extends BaseApiService {
     if (user) {
       user.newsletter = !!(user.newsletter === 'true');
     }
-    return this.createVariables(variables);
+    return this.createVariables({ ...variables, ...requestContext });
   }
 
   /**
    * Fetches the authenticated user's profile.
    * @param userToken - The user's authentication token.
+   * @param requestContext - Optional per-request locale/market/channel overrides.
    * @returns The user profile, or undefined if not found.
    */
-  async get(userToken: string): Promise<GeinsUserType | undefined> {
+  async get(userToken: string, requestContext?: RequestContext): Promise<GeinsUserType | undefined> {
     const options: GraphQLQueryOptions = {
       query: queries.userGet,
-      variables: this.generateVars({}),
+      variables: this.generateVars({}, requestContext),
       userToken,
     };
     return this.runQueryParsed<GeinsUserType>(options);
@@ -45,12 +46,13 @@ export class UserService extends BaseApiService {
    * Registers a new user.
    * @param user - The user data to register.
    * @param userToken - The user's authentication token.
+   * @param requestContext - Optional per-request locale/market/channel overrides.
    * @returns The created user profile, or undefined on failure.
    */
-  async create(user: GeinsUserInputTypeType, userToken: string): Promise<GeinsUserType | undefined> {
+  async create(user: GeinsUserInputTypeType, userToken: string, requestContext?: RequestContext): Promise<GeinsUserType | undefined> {
     const options: GraphQLQueryOptions = {
       query: mutations.userRegister,
-      variables: this.generateMutationVars({ user }),
+      variables: this.generateMutationVars({ user }, requestContext),
       userToken,
     };
     const result = await this.runMutation(options);
@@ -61,12 +63,13 @@ export class UserService extends BaseApiService {
    * Updates an existing user's profile.
    * @param user - The updated user data.
    * @param userToken - The user's authentication token.
+   * @param requestContext - Optional per-request locale/market/channel overrides.
    * @returns The updated user profile, or undefined on failure.
    */
-  async update(user: GeinsUserInputTypeType, userToken: string): Promise<GeinsUserType | undefined> {
+  async update(user: GeinsUserInputTypeType, userToken: string, requestContext?: RequestContext): Promise<GeinsUserType | undefined> {
     const options: GraphQLQueryOptions = {
       query: mutations.userUpdate,
-      variables: this.generateMutationVars({ user }),
+      variables: this.generateMutationVars({ user }, requestContext),
       userToken,
     };
     const result = await this.runMutation(options);
@@ -76,12 +79,13 @@ export class UserService extends BaseApiService {
   /**
    * Deletes the authenticated user's account.
    * @param userToken - The user's authentication token.
+   * @param requestContext - Optional per-request locale/market/channel overrides.
    * @returns True if the deletion succeeded.
    */
-  async delete(userToken: string): Promise<boolean> {
+  async delete(userToken: string, requestContext?: RequestContext): Promise<boolean> {
     const options: GraphQLQueryOptions = {
       query: mutations.userDelete,
-      variables: this.generateVars({}),
+      variables: this.generateVars({}, requestContext),
       userToken,
     };
     const result = await this.runMutation(options);

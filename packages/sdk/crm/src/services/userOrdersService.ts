@@ -1,4 +1,4 @@
-import type { GeinsSettings, GeinsUserOrdersType } from '@geins/types';
+import type { GeinsSettings, GeinsUserOrdersType, RequestContext } from '@geins/types';
 import { BaseApiService } from '@geins/core';
 import type { ApiClientGetter, GraphQLQueryOptions } from '@geins/core';
 import { queries } from '../graphql';
@@ -10,19 +10,20 @@ export class UserOrdersService extends BaseApiService {
   }
 
   /** Enriches variables with default locale, market, and channel. */
-  private generateVars(variables: Record<string, unknown>): Record<string, unknown> {
-    return this.createVariables(variables);
+  private generateVars(variables: Record<string, unknown>, requestContext?: RequestContext): Record<string, unknown> {
+    return this.createVariables({ ...variables, ...requestContext });
   }
 
   /**
    * Fetches the authenticated user's orders.
    * @param userToken - The user's authentication token.
+   * @param requestContext - Optional per-request locale/market/channel overrides.
    * @returns The user's orders, or undefined if none found.
    */
-  async get(userToken: string): Promise<GeinsUserOrdersType | undefined> {
+  async get(userToken: string, requestContext?: RequestContext): Promise<GeinsUserOrdersType | undefined> {
     const options: GraphQLQueryOptions = {
       query: queries.userOrders,
-      variables: this.generateVars({}),
+      variables: this.generateVars({}, requestContext),
       userToken,
     };
     return this.runQueryParsed<GeinsUserOrdersType>(options);

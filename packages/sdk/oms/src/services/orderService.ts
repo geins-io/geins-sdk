@@ -1,4 +1,4 @@
-import type { GeinsSettings, OMSSettings, OrderSummaryType } from '@geins/core';
+import type { GeinsSettings, OMSSettings, OrderSummaryType, RequestContext } from '@geins/core';
 import { BaseApiService, FetchPolicyOptions, GeinsError, GeinsErrorCode, OrderError } from '@geins/core';
 import type { ApiClientGetter, GraphQLQueryOptions } from '@geins/core';
 import { queries } from '../graphql';
@@ -11,8 +11,9 @@ export interface OrderServiceInterface {
    *
    * @param args.publicOrderId - The public order ID.
    * @param args.checkoutMarketId - Optional market override.
+   * @param requestContext - Optional per-request locale/market overrides.
    */
-  get(args: { publicOrderId: string; checkoutMarketId?: string }): Promise<OrderSummaryType | undefined>;
+  get(args: { publicOrderId: string; checkoutMarketId?: string }, requestContext?: RequestContext): Promise<OrderSummaryType | undefined>;
 }
 
 /** Service for retrieving order summaries by public order ID. */
@@ -28,13 +29,14 @@ export class OrderService extends BaseApiService implements OrderServiceInterfac
    * Retrieves a parsed order summary by public order ID.
    * @param args.publicOrderId - The public-facing order identifier.
    * @param args.checkoutMarketId - Optional market override; defaults to settings market.
+   * @param requestContext - Optional per-request locale/market overrides.
    * @returns The parsed order summary, or undefined if not found.
    * @throws {OrderError} If the query fails.
    */
   async get(args: {
     publicOrderId: string;
     checkoutMarketId?: string;
-  }): Promise<OrderSummaryType | undefined> {
+  }, requestContext?: RequestContext): Promise<OrderSummaryType | undefined> {
     if (!args.publicOrderId) {
       throw new GeinsError('Missing publicOrderId', GeinsErrorCode.INVALID_ARGUMENT);
     }
@@ -42,6 +44,7 @@ export class OrderService extends BaseApiService implements OrderServiceInterfac
     const variables = {
       publicOrderId: args.publicOrderId,
       marketId: args.checkoutMarketId || this._geinsSettings.market,
+      ...requestContext,
     };
 
     const options: GraphQLQueryOptions = {

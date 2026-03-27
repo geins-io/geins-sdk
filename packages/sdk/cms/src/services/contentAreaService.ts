@@ -1,6 +1,7 @@
 import type { ContentAreaVariables, ContentAreaType } from '@geins/core';
 import { BaseApiService, GeinsError, GeinsErrorCode } from '@geins/core';
 import type { GraphQLQueryOptions } from '@geins/core';
+import type { RequestContext } from '@geins/types';
 import { queries } from '../graphql';
 import * as contentParsers from '../parsers/contentParsers';
 
@@ -10,21 +11,22 @@ export class ContentAreaService extends BaseApiService {
    * Validates and enriches content area variables with defaults.
    * @throws {GeinsError} If areaName or family is missing.
    */
-  private async generateVars(variables: ContentAreaVariables) {
+  private async generateVars(variables: ContentAreaVariables, requestContext?: RequestContext) {
     if (!variables.areaName || !variables.family) {
       throw new GeinsError('areaName and family is required', GeinsErrorCode.INVALID_ARGUMENT);
     }
-    return this.createVariables(variables);
+    return this.createVariables({ ...variables, ...requestContext });
   }
 
   /**
    * Fetches a content area as raw GraphQL response data.
    * @param variables - Must include areaName and family.
+   * @param requestContext - Optional per-request locale/market/channel overrides.
    */
-  async getRaw(variables: ContentAreaVariables) {
+  async getRaw(variables: ContentAreaVariables, requestContext?: RequestContext) {
     const options: GraphQLQueryOptions = {
       query: queries.contentArea,
-      variables: await this.generateVars(variables),
+      variables: await this.generateVars(variables, requestContext),
     };
     return await this.runQuery(options);
   }
@@ -32,11 +34,12 @@ export class ContentAreaService extends BaseApiService {
   /**
    * Fetches a content area and returns a parsed {@link ContentAreaType}.
    * @param variables - Must include areaName and family.
+   * @param requestContext - Optional per-request locale/market/channel overrides.
    */
-  async get(variables: ContentAreaVariables) {
+  async get(variables: ContentAreaVariables, requestContext?: RequestContext) {
     const options: GraphQLQueryOptions = {
       query: queries.contentArea,
-      variables: await this.generateVars(variables),
+      variables: await this.generateVars(variables, requestContext),
     };
     return await this.runQueryParsed(options);
   }

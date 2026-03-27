@@ -12,6 +12,7 @@ import type {
   GenerateCheckoutTokenOptions,
   GetCheckoutOptions,
   OMSSettings,
+  RequestContext,
   ValidateOrderConditionsArgs,
   ValidateOrderConditionsResponseType,
   ValidateOrderCreationResponseType,
@@ -75,7 +76,7 @@ export interface CheckoutServiceInterface {
    * @param {string} args.paymentMethod - The payment type.
    * @returns {Promise<CheckoutSummaryType | undefined>} A promise that resolves to the checkout summary or undefined.
    */
-  summary(args: { orderId: string; paymentMethod: string }): Promise<CheckoutSummaryType | undefined>;
+  summary(args: { orderId: string; paymentMethod: string; requestContext?: RequestContext }): Promise<CheckoutSummaryType | undefined>;
 
   /**
    * Creates a token for the checkout process to use when sending user to an external checkout page.
@@ -131,6 +132,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
           ...data.checkoutOptions,
         },
         marketId: data.checkoutMarketId || this._geinsSettings.market,
+        ...args?.requestContext,
       };
 
       const options = {
@@ -161,6 +163,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       cartId: resolvedArgs.cartId,
       checkout: resolvedArgs.checkoutOptions,
       marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
+      ...resolvedArgs.requestContext,
     };
 
     const options: GraphQLQueryOptions = {
@@ -190,6 +193,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       cartId: resolvedArgs.cartId,
       email: resolvedArgs.email,
       marketId: this._geinsSettings.market,
+      ...resolvedArgs.requestContext,
     };
 
     const options: GraphQLQueryOptions = {
@@ -221,6 +225,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       cartId: resolvedArgs.cartId,
       checkout: resolvedArgs.checkoutOptions,
       marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
+      ...resolvedArgs.requestContext,
     };
 
     const options: GraphQLQueryOptions = {
@@ -240,7 +245,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     }
   }
 
-  async summary(args: { orderId: string; paymentMethod: string }): Promise<CheckoutSummaryType | undefined> {
+  async summary(args: { orderId: string; paymentMethod: string; requestContext?: RequestContext }): Promise<CheckoutSummaryType | undefined> {
     if (!args.orderId) {
       throw new GeinsError('Missing orderId', GeinsErrorCode.INVALID_ARGUMENT);
     }
@@ -252,6 +257,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     const variables = {
       id: args.orderId,
       paymentType: args.paymentMethod,
+      ...args.requestContext,
     };
 
     const options: GraphQLQueryOptions = {
