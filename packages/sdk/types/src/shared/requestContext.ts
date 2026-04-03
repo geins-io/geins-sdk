@@ -13,4 +13,6 @@ export type RequestContext = {
   marketId?: string;
   /** Channel identifier to use instead of the derived channelId (e.g. "channel|tld"). */
   channelId?: string;
+  /** JWT bearer token for authenticated requests (e.g. CMS preview, user-specific content). */
+  userToken?: string;
 };
