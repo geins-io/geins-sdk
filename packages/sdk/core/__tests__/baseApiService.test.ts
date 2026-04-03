@@ -3,7 +3,7 @@ import { BaseApiService, ApiClientGetter } from '../src/base/baseApiService';
 import { GraphQLQueryOptions } from '../src/api-client/merchantApiClient';
 import { GeinsSettings } from '@geins/types';
 import { GeinsError } from '../src/errors/geinsError';
-import { gql } from '@apollo/client/core';
+import { DocumentNode, gql } from '@apollo/client/core';
 
 // Concrete subclass for testing the abstract BaseApiService
 class TestService extends BaseApiService {
@@ -12,7 +12,7 @@ class TestService extends BaseApiService {
   }
 
   public callCreateQueryOptions(
-    query: any,
+    query: DocumentNode | string,
     vars: Record<string, unknown>,
     requestContext?: RequestContext,
   ): GraphQLQueryOptions {
