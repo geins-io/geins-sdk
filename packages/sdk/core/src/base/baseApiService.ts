@@ -1,6 +1,7 @@
-import type { GeinsSettings } from '@geins/types';
+import type { GeinsSettings, RequestContext } from '@geins/types';
 import type { MerchantApiClient } from '../api-client/merchantApiClient';
 import { GraphQLQueryOptions } from '../api-client/merchantApiClient';
+import type { DocumentNode } from '@apollo/client/core';
 import { GeinsError, GeinsErrorCode } from '../errors/geinsError';
 
 /** Function that returns a MerchantApiClient instance. */
@@ -53,6 +54,10 @@ export abstract class BaseApiService {
   protected createVariables(vars: Record<string, unknown>): Record<string, unknown> {
     const variables: Record<string, unknown> = { ...vars };
 
+    // userToken is an auth concern, not a GraphQL variable — strip it so it never
+    // leaks into the query variables sent to the API.
+    delete variables.userToken;
+
     if (!variables.languageId) {
       if (!this._geinsSettings.locale) {
         throw new GeinsError('Language is required', GeinsErrorCode.INVALID_ARGUMENT);
@@ -72,6 +77,31 @@ export abstract class BaseApiService {
     }
 
     return variables;
+  }
+
+  /**
+   * Builds a complete {@link GraphQLQueryOptions} object from a query, caller variables,
+   * and an optional {@link RequestContext}.
+   *
+   * - Extracts `userToken` from the request context and routes it to the
+   *   {@link GraphQLQueryOptions.userToken} field (which becomes an `Authorization: Bearer`
+   *   header via {@link MerchantApiClient.buildContext}).
+   * - Merges remaining context fields (`languageId`, `marketId`, `channelId`) into the
+   *   GraphQL variables via {@link createVariables}.
+   *
+   * @param query - The GraphQL document or string to execute.
+   * @param vars - Caller-provided variables (e.g. `{ alias: '/about' }`).
+   * @param requestContext - Optional per-request overrides including auth token.
+   * @returns A ready-to-execute query options object.
+   */
+  protected createQueryOptions(
+    query: DocumentNode | string,
+    vars: Record<string, unknown>,
+    requestContext?: RequestContext,
+  ): GraphQLQueryOptions {
+    const { userToken, ...contextVars } = requestContext ?? {};
+    const variables = this.createVariables({ ...vars, ...contextVars });
+    return { query, variables, ...(userToken ? { userToken } : {}) };
   }
 
   /**
