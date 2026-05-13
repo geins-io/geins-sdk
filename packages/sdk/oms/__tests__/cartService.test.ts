@@ -313,4 +313,45 @@ describe('CartService', () => {
       expect(callArgs.variables.languageId).toBe('en-US');
     });
   });
+
+  // Regression: prior to the fix the cart service spread requestContext directly
+  // into variables, which left userToken stripped (by createVariables) and never
+  // routed to the Authorization header. Geins then resolved cart prices without
+  // the user's CRM price list applied, so logged-in customers saw regular prices
+  // in cart while PDP correctly showed the override.
+  describe('userToken routing (auth-aware pricing)', () => {
+    const userToken = 'eyJhbGciOiJIUzI1NiIsInR.dummy.token';
+
+    it('addItem routes userToken to options, not variables', async () => {
+      mockClient.runMutation.mockResolvedValue(mockCartResponse());
+
+      await service.addItem('cart-1', { skuId: 42, quantity: 1 }, { userToken });
+
+      const callArgs = mockClient.runMutation.mock.calls[0][0];
+      expect(callArgs.userToken).toBe(userToken);
+      expect(callArgs.variables.userToken).toBeUndefined();
+    });
+
+    it.each([
+      ['create', () => service.create({ userToken })],
+      ['get', () => service.get('cart-1', false, { userToken })],
+      ['complete', () => service.complete('cart-1', { userToken })],
+      ['updateItem', () => service.updateItem('cart-1', { id: 'item-1', quantity: 2 }, { userToken })],
+      ['setPromotionCode', () => service.setPromotionCode('cart-1', 'SUMMER', { userToken })],
+      ['setShippingFee', () => service.setShippingFee('cart-1', 99, { userToken })],
+      ['setMerchantData', () => service.setMerchantData('cart-1', '{}', { userToken })],
+    ])('%s routes userToken to options, not variables', async (_name, callOp) => {
+      mockClient.runMutation.mockResolvedValue(mockCartResponse());
+      mockClient.runQuery.mockResolvedValue(mockCartResponse());
+
+      await callOp();
+
+      const lastCall =
+        mockClient.runMutation.mock.calls[mockClient.runMutation.mock.calls.length - 1] ??
+        mockClient.runQuery.mock.calls[mockClient.runQuery.mock.calls.length - 1];
+      const callArgs = lastCall[0];
+      expect(callArgs.userToken).toBe(userToken);
+      expect(callArgs.variables.userToken).toBeUndefined();
+    });
+  });
 });
