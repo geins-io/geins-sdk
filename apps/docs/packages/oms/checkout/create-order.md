@@ -36,8 +36,40 @@ type CreateOrderOptions = {
   cartId: string;
   checkoutOptions: CheckoutInputType;
   checkoutMarketId?: string;
+  requestContext?: RequestContext; // carries userToken
 };
 ```
+
+### Authentication
+
+Pass the buyer's `userToken` via `requestContext` whenever the user
+is signed in. Without it the mutation runs anonymously, so Geins
+applies the channel's regular price on the order line even if the
+cart line carried a CRM price-list override. The SDK reads no cookies
+or storage of its own.
+
+```typescript
+const result = await geinsOMS.checkout.createOrder({
+  cartId,
+  checkoutOptions,
+  requestContext: { userToken },
+});
+```
+
+### Consumer vs company (B2B) addresses
+
+`checkoutOptions` accepts two mutually exclusive shapes per address
+side. Pick exactly one per side:
+
+| Customer type | Use these fields |
+|---|---|
+| Consumer (`PERSON`) | `billingAddress`, `shippingAddress` (literal `AddressInputType`) |
+| Company (`ORGANIZATION`) | `billingAddressId`, `shippingAddressId` (string ids referring to the company's predefined addresses) |
+
+Geins rejects literal addresses on a company checkout and rejects
+addressIds on a consumer checkout. Resolve the company's predefined
+addresses via `geinsCRM.company.get(userToken)` and pass the matching
+`addressId` values in.
 
 ## Return Object
 

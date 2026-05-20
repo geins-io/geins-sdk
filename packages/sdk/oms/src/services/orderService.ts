@@ -41,17 +41,14 @@ export class OrderService extends BaseApiService implements OrderServiceInterfac
       throw new GeinsError('Missing publicOrderId', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
-    const variables = {
-      publicOrderId: args.publicOrderId,
-      marketId: args.checkoutMarketId || this._geinsSettings.market,
-      ...requestContext,
-    };
-
-    const options: GraphQLQueryOptions = {
-      query: queries.orderGet,
-      variables: this.createVariables(variables),
-      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
-    };
+    const options = this.buildOptions(
+      queries.orderGet,
+      {
+        publicOrderId: args.publicOrderId,
+        marketId: args.checkoutMarketId || this._geinsSettings.market,
+      },
+      requestContext,
+    );
 
     try {
       const data = await this.runQuery(options);
@@ -59,5 +56,29 @@ export class OrderService extends BaseApiService implements OrderServiceInterfac
     } catch (e) {
       throw new OrderError('Error getting order', GeinsErrorCode.ORDER_FAILED, e);
     }
+  }
+
+  /**
+   * Build order query options, routing userToken into the request
+   * options (so the API sends an Authorization header) and merging
+   * the remaining context fields into the GraphQL variables. Order
+   * lookup runs NO_CACHE because order state is per-user.
+   *
+   * Without this routing the order query runs unauthenticated and
+   * Geins applies anonymous pricing on the order line, masking the
+   * customer's CRM price-list overrides on read.
+   */
+  private buildOptions(
+    query: GraphQLQueryOptions['query'],
+    vars: Record<string, unknown>,
+    requestContext?: RequestContext,
+  ): GraphQLQueryOptions {
+    const { userToken, ...contextVars } = requestContext ?? {};
+    return {
+      query,
+      variables: this.createVariables({ ...vars, ...contextVars }),
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+      ...(userToken ? { userToken } : {}),
+    };
   }
 }

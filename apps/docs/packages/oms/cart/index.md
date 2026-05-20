@@ -25,6 +25,28 @@ The `CartService` provides:
 - **Cart Copying**: Create new carts based on existing ones.
 - **Cart Completion**: Mark carts as read-only after checkout.
 
+## Authentication
+
+Every cart method accepts an optional `requestContext` object. When
+the buyer is signed in, pass their `userToken` so Geins applies
+user-scoped behaviour on the cart line — CRM price lists, restricted
+product access, the company / price list context. Without it the cart
+mutation runs anonymously and Geins falls back to the channel regular
+price.
+
+```typescript
+const cart = await geinsOMS.cart.addItem(
+  cartId,
+  { skuId: 1234, quantity: 1 },
+  { requestContext: { userToken } },
+);
+```
+
+This pattern applies to every cart method: `get`, `create`, `copy`,
+`complete`, `addItem`, `updateItem`, `deleteItem`, `addPackageItem`,
+`updatePackageItem`, `setPromotionCode`, `removePromotionCode`,
+`setShippingFee`, `setMerchantData`.
+
 ## Stateless API
 
 ```typescript

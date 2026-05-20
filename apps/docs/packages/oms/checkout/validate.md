@@ -36,8 +36,15 @@ type CreateOrderOptions = {
   cartId: string;
   checkoutOptions: CheckoutInputType;
   checkoutMarketId?: string;
+  requestContext?: RequestContext;
 };
 ```
+
+::: info :bulb: Authentication
+Pass `requestContext: { userToken }` whenever the buyer is signed in
+so the validation result reflects the user's CRM price lists and any
+restricted-product access rules.
+:::
 
 ## Return Object
 

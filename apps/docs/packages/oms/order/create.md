@@ -59,3 +59,12 @@ The returned object will be of type `PlaceOrderResponseType` containing the crea
 ::: tip :bulb: Tip
 Make sure to validate the checkout data using the `CheckoutService.validate()` method before creating an order to ensure all required information is present and valid.
 :::
+
+::: info :bulb: Authentication
+Pass `requestContext: { userToken }` whenever the buyer is signed in.
+Without it the order mutation runs anonymously, so Geins applies the
+channel's regular price on the order line even when the cart line
+already carried a CRM price-list override. For company (B2B) checkouts
+use `billingAddressId` / `shippingAddressId` instead of literal
+address objects — see [Create Order in checkout](../checkout/create-order.md#consumer-vs-company-b2b-addresses).
+:::

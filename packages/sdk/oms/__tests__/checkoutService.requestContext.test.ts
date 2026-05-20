@@ -35,6 +35,45 @@ describe('CheckoutService requestContext override', () => {
   const requestContext = { languageId: 'en-US', marketId: 'US', channelId: 'us-channel' };
 
   describe('createOrder', () => {
+    it('routes userToken to options, not variables, so the API receives Authorization: Bearer', async () => {
+      mockClient.runQuery.mockResolvedValue({
+        __typename: 'CreateOrderResponseType',
+        created: true,
+        orderId: 'order-1',
+      });
+
+      await service.createOrder({
+        cartId: 'cart-1',
+        checkoutOptions: { paymentId: 1 } as any,
+        requestContext: { ...requestContext, userToken: 'jwt-token' } as any,
+      });
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      // userToken sits at the top-level option (where the API client lifts
+      // it onto the Authorization header), NOT inside the GraphQL variables.
+      expect(callArgs.userToken).toBe('jwt-token');
+      expect(callArgs.variables.userToken).toBeUndefined();
+      expect(callArgs.variables.languageId).toBe('en-US');
+      expect(callArgs.variables.marketId).toBe('US');
+    });
+
+    it('omits userToken option when requestContext has no token', async () => {
+      mockClient.runQuery.mockResolvedValue({
+        __typename: 'CreateOrderResponseType',
+        created: true,
+        orderId: 'order-1',
+      });
+
+      await service.createOrder({
+        cartId: 'cart-1',
+        checkoutOptions: { paymentId: 1 } as any,
+        requestContext,
+      });
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.userToken).toBeUndefined();
+    });
+
     it('spreads requestContext into createVariables', async () => {
       mockClient.runQuery.mockResolvedValue({
         __typename: 'CreateOrderResponseType',
