@@ -99,6 +99,41 @@ const updated = await geinsOMS.cart.setPromotionCode(cartId, 'SUMMER20');
 const completed = await geinsOMS.cart.complete(cartId);
 ```
 
+### Authenticated cart and checkout
+
+Cart, checkout, and order methods accept an optional `requestContext`
+that can carry a `userToken`. Pass it whenever the buyer is signed in
+so Geins applies user-scoped behaviour — CRM price lists, restricted
+product access, address pre-fill, the company buyer roster, anything
+gated behind the `Authorization: Bearer` header.
+
+```typescript
+// Authenticated add-to-cart so the user's price list applies
+const cart = await geinsOMS.cart.addItem(
+  cartId,
+  { skuId: 1234, quantity: 1 },
+  { requestContext: { userToken } },
+);
+
+// Authenticated placeOrder so the order line uses the buyer's
+// price-list price, not the anonymous channel price
+const result = await geinsOMS.checkout.createOrder({
+  cartId,
+  checkoutOptions: myCheckoutOptions,
+  requestContext: { userToken },
+});
+
+// Authenticated order lookup
+const order = await geinsOMS.order.get(
+  { publicOrderId },
+  { userToken },
+);
+```
+
+Without `userToken`, every call runs anonymously regardless of the user
+state in your app. The SDK never inspects cookies or storage — only
+what you pass explicitly.
+
 ## Authentication
 
 All auth methods require tokens as explicit parameters:

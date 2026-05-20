@@ -22,6 +22,9 @@ To get a summary of the checkout process, you need to provide an `orderId` and t
 ## Options
 - `orderId` - The order id of the order you want to get the summary for.
 - `paymentMethod` - The payment method to be used for the checkout.
+- `requestContext` - Optional. Carries `userToken` for authenticated lookups
+  so summary values (price, applied price list, discounts) match the
+  buyer's CRM context instead of the anonymous channel pricing.
 
 ## Return Object
 The return object contains an instance of `CheckoutSummaryType`, which includes details such as item information, shipping details, total amount, applicable discounts, and taxes.

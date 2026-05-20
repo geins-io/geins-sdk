@@ -26,6 +26,13 @@ graph LR
 Some of the steps are optional if you use an external payment gateway some of the steps are done by Geins Backend.
 :::
 
+::: info :bulb: Authenticated checkout
+Each step in this flow accepts an optional `requestContext` with the
+buyer's `userToken`. Pass it on every call so the price-list, address,
+and product-access context is carried through from cart to order line.
+Anonymous calls fall back to the channel's regular price even mid-flow.
+:::
+
 ## Get Checkout
 
 The only thing needed to get a checkout, is a `cartId`. This means that you need to have a cart created before you can start the checkout process.

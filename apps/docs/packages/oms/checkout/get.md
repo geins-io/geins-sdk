@@ -36,6 +36,20 @@ Use the `OMSSettings` to set the default payment, redirect URL's etc. This will 
 
 :::
 
+::: info :bulb: Authentication
+Pass the buyer's `userToken` via `requestContext` whenever the user
+is signed in so Geins applies user-scoped behaviour (CRM price lists,
+company billing/shipping addresses, restricted product access, etc).
+Without it the call runs anonymously.
+
+```typescript
+const checkout = await geinsOMS.checkout.get({
+  cartId,
+  requestContext: { userToken },
+});
+```
+:::
+
 ## Types
 
 ```typescript [@geins/types]
@@ -48,6 +62,7 @@ type GetCheckoutOptions = {
   shippingMethodId?: number;
   checkoutOptions?: CheckoutInputType;
   checkoutMarketId?: string;
+  requestContext?: RequestContext;
 };
 
 /**
