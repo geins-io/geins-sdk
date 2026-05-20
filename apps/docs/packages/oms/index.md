@@ -24,6 +24,16 @@ The `@geins/oms` package allows you to add shopping cart and checkout functional
 
 - [Merchant Data](./merchant-data.md)
 
+::: info :bulb: Authentication
+Every cart, checkout, and order method accepts an optional
+`requestContext` with a `userToken`. Pass it whenever the buyer is
+signed in so Geins applies user-scoped behaviour (CRM price lists,
+restricted product access, company billing/shipping addresses). The
+SDK does not read cookies or storage of its own — only what callers
+pass explicitly. See [Server-Side Usage › Authenticated cart and checkout](../../guide/server-usage.md#authenticated-cart-and-checkout)
+for a full walk-through.
+:::
+
 ## Setting Up @geins/oms
 
 ### Prerequisites

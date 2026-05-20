@@ -124,22 +124,19 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
   async get(args?: GetCheckoutOptions): Promise<CheckoutType | undefined> {
     const data = this.dataResolver.resolveGetCheckoutOptions(args);
     try {
-      const variables = {
-        cartId: data.cartId,
-        checkout: {
-          paymentId: data.paymentMethodId,
-          shippingId: data.shippingMethodId,
-          ...data.checkoutOptions,
+      const options = this.buildOptions(
+        queries.checkoutCreate,
+        {
+          cartId: data.cartId,
+          checkout: {
+            paymentId: data.paymentMethodId,
+            shippingId: data.shippingMethodId,
+            ...data.checkoutOptions,
+          },
+          marketId: data.checkoutMarketId || this._geinsSettings.market,
         },
-        marketId: data.checkoutMarketId || this._geinsSettings.market,
-        ...args?.requestContext,
-      };
-
-      const options = {
-        query: queries.checkoutCreate,
-        variables: this.generateVars(variables),
-        requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
-      };
+        args?.requestContext,
+      );
 
       const queryResult = await this.runMutation(options);
       return parseCheckout(queryResult, this._geinsSettings.locale);
@@ -159,18 +156,15 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       throw new GeinsError('Missing checkout options', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
-    const variables = {
-      cartId: resolvedArgs.cartId,
-      checkout: resolvedArgs.checkoutOptions,
-      marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
-      ...resolvedArgs.requestContext,
-    };
-
-    const options: GraphQLQueryOptions = {
-      query: queries.checkoutValidate,
-      variables: this.createVariables(variables),
-      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
-    };
+    const options = this.buildOptions(
+      queries.checkoutValidate,
+      {
+        cartId: resolvedArgs.cartId,
+        checkout: resolvedArgs.checkoutOptions,
+        marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
+      },
+      resolvedArgs.requestContext,
+    );
 
     try {
       const data = await this.runQuery(options);
@@ -189,18 +183,15 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       throw new GeinsError('Missing cartId', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
-    const variables = {
-      cartId: resolvedArgs.cartId,
-      email: resolvedArgs.email,
-      marketId: this._geinsSettings.market,
-      ...resolvedArgs.requestContext,
-    };
-
-    const options: GraphQLQueryOptions = {
-      query: queries.checkoutValidate,
-      variables: this.createVariables(variables),
-      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
-    };
+    const options = this.buildOptions(
+      queries.checkoutValidate,
+      {
+        cartId: resolvedArgs.cartId,
+        email: resolvedArgs.email,
+        marketId: this._geinsSettings.market,
+      },
+      resolvedArgs.requestContext,
+    );
 
     try {
       const data = await this.runQuery(options);
@@ -221,18 +212,15 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       throw new GeinsError('Missing checkout options', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
-    const variables = {
-      cartId: resolvedArgs.cartId,
-      checkout: resolvedArgs.checkoutOptions,
-      marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
-      ...resolvedArgs.requestContext,
-    };
-
-    const options: GraphQLQueryOptions = {
-      query: queries.orderCreate,
-      variables: this.createVariables(variables),
-      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
-    };
+    const options = this.buildOptions(
+      queries.orderCreate,
+      {
+        cartId: resolvedArgs.cartId,
+        checkout: resolvedArgs.checkoutOptions,
+        marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
+      },
+      resolvedArgs.requestContext,
+    );
 
     try {
       const data = await this.runQuery(options);
@@ -254,16 +242,14 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       throw new GeinsError('Missing paymentMethod', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
-    const variables = {
-      id: args.orderId,
-      paymentType: args.paymentMethod,
-      ...args.requestContext,
-    };
-
-    const options: GraphQLQueryOptions = {
-      query: queries.checkoutSummaryGet,
-      variables: this.createVariables(variables),
-    };
+    const options = this.buildOptions(
+      queries.checkoutSummaryGet,
+      {
+        id: args.orderId,
+        paymentType: args.paymentMethod,
+      },
+      args.requestContext,
+    );
 
     try {
       const data = await this.runQuery(options);
@@ -307,7 +293,28 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     return decodedToken.payload as CheckoutTokenPayload;
   }
 
-  private generateVars(variables: Record<string, unknown>) {
-    return this.createVariables(variables);
+  /**
+   * Build checkout query options, routing userToken into the request
+   * options (so the API sends an Authorization header) and merging the
+   * remaining context fields into the GraphQL variables. Every checkout
+   * op runs NO_CACHE because state is per-user.
+   *
+   * Without this routing, checkout mutations including placeOrder run
+   * unauthenticated, which means Geins cannot resolve user-scoped
+   * pricing (CRM price lists) and the order falls back to the channel
+   * regular price (zero for catalogue-mode-priced products).
+   */
+  private buildOptions(
+    query: GraphQLQueryOptions['query'],
+    vars: Record<string, unknown>,
+    requestContext?: RequestContext,
+  ): GraphQLQueryOptions {
+    const { userToken, ...contextVars } = requestContext ?? {};
+    return {
+      query,
+      variables: this.createVariables({ ...vars, ...contextVars }),
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+      ...(userToken ? { userToken } : {}),
+    };
   }
 }
