@@ -2237,6 +2237,19 @@ export interface GeinsUserBalanceTypeType {
   currency: Scalars['String']['output'];
 }
 
+/**
+ * Pair of channel id and the markets the user is allowed to use on that channel.
+ * Used by storefronts to switch the active market/currency to one the buyer is
+ * authorized for before making any subsequent API calls. Passing a market the
+ * buyer is not allowed to use can return empty or invalid catalog responses.
+ */
+export interface GeinsUserChannelTypeType {
+  /** The markets the user is allowed to use on this channel. */
+  availableMarkets?: Maybe<Array<Maybe<GeinsMarketTypeType>>>;
+  /** The channel identifier the user has access to. */
+  channelId: Scalars['String']['output'];
+}
+
 export interface GeinsUserInputTypeType {
   address?: InputMaybe<GeinsAddressInputTypeType>;
   customerType?: InputMaybe<GeinsCustomerType>;
@@ -2250,6 +2263,8 @@ export interface GeinsUserInputTypeType {
 export interface GeinsUserTypeType {
   /** The address of the user. */
   address?: Maybe<GeinsAddressTypeType>;
+  /** Channels the user is allowed to use, with the markets allowed per channel. */
+  availableChannels?: Maybe<Array<Maybe<GeinsUserChannelTypeType>>>;
   /**
    * Account balance
    * @deprecated Use Balances instead
@@ -2777,6 +2792,16 @@ export type GeinsUserType = {
   balances?: Array<{
     currency: string,
     amount: number
+  } | null> | null,
+  availableChannels?: Array<{
+    channelId: string,
+    availableMarkets?: Array<{
+      id: string,
+      alias?: string | null,
+      currency?: {
+        code: string
+      } | null
+    } | null> | null
   } | null> | null
 };
 
@@ -4449,6 +4474,16 @@ export type GeinsUserGetType = {
     balances?: Array<{
       currency: string,
       amount: number
+    } | null> | null,
+    availableChannels?: Array<{
+      channelId: string,
+      availableMarkets?: Array<{
+        id: string,
+        alias?: string | null,
+        currency?: {
+          code: string
+        } | null
+      } | null> | null
     } | null> | null
   } | null
 };
@@ -4502,6 +4537,16 @@ export type GeinsUserUpdateType = {
     balances?: Array<{
       currency: string,
       amount: number
+    } | null> | null,
+    availableChannels?: Array<{
+      channelId: string,
+      availableMarkets?: Array<{
+        id: string,
+        alias?: string | null,
+        currency?: {
+          code: string
+        } | null
+      } | null> | null
     } | null> | null
   } | null
 };
@@ -9958,6 +10003,16 @@ export type GeinsGetOrderPublicType = {
  */
 
 /**
+ * Pair of channel id and the markets the user is allowed to use on that channel.
+ * Used by storefronts to switch the active market/currency to one the buyer is
+ * authorized for before making any subsequent API calls. Passing a market the
+ * buyer is not allowed to use can return empty or invalid catalog responses.
+ * @typedef {Object} UserChannelType
+ * @property {Array<(MarketType|null|undefined)>} [availableMarkets] - The markets the user is allowed to use on this channel.
+ * @property {string} channelId - The channel identifier the user has access to.
+ */
+
+/**
  * @typedef {Object} UserInputType
  * @property {AddressInputType} [address]
  * @property {CustomerType} [customerType]
@@ -9970,6 +10025,7 @@ export type GeinsGetOrderPublicType = {
 /**
  * @typedef {Object} UserType
  * @property {AddressType} [address] - The address of the user.
+ * @property {Array<(UserChannelType|null|undefined)>} [availableChannels] - Channels the user is allowed to use, with the markets allowed per channel.
  * @property {Decimal} balance - Account balance - DEPRECATED: Use Balances instead
  * @property {string} [balanceFormatted] - Account balance. Formatted as a currency string. - DEPRECATED: Use Balances instead
  * @property {Array<(UserBalanceType|null|undefined)>} [balances] - User balance per currency
