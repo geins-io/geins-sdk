@@ -13,4 +13,14 @@ fragment User on UserType {
     ...UserBalance
   }
   metaData
+  availableChannels {
+    channelId
+    availableMarkets {
+      id
+      alias
+      currency {
+        code
+      }
+    }
+  }
 }

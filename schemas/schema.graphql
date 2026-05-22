@@ -3121,6 +3121,20 @@ type UserBalanceType {
   amountFormatted: String
 }
 
+"""
+Pair of channel id and the markets the user is allowed to use on that channel.
+Used by storefronts to switch the active market/currency to one the buyer is
+authorized for before making any subsequent API calls. Passing a market the
+buyer is not allowed to use can return empty or invalid catalog responses.
+"""
+type UserChannelType {
+  """The channel identifier the user has access to."""
+  channelId: String!
+
+  """The markets the user is allowed to use on this channel."""
+  availableMarkets: [MarketType]
+}
+
 input UserInputType {
   address: AddressInputType
   gender: Gender
@@ -3173,6 +3187,9 @@ type UserType {
   Free-text field that can contain any additional metadata related to the customer.
   """
   metaData: String
+
+  """Channels the user is allowed to use, with the markets allowed per channel."""
+  availableChannels: [UserChannelType]
 }
 
 type ValidateOrderConditionsResponseType {
