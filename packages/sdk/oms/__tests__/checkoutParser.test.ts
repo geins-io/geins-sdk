@@ -49,6 +49,34 @@ describe('checkoutParser', () => {
       expect(parseCheckoutSummaryOrder(undefined, 'en')).toBeUndefined();
     });
 
+    it('maps customerOrderNumber and goodsLabel from raw response', () => {
+      const input = {
+        __typename: 'CheckoutOrderType',
+        customerOrderNumber: 'PO-12345',
+        goodsLabel: 'Pallet A',
+        currency: 'SEK',
+        rows: [],
+      };
+      const result = parseCheckoutSummaryOrder(input as any, 'sv-SE');
+      expect(result).toBeDefined();
+      expect(result!.customerOrderNumber).toBe('PO-12345');
+      expect(result!.goodsLabel).toBe('Pallet A');
+    });
+
+    it('maps null customerOrderNumber and goodsLabel (explicit wire null) to undefined', () => {
+      const input = {
+        __typename: 'CheckoutOrderType',
+        customerOrderNumber: null,
+        goodsLabel: null,
+        currency: 'SEK',
+        rows: [],
+      };
+      const result = parseCheckoutSummaryOrder(input as any, 'sv-SE');
+      expect(result).toBeDefined();
+      expect(result!.customerOrderNumber).toBeUndefined();
+      expect(result!.goodsLabel).toBeUndefined();
+    });
+
     it('parses order with addresses and campaigns', () => {
       const input = {
         __typename: 'CheckoutOrderType',
