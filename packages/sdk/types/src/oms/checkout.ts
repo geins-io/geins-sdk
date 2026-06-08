@@ -43,6 +43,8 @@ export type CheckoutInputType = {
   externalShippingId?: string;
   pickupPoint?: string;
   desiredDeliveryDate?: Date;
+  customerOrderNumber?: string;
+  goodsLabel?: string;
   message?: string;
   acceptedConsents?: string[];
   shippingAddress?: AddressInputType;
@@ -186,6 +188,8 @@ export type CheckoutSummaryOrderType = {
   shippingId?: number;
   pickupPoint?: string;
   desiredDeliveryDate?: string;
+  customerOrderNumber?: string;
+  goodsLabel?: string;
   promoCode?: string;
   appliedCampaignIds?: string[];
   appliedCampaigns?: string[];

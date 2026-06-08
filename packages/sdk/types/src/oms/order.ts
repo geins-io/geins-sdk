@@ -46,6 +46,8 @@ export type OrderSummaryType = {
   completedAt?: string;
   currency?: string;
   desiredDeliveryDate?: string;
+  customerOrderNumber?: string;
+  goodsLabel?: string;
   message?: string;
   status?: string;
   updatedAt?: string;

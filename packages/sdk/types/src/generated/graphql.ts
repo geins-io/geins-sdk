@@ -391,6 +391,8 @@ export interface GeinsCheckoutInputTypeType {
    * others only accept https.
    */
   checkoutUrls?: InputMaybe<GeinsCheckoutUrlsInputTypeType>;
+  /** Customer-supplied reference / PO number. Appears on the invoice as the customer reference. */
+  customerOrderNumber?: InputMaybe<Scalars['String']['input']>;
   /** The type of customer. */
   customerType?: InputMaybe<GeinsCustomerType>;
   /** The desired delivery date for the order. */
@@ -401,6 +403,8 @@ export interface GeinsCheckoutInputTypeType {
   externalShippingFee?: InputMaybe<Scalars['Decimal']['input']>;
   /** The external ID of the shipping method. */
   externalShippingId?: InputMaybe<Scalars['String']['input']>;
+  /** Text printed on packages, freight docs and pallet flags so goods are identified on arrival. */
+  goodsLabel?: InputMaybe<Scalars['String']['input']>;
   /** The identity number of the customer. */
   identityNumber?: InputMaybe<Scalars['String']['input']>;
   /** Additional data from the merchant. */
@@ -519,6 +523,8 @@ export interface GeinsCheckoutOrderTypeType {
   customerGroupId: Scalars['Int']['output'];
   /** Customer ID */
   customerId: Scalars['Int']['output'];
+  /** Customer-supplied reference / PO number. Appears on the invoice as the customer reference. */
+  customerOrderNumber?: Maybe<Scalars['String']['output']>;
   /** Customer Type ID */
   customerTypeId: Scalars['Int']['output'];
   /** Desired Delivery Date */
@@ -541,6 +547,8 @@ export interface GeinsCheckoutOrderTypeType {
   firstName?: Maybe<Scalars['String']['output']>;
   /** Gender */
   gender: GeinsGenderType;
+  /** Text printed on packages, freight docs and pallet flags so goods are identified on arrival. */
+  goodsLabel?: Maybe<Scalars['String']['output']>;
   /** IP Address */
   ipAddress?: Maybe<Scalars['String']['output']>;
   /** Represents the total sum of the prices for all order rows, excluding VAT */
@@ -1462,12 +1470,16 @@ export interface GeinsOrderTypeType {
   createdAt?: Maybe<Scalars['DateTime']['output']>;
   currency?: Maybe<Scalars['String']['output']>;
   customerId?: Maybe<Scalars['Int']['output']>;
+  /** Customer-supplied reference / PO number. Appears on the invoice as the customer reference. */
+  customerOrderNumber?: Maybe<Scalars['String']['output']>;
   desiredDeliveryDate?: Maybe<Scalars['DateTime']['output']>;
   discount?: Maybe<GeinsPriceTypeType>;
   /** The amount taken from account balance */
   fromBalance: Scalars['Decimal']['output'];
   /** The amount taken from account balance. Formatted as a currency string. */
   fromBalanceFormatted?: Maybe<Scalars['String']['output']>;
+  /** Text printed on packages, freight docs and pallet flags so goods are identified on arrival. */
+  goodsLabel?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
   message?: Maybe<Scalars['String']['output']>;
   orderTotal?: Maybe<GeinsPriceTypeType>;
@@ -9068,11 +9080,13 @@ export type GeinsGetOrderPublicType = {
  * {geins.cartid} - the cart id, {payment.uid} - the unique payment identifier
  * (external order id). Note that some payment providers do not support this and
  * others only accept https.
+ * @property {string} [customerOrderNumber] - Customer-supplied reference / PO number. Appears on the invoice as the customer reference.
  * @property {CustomerType} [customerType] - The type of customer.
  * @property {DateTime} [desiredDeliveryDate] - The desired delivery date for the order.
  * @property {string} [email] - The email address of the customer.
  * @property {Decimal} [externalShippingFee] - The external shipping fee for the order.
  * @property {string} [externalShippingId] - The external ID of the shipping method.
+ * @property {string} [goodsLabel] - Text printed on packages, freight docs and pallet flags so goods are identified on arrival.
  * @property {string} [identityNumber] - The identity number of the customer.
  * @property {string} [merchantData] - Additional data from the merchant.
  * @property {string} [message] - A message from the customer.
@@ -9129,6 +9143,7 @@ export type GeinsGetOrderPublicType = {
  * @property {string} [currency] - Currency
  * @property {number} customerGroupId - CustomerGroup ID
  * @property {number} customerId - Customer ID
+ * @property {string} [customerOrderNumber] - Customer-supplied reference / PO number. Appears on the invoice as the customer reference.
  * @property {number} customerTypeId - Customer Type ID
  * @property {DateTime} [desiredDeliveryDate] - Desired Delivery Date
  * @property {Decimal} discountExVat - Discount excl. VAT
@@ -9137,6 +9152,7 @@ export type GeinsGetOrderPublicType = {
  * @property {string} [externalOrderId] - External Order ID
  * @property {string} [firstName] - First name - DEPRECATED: Use Billing Address instead
  * @property {GenderType} gender - Gender
+ * @property {string} [goodsLabel] - Text printed on packages, freight docs and pallet flags so goods are identified on arrival.
  * @property {string} [ipAddress] - IP Address
  * @property {Decimal} itemValueExVat - Represents the total sum of the prices for all order rows, excluding VAT
  * @property {Decimal} itemValueIncVat - Represents the total sum of the prices for all order rows
@@ -9513,10 +9529,12 @@ export type GeinsGetOrderPublicType = {
  * @property {DateTime} [createdAt]
  * @property {string} [currency]
  * @property {number} [customerId]
+ * @property {string} [customerOrderNumber] - Customer-supplied reference / PO number. Appears on the invoice as the customer reference.
  * @property {DateTime} [desiredDeliveryDate]
  * @property {PriceType} [discount]
  * @property {Decimal} fromBalance - The amount taken from account balance
  * @property {string} [fromBalanceFormatted] - The amount taken from account balance. Formatted as a currency string.
+ * @property {string} [goodsLabel] - Text printed on packages, freight docs and pallet flags so goods are identified on arrival.
  * @property {number} [id]
  * @property {string} [message]
  * @property {PriceType} [orderTotal]

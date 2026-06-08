@@ -491,6 +491,12 @@ input CheckoutInputType {
   """The desired delivery date for the order."""
   desiredDeliveryDate: DateTime
 
+  """Customer-supplied reference / PO number. Appears on the invoice as the customer reference."""
+  customerOrderNumber: String
+
+  """Text printed on packages, freight docs and pallet flags so goods are identified on arrival."""
+  goodsLabel: String
+
   """A message from the customer."""
   message: String
 
@@ -764,6 +770,12 @@ type CheckoutOrderType {
 
   """Desired Delivery Date"""
   desiredDeliveryDate: DateTime
+
+  """Customer-supplied reference / PO number. Appears on the invoice as the customer reference."""
+  customerOrderNumber: String
+
+  """Text printed on packages, freight docs and pallet flags so goods are identified on arrival."""
+  goodsLabel: String
 }
 
 enum CheckoutStatus {
@@ -2073,6 +2085,10 @@ type OrderType {
   completedAt: DateTime
   currency: String
   desiredDeliveryDate: DateTime
+  """Customer-supplied reference / PO number. Appears on the invoice as the customer reference."""
+  customerOrderNumber: String
+  """Text printed on packages, freight docs and pallet flags so goods are identified on arrival."""
+  goodsLabel: String
   message: String
   status: String!
   updatedAt: DateTime
