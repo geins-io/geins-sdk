@@ -36,6 +36,8 @@ query checkoutSummary(
       shippingId
       pickupPoint
       desiredDeliveryDate
+      customerOrderNumber
+      goodsLabel
 
       promoCode
       campaignIds

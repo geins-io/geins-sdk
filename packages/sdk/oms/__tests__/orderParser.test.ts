@@ -50,6 +50,42 @@ describe('orderParser', () => {
       expect(parseCheckoutOrderSummary({}, 'en')).toBeUndefined();
     });
 
+    it('maps customerOrderNumber and goodsLabel from raw checkout order', () => {
+      const input = {
+        __typename: 'CheckoutDataType',
+        order: {
+          orderId: 'ORD-99',
+          customerId: 1,
+          currency: 'SEK',
+          customerOrderNumber: 'PO-12345',
+          goodsLabel: 'Pallet A',
+        },
+        cart: null,
+      };
+      const result = parseCheckoutOrderSummary(input as any, 'sv-SE');
+      expect(result).toBeDefined();
+      expect(result!.customerOrderNumber).toBe('PO-12345');
+      expect(result!.goodsLabel).toBe('Pallet A');
+    });
+
+    it('maps null customerOrderNumber and goodsLabel (explicit wire null) to undefined in checkout order', () => {
+      const input = {
+        __typename: 'CheckoutDataType',
+        order: {
+          orderId: 'ORD-99',
+          customerId: 1,
+          currency: 'SEK',
+          customerOrderNumber: null,
+          goodsLabel: null,
+        },
+        cart: null,
+      };
+      const result = parseCheckoutOrderSummary(input as any, 'sv-SE');
+      expect(result).toBeDefined();
+      expect(result!.customerOrderNumber).toBeUndefined();
+      expect(result!.goodsLabel).toBeUndefined();
+    });
+
     it('parses checkout data with order', () => {
       const input = {
         __typename: 'CheckoutDataType',
@@ -95,6 +131,40 @@ describe('orderParser', () => {
     it('returns undefined when no OrderType found', () => {
       expect(parseOrderSummary(undefined, 'en')).toBeUndefined();
       expect(parseOrderSummary({}, 'en')).toBeUndefined();
+    });
+
+    it('maps customerOrderNumber and goodsLabel from raw order', () => {
+      const input = {
+        __typename: 'OrderType',
+        id: 55,
+        customerId: 100,
+        currency: 'SEK',
+        status: 'shipped',
+        publicId: 'PUB-55',
+        customerOrderNumber: 'PO-12345',
+        goodsLabel: 'Pallet A',
+      };
+      const result = parseOrderSummary(input as any, 'sv-SE');
+      expect(result).toBeDefined();
+      expect(result!.customerOrderNumber).toBe('PO-12345');
+      expect(result!.goodsLabel).toBe('Pallet A');
+    });
+
+    it('maps null customerOrderNumber and goodsLabel (explicit wire null) to undefined in order summary', () => {
+      const input = {
+        __typename: 'OrderType',
+        id: 55,
+        customerId: 100,
+        currency: 'SEK',
+        status: 'shipped',
+        publicId: 'PUB-55',
+        customerOrderNumber: null,
+        goodsLabel: null,
+      };
+      const result = parseOrderSummary(input as any, 'sv-SE');
+      expect(result).toBeDefined();
+      expect(result!.customerOrderNumber).toBeUndefined();
+      expect(result!.goodsLabel).toBeUndefined();
     });
 
     it('parses a full order summary', () => {

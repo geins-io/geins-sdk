@@ -80,6 +80,8 @@ export function parseCheckoutSummaryOrder(
     shippingId: order.shippingId,
     pickupPoint: order.pickupPoint ?? undefined,
     desiredDeliveryDate: order.desiredDeliveryDate ?? undefined,
+    customerOrderNumber: order.customerOrderNumber ?? undefined,
+    goodsLabel: order.goodsLabel ?? undefined,
 
     promoCode: order.promoCode ?? undefined,
     appliedCampaignIds: order.campaignIds?.filter((s): s is string => s != null) ?? undefined,

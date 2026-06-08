@@ -12,6 +12,8 @@ fragment OrderSummary on OrderType {
   completedAt
   currency
   desiredDeliveryDate
+  customerOrderNumber
+  goodsLabel
   message
   status
   updatedAt
