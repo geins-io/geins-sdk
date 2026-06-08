@@ -147,9 +147,12 @@ describe('GeinsOMS cart (stateless)', () => {
 
   it('should show applied campaign', async () => {
     let cart = await geinsOMS.cart.create();
-    cart = await geinsOMS.cart.addItem(cart.id, { skuId: omsSettings.skus.skuId1, quantity: 1 });
     cart = await geinsOMS.cart.addItem(cart.id, { skuId: omsSettings.skus.skuId2, quantity: 1 });
-    cart = await geinsOMS.cart.addItem(cart.id, { skuId: omsSettings.skus.skuId3, quantity: 1 });
+
+    // Apply a known promotion code so a campaign is deterministically present.
+    // Relying on an always-on automatic campaign made this test depend on live
+    // promo configuration and flake when none was active.
+    cart = await geinsOMS.cart.setPromotionCode(cart.id, omsSettings.promotionCodes.percentOff);
 
     expect(cart.appliedCampaigns?.length ?? 0).toBeGreaterThan(0);
   });
