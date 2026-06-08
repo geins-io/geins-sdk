@@ -1,5 +1,11 @@
 # @geins/oms
 
+## 0.10.4
+
+### Patch Changes
+
+- b5af815: Add native customerOrderNumber and goodsLabel fields to checkout input and order output (types, GraphQL selections, parsers).
+
 ## 0.10.3
 
 ### Patch Changes
