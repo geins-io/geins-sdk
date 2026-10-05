@@ -14,6 +14,7 @@ export function isServerContext() {
  * @param apiKey - The API key.
  * @param accountName - The account name.
  * @param environment - The environment.
+ * @param apiUrl - Optional merchant API GraphQL endpoint. Empty or omitted means the default.
  * @returns The endpoints.
  * @example
  * ```ts
@@ -27,9 +28,10 @@ export function buildEndpoints(
   apiKey: string,
   accountName: string,
   environment: Environment = 'prod',
+  apiUrl?: string,
 ): GeinsEndpoints {
   return {
-    main: ENDPOINTS.main,
+    main: apiUrl || ENDPOINTS.main,
     auth: ENDPOINTS.auth.replace('{ACCOUNT}', accountName).replace('{ENV}', environment),
     authSign: ENDPOINTS.auth_sign.replace('{API-KEY}', apiKey),
     image: ENDPOINTS.image.replace('{ACCOUNT}', accountName),
