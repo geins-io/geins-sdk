@@ -61,12 +61,15 @@ export type GeinsSettings = {
   locale: string;
   market: string;
   environment?: Environment;
+  apiUrl?: string;
   logLevel?: GeinsLogLevel;
   requestConfig?: GeinsRequestConfig;
 };
 ```
 
 These settings include authentication details, application-specific configurations like channel and locale, and optional request pipeline configuration.
+
+`apiUrl` sets the merchant API GraphQL endpoint and defaults to `https://merchantapi.geins.io/graphql`. Every GraphQL call (core, CMS, CRM, OMS) uses it. Only the GraphQL endpoint moves; sign-in (`/auth/sign`) and redirect history stay on the default host.
 
 ### Initializing GeinsCore
 

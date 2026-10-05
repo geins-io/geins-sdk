@@ -61,6 +61,7 @@ export class GeinsCore {
         this._geinsSettings.apiKey,
         this._geinsSettings.accountName,
         this._geinsSettings.environment,
+        this._geinsSettings.apiUrl,
       );
     }
 

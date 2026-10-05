@@ -35,6 +35,7 @@ export type GeinsSettings = {
   locale: string;
   market: string;
   environment?: Environment;
+  apiUrl?: string;
   logLevel?: GeinsLogLevel;
   requestConfig?: GeinsRequestConfig;
 };
