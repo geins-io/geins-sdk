@@ -35,6 +35,7 @@ export class Channel {
         this.geinsSettings.apiKey,
         this.geinsSettings.accountName,
         this.geinsSettings.environment,
+        this.geinsSettings.apiUrl,
       );
       const options = {
         apiUrl: endpointsUrls.main,
