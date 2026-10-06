@@ -1,0 +1,35 @@
+#import "./price.gql"
+#import "./configuration-message.gql"
+
+fragment CpqOption on CpqOptionType {
+  id
+  instanceId
+  articleNumber
+  name
+  description
+  selected
+  available
+  readOnly
+  selectionSource
+  quantity
+  defaultQuantity
+  minQuantity
+  maxQuantity
+  unitPrice {
+    ...OmsPrice
+  }
+  discountPercent
+  product {
+    productId
+    name
+    articleNumber
+    alias
+    canonicalUrl
+    productImages {
+      fileName
+    }
+  }
+  messages {
+    ...CpqMessage
+  }
+}

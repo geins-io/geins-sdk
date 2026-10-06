@@ -1,0 +1,6 @@
+#import "../fragments/configuration.gql"
+mutation createConfiguration($productId: Int, $articleNumber: String, $quantity: Decimal!, $channelId: String, $languageId: String, $marketId: String) {
+  createConfiguration(productId: $productId, articleNumber: $articleNumber, quantity: $quantity, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+    ...CpqConfiguration
+  }
+}

@@ -1,0 +1,52 @@
+#import "./price.gql"
+#import "./configuration-message.gql"
+#import "./configuration-variable.gql"
+#import "./configuration-group.gql"
+
+fragment CpqSectionFields on CpqSectionType {
+  id
+  name
+  description
+  visible
+  sortIndex
+  variables {
+    ...CpqVariable
+  }
+  optionGroups {
+    ...CpqGroupTree
+  }
+  messages {
+    ...CpqMessage
+  }
+}
+
+# Fragments cannot recurse: sections are selected four levels deep.
+fragment CpqConfiguration on CpqConfigurationType {
+  configurationId
+  expiresAt
+  isValid
+  articleNumber
+  quantity
+  unitPrice {
+    ...OmsPrice
+  }
+  discountPercent
+  weightPerUnit
+  templateId
+  templateVersion
+  messages {
+    ...CpqMessage
+  }
+  sections {
+    ...CpqSectionFields
+    sections {
+      ...CpqSectionFields
+      sections {
+        ...CpqSectionFields
+        sections {
+          ...CpqSectionFields
+        }
+      }
+    }
+  }
+}
