@@ -2,6 +2,7 @@ import {
   ApolloClient,
   ApolloLink,
   ApolloQueryResult,
+  createHttpLink,
   DocumentNode,
   FetchPolicy,
   FetchResult,
@@ -9,18 +10,17 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
   OperationVariables,
-  createHttpLink,
 } from '@apollo/client/core';
 import { RetryLink } from '@apollo/client/link/retry';
+import type { GeinsRetryConfig, GeinsSettings } from '@geins/types';
 import { GeinsLogLevel } from '@geins/types';
-import type { GeinsSettings, GeinsRetryConfig } from '@geins/types';
 import { isServerContext, Logger } from '../utils';
-import { createRequestIdLink } from './links/requestIdLink';
 import { createIdempotencyLink } from './links/idempotencyLink';
-import { createLoggingLink } from './links/loggingLink';
-import { createTimeoutLink } from './links/timeoutLink';
 import { createInterceptorLink } from './links/interceptorLink';
+import { createLoggingLink } from './links/loggingLink';
+import { createRequestIdLink } from './links/requestIdLink';
 import { createTelemetryLink, TelemetryCollector } from './links/telemetryLink';
+import { createTimeoutLink } from './links/timeoutLink';
 
 export enum FetchPolicyOptions {
   CACHE_FIRST = 'cache-first',
@@ -66,7 +66,8 @@ export interface GraphQLQueryOptions {
 export class MerchantApiClient {
   private _apolloClient: ApolloClient<NormalizedCacheObject>;
   private _telemetry: TelemetryCollector | null = null;
-  fetchPolicy: FetchPolicy = isServerContext()
+  private readonly _serverContext = isServerContext();
+  fetchPolicy: FetchPolicy = this._serverContext
     ? FetchPolicyOptions.NO_CACHE
     : FetchPolicyOptions.CACHE_FIRST;
   pollInterval: number = 0;
@@ -157,12 +158,7 @@ export class MerchantApiClient {
   }
 
   private createRetryLink(retryConfig: GeinsRetryConfig): RetryLink {
-    const {
-      maxRetries = 3,
-      initialDelayMs = 300,
-      maxDelayMs = 10000,
-      jitter = true,
-    } = retryConfig;
+    const { maxRetries = 3, initialDelayMs = 300, maxDelayMs = 10000, jitter = true } = retryConfig;
 
     return new RetryLink({
       delay: {
@@ -177,7 +173,8 @@ export class MerchantApiClient {
 
           const err = error as Record<string, unknown>;
           const response = err.response as Record<string, unknown> | undefined;
-          const statusCode = (err.statusCode as number | undefined) ?? (response?.status as number | undefined);
+          const statusCode =
+            (err.statusCode as number | undefined) ?? (response?.status as number | undefined);
 
           // 429 — rate limited, always retry
           if (statusCode === 429) return true;
@@ -218,7 +215,15 @@ export class MerchantApiClient {
         return this.fetchPolicy;
       }
     } else if (operationType === OperationType.MUTATION) {
-      return FetchPolicyOptions.NETWORK_ONLY;
+      if (
+        selectedFetchPolicy === FetchPolicyOptions.NO_CACHE ||
+        selectedFetchPolicy === FetchPolicyOptions.NETWORK_ONLY
+      ) {
+        return selectedFetchPolicy;
+      }
+      // A server instance is shared by every request it serves, and nothing
+      // evicts what a mutation writes into its cache.
+      return this._serverContext ? FetchPolicyOptions.NO_CACHE : FetchPolicyOptions.NETWORK_ONLY;
     }
 
     if (
@@ -268,7 +273,9 @@ export class MerchantApiClient {
     return this._apolloClient.mutate<TData, TVariables>({
       mutation,
       variables: variables as TVariables,
-      fetchPolicy: this.getFetchPolicy(OperationType.MUTATION, opts.fetchPolicy) as 'network-only' | 'no-cache',
+      fetchPolicy: this.getFetchPolicy(OperationType.MUTATION, opts.fetchPolicy) as
+        | 'network-only'
+        | 'no-cache',
       context: this.buildContext(userToken),
     });
   }
