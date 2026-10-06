@@ -12,9 +12,11 @@ Add the CPQ (configure, price, quote) area as `oms.configuration`.
 `commit`, `delete`, `reopenCartItem`), a configured cart line (`addCartItem`, `updateCartItem`,
 `getCartLines`) and an order's configured rows (`getOrderLines`, `getOrderLineChoices`). Every call
 runs without the Apollo cache, a mutation is never retried, and each call can take its own
-`timeoutMs`. A failure is a `ConfigurationError` that carries the provider's codes as sent
-(`providerCodes`, `providerCode`, `providerMessage`, `status`), whether they arrive with a 2xx or a
-non-2xx answer.
+`timeoutMs`. A failure is a `ConfigurationError` that carries every provider error as sent
+(`providerErrors`, each with its `code` and `message`, plus `providerCodes`, `providerCode`,
+`providerMessage` and `status`), whether it arrives with a 2xx or a non-2xx answer. Recognise one
+with `isConfigurationError`: built for ES5, an `Error` subclass is a plain `Error` at run time, so
+`instanceof ConfigurationError` cannot tell.
 
 In `@geins/core`, a call's `requestOptions.context` now reaches the link chain. The timeout link
 reads a per-call `timeoutMs` there, and the retry link skips an operation whose context sets
