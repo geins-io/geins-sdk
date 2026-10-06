@@ -1,6 +1,6 @@
-import { ApolloLink, execute, gql, Observable } from '@apollo/client/core';
-import { createTimeoutLink } from '../../src/api-client/links/timeoutLink';
+import { ApolloLink, execute, FetchResult, gql, Observable } from '@apollo/client/core';
 import { createRequestIdLink } from '../../src/api-client/links/requestIdLink';
+import { createTimeoutLink } from '../../src/api-client/links/timeoutLink';
 import { TimeoutError } from '../../src/errors/networkError';
 
 const TEST_QUERY = gql`
@@ -42,11 +42,7 @@ describe('TimeoutLink', () => {
   it('allows requests that complete before timeout', (done) => {
     jest.useRealTimers();
 
-    const link = ApolloLink.from([
-      createRequestIdLink(),
-      createTimeoutLink(5000),
-      createImmediateLink(),
-    ]);
+    const link = ApolloLink.from([createRequestIdLink(), createTimeoutLink(5000), createImmediateLink()]);
 
     execute(link, { query: TEST_QUERY }).subscribe({
       next: (result) => {
@@ -59,11 +55,7 @@ describe('TimeoutLink', () => {
   it('emits TimeoutError when request exceeds timeout', (done) => {
     jest.useRealTimers();
 
-    const link = ApolloLink.from([
-      createRequestIdLink(),
-      createTimeoutLink(50),
-      createDelayedLink(200),
-    ]);
+    const link = ApolloLink.from([createRequestIdLink(), createTimeoutLink(50), createDelayedLink(200)]);
 
     execute(link, { query: TEST_QUERY }).subscribe({
       error: (error) => {
@@ -78,11 +70,7 @@ describe('TimeoutLink', () => {
   it('passes through when timeoutMs is 0', (done) => {
     jest.useRealTimers();
 
-    const link = ApolloLink.from([
-      createRequestIdLink(),
-      createTimeoutLink(0),
-      createImmediateLink(),
-    ]);
+    const link = ApolloLink.from([createRequestIdLink(), createTimeoutLink(0), createImmediateLink()]);
 
     execute(link, { query: TEST_QUERY }).subscribe({
       next: (result) => {
@@ -95,11 +83,7 @@ describe('TimeoutLink', () => {
   it('passes through when timeoutMs is negative', (done) => {
     jest.useRealTimers();
 
-    const link = ApolloLink.from([
-      createRequestIdLink(),
-      createTimeoutLink(-1),
-      createImmediateLink(),
-    ]);
+    const link = ApolloLink.from([createRequestIdLink(), createTimeoutLink(-1), createImmediateLink()]);
 
     execute(link, { query: TEST_QUERY }).subscribe({
       next: (result) => {
@@ -113,11 +97,7 @@ describe('TimeoutLink', () => {
     jest.useRealTimers();
     const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
 
-    const link = ApolloLink.from([
-      createRequestIdLink(),
-      createTimeoutLink(5000),
-      createImmediateLink(),
-    ]);
+    const link = ApolloLink.from([createRequestIdLink(), createTimeoutLink(5000), createImmediateLink()]);
 
     execute(link, { query: TEST_QUERY }).subscribe({
       complete: () => {
@@ -138,11 +118,7 @@ describe('TimeoutLink', () => {
       });
     });
 
-    const link = ApolloLink.from([
-      createRequestIdLink(),
-      createTimeoutLink(5000),
-      errorLink,
-    ]);
+    const link = ApolloLink.from([createRequestIdLink(), createTimeoutLink(5000), errorLink]);
 
     execute(link, { query: TEST_QUERY }).subscribe({
       error: (error) => {
@@ -152,5 +128,32 @@ describe('TimeoutLink', () => {
         done();
       },
     });
+  });
+});
+
+describe('TimeoutLink per call', () => {
+  it('goes straight to forward when there is no deadline', () => {
+    const forwarded = new Observable<FetchResult>(() => undefined);
+    const forward = () => forwarded;
+    const link = createTimeoutLink(0);
+    const operation = { query: TEST_QUERY, getContext: () => ({}) } as never;
+
+    expect(link.request(operation, forward)).toBe(forwarded);
+  });
+
+  it("takes the operation's own deadline over the link's", (done) => {
+    jest.useFakeTimers();
+    const link = ApolloLink.from([createRequestIdLink(), createTimeoutLink(0), createDelayedLink(1_000)]);
+
+    execute(link, { query: TEST_QUERY, context: { timeoutMs: 50 } }).subscribe({
+      error: (error) => {
+        expect(error).toBeInstanceOf(TimeoutError);
+        expect(error.timeoutMs).toBe(50);
+        jest.useRealTimers();
+        done();
+      },
+    });
+
+    jest.advanceTimersByTime(60);
   });
 });

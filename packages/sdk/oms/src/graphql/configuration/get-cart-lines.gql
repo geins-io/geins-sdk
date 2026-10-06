@@ -1,0 +1,6 @@
+#import "../fragments/configured-cart-lines.gql"
+query getConfiguredCartLines($id: String, $channelId: String, $languageId: String, $marketId: String) {
+  getCart(id: $id, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+    ...CpqConfiguredCartLines
+  }
+}

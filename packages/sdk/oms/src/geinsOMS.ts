@@ -10,6 +10,7 @@ import {
 import { CustomerType } from '@geins/types';
 import { CartService } from './services/cartService';
 import { CheckoutService } from './services/checkoutService';
+import { ConfigurationService } from './services/configurationService';
 import { OrderService } from './services/orderService';
 
 export interface GeinsOMSInterface {
@@ -29,6 +30,11 @@ export interface GeinsOMSInterface {
    */
   readonly order: OrderService;
   /**
+   * Configuration (CPQ) service.
+   * Configuration sessions, their commit, and the cart and order reads of a configured line.
+   */
+  readonly configuration: ConfigurationService;
+  /**
    * Creates a token for external checkout pages.
    * @param args.cartId - Required. The cart ID.
    */
@@ -43,6 +49,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
   private _cart!: CartService;
   private _checkout!: CheckoutService;
   private _order!: OrderService;
+  private _configuration!: ConfigurationService;
   private _omsSettings: OMSSettings;
 
   constructor(core: GeinsCore, options?: { omsSettings?: OMSSettings }) {
@@ -54,6 +61,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
     this._cart?.destroy();
     this._checkout?.destroy();
     this._order?.destroy();
+    this._configuration?.destroy();
   }
 
   /** @inheritdoc */
@@ -67,11 +75,7 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
   /** @inheritdoc */
   get checkout(): CheckoutService {
     if (!this._checkout) {
-      this._checkout = new CheckoutService(
-        () => this._apiClient(),
-        this._geinsSettings,
-        this._omsSettings,
-      );
+      this._checkout = new CheckoutService(() => this._apiClient(), this._geinsSettings, this._omsSettings);
     }
     return this._checkout;
   }
@@ -82,6 +86,14 @@ export class GeinsOMS extends BasePackage implements GeinsOMSInterface {
       this._order = new OrderService(() => this._apiClient(), this._geinsSettings);
     }
     return this._order;
+  }
+
+  /** @inheritdoc */
+  get configuration(): ConfigurationService {
+    if (!this._configuration) {
+      this._configuration = new ConfigurationService(() => this._apiClient(), this._geinsSettings);
+    }
+    return this._configuration;
   }
 
   async createCheckoutToken(options?: GenerateCheckoutTokenOptions): Promise<string | undefined> {

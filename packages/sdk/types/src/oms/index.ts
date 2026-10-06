@@ -1,4 +1,5 @@
-export * from './settings';
 export * from './cart';
-export * from './order';
 export * from './checkout';
+export * from './configuration';
+export * from './order';
+export * from './settings';

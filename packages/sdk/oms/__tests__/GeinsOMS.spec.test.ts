@@ -90,4 +90,24 @@ describe('GeinsOMS Shape', () => {
     expect(oms.order.get).toBeDefined();
     expect(typeof oms.order.get).toBe('function');
   });
+
+  it('configuration service should expose methods, one instance per package', () => {
+    for (const method of [
+      'create',
+      'get',
+      'applyChanges',
+      'renew',
+      'commit',
+      'delete',
+      'reopenCartItem',
+      'addCartItem',
+      'updateCartItem',
+      'getCartLines',
+      'getOrderLines',
+      'getOrderLineChoices',
+    ] as const) {
+      expect(typeof oms.configuration[method]).toBe('function');
+    }
+    expect(oms.configuration).toBe(oms.configuration);
+  });
 });

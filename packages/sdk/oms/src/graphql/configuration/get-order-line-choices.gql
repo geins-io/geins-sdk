@@ -1,0 +1,27 @@
+#import "../fragments/configuration-committed.gql"
+# Fragments cannot recurse: sections are selected four levels deep.
+query getConfiguredOrderLineChoices($publicOrderId: Guid!, $channelId: String, $languageId: String, $marketId: String) {
+  getOrderPublic(publicOrderId: $publicOrderId, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+    cart {
+      items {
+        product {
+          productId
+        }
+        configuration {
+          sections {
+            ...CpqCommittedSectionFields
+            sections {
+              ...CpqCommittedSectionFields
+              sections {
+                ...CpqCommittedSectionFields
+                sections {
+                  ...CpqCommittedSectionFields
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

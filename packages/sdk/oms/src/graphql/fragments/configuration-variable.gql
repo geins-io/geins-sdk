@@ -1,0 +1,24 @@
+#import "./configuration-message.gql"
+
+fragment CpqVariable on CpqVariableType {
+  id
+  name
+  description
+  valueType
+  value
+  defaultValue
+  required
+  available
+  readOnly
+  min
+  max
+  step
+  decimals
+  unit
+  selectionSource
+  valueSource
+  sortIndex
+  messages {
+    ...CpqMessage
+  }
+}
