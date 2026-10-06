@@ -127,11 +127,8 @@ export class MerchantApiClient {
       links.push(createInterceptorLink(requestConfig.interceptors));
     }
 
-    // 5. TimeoutLink — only if timeoutMs > 0
-    const timeoutMs = requestConfig?.timeoutMs ?? 0;
-    if (timeoutMs > 0) {
-      links.push(createTimeoutLink(timeoutMs));
-    }
+    // 5. TimeoutLink — always on; passes straight through without a client or per-call deadline
+    links.push(createTimeoutLink(requestConfig?.timeoutMs ?? 0));
 
     // 6. TelemetryLink — only if telemetry config provided and not disabled
     if (requestConfig?.telemetry) {
@@ -168,8 +165,11 @@ export class MerchantApiClient {
       },
       attempts: {
         max: maxRetries + 1, // RetryLink counts the initial attempt
-        retryIf: (error: unknown) => {
+        retryIf: (error: unknown, operation) => {
           if (!error) return false;
+
+          // A call that must not be sent twice asks for no retry.
+          if (operation.getContext().retry === false) return false;
 
           const err = error as Record<string, unknown>;
           const response = err.response as Record<string, unknown> | undefined;
@@ -236,13 +236,16 @@ export class MerchantApiClient {
     return FetchPolicyOptions.NETWORK_ONLY;
   }
 
-  private buildContext(userToken?: string): Record<string, unknown> | undefined {
-    if (!userToken) return undefined;
-    return {
-      headers: {
-        Authorization: `Bearer ${userToken}`,
-      },
+  private buildContext(
+    userToken?: string,
+    context?: Record<string, unknown>,
+  ): Record<string, unknown> | undefined {
+    if (!userToken && !context) return undefined;
+    const headers = {
+      ...(context?.headers as Record<string, string> | undefined),
+      ...(userToken ? { Authorization: `Bearer ${userToken}` } : {}),
     };
+    return { ...context, ...(Object.keys(headers).length > 0 ? { headers } : {}) };
   }
 
   /** Execute a GraphQL query against the Merchant API. */
@@ -258,7 +261,7 @@ export class MerchantApiClient {
       variables: variables as TVariables,
       fetchPolicy: this.getFetchPolicy(OperationType.QUERY, opts.fetchPolicy),
       pollInterval: opts.pollInterval || this.pollInterval,
-      context: this.buildContext(userToken),
+      context: this.buildContext(userToken, opts.context),
     });
   }
 
@@ -276,7 +279,7 @@ export class MerchantApiClient {
       fetchPolicy: this.getFetchPolicy(OperationType.MUTATION, opts.fetchPolicy) as
         | 'network-only'
         | 'no-cache',
-      context: this.buildContext(userToken),
+      context: this.buildContext(userToken, opts.context),
     });
   }
 }

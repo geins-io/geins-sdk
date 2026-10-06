@@ -39,6 +39,8 @@ export enum GeinsErrorCode {
   RETRY_EXHAUSTED = 'RETRY_EXHAUSTED',
   /** Network-level error (connection refused, DNS failure, etc.) */
   NETWORK_ERROR = 'NETWORK_ERROR',
+  /** A configuration (CPQ) operation failed; the provider's own codes are on the error */
+  CONFIGURATION_FAILED = 'CONFIGURATION_FAILED',
 }
 
 /**
