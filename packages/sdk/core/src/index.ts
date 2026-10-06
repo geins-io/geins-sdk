@@ -2,18 +2,14 @@ export { gql } from '@apollo/client/core';
 export * from '@geins/types';
 
 // API Client
-export {
-  MerchantApiClient,
-  FetchPolicyOptions,
-  OperationType,
-} from './api-client/merchantApiClient';
+export { TelemetryCollector } from './api-client/links/telemetryLink';
+export { ManagementApiClient } from './api-client/managementApiClient';
+export { FetchPolicyOptions, MerchantApiClient, OperationType } from './api-client/merchantApiClient';
 export type {
   GraphQLQueryOptions,
-  RequestOptions,
   MerchantApiClientOptions,
+  RequestOptions,
 } from './api-client/merchantApiClient';
-export { ManagementApiClient } from './api-client/managementApiClient';
-export { TelemetryCollector } from './api-client/links/telemetryLink';
 
 // Base
 export { BaseApiService } from './base/baseApiService';
@@ -21,6 +17,9 @@ export type { ApiClientGetter } from './base/baseApiService';
 export { BasePackage } from './base/basePackage';
 
 // Constants
+export { AUTH_HEADERS } from './constants/headerNames';
+export { GEINS_IMAGE_FOLDER } from './constants/image';
+export { CHECKOUT_PARAMETERS } from './constants/parameters';
 export {
   AUTH_STORAGE_KEYS,
   AUTH_STORAGE_MAX_AGE,
@@ -29,20 +28,23 @@ export {
   LISTS_STORAGE_KEYS,
   LISTS_STORAGE_MAX_AGE,
 } from './constants/storageKeys';
-export { AUTH_HEADERS } from './constants/headerNames';
-export { CHECKOUT_PARAMETERS } from './constants/parameters';
-export { GEINS_IMAGE_FOLDER } from './constants/image';
 
 // Errors
-export { GeinsError, GeinsErrorCode } from './errors/geinsError';
 export { AuthError, TokenExpiredError, TokenRefreshError } from './errors/authError';
 export { CartError } from './errors/cartError';
 export { CheckoutError, OrderError } from './errors/checkoutError';
+export { ConfigurationError, isConfigurationError, toConfigurationError } from './errors/configurationError';
+export type {
+  ConfigurationErrorCode,
+  ConfigurationErrorDetails,
+  ConfigurationProviderError,
+} from './errors/configurationError';
+export { GeinsError, GeinsErrorCode } from './errors/geinsError';
 export {
   NetworkRequestError,
-  TimeoutError,
   RateLimitError,
   RetryExhaustedError,
+  TimeoutError,
 } from './errors/networkError';
 
 // Main class
@@ -63,10 +65,10 @@ export type { StorageInterface, StorageSetOptions } from './services/storageInte
 // Utils
 export {
   buildEndpoints,
-  findObjectWithProperty,
   extractParametersFromUrl,
-  parseErrorMessage,
+  findObjectWithProperty,
   isServerContext,
+  parseErrorMessage,
 } from './utils/helpers';
 export { buildGeinsImageUrl, buildGeinsRawUrl, buildGeinsThumbnailUrl } from './utils/imageUrl';
 export { decodeJWT, encodeJWT } from './utils/jwtUtils';

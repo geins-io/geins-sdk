@@ -267,6 +267,7 @@ input CartItemInputType {
   quantity: Int!
   groupKey: ID
   message: String
+  configurationId: String
 }
 
 """Type containing cart item information"""
@@ -303,6 +304,14 @@ type CartItemType {
 
   """Indicates if the cart item is a free gift from a campaign"""
   isCampaignFreeGift: Boolean!
+
+  """The committed cpq configuration this cart item is"""
+  configurationId: String
+
+  """
+  What configurationId names, as it was committed. Null on an unconfigured cart item, and on a configured one added before the configuration was copied onto cart items. On an order it is filled in by getOrder and getOrderPublic only, and is null there where cpq could not answer. getOrders and getCompanyOrders always answer null.
+  """
+  configuration: CpqCartItemConfigurationType
 }
 
 """Type containing cart summary information"""
@@ -1369,6 +1378,122 @@ type GeinsMerchantApiMutation {
     """The market ID. Will default to an existing value if it is not found."""
     marketId: String
   ): CheckoutType
+
+  """
+  Opens a product configuration session and returns its first evaluated state. The session settles its customer and its currency here and no later call moves them.
+  """
+  createConfiguration(
+    """
+    The article number of the product to configure. Give this or productId, not both.
+    """
+    articleNumber: String
+
+    """
+    The Geins product id of the product to configure. Give this or articleNumber, not both.
+    """
+    productId: Int
+
+    """How many of the configured product are being ordered"""
+    quantity: Decimal!
+
+    """The channel ID. Will default to an existing value if it is not found."""
+    channelId: String
+
+    """The language ID. Will default to an existing value if it is not found."""
+    languageId: String
+
+    """The market ID. Will default to an existing value if it is not found."""
+    marketId: String
+  ): CpqConfigurationType
+
+  """
+  Opens a cart item's committed configuration again as a session to edit, at the item's quantity and at today's price. Commit the session and pass the new committed id to updateCartItem to put it on the item. Until then the item keeps the configuration it has.
+  """
+  reopenCartItemConfiguration(
+    """The cart ID"""
+    cartId: String!
+
+    """The ID of the configured cart item"""
+    itemId: String!
+
+    """The channel ID. Will default to an existing value if it is not found."""
+    channelId: String
+
+    """The language ID. Will default to an existing value if it is not found."""
+    languageId: String
+
+    """The market ID. Will default to an existing value if it is not found."""
+    marketId: String
+  ): CpqConfigurationType
+
+  """
+  Applies a batch of changes to a configuration and returns the whole re-evaluated state. The whole batch succeeds or none of it does, and the answer replaces what is held rather than patching it.
+  """
+  applyConfigurationChanges(
+    """The configuration session ID"""
+    configurationId: String!
+
+    """The changes to apply"""
+    changes: [CpqConfigurationChangeInputType!]!
+
+    """The channel ID. Will default to an existing value if it is not found."""
+    channelId: String
+
+    """The language ID. Will default to an existing value if it is not found."""
+    languageId: String
+
+    """The market ID. Will default to an existing value if it is not found."""
+    marketId: String
+  ): CpqConfigurationType
+
+  """
+  Freezes a configuration at its current price and returns the committed id, which is what a cart item's configurationId carries.
+  """
+  commitConfiguration(
+    """The configuration session ID"""
+    configurationId: String!
+
+    """The channel ID. Will default to an existing value if it is not found."""
+    channelId: String
+
+    """The language ID. Will default to an existing value if it is not found."""
+    languageId: String
+
+    """The market ID. Will default to an existing value if it is not found."""
+    marketId: String
+  ): CpqCommittedConfigurationType
+
+  """Pushes out a configuration session's expiry and reports the new one."""
+  renewConfiguration(
+    """The configuration session ID"""
+    configurationId: String!
+
+    """The channel ID. Will default to an existing value if it is not found."""
+    channelId: String
+
+    """The language ID. Will default to an existing value if it is not found."""
+    languageId: String
+
+    """The market ID. Will default to an existing value if it is not found."""
+    marketId: String
+  ): CpqConfigurationRenewalType
+
+  """
+  Abandons a configuration session. Reading it afterwards answers a 'ConfigurationGone' error.
+  """
+  deleteConfiguration(
+    """The configuration session ID"""
+    configurationId: String!
+
+    """The channel ID. Will default to an existing value if it is not found."""
+    channelId: String
+
+    """The language ID. Will default to an existing value if it is not found."""
+    languageId: String
+
+    """The market ID. Will default to an existing value if it is not found."""
+    marketId: String
+  ): Boolean
 }
 
 type GeinsMerchantApiQuery {
@@ -1816,6 +1941,23 @@ type GeinsMerchantApiQuery {
     """The market ID. Will default to an existing value if it is not found."""
     marketId: String
   ): ValidateOrderConditionsResponseType
+
+  """
+  Gets a live product configuration session in full. A session that has run out answers a 'ConfigurationGone' error, which is not the same as an id that never existed.
+  """
+  getConfiguration(
+    """The configuration session ID"""
+    configurationId: String!
+
+    """The channel ID. Will default to an existing value if it is not found."""
+    channelId: String
+
+    """The language ID. Will default to an existing value if it is not found."""
+    languageId: String
+
+    """The market ID. Will default to an existing value if it is not found."""
+    marketId: String
+  ): CpqConfigurationType
 }
 
 enum Gender {
@@ -3346,3 +3488,639 @@ type VatGroupType {
   amount: Decimal!
 }
 
+"""
+The committed configuration a cart item is. On a cart it was copied onto the item when its configuration id was set, and reading it makes no call to cpq. On a single order it is read from cpq with the order.
+"""
+type CpqCartItemConfigurationType {
+  """
+  The committed configuration's id, the same as the cart item's configurationId. Null on an order, whose items carry no configurationId either, so that a reorder cannot reuse a price that is no longer quotable.
+  """
+  committedConfigurationId: String
+
+  """The article number of the configured product"""
+  articleNumber: String
+
+  """The discount the ERP applied at commit, in percent"""
+  discountPercent: Decimal
+
+  """The weight of one configured product, in the ERP's own unit"""
+  weightPerUnit: Decimal
+
+  """
+  The selections as one line each, in the language the configuration was committed in
+  """
+  summary: [CpqCommittedConfigurationLineType]
+
+  """
+  The same selections as 'summary', structured by section. Null on a configuration committed before cpq recorded the structure.
+  """
+  sections: [CpqCommittedSectionType]
+}
+
+"""One line of a committed configuration's human-readable summary"""
+type CpqCommittedConfigurationLineType {
+  """What was chosen, in the requested language"""
+  label: String
+
+  """The choice, in the requested language"""
+  value: String
+}
+
+"""
+A section of a committed configuration, holding only what the shopper saw and chose
+"""
+type CpqCommittedSectionType {
+  """The section id"""
+  id: String
+
+  """The section name, in the language the configuration was committed in"""
+  name: String
+
+  """
+  Orders this section against every other member of the same parent, its sibling sections, variables and option groups alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+  """
+  sortIndex: Int
+
+  """The variables in this section that carry a value"""
+  variables: [CpqCommittedVariableType]
+
+  """
+  The option groups in this section holding a selected option, directly or in a nested group
+  """
+  optionGroups: [CpqCommittedOptionGroupType]
+
+  """The sections nested in this one that are not empty"""
+  sections: [CpqCommittedSectionType]
+}
+
+"""
+A variable of a committed configuration and the value it was committed with
+"""
+type CpqCommittedVariableType {
+  """The variable id"""
+  id: String
+
+  """The variable name, in the language the configuration was committed in"""
+  name: String
+
+  """
+  Orders this variable against every other member of the same section, its sibling variables, the option groups and the nested sections alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+  """
+  sortIndex: Int
+
+  """The type 'value' is written in"""
+  valueType: CpqVariableValueType!
+
+  """
+  The value in invariant culture and without the unit: a number with exactly 'decimals' decimals, a date as yyyy-MM-dd, and a boolean as true or false
+  """
+  value: String
+
+  """The unit the value is measured in, such as 'mm'"""
+  unit: String
+
+  """
+  How many decimals a number is written with. Null for any other value type.
+  """
+  decimals: Int
+}
+
+"""The type a variable's value and default value carry"""
+enum CpqVariableValueType {
+  """
+  A type added to cpq after this API was built. Read the value as the JSON it arrives as.
+  """
+  UNKNOWN
+
+  """Free text"""
+  STRING
+
+  """A number, bounded by the variable's min, max and step"""
+  NUMBER
+
+  """True or false"""
+  BOOLEAN
+
+  """A date"""
+  DATE
+}
+
+"""
+An option group of a committed configuration, holding only its selected options
+"""
+type CpqCommittedOptionGroupType {
+  """The option group id"""
+  id: String
+
+  """The provider's own code for the group"""
+  code: String
+
+  """
+  The option group name, in the language the configuration was committed in
+  """
+  name: String
+
+  """
+  Orders this group against every other member of the same parent, its sibling groups and, where the parent is a section, that section's variables and nested sections. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+  """
+  sortIndex: Int
+
+  """
+  The options selected in this group. Empty where only a nested group holds a selection.
+  """
+  options: [CpqCommittedOptionType]
+
+  """The groups nested in this one that hold a selection"""
+  optionGroups: [CpqCommittedOptionGroupType]
+}
+
+"""
+An option the shopper had selected when the configuration was committed
+"""
+type CpqCommittedOptionType {
+  """The option id"""
+  id: String
+
+  """Distinguishes repeated copies of the same option within one group"""
+  instanceId: String
+
+  """
+  The article number of the product this option adds, when it maps to one
+  """
+  articleNumber: String
+
+  """
+  The option's name as the summary shows it, in the language the configuration was committed in. Never empty.
+  """
+  name: String
+
+  """How many of the option were selected"""
+  quantity: Decimal!
+
+  """
+  What one of the option cost at commit, with its own discount already taken off. cpq froze it net, so the inc-VAT side is worked out from the cart item's own VAT rate. Option prices need not add up to the cart item's price, which comes from the frozen total and the customer's agreement.
+  """
+  unitPrice: PriceType
+
+  """The discount already reflected in 'unitPrice', in percent"""
+  discountPercent: Decimal
+
+  """
+  The Geins product the article number names today, read with the cart in one batch for all its items and with no call to cpq. Null when no active product in the market carries it, which is ordinary: an ERP part number is not always a sellable article. Also null on every option of the cart when the product read failed, in which case the cart's items are still answered. It is read in the request's market, which a caller passing its own marketId can make differ from the one the cart item was priced in. Its unitPrice is today's catalogue price with campaigns, price lists and customer prices applied, not what the option cost at commit, which is this option's 'unitPrice'.
+  """
+  product: ProductType
+}
+
+"""
+A live product configuration session. Every call that touches it answers the whole re-evaluated state, so replace what is held rather than merging into it.
+"""
+type CpqConfigurationType {
+  """The session id. Every later call on this configuration takes it."""
+  configurationId: String!
+
+  """
+  When the session stops answering and the shopper has to start a new one. Push it out with renewConfiguration.
+  """
+  expiresAt: DateTimeOffset!
+
+  """
+  'true' when the configuration is complete enough to be committed and ordered
+  """
+  isValid: Boolean!
+
+  """The article number of the product being configured"""
+  articleNumber: String
+
+  """How many of the configured product are being ordered"""
+  quantity: Decimal!
+
+  """
+  What one configured product costs according to the ERP. cpq reports net only, so the inc-VAT side is worked out here from the article's VAT rate in this market, and equals the net where no Geins product carries one. 'regularPrice' and 'isDiscounted' reconstruct 'discountPercent'.
+  """
+  unitPrice: PriceType
+
+  """The discount the ERP applied, in percent"""
+  discountPercent: Decimal
+
+  """The weight of one configured product, in the ERP's own unit"""
+  weightPerUnit: Decimal
+
+  """The provider template this configuration was opened from"""
+  templateId: String
+
+  """
+  The version of the provider template this configuration was opened from
+  """
+  templateVersion: String
+
+  """Messages about the configuration as a whole"""
+  messages: [CpqMessageType]
+
+  """The configuration's top level sections"""
+  sections: [CpqSectionType]
+}
+
+"""
+Something the provider wants the shopper to know about the element carrying it
+"""
+type CpqMessageType {
+  """How much the message matters"""
+  severity: CpqMessageSeverity!
+
+  """The message, in the requested language"""
+  text: String
+}
+
+"""How much a message matters to the shopper"""
+enum CpqMessageSeverity {
+  """A severity added to cpq after this API was built, or none at all"""
+  UNKNOWN
+
+  """Explains something without demanding action"""
+  INFO
+
+  """
+  Flags something the shopper should look at, without blocking the configuration
+  """
+  WARNING
+
+  """Keeps the configuration from being valid"""
+  ERROR
+}
+
+"""
+A part of a configuration, holding variables, option groups and further sections
+"""
+type CpqSectionType {
+  """The section id"""
+  id: String
+
+  """The section name, in the requested language"""
+  name: String
+
+  """The section description, in the requested language"""
+  description: String
+
+  """'false' when the shopper's other choices rule this section out"""
+  visible: Boolean!
+
+  """
+  Orders this section against every other member of the same parent, its sibling sections, variables and option groups alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+  """
+  sortIndex: Int
+
+  """Sections nested in this one"""
+  sections: [CpqSectionType]
+
+  """Variables in this section"""
+  variables: [CpqVariableType]
+
+  """Option groups in this section"""
+  optionGroups: [CpqOptionGroupType]
+
+  """Messages about this section"""
+  messages: [CpqMessageType]
+}
+
+"""
+A single value the shopper sets, such as a measurement or a free-text engraving
+"""
+type CpqVariableType {
+  """The variable id"""
+  id: String
+
+  """The variable name, in the requested language"""
+  name: String
+
+  """The variable description, in the requested language"""
+  description: String
+
+  """The type value and defaultValue carry"""
+  valueType: CpqVariableValueType!
+
+  """The value the variable currently holds"""
+  value: CpqValue
+
+  """The value the variable takes when nothing sets it"""
+  defaultValue: CpqValue
+
+  """
+  'true' when the configuration is not valid until this variable holds a value
+  """
+  required: Boolean!
+
+  """'false' when the shopper's other choices rule this variable out"""
+  available: Boolean!
+
+  """
+  'true' when the ERP sets the value itself, from a formula or another element it follows, and a change to it is refused. A read-only variable that is required and has no value is waiting on the inputs it is computed from, not on the shopper.
+  """
+  readOnly: Boolean!
+
+  """The lowest value a numeric variable takes"""
+  min: Decimal
+
+  """The highest value a numeric variable takes"""
+  max: Decimal
+
+  """
+  The increment the value has to land on between the minimum and the maximum
+  """
+  step: Decimal
+
+  """How many decimals a numeric value carries"""
+  decimals: Int
+
+  """The unit the value is measured in, such as 'mm'"""
+  unit: String
+
+  """Why the variable is available the way it is"""
+  selectionSource: CpqSelectionSource!
+
+  """
+  Where the current value came from. Whether it can be changed is 'readOnly'.
+  """
+  valueSource: CpqValueSource!
+
+  """
+  Orders this variable against every other member of the same section, its sibling variables, the option groups and the nested sections alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+  """
+  sortIndex: Int
+
+  """Messages about this variable"""
+  messages: [CpqMessageType]
+}
+
+"""
+A configuration variable's value: a string, a number or a boolean, depending on the variable's own valueType. A date is a string.
+"""
+scalar CpqValue
+
+"""
+Why an option is selected or deselected, or a variable available, the way it is
+"""
+enum CpqSelectionSource {
+  """
+  A source the ERP reported that neither cpq nor this API has a name for, or none at all
+  """
+  UNKNOWN
+
+  """Set when the configuration was created, and not touched since"""
+  INITIAL
+
+  """Set by the shopper"""
+  MANUAL
+
+  """Selected by a rule the ERP evaluated"""
+  RULE_SELECTED
+
+  """Deselected by a rule the ERP evaluated"""
+  RULE_DESELECTED
+
+  """Set by a rule on the option group rather than on the option itself"""
+  GROUP_RULE
+
+  """
+  Fixed for the lifetime of the configuration. The shopper cannot change it.
+  """
+  LOCKED
+
+  """
+  Fixed while the shopper's other choices hold, and changeable again once they change
+  """
+  TEMPORARILY_LOCKED
+
+  """
+  No selection state reported, which is the resting state of an untouched unselected option
+  """
+  NONE
+}
+
+"""Where a variable's current value came from"""
+enum CpqValueSource {
+  """
+  A source the ERP reported that neither cpq nor this API has a name for, or none at all
+  """
+  UNKNOWN
+
+  """Set when the configuration was created, and not touched since"""
+  INITIAL
+
+  """Entered by the shopper"""
+  MANUAL
+
+  """Computed by a formula the ERP evaluated"""
+  FORMULA
+
+  """Taken from another variable this one is linked to"""
+  LINKED
+
+  """A default the ERP fell back to because nothing else supplied a value"""
+  FALLBACK
+}
+
+"""
+A set of options the shopper chooses from, which may itself hold further groups
+"""
+type CpqOptionGroupType {
+  """The option group id"""
+  id: String
+
+  """The provider's own code for the group"""
+  code: String
+
+  """The option group name, in the requested language"""
+  name: String
+
+  """The option group description, in the requested language"""
+  description: String
+
+  """'false' when the shopper's other choices rule this group out"""
+  available: Boolean!
+
+  """How many options have to be selected"""
+  minSelections: Int
+
+  """
+  How many options may be selected at once. One means the group is single-select.
+  """
+  maxSelections: Int
+
+  """The lowest quantity an option in this group takes"""
+  minQuantity: Decimal
+
+  """The highest quantity an option in this group takes"""
+  maxQuantity: Decimal
+
+  """'true' when the shopper may set an option's quantity in this group"""
+  quantityEditable: Boolean!
+
+  """
+  Orders this group against every other member of the same parent, its sibling groups and, where the parent is a section, that section's variables and nested sections. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+  """
+  sortIndex: Int
+
+  """Option groups nested in this one"""
+  optionGroups: [CpqOptionGroupType]
+
+  """The options in this group"""
+  options: [CpqOptionType]
+
+  """Messages about this option group"""
+  messages: [CpqMessageType]
+}
+
+"""One selectable row in an option group"""
+type CpqOptionType {
+  """The option id"""
+  id: String
+
+  """Distinguishes repeated copies of the same option within one group"""
+  instanceId: String
+
+  """The article number of the product this option adds"""
+  articleNumber: String
+
+  """
+  The ERP's name for this option, in the requested language: the merchant's own label for the row inside this configuration where there is one, and the description of the part this option adds otherwise. An option is a row inside the ERP's configuration, so the ERP names it, and under Monitor, where a part description is mandatory, it is filled for every option whose part is in the register. That is a different lookup from 'product', which resolves the same article number against the Geins catalogue, so an option commonly carries a name with no product beside it. A storefront wanting its own name, images or copy overrides from 'product'; the two disagreeing is ordinary rather than a defect. Empty means the ERP filled neither, and null means a cpq that predates the rename and is still answering 'providerLabel', which is every build until cpq is deployed rather than merely merged.
+  """
+  name: String
+
+  """
+  The option description, in the requested language. This is not the part description 'name' can fall back to.
+  """
+  description: String
+
+  """'true' when the option is currently selected"""
+  selected: Boolean!
+
+  """'false' when the shopper's other choices rule this option out"""
+  available: Boolean!
+
+  """
+  'true' when the option's selection is fixed and a change to it is refused. A lock the caller set does not make an option read-only: the caller can still change or unlock it. Always 'false' under Monitor.
+  """
+  readOnly: Boolean!
+
+  """Why the option is selected or deselected the way it is"""
+  selectionSource: CpqSelectionSource!
+
+  """How many of this option are selected"""
+  quantity: Decimal!
+
+  """The quantity the option takes when it is selected without one"""
+  defaultQuantity: Decimal!
+
+  """The lowest quantity this option takes"""
+  minQuantity: Decimal
+
+  """The highest quantity this option takes"""
+  maxQuantity: Decimal
+
+  """
+  What one of this option costs according to the ERP, and what the cart is charged for it. cpq reports net only, so the inc-VAT side is worked out here from the configured article's VAT rate in this market, not this option's own product's, because the configured product is invoiced as one line. It equals the net where the configured article carries no rate. This is not product.unitPrice.
+  """
+  unitPrice: PriceType
+
+  """The discount the ERP applied to this option, in percent"""
+  discountPercent: Decimal
+
+  """
+  The Geins product the article number names, resolved in this same call. Null when no active product in the market carries it, which is ordinary: an ERP part number is not always a sellable article. Its unitPrice is the catalogue price with campaigns, price lists and customer prices applied, which is not what a CPQ account charges for the option.
+  """
+  product: ProductType
+
+  """Messages about this option"""
+  messages: [CpqMessageType]
+}
+
+"""
+One change to apply to a configuration. Which fields carry meaning depends on the type: a variable change reads variableId and value, an option change reads optionId, instanceId, selected, quantity and lock, and a quantity change reads only quantity.
+"""
+input CpqConfigurationChangeInputType {
+  """Which part of the configuration the change acts on"""
+  type: CpqConfigurationChangeType!
+
+  """The variable to set, for a variable change"""
+  variableId: String
+
+  """The value to set, for a variable change"""
+  value: CpqValue
+
+  """The option to act on, for an option change"""
+  optionId: String
+
+  """Which copy of the option to act on, for an option change"""
+  instanceId: String
+
+  """Whether to select or deselect the option, for an option change"""
+  selected: Boolean
+
+  """
+  Whether to pin the option against later rule cascades, for an option change. 'NONE' leaves an existing pin alone, which is also what omitting it does.
+  """
+  lock: CpqOptionLock
+
+  """
+  On an option change the option's quantity; on a quantity change how many of the configured product are being ordered
+  """
+  quantity: Decimal
+}
+
+enum CpqConfigurationChangeType {
+  VARIABLE
+  OPTION
+  QUANTITY
+}
+
+enum CpqOptionLock {
+  NONE
+  LOCK
+  UNLOCK
+}
+
+"""
+A configuration frozen at the price it was committed at. A cart line carries the committed id and not the session id, because carts outlive sessions.
+"""
+type CpqCommittedConfigurationType {
+  """
+  The id to pass as a cart item's configurationId when adding the configured product to a cart
+  """
+  committedConfigurationId: String!
+
+  """The session this was committed from"""
+  configurationId: String
+
+  """The article number of the configured product"""
+  articleNumber: String
+
+  """How many of the configured product were committed"""
+  quantity: Decimal!
+
+  """
+  The frozen price of one configured product. cpq reports net only, so the inc-VAT side is worked out here from the article's VAT rate in this market, and equals the net where no Geins product carries one.
+  """
+  unitPrice: PriceType
+
+  """The discount the ERP applied, in percent"""
+  discountPercent: Decimal
+
+  """The weight of one configured product, in the ERP's own unit"""
+  weightPerUnit: Decimal
+
+  """
+  The selections in a form a cart line can show without re-reading the configuration
+  """
+  summary: [CpqCommittedConfigurationLineType]
+}
+
+"""The expiry a renewed configuration session now answers until"""
+type CpqConfigurationRenewalType {
+  """When the session stops answering, after the renewal"""
+  expiresAt: DateTimeOffset!
+}
+
+"""
+The `DateTimeOffset` scalar type represents a date, time and offset from UTC. `DateTimeOffset` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+"""
+scalar DateTimeOffset

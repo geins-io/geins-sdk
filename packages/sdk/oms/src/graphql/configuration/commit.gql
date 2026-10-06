@@ -1,0 +1,18 @@
+#import "../fragments/price.gql"
+mutation commitConfiguration($configurationId: String!, $channelId: String, $languageId: String, $marketId: String) {
+  commitConfiguration(configurationId: $configurationId, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+    committedConfigurationId
+    configurationId
+    articleNumber
+    quantity
+    unitPrice {
+      ...OmsPrice
+    }
+    discountPercent
+    weightPerUnit
+    summary {
+      label
+      value
+    }
+  }
+}

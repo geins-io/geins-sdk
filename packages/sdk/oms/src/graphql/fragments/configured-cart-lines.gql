@@ -1,0 +1,14 @@
+fragment CpqConfiguredCartLines on CartType {
+  id
+  items {
+    id
+    quantity
+    configurationId
+    configuration {
+      summary {
+        label
+        value
+      }
+    }
+  }
+}

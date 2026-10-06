@@ -12,12 +12,16 @@ export interface Scalars {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** A configuration variable's value: a string, a number or a boolean, depending on the variable's own valueType. A date is a string. */
+  CpqValue: { input: string | number | boolean | null; output: string | number | boolean | null; }
   /**
    * The `DateTime` scalar type represents a date and time. `DateTime` expects
    * timestamps to be formatted in accordance with the
    * [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
    */
   DateTime: { input: string; output: string; }
+  /** The `DateTimeOffset` scalar type represents a date, time and offset from UTC. `DateTimeOffset` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard. */
+  DateTimeOffset: { input: string; output: string; }
   Decimal: { input: number; output: number; }
   Guid: { input: string; output: string; }
   Long: { input: number; output: number; }
@@ -225,6 +229,7 @@ export interface GeinsCartGroupInputTypeType {
 }
 
 export interface GeinsCartItemInputTypeType {
+  configurationId?: InputMaybe<Scalars['String']['input']>;
   groupKey?: InputMaybe<Scalars['ID']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   message?: InputMaybe<Scalars['String']['input']>;
@@ -236,6 +241,10 @@ export interface GeinsCartItemInputTypeType {
 export interface GeinsCartItemTypeType {
   /** Campaign */
   campaign?: Maybe<GeinsCampaignTypeType>;
+  /** What configurationId names, as it was committed. Null on an unconfigured cart item, and on a configured one added before the configuration was copied onto cart items. On an order it is filled in by getOrder and getOrderPublic only, and is null there where cpq could not answer. getOrders and getCompanyOrders always answer null. */
+  configuration?: Maybe<GeinsCpqCartItemConfigurationTypeType>;
+  /** The committed cpq configuration this cart item is */
+  configurationId?: Maybe<Scalars['String']['output']>;
   /** The key of the group that this cart item belong to */
   groupKey?: Maybe<Scalars['ID']['output']>;
   /** Cart item Id */
@@ -667,6 +676,390 @@ export interface GeinsCountryTypeType {
   name: Scalars['String']['output'];
 }
 
+/** The committed configuration a cart item is. On a cart it was copied onto the item when its configuration id was set, and reading it makes no call to cpq. On a single order it is read from cpq with the order. */
+export interface GeinsCpqCartItemConfigurationTypeType {
+  /** The article number of the configured product */
+  articleNumber?: Maybe<Scalars['String']['output']>;
+  /** The committed configuration's id, the same as the cart item's configurationId. Null on an order, whose items carry no configurationId either, so that a reorder cannot reuse a price that is no longer quotable. */
+  committedConfigurationId?: Maybe<Scalars['String']['output']>;
+  /** The discount the ERP applied at commit, in percent */
+  discountPercent?: Maybe<Scalars['Decimal']['output']>;
+  /** The same selections as 'summary', structured by section. Null on a configuration committed before cpq recorded the structure. */
+  sections?: Maybe<Array<Maybe<GeinsCpqCommittedSectionTypeType>>>;
+  /** The selections as one line each, in the language the configuration was committed in */
+  summary?: Maybe<Array<Maybe<GeinsCpqCommittedConfigurationLineTypeType>>>;
+  /** The weight of one configured product, in the ERP's own unit */
+  weightPerUnit?: Maybe<Scalars['Decimal']['output']>;
+}
+
+/** One line of a committed configuration's human-readable summary */
+export interface GeinsCpqCommittedConfigurationLineTypeType {
+  /** What was chosen, in the requested language */
+  label?: Maybe<Scalars['String']['output']>;
+  /** The choice, in the requested language */
+  value?: Maybe<Scalars['String']['output']>;
+}
+
+/** A configuration frozen at the price it was committed at. A cart line carries the committed id and not the session id, because carts outlive sessions. */
+export interface GeinsCpqCommittedConfigurationTypeType {
+  /** The article number of the configured product */
+  articleNumber?: Maybe<Scalars['String']['output']>;
+  /** The id to pass as a cart item's configurationId when adding the configured product to a cart */
+  committedConfigurationId: Scalars['String']['output'];
+  /** The session this was committed from */
+  configurationId?: Maybe<Scalars['String']['output']>;
+  /** The discount the ERP applied, in percent */
+  discountPercent?: Maybe<Scalars['Decimal']['output']>;
+  /** How many of the configured product were committed */
+  quantity: Scalars['Decimal']['output'];
+  /** The selections in a form a cart line can show without re-reading the configuration */
+  summary?: Maybe<Array<Maybe<GeinsCpqCommittedConfigurationLineTypeType>>>;
+  /** The frozen price of one configured product. cpq reports net only, so the inc-VAT side is worked out here from the article's VAT rate in this market, and equals the net where no Geins product carries one. */
+  unitPrice?: Maybe<GeinsPriceTypeType>;
+  /** The weight of one configured product, in the ERP's own unit */
+  weightPerUnit?: Maybe<Scalars['Decimal']['output']>;
+}
+
+/** An option group of a committed configuration, holding only its selected options */
+export interface GeinsCpqCommittedOptionGroupTypeType {
+  /** The provider's own code for the group */
+  code?: Maybe<Scalars['String']['output']>;
+  /** The option group id */
+  id?: Maybe<Scalars['String']['output']>;
+  /** The option group name, in the language the configuration was committed in */
+  name?: Maybe<Scalars['String']['output']>;
+  /** The groups nested in this one that hold a selection */
+  optionGroups?: Maybe<Array<Maybe<GeinsCpqCommittedOptionGroupTypeType>>>;
+  /** The options selected in this group. Empty where only a nested group holds a selection. */
+  options?: Maybe<Array<Maybe<GeinsCpqCommittedOptionTypeType>>>;
+  /** Orders this group against every other member of the same parent, its sibling groups and, where the parent is a section, that section's variables and nested sections. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in. */
+  sortIndex?: Maybe<Scalars['Int']['output']>;
+}
+
+/** An option the shopper had selected when the configuration was committed */
+export interface GeinsCpqCommittedOptionTypeType {
+  /** The article number of the product this option adds, when it maps to one */
+  articleNumber?: Maybe<Scalars['String']['output']>;
+  /** The discount already reflected in 'unitPrice', in percent */
+  discountPercent?: Maybe<Scalars['Decimal']['output']>;
+  /** The option id */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Distinguishes repeated copies of the same option within one group */
+  instanceId?: Maybe<Scalars['String']['output']>;
+  /** The option's name as the summary shows it, in the language the configuration was committed in. Never empty. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** The Geins product the article number names today, read with the cart in one batch for all its items and with no call to cpq. Null when no active product in the market carries it, which is ordinary: an ERP part number is not always a sellable article. Also null on every option of the cart when the product read failed, in which case the cart's items are still answered. It is read in the request's market, which a caller passing its own marketId can make differ from the one the cart item was priced in. Its unitPrice is today's catalogue price with campaigns, price lists and customer prices applied, not what the option cost at commit, which is this option's 'unitPrice'. */
+  product?: Maybe<GeinsProductTypeType>;
+  /** How many of the option were selected */
+  quantity: Scalars['Decimal']['output'];
+  /** What one of the option cost at commit, with its own discount already taken off. cpq froze it net, so the inc-VAT side is worked out from the cart item's own VAT rate. Option prices need not add up to the cart item's price, which comes from the frozen total and the customer's agreement. */
+  unitPrice?: Maybe<GeinsPriceTypeType>;
+}
+
+/** A section of a committed configuration, holding only what the shopper saw and chose */
+export interface GeinsCpqCommittedSectionTypeType {
+  /** The section id */
+  id?: Maybe<Scalars['String']['output']>;
+  /** The section name, in the language the configuration was committed in */
+  name?: Maybe<Scalars['String']['output']>;
+  /** The option groups in this section holding a selected option, directly or in a nested group */
+  optionGroups?: Maybe<Array<Maybe<GeinsCpqCommittedOptionGroupTypeType>>>;
+  /** The sections nested in this one that are not empty */
+  sections?: Maybe<Array<Maybe<GeinsCpqCommittedSectionTypeType>>>;
+  /** Orders this section against every other member of the same parent, its sibling sections, variables and option groups alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in. */
+  sortIndex?: Maybe<Scalars['Int']['output']>;
+  /** The variables in this section that carry a value */
+  variables?: Maybe<Array<Maybe<GeinsCpqCommittedVariableTypeType>>>;
+}
+
+/** A variable of a committed configuration and the value it was committed with */
+export interface GeinsCpqCommittedVariableTypeType {
+  /** How many decimals a number is written with. Null for any other value type. */
+  decimals?: Maybe<Scalars['Int']['output']>;
+  /** The variable id */
+  id?: Maybe<Scalars['String']['output']>;
+  /** The variable name, in the language the configuration was committed in */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Orders this variable against every other member of the same section, its sibling variables, the option groups and the nested sections alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in. */
+  sortIndex?: Maybe<Scalars['Int']['output']>;
+  /** The unit the value is measured in, such as 'mm' */
+  unit?: Maybe<Scalars['String']['output']>;
+  /** The value in invariant culture and without the unit: a number with exactly 'decimals' decimals, a date as yyyy-MM-dd, and a boolean as true or false */
+  value?: Maybe<Scalars['String']['output']>;
+  /** The type 'value' is written in */
+  valueType: GeinsCpqVariableValueType;
+}
+
+/** One change to apply to a configuration. Which fields carry meaning depends on the type: a variable change reads variableId and value, an option change reads optionId, instanceId, selected, quantity and lock, and a quantity change reads only quantity. */
+export interface GeinsCpqConfigurationChangeInputTypeType {
+  /** Which copy of the option to act on, for an option change */
+  instanceId?: InputMaybe<Scalars['String']['input']>;
+  /** Whether to pin the option against later rule cascades, for an option change. 'NONE' leaves an existing pin alone, which is also what omitting it does. */
+  lock?: InputMaybe<GeinsCpqOptionLock>;
+  /** The option to act on, for an option change */
+  optionId?: InputMaybe<Scalars['String']['input']>;
+  /** On an option change the option's quantity; on a quantity change how many of the configured product are being ordered */
+  quantity?: InputMaybe<Scalars['Decimal']['input']>;
+  /** Whether to select or deselect the option, for an option change */
+  selected?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Which part of the configuration the change acts on */
+  type: GeinsCpqConfigurationChangeType;
+  /** The value to set, for a variable change */
+  value?: InputMaybe<Scalars['CpqValue']['input']>;
+  /** The variable to set, for a variable change */
+  variableId?: InputMaybe<Scalars['String']['input']>;
+}
+
+export enum GeinsCpqConfigurationChangeType {
+  OptionType = 'OPTION',
+  QuantityType = 'QUANTITY',
+  VariableType = 'VARIABLE'
+}
+
+/** The expiry a renewed configuration session now answers until */
+export interface GeinsCpqConfigurationRenewalTypeType {
+  /** When the session stops answering, after the renewal */
+  expiresAt: Scalars['DateTimeOffset']['output'];
+}
+
+/** A live product configuration session. Every call that touches it answers the whole re-evaluated state, so replace what is held rather than merging into it. */
+export interface GeinsCpqConfigurationTypeType {
+  /** The article number of the product being configured */
+  articleNumber?: Maybe<Scalars['String']['output']>;
+  /** The session id. Every later call on this configuration takes it. */
+  configurationId: Scalars['String']['output'];
+  /** The discount the ERP applied, in percent */
+  discountPercent?: Maybe<Scalars['Decimal']['output']>;
+  /** When the session stops answering and the shopper has to start a new one. Push it out with renewConfiguration. */
+  expiresAt: Scalars['DateTimeOffset']['output'];
+  /** 'true' when the configuration is complete enough to be committed and ordered */
+  isValid: Scalars['Boolean']['output'];
+  /** Messages about the configuration as a whole */
+  messages?: Maybe<Array<Maybe<GeinsCpqMessageTypeType>>>;
+  /** How many of the configured product are being ordered */
+  quantity: Scalars['Decimal']['output'];
+  /** The configuration's top level sections */
+  sections?: Maybe<Array<Maybe<GeinsCpqSectionTypeType>>>;
+  /** The provider template this configuration was opened from */
+  templateId?: Maybe<Scalars['String']['output']>;
+  /** The version of the provider template this configuration was opened from */
+  templateVersion?: Maybe<Scalars['String']['output']>;
+  /** What one configured product costs according to the ERP. cpq reports net only, so the inc-VAT side is worked out here from the article's VAT rate in this market, and equals the net where no Geins product carries one. 'regularPrice' and 'isDiscounted' reconstruct 'discountPercent'. */
+  unitPrice?: Maybe<GeinsPriceTypeType>;
+  /** The weight of one configured product, in the ERP's own unit */
+  weightPerUnit?: Maybe<Scalars['Decimal']['output']>;
+}
+
+/** How much a message matters to the shopper */
+export enum GeinsCpqMessageSeverity {
+  /** Keeps the configuration from being valid */
+  ErrorType = 'ERROR',
+  /** Explains something without demanding action */
+  InfoType = 'INFO',
+  /** A severity added to cpq after this API was built, or none at all */
+  UnknownType = 'UNKNOWN',
+  /** Flags something the shopper should look at, without blocking the configuration */
+  WarningType = 'WARNING'
+}
+
+/** Something the provider wants the shopper to know about the element carrying it */
+export interface GeinsCpqMessageTypeType {
+  /** How much the message matters */
+  severity: GeinsCpqMessageSeverity;
+  /** The message, in the requested language */
+  text?: Maybe<Scalars['String']['output']>;
+}
+
+/** A set of options the shopper chooses from, which may itself hold further groups */
+export interface GeinsCpqOptionGroupTypeType {
+  /** 'false' when the shopper's other choices rule this group out */
+  available: Scalars['Boolean']['output'];
+  /** The provider's own code for the group */
+  code?: Maybe<Scalars['String']['output']>;
+  /** The option group description, in the requested language */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The option group id */
+  id?: Maybe<Scalars['String']['output']>;
+  /** The highest quantity an option in this group takes */
+  maxQuantity?: Maybe<Scalars['Decimal']['output']>;
+  /** How many options may be selected at once. One means the group is single-select. */
+  maxSelections?: Maybe<Scalars['Int']['output']>;
+  /** Messages about this option group */
+  messages?: Maybe<Array<Maybe<GeinsCpqMessageTypeType>>>;
+  /** The lowest quantity an option in this group takes */
+  minQuantity?: Maybe<Scalars['Decimal']['output']>;
+  /** How many options have to be selected */
+  minSelections?: Maybe<Scalars['Int']['output']>;
+  /** The option group name, in the requested language */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Option groups nested in this one */
+  optionGroups?: Maybe<Array<Maybe<GeinsCpqOptionGroupTypeType>>>;
+  /** The options in this group */
+  options?: Maybe<Array<Maybe<GeinsCpqOptionTypeType>>>;
+  /** 'true' when the shopper may set an option's quantity in this group */
+  quantityEditable: Scalars['Boolean']['output'];
+  /** Orders this group against every other member of the same parent, its sibling groups and, where the parent is a section, that section's variables and nested sections. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in. */
+  sortIndex?: Maybe<Scalars['Int']['output']>;
+}
+
+export enum GeinsCpqOptionLock {
+  LockType = 'LOCK',
+  NoneType = 'NONE',
+  UnlockType = 'UNLOCK'
+}
+
+/** One selectable row in an option group */
+export interface GeinsCpqOptionTypeType {
+  /** The article number of the product this option adds */
+  articleNumber?: Maybe<Scalars['String']['output']>;
+  /** 'false' when the shopper's other choices rule this option out */
+  available: Scalars['Boolean']['output'];
+  /** The quantity the option takes when it is selected without one */
+  defaultQuantity: Scalars['Decimal']['output'];
+  /** The option description, in the requested language. This is not the part description 'name' can fall back to. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The discount the ERP applied to this option, in percent */
+  discountPercent?: Maybe<Scalars['Decimal']['output']>;
+  /** The option id */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Distinguishes repeated copies of the same option within one group */
+  instanceId?: Maybe<Scalars['String']['output']>;
+  /** The highest quantity this option takes */
+  maxQuantity?: Maybe<Scalars['Decimal']['output']>;
+  /** Messages about this option */
+  messages?: Maybe<Array<Maybe<GeinsCpqMessageTypeType>>>;
+  /** The lowest quantity this option takes */
+  minQuantity?: Maybe<Scalars['Decimal']['output']>;
+  /** The ERP's name for this option, in the requested language: the merchant's own label for the row inside this configuration where there is one, and the description of the part this option adds otherwise. An option is a row inside the ERP's configuration, so the ERP names it, and under Monitor, where a part description is mandatory, it is filled for every option whose part is in the register. That is a different lookup from 'product', which resolves the same article number against the Geins catalogue, so an option commonly carries a name with no product beside it. A storefront wanting its own name, images or copy overrides from 'product'; the two disagreeing is ordinary rather than a defect. Empty means the ERP filled neither, and null means a cpq that predates the rename and is still answering 'providerLabel', which is every build until cpq is deployed rather than merely merged. */
+  name?: Maybe<Scalars['String']['output']>;
+  /** The Geins product the article number names, resolved in this same call. Null when no active product in the market carries it, which is ordinary: an ERP part number is not always a sellable article. Its unitPrice is the catalogue price with campaigns, price lists and customer prices applied, which is not what a CPQ account charges for the option. */
+  product?: Maybe<GeinsProductTypeType>;
+  /** How many of this option are selected */
+  quantity: Scalars['Decimal']['output'];
+  /** 'true' when the option's selection is fixed and a change to it is refused. A lock the caller set does not make an option read-only: the caller can still change or unlock it. Always 'false' under Monitor. */
+  readOnly: Scalars['Boolean']['output'];
+  /** 'true' when the option is currently selected */
+  selected: Scalars['Boolean']['output'];
+  /** Why the option is selected or deselected the way it is */
+  selectionSource: GeinsCpqSelectionSource;
+  /** What one of this option costs according to the ERP, and what the cart is charged for it. cpq reports net only, so the inc-VAT side is worked out here from the configured article's VAT rate in this market, not this option's own product's, because the configured product is invoiced as one line. It equals the net where the configured article carries no rate. This is not product.unitPrice. */
+  unitPrice?: Maybe<GeinsPriceTypeType>;
+}
+
+/** A part of a configuration, holding variables, option groups and further sections */
+export interface GeinsCpqSectionTypeType {
+  /** The section description, in the requested language */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The section id */
+  id?: Maybe<Scalars['String']['output']>;
+  /** Messages about this section */
+  messages?: Maybe<Array<Maybe<GeinsCpqMessageTypeType>>>;
+  /** The section name, in the requested language */
+  name?: Maybe<Scalars['String']['output']>;
+  /** Option groups in this section */
+  optionGroups?: Maybe<Array<Maybe<GeinsCpqOptionGroupTypeType>>>;
+  /** Sections nested in this one */
+  sections?: Maybe<Array<Maybe<GeinsCpqSectionTypeType>>>;
+  /** Orders this section against every other member of the same parent, its sibling sections, variables and option groups alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in. */
+  sortIndex?: Maybe<Scalars['Int']['output']>;
+  /** Variables in this section */
+  variables?: Maybe<Array<Maybe<GeinsCpqVariableTypeType>>>;
+  /** 'false' when the shopper's other choices rule this section out */
+  visible: Scalars['Boolean']['output'];
+}
+
+/** Why an option is selected or deselected, or a variable available, the way it is */
+export enum GeinsCpqSelectionSource {
+  /** Set by a rule on the option group rather than on the option itself */
+  GroupRuleType = 'GROUP_RULE',
+  /** Set when the configuration was created, and not touched since */
+  InitialType = 'INITIAL',
+  /** Fixed for the lifetime of the configuration. The shopper cannot change it. */
+  LockedType = 'LOCKED',
+  /** Set by the shopper */
+  ManualType = 'MANUAL',
+  /** No selection state reported, which is the resting state of an untouched unselected option */
+  NoneType = 'NONE',
+  /** Deselected by a rule the ERP evaluated */
+  RuleDeselectedType = 'RULE_DESELECTED',
+  /** Selected by a rule the ERP evaluated */
+  RuleSelectedType = 'RULE_SELECTED',
+  /** Fixed while the shopper's other choices hold, and changeable again once they change */
+  TemporarilyLockedType = 'TEMPORARILY_LOCKED',
+  /** A source the ERP reported that neither cpq nor this API has a name for, or none at all */
+  UnknownType = 'UNKNOWN'
+}
+
+/** Where a variable's current value came from */
+export enum GeinsCpqValueSource {
+  /** A default the ERP fell back to because nothing else supplied a value */
+  FallbackType = 'FALLBACK',
+  /** Computed by a formula the ERP evaluated */
+  FormulaType = 'FORMULA',
+  /** Set when the configuration was created, and not touched since */
+  InitialType = 'INITIAL',
+  /** Taken from another variable this one is linked to */
+  LinkedType = 'LINKED',
+  /** Entered by the shopper */
+  ManualType = 'MANUAL',
+  /** A source the ERP reported that neither cpq nor this API has a name for, or none at all */
+  UnknownType = 'UNKNOWN'
+}
+
+/** A single value the shopper sets, such as a measurement or a free-text engraving */
+export interface GeinsCpqVariableTypeType {
+  /** 'false' when the shopper's other choices rule this variable out */
+  available: Scalars['Boolean']['output'];
+  /** How many decimals a numeric value carries */
+  decimals?: Maybe<Scalars['Int']['output']>;
+  /** The value the variable takes when nothing sets it */
+  defaultValue?: Maybe<Scalars['CpqValue']['output']>;
+  /** The variable description, in the requested language */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The variable id */
+  id?: Maybe<Scalars['String']['output']>;
+  /** The highest value a numeric variable takes */
+  max?: Maybe<Scalars['Decimal']['output']>;
+  /** Messages about this variable */
+  messages?: Maybe<Array<Maybe<GeinsCpqMessageTypeType>>>;
+  /** The lowest value a numeric variable takes */
+  min?: Maybe<Scalars['Decimal']['output']>;
+  /** The variable name, in the requested language */
+  name?: Maybe<Scalars['String']['output']>;
+  /** 'true' when the ERP sets the value itself, from a formula or another element it follows, and a change to it is refused. A read-only variable that is required and has no value is waiting on the inputs it is computed from, not on the shopper. */
+  readOnly: Scalars['Boolean']['output'];
+  /** 'true' when the configuration is not valid until this variable holds a value */
+  required: Scalars['Boolean']['output'];
+  /** Why the variable is available the way it is */
+  selectionSource: GeinsCpqSelectionSource;
+  /** Orders this variable against every other member of the same section, its sibling variables, the option groups and the nested sections alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in. */
+  sortIndex?: Maybe<Scalars['Int']['output']>;
+  /** The increment the value has to land on between the minimum and the maximum */
+  step?: Maybe<Scalars['Decimal']['output']>;
+  /** The unit the value is measured in, such as 'mm' */
+  unit?: Maybe<Scalars['String']['output']>;
+  /** The value the variable currently holds */
+  value?: Maybe<Scalars['CpqValue']['output']>;
+  /** Where the current value came from. Whether it can be changed is 'readOnly'. */
+  valueSource: GeinsCpqValueSource;
+  /** The type value and defaultValue carry */
+  valueType: GeinsCpqVariableValueType;
+}
+
+/** The type a variable's value and default value carry */
+export enum GeinsCpqVariableValueType {
+  /** True or false */
+  BooleanType = 'BOOLEAN',
+  /** A date */
+  DateType = 'DATE',
+  /** A number, bounded by the variable's min, max and step */
+  NumberType = 'NUMBER',
+  /** Free text */
+  StringType = 'STRING',
+  /** A type added to cpq after this API was built. Read the value as the JSON it arrives as. */
+  UnknownType = 'UNKNOWN'
+}
+
 /** Type containing all information about the currency-type */
 export interface GeinsCurrencyTypeType {
   /** Currency code */
@@ -811,18 +1204,30 @@ export interface GeinsFilterValueTypeType {
 export interface GeinsGeinsMerchantApiMutationType {
   addPackageToCart?: Maybe<GeinsCartTypeType>;
   addToCart?: Maybe<GeinsCartTypeType>;
+  /** Applies a batch of changes to a configuration and returns the whole re-evaluated state. The whole batch succeeds or none of it does, and the answer replaces what is held rather than patching it. */
+  applyConfigurationChanges?: Maybe<GeinsCpqConfigurationTypeType>;
   /** Clears all items in the cart */
   clearCart?: Maybe<GeinsCartTypeType>;
   /** Clones the cart */
   cloneCart?: Maybe<GeinsCartTypeType>;
+  /** Freezes a configuration at its current price and returns the committed id, which is what a cart item's configurationId carries. */
+  commitConfiguration?: Maybe<GeinsCpqCommittedConfigurationTypeType>;
   commitReset?: Maybe<Scalars['Boolean']['output']>;
   /** Marks the cart as completed, and makes it read-only */
   completeCart?: Maybe<GeinsCartTypeType>;
+  /** Opens a product configuration session and returns its first evaluated state. The session settles its customer and its currency here and no later call moves them. */
+  createConfiguration?: Maybe<GeinsCpqConfigurationTypeType>;
   createOrUpdateCheckout?: Maybe<GeinsCheckoutTypeType>;
+  /** Abandons a configuration session. Reading it afterwards answers a 'ConfigurationGone' error. */
+  deleteConfiguration?: Maybe<Scalars['Boolean']['output']>;
   deleteUser?: Maybe<Scalars['Boolean']['output']>;
   monitorProductAvailability?: Maybe<Scalars['Boolean']['output']>;
   placeOrder?: Maybe<GeinsPlaceOrderResponseTypeType>;
   postProductReview?: Maybe<Scalars['Boolean']['output']>;
+  /** Pushes out a configuration session's expiry and reports the new one. */
+  renewConfiguration?: Maybe<GeinsCpqConfigurationRenewalTypeType>;
+  /** Opens a cart item's committed configuration again as a session to edit, at the item's quantity and at today's price. Commit the session and pass the new committed id to updateCartItem to put it on the item. Until then the item keeps the configuration it has. */
+  reopenCartItemConfiguration?: Maybe<GeinsCpqConfigurationTypeType>;
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
   /** Set custom merchant data on the cart */
   setCartMerchantData?: Maybe<GeinsCartTypeType>;
@@ -859,6 +1264,15 @@ export interface GeinsGeinsMerchantApiMutationAddToCartArgsType {
 }
 
 
+export interface GeinsGeinsMerchantApiMutationApplyConfigurationChangesArgsType {
+  changes: Array<GeinsCpqConfigurationChangeInputTypeType>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  configurationId: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
 export interface GeinsGeinsMerchantApiMutationClearCartArgsType {
   channelId?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
@@ -873,6 +1287,14 @@ export interface GeinsGeinsMerchantApiMutationCloneCartArgsType {
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
   resetPromotions?: InputMaybe<Scalars['Boolean']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationCommitConfigurationArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  configurationId: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
 }
 
 
@@ -893,10 +1315,28 @@ export interface GeinsGeinsMerchantApiMutationCompleteCartArgsType {
 }
 
 
+export interface GeinsGeinsMerchantApiMutationCreateConfigurationArgsType {
+  articleNumber?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+  productId?: InputMaybe<Scalars['Int']['input']>;
+  quantity: Scalars['Decimal']['input'];
+}
+
+
 export interface GeinsGeinsMerchantApiMutationCreateOrUpdateCheckoutArgsType {
   cartId: Scalars['String']['input'];
   channelId?: InputMaybe<Scalars['String']['input']>;
   checkout?: InputMaybe<GeinsCheckoutInputTypeType>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationDeleteConfigurationArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  configurationId: Scalars['String']['input'];
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
 }
@@ -935,6 +1375,23 @@ export interface GeinsGeinsMerchantApiMutationPostProductReviewArgsType {
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
   rating?: InputMaybe<Scalars['Int']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationRenewConfigurationArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  configurationId: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}
+
+
+export interface GeinsGeinsMerchantApiMutationReopenCartItemConfigurationArgsType {
+  cartId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  itemId: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
 }
 
 
@@ -1042,6 +1499,8 @@ export interface GeinsGeinsMerchantApiQueryType {
    * @deprecated Use Checkout instead
    */
   getCheckoutAndOrder?: Maybe<GeinsCheckoutAndOrderTypeType>;
+  /** Gets a live product configuration session in full. A session that has run out answers a 'ConfigurationGone' error, which is not the same as an id that never existed. */
+  getConfiguration?: Maybe<GeinsCpqConfigurationTypeType>;
   /** Get a menu */
   getMenuAtLocation?: Maybe<GeinsMenuTypeType>;
   /** Get a specific order with details */
@@ -1152,6 +1611,14 @@ export interface GeinsGeinsMerchantApiQueryGetCheckoutAndOrderArgsType {
   languageId?: InputMaybe<Scalars['String']['input']>;
   marketId?: InputMaybe<Scalars['String']['input']>;
   paymentType: GeinsPaymentType;
+}
+
+
+export interface GeinsGeinsMerchantApiQueryGetConfigurationArgsType {
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  configurationId: Scalars['String']['input'];
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
 }
 
 
@@ -3469,6 +3936,1751 @@ export type GeinsOmsAddressType = {
   phone: string
 };
 
+export type GeinsCpqConfiguredCartLinesType = {
+  id?: string | null,
+  items?: Array<{
+    id: string | number,
+    quantity: number,
+    configurationId?: string | null,
+    configuration?: {
+      summary?: Array<{
+        label?: string | null,
+        value?: string | null
+      } | null> | null
+    } | null
+  } | null> | null
+};
+
+export type GeinsCpqConfigurationType = {
+  configurationId: string,
+  expiresAt: string,
+  isValid: boolean,
+  articleNumber?: string | null,
+  quantity: number,
+  discountPercent?: number | null,
+  weightPerUnit?: number | null,
+  templateId?: string | null,
+  templateVersion?: string | null,
+  unitPrice?: {
+    __typename: 'PriceType',
+    sellingPriceIncVat: number,
+    sellingPriceExVat: number,
+    regularPriceIncVat: number,
+    regularPriceExVat: number,
+    discountIncVat: number,
+    discountExVat: number,
+    discountPercentage: number,
+    vat: number,
+    isDiscounted: boolean,
+    sellingPriceIncVatFormatted?: string | null,
+    sellingPriceExVatFormatted?: string | null,
+    regularPriceIncVatFormatted?: string | null,
+    regularPriceExVatFormatted?: string | null,
+    discountIncVatFormatted?: string | null,
+    discountExVatFormatted?: string | null,
+    vatFormatted?: string | null,
+    currency?: {
+      __typename: 'CurrencyType',
+      code: string,
+      symbol: string,
+      rate: number,
+      name: string
+    } | null
+  } | null,
+  messages?: Array<{
+    severity: GeinsCpqMessageSeverity,
+    text?: string | null
+  } | null> | null,
+  sections?: Array<{
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    visible: boolean,
+    sortIndex?: number | null,
+    sections?: Array<{
+      id?: string | null,
+      name?: string | null,
+      description?: string | null,
+      visible: boolean,
+      sortIndex?: number | null,
+      sections?: Array<{
+        id?: string | null,
+        name?: string | null,
+        description?: string | null,
+        visible: boolean,
+        sortIndex?: number | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          description?: string | null,
+          visible: boolean,
+          sortIndex?: number | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            description?: string | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | number | boolean | null | null,
+            defaultValue?: string | number | boolean | null | null,
+            required: boolean,
+            available: boolean,
+            readOnly: boolean,
+            min?: number | null,
+            max?: number | null,
+            step?: number | null,
+            decimals?: number | null,
+            unit?: string | null,
+            selectionSource: GeinsCpqSelectionSource,
+            valueSource: GeinsCpqValueSource,
+            sortIndex?: number | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                description?: string | null,
+                available: boolean,
+                minSelections?: number | null,
+                maxSelections?: number | null,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                quantityEditable: boolean,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  selected: boolean,
+                  available: boolean,
+                  readOnly: boolean,
+                  selectionSource: GeinsCpqSelectionSource,
+                  quantity: number,
+                  defaultQuantity: number,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null,
+                  product?: {
+                    productId: number,
+                    name?: string | null,
+                    articleNumber?: string | null,
+                    alias: string,
+                    canonicalUrl?: string | null,
+                    productImages?: Array<{
+                      fileName: string
+                    } | null> | null
+                  } | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        variables?: Array<{
+          id?: string | null,
+          name?: string | null,
+          description?: string | null,
+          valueType: GeinsCpqVariableValueType,
+          value?: string | number | boolean | null | null,
+          defaultValue?: string | number | boolean | null | null,
+          required: boolean,
+          available: boolean,
+          readOnly: boolean,
+          min?: number | null,
+          max?: number | null,
+          step?: number | null,
+          decimals?: number | null,
+          unit?: string | null,
+          selectionSource: GeinsCpqSelectionSource,
+          valueSource: GeinsCpqValueSource,
+          sortIndex?: number | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      variables?: Array<{
+        id?: string | null,
+        name?: string | null,
+        description?: string | null,
+        valueType: GeinsCpqVariableValueType,
+        value?: string | number | boolean | null | null,
+        defaultValue?: string | number | boolean | null | null,
+        required: boolean,
+        available: boolean,
+        readOnly: boolean,
+        min?: number | null,
+        max?: number | null,
+        step?: number | null,
+        decimals?: number | null,
+        unit?: string | null,
+        selectionSource: GeinsCpqSelectionSource,
+        valueSource: GeinsCpqValueSource,
+        sortIndex?: number | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        code?: string | null,
+        name?: string | null,
+        description?: string | null,
+        available: boolean,
+        minSelections?: number | null,
+        maxSelections?: number | null,
+        minQuantity?: number | null,
+        maxQuantity?: number | null,
+        quantityEditable: boolean,
+        sortIndex?: number | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          articleNumber?: string | null,
+          name?: string | null,
+          description?: string | null,
+          selected: boolean,
+          available: boolean,
+          readOnly: boolean,
+          selectionSource: GeinsCpqSelectionSource,
+          quantity: number,
+          defaultQuantity: number,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          discountPercent?: number | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null,
+          product?: {
+            productId: number,
+            name?: string | null,
+            articleNumber?: string | null,
+            alias: string,
+            canonicalUrl?: string | null,
+            productImages?: Array<{
+              fileName: string
+            } | null> | null
+          } | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null,
+    variables?: Array<{
+      id?: string | null,
+      name?: string | null,
+      description?: string | null,
+      valueType: GeinsCpqVariableValueType,
+      value?: string | number | boolean | null | null,
+      defaultValue?: string | number | boolean | null | null,
+      required: boolean,
+      available: boolean,
+      readOnly: boolean,
+      min?: number | null,
+      max?: number | null,
+      step?: number | null,
+      decimals?: number | null,
+      unit?: string | null,
+      selectionSource: GeinsCpqSelectionSource,
+      valueSource: GeinsCpqValueSource,
+      sortIndex?: number | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null,
+    optionGroups?: Array<{
+      id?: string | null,
+      code?: string | null,
+      name?: string | null,
+      description?: string | null,
+      available: boolean,
+      minSelections?: number | null,
+      maxSelections?: number | null,
+      minQuantity?: number | null,
+      maxQuantity?: number | null,
+      quantityEditable: boolean,
+      sortIndex?: number | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        code?: string | null,
+        name?: string | null,
+        description?: string | null,
+        available: boolean,
+        minSelections?: number | null,
+        maxSelections?: number | null,
+        minQuantity?: number | null,
+        maxQuantity?: number | null,
+        quantityEditable: boolean,
+        sortIndex?: number | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          articleNumber?: string | null,
+          name?: string | null,
+          description?: string | null,
+          selected: boolean,
+          available: boolean,
+          readOnly: boolean,
+          selectionSource: GeinsCpqSelectionSource,
+          quantity: number,
+          defaultQuantity: number,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          discountPercent?: number | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null,
+          product?: {
+            productId: number,
+            name?: string | null,
+            articleNumber?: string | null,
+            alias: string,
+            canonicalUrl?: string | null,
+            productImages?: Array<{
+              fileName: string
+            } | null> | null
+          } | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      options?: Array<{
+        id?: string | null,
+        instanceId?: string | null,
+        articleNumber?: string | null,
+        name?: string | null,
+        description?: string | null,
+        selected: boolean,
+        available: boolean,
+        readOnly: boolean,
+        selectionSource: GeinsCpqSelectionSource,
+        quantity: number,
+        defaultQuantity: number,
+        minQuantity?: number | null,
+        maxQuantity?: number | null,
+        discountPercent?: number | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        product?: {
+          productId: number,
+          name?: string | null,
+          articleNumber?: string | null,
+          alias: string,
+          canonicalUrl?: string | null,
+          productImages?: Array<{
+            fileName: string
+          } | null> | null
+        } | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null,
+    messages?: Array<{
+      severity: GeinsCpqMessageSeverity,
+      text?: string | null
+    } | null> | null
+  } | null> | null
+};
+
+export type GeinsCpqMessageType = {
+  severity: GeinsCpqMessageSeverity,
+  text?: string | null
+};
+
+export type GeinsCpqSectionFieldsType = {
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  visible: boolean,
+  sortIndex?: number | null,
+  variables?: Array<{
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    valueType: GeinsCpqVariableValueType,
+    value?: string | number | boolean | null | null,
+    defaultValue?: string | number | boolean | null | null,
+    required: boolean,
+    available: boolean,
+    readOnly: boolean,
+    min?: number | null,
+    max?: number | null,
+    step?: number | null,
+    decimals?: number | null,
+    unit?: string | null,
+    selectionSource: GeinsCpqSelectionSource,
+    valueSource: GeinsCpqValueSource,
+    sortIndex?: number | null,
+    messages?: Array<{
+      severity: GeinsCpqMessageSeverity,
+      text?: string | null
+    } | null> | null
+  } | null> | null,
+  optionGroups?: Array<{
+    id?: string | null,
+    code?: string | null,
+    name?: string | null,
+    description?: string | null,
+    available: boolean,
+    minSelections?: number | null,
+    maxSelections?: number | null,
+    minQuantity?: number | null,
+    maxQuantity?: number | null,
+    quantityEditable: boolean,
+    sortIndex?: number | null,
+    optionGroups?: Array<{
+      id?: string | null,
+      code?: string | null,
+      name?: string | null,
+      description?: string | null,
+      available: boolean,
+      minSelections?: number | null,
+      maxSelections?: number | null,
+      minQuantity?: number | null,
+      maxQuantity?: number | null,
+      quantityEditable: boolean,
+      sortIndex?: number | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        code?: string | null,
+        name?: string | null,
+        description?: string | null,
+        available: boolean,
+        minSelections?: number | null,
+        maxSelections?: number | null,
+        minQuantity?: number | null,
+        maxQuantity?: number | null,
+        quantityEditable: boolean,
+        sortIndex?: number | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          articleNumber?: string | null,
+          name?: string | null,
+          description?: string | null,
+          selected: boolean,
+          available: boolean,
+          readOnly: boolean,
+          selectionSource: GeinsCpqSelectionSource,
+          quantity: number,
+          defaultQuantity: number,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          discountPercent?: number | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null,
+          product?: {
+            productId: number,
+            name?: string | null,
+            articleNumber?: string | null,
+            alias: string,
+            canonicalUrl?: string | null,
+            productImages?: Array<{
+              fileName: string
+            } | null> | null
+          } | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      options?: Array<{
+        id?: string | null,
+        instanceId?: string | null,
+        articleNumber?: string | null,
+        name?: string | null,
+        description?: string | null,
+        selected: boolean,
+        available: boolean,
+        readOnly: boolean,
+        selectionSource: GeinsCpqSelectionSource,
+        quantity: number,
+        defaultQuantity: number,
+        minQuantity?: number | null,
+        maxQuantity?: number | null,
+        discountPercent?: number | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        product?: {
+          productId: number,
+          name?: string | null,
+          articleNumber?: string | null,
+          alias: string,
+          canonicalUrl?: string | null,
+          productImages?: Array<{
+            fileName: string
+          } | null> | null
+        } | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null,
+    options?: Array<{
+      id?: string | null,
+      instanceId?: string | null,
+      articleNumber?: string | null,
+      name?: string | null,
+      description?: string | null,
+      selected: boolean,
+      available: boolean,
+      readOnly: boolean,
+      selectionSource: GeinsCpqSelectionSource,
+      quantity: number,
+      defaultQuantity: number,
+      minQuantity?: number | null,
+      maxQuantity?: number | null,
+      discountPercent?: number | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      product?: {
+        productId: number,
+        name?: string | null,
+        articleNumber?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        productImages?: Array<{
+          fileName: string
+        } | null> | null
+      } | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null,
+    messages?: Array<{
+      severity: GeinsCpqMessageSeverity,
+      text?: string | null
+    } | null> | null
+  } | null> | null,
+  messages?: Array<{
+    severity: GeinsCpqMessageSeverity,
+    text?: string | null
+  } | null> | null
+};
+
+export type GeinsCpqVariableType = {
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  valueType: GeinsCpqVariableValueType,
+  value?: string | number | boolean | null | null,
+  defaultValue?: string | number | boolean | null | null,
+  required: boolean,
+  available: boolean,
+  readOnly: boolean,
+  min?: number | null,
+  max?: number | null,
+  step?: number | null,
+  decimals?: number | null,
+  unit?: string | null,
+  selectionSource: GeinsCpqSelectionSource,
+  valueSource: GeinsCpqValueSource,
+  sortIndex?: number | null,
+  messages?: Array<{
+    severity: GeinsCpqMessageSeverity,
+    text?: string | null
+  } | null> | null
+};
+
+export type GeinsCpqGroupTreeType = {
+  id?: string | null,
+  code?: string | null,
+  name?: string | null,
+  description?: string | null,
+  available: boolean,
+  minSelections?: number | null,
+  maxSelections?: number | null,
+  minQuantity?: number | null,
+  maxQuantity?: number | null,
+  quantityEditable: boolean,
+  sortIndex?: number | null,
+  optionGroups?: Array<{
+    id?: string | null,
+    code?: string | null,
+    name?: string | null,
+    description?: string | null,
+    available: boolean,
+    minSelections?: number | null,
+    maxSelections?: number | null,
+    minQuantity?: number | null,
+    maxQuantity?: number | null,
+    quantityEditable: boolean,
+    sortIndex?: number | null,
+    optionGroups?: Array<{
+      id?: string | null,
+      code?: string | null,
+      name?: string | null,
+      description?: string | null,
+      available: boolean,
+      minSelections?: number | null,
+      maxSelections?: number | null,
+      minQuantity?: number | null,
+      maxQuantity?: number | null,
+      quantityEditable: boolean,
+      sortIndex?: number | null,
+      options?: Array<{
+        id?: string | null,
+        instanceId?: string | null,
+        articleNumber?: string | null,
+        name?: string | null,
+        description?: string | null,
+        selected: boolean,
+        available: boolean,
+        readOnly: boolean,
+        selectionSource: GeinsCpqSelectionSource,
+        quantity: number,
+        defaultQuantity: number,
+        minQuantity?: number | null,
+        maxQuantity?: number | null,
+        discountPercent?: number | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null,
+        product?: {
+          productId: number,
+          name?: string | null,
+          articleNumber?: string | null,
+          alias: string,
+          canonicalUrl?: string | null,
+          productImages?: Array<{
+            fileName: string
+          } | null> | null
+        } | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null,
+    options?: Array<{
+      id?: string | null,
+      instanceId?: string | null,
+      articleNumber?: string | null,
+      name?: string | null,
+      description?: string | null,
+      selected: boolean,
+      available: boolean,
+      readOnly: boolean,
+      selectionSource: GeinsCpqSelectionSource,
+      quantity: number,
+      defaultQuantity: number,
+      minQuantity?: number | null,
+      maxQuantity?: number | null,
+      discountPercent?: number | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null,
+      product?: {
+        productId: number,
+        name?: string | null,
+        articleNumber?: string | null,
+        alias: string,
+        canonicalUrl?: string | null,
+        productImages?: Array<{
+          fileName: string
+        } | null> | null
+      } | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null,
+    messages?: Array<{
+      severity: GeinsCpqMessageSeverity,
+      text?: string | null
+    } | null> | null
+  } | null> | null,
+  options?: Array<{
+    id?: string | null,
+    instanceId?: string | null,
+    articleNumber?: string | null,
+    name?: string | null,
+    description?: string | null,
+    selected: boolean,
+    available: boolean,
+    readOnly: boolean,
+    selectionSource: GeinsCpqSelectionSource,
+    quantity: number,
+    defaultQuantity: number,
+    minQuantity?: number | null,
+    maxQuantity?: number | null,
+    discountPercent?: number | null,
+    unitPrice?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    product?: {
+      productId: number,
+      name?: string | null,
+      articleNumber?: string | null,
+      alias: string,
+      canonicalUrl?: string | null,
+      productImages?: Array<{
+        fileName: string
+      } | null> | null
+    } | null,
+    messages?: Array<{
+      severity: GeinsCpqMessageSeverity,
+      text?: string | null
+    } | null> | null
+  } | null> | null,
+  messages?: Array<{
+    severity: GeinsCpqMessageSeverity,
+    text?: string | null
+  } | null> | null
+};
+
+export type GeinsCpqGroupFieldsType = {
+  id?: string | null,
+  code?: string | null,
+  name?: string | null,
+  description?: string | null,
+  available: boolean,
+  minSelections?: number | null,
+  maxSelections?: number | null,
+  minQuantity?: number | null,
+  maxQuantity?: number | null,
+  quantityEditable: boolean,
+  sortIndex?: number | null,
+  options?: Array<{
+    id?: string | null,
+    instanceId?: string | null,
+    articleNumber?: string | null,
+    name?: string | null,
+    description?: string | null,
+    selected: boolean,
+    available: boolean,
+    readOnly: boolean,
+    selectionSource: GeinsCpqSelectionSource,
+    quantity: number,
+    defaultQuantity: number,
+    minQuantity?: number | null,
+    maxQuantity?: number | null,
+    discountPercent?: number | null,
+    unitPrice?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    product?: {
+      productId: number,
+      name?: string | null,
+      articleNumber?: string | null,
+      alias: string,
+      canonicalUrl?: string | null,
+      productImages?: Array<{
+        fileName: string
+      } | null> | null
+    } | null,
+    messages?: Array<{
+      severity: GeinsCpqMessageSeverity,
+      text?: string | null
+    } | null> | null
+  } | null> | null,
+  messages?: Array<{
+    severity: GeinsCpqMessageSeverity,
+    text?: string | null
+  } | null> | null
+};
+
+export type GeinsCpqOptionType = {
+  id?: string | null,
+  instanceId?: string | null,
+  articleNumber?: string | null,
+  name?: string | null,
+  description?: string | null,
+  selected: boolean,
+  available: boolean,
+  readOnly: boolean,
+  selectionSource: GeinsCpqSelectionSource,
+  quantity: number,
+  defaultQuantity: number,
+  minQuantity?: number | null,
+  maxQuantity?: number | null,
+  discountPercent?: number | null,
+  unitPrice?: {
+    __typename: 'PriceType',
+    sellingPriceIncVat: number,
+    sellingPriceExVat: number,
+    regularPriceIncVat: number,
+    regularPriceExVat: number,
+    discountIncVat: number,
+    discountExVat: number,
+    discountPercentage: number,
+    vat: number,
+    isDiscounted: boolean,
+    sellingPriceIncVatFormatted?: string | null,
+    sellingPriceExVatFormatted?: string | null,
+    regularPriceIncVatFormatted?: string | null,
+    regularPriceExVatFormatted?: string | null,
+    discountIncVatFormatted?: string | null,
+    discountExVatFormatted?: string | null,
+    vatFormatted?: string | null,
+    currency?: {
+      __typename: 'CurrencyType',
+      code: string,
+      symbol: string,
+      rate: number,
+      name: string
+    } | null
+  } | null,
+  product?: {
+    productId: number,
+    name?: string | null,
+    articleNumber?: string | null,
+    alias: string,
+    canonicalUrl?: string | null,
+    productImages?: Array<{
+      fileName: string
+    } | null> | null
+  } | null,
+  messages?: Array<{
+    severity: GeinsCpqMessageSeverity,
+    text?: string | null
+  } | null> | null
+};
+
+export type GeinsCpqCommittedSectionFieldsType = {
+  id?: string | null,
+  variables?: Array<{
+    id?: string | null,
+    valueType: GeinsCpqVariableValueType,
+    value?: string | null
+  } | null> | null,
+  optionGroups?: Array<{
+    id?: string | null,
+    optionGroups?: Array<{
+      id?: string | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          quantity: number
+        } | null> | null
+      } | null> | null,
+      options?: Array<{
+        id?: string | null,
+        instanceId?: string | null,
+        quantity: number
+      } | null> | null
+    } | null> | null,
+    options?: Array<{
+      id?: string | null,
+      instanceId?: string | null,
+      quantity: number
+    } | null> | null
+  } | null> | null
+};
+
+export type GeinsCpqCommittedGroupFieldsType = {
+  id?: string | null,
+  options?: Array<{
+    id?: string | null,
+    instanceId?: string | null,
+    quantity: number
+  } | null> | null
+};
+
 export type GeinsOrderSummaryType = {
   id?: number | null,
   customerId?: number | null,
@@ -3476,6 +5688,8 @@ export type GeinsOrderSummaryType = {
   completedAt?: string | null,
   currency?: string | null,
   desiredDeliveryDate?: string | null,
+  customerOrderNumber?: string | null,
+  goodsLabel?: string | null,
   message?: string | null,
   status: string,
   updatedAt?: string | null,
@@ -7934,6 +10148,8 @@ export type GeinsCheckoutSummaryType = {
       shippingId: number,
       pickupPoint?: string | null,
       desiredDeliveryDate?: string | null,
+      customerOrderNumber?: string | null,
+      goodsLabel?: string | null,
       promoCode?: string | null,
       campaignIds?: Array<string | null> | null,
       campaignNames?: Array<string | null> | null,
@@ -8330,6 +10546,4595 @@ export type GeinsValidateOrderCreationType = {
   } | null
 };
 
+export type GeinsAddConfiguredCartItemVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  item: GeinsCartItemInputTypeType;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsAddConfiguredCartItemType = {
+  addToCart?: {
+    id?: string | null,
+    items?: Array<{
+      id: string | number,
+      quantity: number,
+      configurationId?: string | null,
+      configuration?: {
+        summary?: Array<{
+          label?: string | null,
+          value?: string | null
+        } | null> | null
+      } | null
+    } | null> | null
+  } | null
+};
+
+export type GeinsApplyConfigurationChangesVariablesType = Exact<{
+  configurationId: Scalars['String']['input'];
+  changes: Array<GeinsCpqConfigurationChangeInputTypeType> | GeinsCpqConfigurationChangeInputTypeType;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsApplyConfigurationChangesType = {
+  applyConfigurationChanges?: {
+    configurationId: string,
+    expiresAt: string,
+    isValid: boolean,
+    articleNumber?: string | null,
+    quantity: number,
+    discountPercent?: number | null,
+    weightPerUnit?: number | null,
+    templateId?: string | null,
+    templateVersion?: string | null,
+    unitPrice?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    messages?: Array<{
+      severity: GeinsCpqMessageSeverity,
+      text?: string | null
+    } | null> | null,
+    sections?: Array<{
+      id?: string | null,
+      name?: string | null,
+      description?: string | null,
+      visible: boolean,
+      sortIndex?: number | null,
+      sections?: Array<{
+        id?: string | null,
+        name?: string | null,
+        description?: string | null,
+        visible: boolean,
+        sortIndex?: number | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          description?: string | null,
+          visible: boolean,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            description?: string | null,
+            visible: boolean,
+            sortIndex?: number | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              description?: string | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | number | boolean | null | null,
+              defaultValue?: string | number | boolean | null | null,
+              required: boolean,
+              available: boolean,
+              readOnly: boolean,
+              min?: number | null,
+              max?: number | null,
+              step?: number | null,
+              decimals?: number | null,
+              unit?: string | null,
+              selectionSource: GeinsCpqSelectionSource,
+              valueSource: GeinsCpqValueSource,
+              sortIndex?: number | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                description?: string | null,
+                available: boolean,
+                minSelections?: number | null,
+                maxSelections?: number | null,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                quantityEditable: boolean,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  available: boolean,
+                  minSelections?: number | null,
+                  maxSelections?: number | null,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  quantityEditable: boolean,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    description?: string | null,
+                    selected: boolean,
+                    available: boolean,
+                    readOnly: boolean,
+                    selectionSource: GeinsCpqSelectionSource,
+                    quantity: number,
+                    defaultQuantity: number,
+                    minQuantity?: number | null,
+                    maxQuantity?: number | null,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null,
+                    product?: {
+                      productId: number,
+                      name?: string | null,
+                      articleNumber?: string | null,
+                      alias: string,
+                      canonicalUrl?: string | null,
+                      productImages?: Array<{
+                        fileName: string
+                      } | null> | null
+                    } | null,
+                    messages?: Array<{
+                      severity: GeinsCpqMessageSeverity,
+                      text?: string | null
+                    } | null> | null
+                  } | null> | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  selected: boolean,
+                  available: boolean,
+                  readOnly: boolean,
+                  selectionSource: GeinsCpqSelectionSource,
+                  quantity: number,
+                  defaultQuantity: number,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null,
+                  product?: {
+                    productId: number,
+                    name?: string | null,
+                    articleNumber?: string | null,
+                    alias: string,
+                    canonicalUrl?: string | null,
+                    productImages?: Array<{
+                      fileName: string
+                    } | null> | null
+                  } | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            description?: string | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | number | boolean | null | null,
+            defaultValue?: string | number | boolean | null | null,
+            required: boolean,
+            available: boolean,
+            readOnly: boolean,
+            min?: number | null,
+            max?: number | null,
+            step?: number | null,
+            decimals?: number | null,
+            unit?: string | null,
+            selectionSource: GeinsCpqSelectionSource,
+            valueSource: GeinsCpqValueSource,
+            sortIndex?: number | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                description?: string | null,
+                available: boolean,
+                minSelections?: number | null,
+                maxSelections?: number | null,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                quantityEditable: boolean,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  selected: boolean,
+                  available: boolean,
+                  readOnly: boolean,
+                  selectionSource: GeinsCpqSelectionSource,
+                  quantity: number,
+                  defaultQuantity: number,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null,
+                  product?: {
+                    productId: number,
+                    name?: string | null,
+                    articleNumber?: string | null,
+                    alias: string,
+                    canonicalUrl?: string | null,
+                    productImages?: Array<{
+                      fileName: string
+                    } | null> | null
+                  } | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        variables?: Array<{
+          id?: string | null,
+          name?: string | null,
+          description?: string | null,
+          valueType: GeinsCpqVariableValueType,
+          value?: string | number | boolean | null | null,
+          defaultValue?: string | number | boolean | null | null,
+          required: boolean,
+          available: boolean,
+          readOnly: boolean,
+          min?: number | null,
+          max?: number | null,
+          step?: number | null,
+          decimals?: number | null,
+          unit?: string | null,
+          selectionSource: GeinsCpqSelectionSource,
+          valueSource: GeinsCpqValueSource,
+          sortIndex?: number | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      variables?: Array<{
+        id?: string | null,
+        name?: string | null,
+        description?: string | null,
+        valueType: GeinsCpqVariableValueType,
+        value?: string | number | boolean | null | null,
+        defaultValue?: string | number | boolean | null | null,
+        required: boolean,
+        available: boolean,
+        readOnly: boolean,
+        min?: number | null,
+        max?: number | null,
+        step?: number | null,
+        decimals?: number | null,
+        unit?: string | null,
+        selectionSource: GeinsCpqSelectionSource,
+        valueSource: GeinsCpqValueSource,
+        sortIndex?: number | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        code?: string | null,
+        name?: string | null,
+        description?: string | null,
+        available: boolean,
+        minSelections?: number | null,
+        maxSelections?: number | null,
+        minQuantity?: number | null,
+        maxQuantity?: number | null,
+        quantityEditable: boolean,
+        sortIndex?: number | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          articleNumber?: string | null,
+          name?: string | null,
+          description?: string | null,
+          selected: boolean,
+          available: boolean,
+          readOnly: boolean,
+          selectionSource: GeinsCpqSelectionSource,
+          quantity: number,
+          defaultQuantity: number,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          discountPercent?: number | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null,
+          product?: {
+            productId: number,
+            name?: string | null,
+            articleNumber?: string | null,
+            alias: string,
+            canonicalUrl?: string | null,
+            productImages?: Array<{
+              fileName: string
+            } | null> | null
+          } | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null
+  } | null
+};
+
+export type GeinsCommitConfigurationVariablesType = Exact<{
+  configurationId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsCommitConfigurationType = {
+  commitConfiguration?: {
+    committedConfigurationId: string,
+    configurationId?: string | null,
+    articleNumber?: string | null,
+    quantity: number,
+    discountPercent?: number | null,
+    weightPerUnit?: number | null,
+    unitPrice?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    summary?: Array<{
+      label?: string | null,
+      value?: string | null
+    } | null> | null
+  } | null
+};
+
+export type GeinsCreateConfigurationVariablesType = Exact<{
+  productId?: InputMaybe<Scalars['Int']['input']>;
+  articleNumber?: InputMaybe<Scalars['String']['input']>;
+  quantity: Scalars['Decimal']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsCreateConfigurationType = {
+  createConfiguration?: {
+    configurationId: string,
+    expiresAt: string,
+    isValid: boolean,
+    articleNumber?: string | null,
+    quantity: number,
+    discountPercent?: number | null,
+    weightPerUnit?: number | null,
+    templateId?: string | null,
+    templateVersion?: string | null,
+    unitPrice?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    messages?: Array<{
+      severity: GeinsCpqMessageSeverity,
+      text?: string | null
+    } | null> | null,
+    sections?: Array<{
+      id?: string | null,
+      name?: string | null,
+      description?: string | null,
+      visible: boolean,
+      sortIndex?: number | null,
+      sections?: Array<{
+        id?: string | null,
+        name?: string | null,
+        description?: string | null,
+        visible: boolean,
+        sortIndex?: number | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          description?: string | null,
+          visible: boolean,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            description?: string | null,
+            visible: boolean,
+            sortIndex?: number | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              description?: string | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | number | boolean | null | null,
+              defaultValue?: string | number | boolean | null | null,
+              required: boolean,
+              available: boolean,
+              readOnly: boolean,
+              min?: number | null,
+              max?: number | null,
+              step?: number | null,
+              decimals?: number | null,
+              unit?: string | null,
+              selectionSource: GeinsCpqSelectionSource,
+              valueSource: GeinsCpqValueSource,
+              sortIndex?: number | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                description?: string | null,
+                available: boolean,
+                minSelections?: number | null,
+                maxSelections?: number | null,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                quantityEditable: boolean,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  available: boolean,
+                  minSelections?: number | null,
+                  maxSelections?: number | null,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  quantityEditable: boolean,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    description?: string | null,
+                    selected: boolean,
+                    available: boolean,
+                    readOnly: boolean,
+                    selectionSource: GeinsCpqSelectionSource,
+                    quantity: number,
+                    defaultQuantity: number,
+                    minQuantity?: number | null,
+                    maxQuantity?: number | null,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null,
+                    product?: {
+                      productId: number,
+                      name?: string | null,
+                      articleNumber?: string | null,
+                      alias: string,
+                      canonicalUrl?: string | null,
+                      productImages?: Array<{
+                        fileName: string
+                      } | null> | null
+                    } | null,
+                    messages?: Array<{
+                      severity: GeinsCpqMessageSeverity,
+                      text?: string | null
+                    } | null> | null
+                  } | null> | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  selected: boolean,
+                  available: boolean,
+                  readOnly: boolean,
+                  selectionSource: GeinsCpqSelectionSource,
+                  quantity: number,
+                  defaultQuantity: number,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null,
+                  product?: {
+                    productId: number,
+                    name?: string | null,
+                    articleNumber?: string | null,
+                    alias: string,
+                    canonicalUrl?: string | null,
+                    productImages?: Array<{
+                      fileName: string
+                    } | null> | null
+                  } | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            description?: string | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | number | boolean | null | null,
+            defaultValue?: string | number | boolean | null | null,
+            required: boolean,
+            available: boolean,
+            readOnly: boolean,
+            min?: number | null,
+            max?: number | null,
+            step?: number | null,
+            decimals?: number | null,
+            unit?: string | null,
+            selectionSource: GeinsCpqSelectionSource,
+            valueSource: GeinsCpqValueSource,
+            sortIndex?: number | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                description?: string | null,
+                available: boolean,
+                minSelections?: number | null,
+                maxSelections?: number | null,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                quantityEditable: boolean,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  selected: boolean,
+                  available: boolean,
+                  readOnly: boolean,
+                  selectionSource: GeinsCpqSelectionSource,
+                  quantity: number,
+                  defaultQuantity: number,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null,
+                  product?: {
+                    productId: number,
+                    name?: string | null,
+                    articleNumber?: string | null,
+                    alias: string,
+                    canonicalUrl?: string | null,
+                    productImages?: Array<{
+                      fileName: string
+                    } | null> | null
+                  } | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        variables?: Array<{
+          id?: string | null,
+          name?: string | null,
+          description?: string | null,
+          valueType: GeinsCpqVariableValueType,
+          value?: string | number | boolean | null | null,
+          defaultValue?: string | number | boolean | null | null,
+          required: boolean,
+          available: boolean,
+          readOnly: boolean,
+          min?: number | null,
+          max?: number | null,
+          step?: number | null,
+          decimals?: number | null,
+          unit?: string | null,
+          selectionSource: GeinsCpqSelectionSource,
+          valueSource: GeinsCpqValueSource,
+          sortIndex?: number | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      variables?: Array<{
+        id?: string | null,
+        name?: string | null,
+        description?: string | null,
+        valueType: GeinsCpqVariableValueType,
+        value?: string | number | boolean | null | null,
+        defaultValue?: string | number | boolean | null | null,
+        required: boolean,
+        available: boolean,
+        readOnly: boolean,
+        min?: number | null,
+        max?: number | null,
+        step?: number | null,
+        decimals?: number | null,
+        unit?: string | null,
+        selectionSource: GeinsCpqSelectionSource,
+        valueSource: GeinsCpqValueSource,
+        sortIndex?: number | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        code?: string | null,
+        name?: string | null,
+        description?: string | null,
+        available: boolean,
+        minSelections?: number | null,
+        maxSelections?: number | null,
+        minQuantity?: number | null,
+        maxQuantity?: number | null,
+        quantityEditable: boolean,
+        sortIndex?: number | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          articleNumber?: string | null,
+          name?: string | null,
+          description?: string | null,
+          selected: boolean,
+          available: boolean,
+          readOnly: boolean,
+          selectionSource: GeinsCpqSelectionSource,
+          quantity: number,
+          defaultQuantity: number,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          discountPercent?: number | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null,
+          product?: {
+            productId: number,
+            name?: string | null,
+            articleNumber?: string | null,
+            alias: string,
+            canonicalUrl?: string | null,
+            productImages?: Array<{
+              fileName: string
+            } | null> | null
+          } | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null
+  } | null
+};
+
+export type GeinsDeleteConfigurationVariablesType = Exact<{
+  configurationId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsDeleteConfigurationType = {
+  deleteConfiguration?: boolean | null
+};
+
+export type GeinsGetConfiguredCartLinesVariablesType = Exact<{
+  id?: InputMaybe<Scalars['String']['input']>;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsGetConfiguredCartLinesType = {
+  getCart?: {
+    id?: string | null,
+    items?: Array<{
+      id: string | number,
+      quantity: number,
+      configurationId?: string | null,
+      configuration?: {
+        summary?: Array<{
+          label?: string | null,
+          value?: string | null
+        } | null> | null
+      } | null
+    } | null> | null
+  } | null
+};
+
+export type GeinsGetConfiguredOrderLineChoicesVariablesType = Exact<{
+  publicOrderId: Scalars['Guid']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsGetConfiguredOrderLineChoicesType = {
+  getOrderPublic?: {
+    cart?: {
+      items?: Array<{
+        product?: {
+          productId: number
+        } | null,
+        configuration?: {
+          sections?: Array<{
+            id?: string | null,
+            variables?: Array<{
+              id?: string | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    quantity: number
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  quantity: number
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                quantity: number
+              } | null> | null
+            } | null> | null,
+            sections?: Array<{
+              id?: string | null,
+              variables?: Array<{
+                id?: string | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      quantity: number
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    quantity: number
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  quantity: number
+                } | null> | null
+              } | null> | null,
+              sections?: Array<{
+                id?: string | null,
+                variables?: Array<{
+                  id?: string | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        quantity: number
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      quantity: number
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    quantity: number
+                  } | null> | null
+                } | null> | null,
+                sections?: Array<{
+                  id?: string | null,
+                  variables?: Array<{
+                    id?: string | null,
+                    valueType: GeinsCpqVariableValueType,
+                    value?: string | null
+                  } | null> | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      optionGroups?: Array<{
+                        id?: string | null,
+                        options?: Array<{
+                          id?: string | null,
+                          instanceId?: string | null,
+                          quantity: number
+                        } | null> | null
+                      } | null> | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        quantity: number
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      quantity: number
+                    } | null> | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null
+            } | null> | null
+          } | null> | null
+        } | null
+      } | null> | null
+    } | null
+  } | null
+};
+
+export type GeinsGetConfiguredOrderLinesVariablesType = Exact<{
+  publicOrderId: Scalars['Guid']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsGetConfiguredOrderLinesType = {
+  getOrderPublic?: {
+    cart?: {
+      items?: Array<{
+        product?: {
+          productId: number,
+          type?: string | null
+        } | null,
+        configuration?: {
+          summary?: Array<{
+            label?: string | null,
+            value?: string | null
+          } | null> | null
+        } | null
+      } | null> | null
+    } | null
+  } | null
+};
+
+export type GeinsGetConfigurationVariablesType = Exact<{
+  configurationId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}> | undefined;
+
+
+export type GeinsGetConfigurationType = {
+  getConfiguration?: {
+    configurationId: string,
+    expiresAt: string,
+    isValid: boolean,
+    articleNumber?: string | null,
+    quantity: number,
+    discountPercent?: number | null,
+    weightPerUnit?: number | null,
+    templateId?: string | null,
+    templateVersion?: string | null,
+    unitPrice?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    messages?: Array<{
+      severity: GeinsCpqMessageSeverity,
+      text?: string | null
+    } | null> | null,
+    sections?: Array<{
+      id?: string | null,
+      name?: string | null,
+      description?: string | null,
+      visible: boolean,
+      sortIndex?: number | null,
+      sections?: Array<{
+        id?: string | null,
+        name?: string | null,
+        description?: string | null,
+        visible: boolean,
+        sortIndex?: number | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          description?: string | null,
+          visible: boolean,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            description?: string | null,
+            visible: boolean,
+            sortIndex?: number | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              description?: string | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | number | boolean | null | null,
+              defaultValue?: string | number | boolean | null | null,
+              required: boolean,
+              available: boolean,
+              readOnly: boolean,
+              min?: number | null,
+              max?: number | null,
+              step?: number | null,
+              decimals?: number | null,
+              unit?: string | null,
+              selectionSource: GeinsCpqSelectionSource,
+              valueSource: GeinsCpqValueSource,
+              sortIndex?: number | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                description?: string | null,
+                available: boolean,
+                minSelections?: number | null,
+                maxSelections?: number | null,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                quantityEditable: boolean,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  available: boolean,
+                  minSelections?: number | null,
+                  maxSelections?: number | null,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  quantityEditable: boolean,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    description?: string | null,
+                    selected: boolean,
+                    available: boolean,
+                    readOnly: boolean,
+                    selectionSource: GeinsCpqSelectionSource,
+                    quantity: number,
+                    defaultQuantity: number,
+                    minQuantity?: number | null,
+                    maxQuantity?: number | null,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null,
+                    product?: {
+                      productId: number,
+                      name?: string | null,
+                      articleNumber?: string | null,
+                      alias: string,
+                      canonicalUrl?: string | null,
+                      productImages?: Array<{
+                        fileName: string
+                      } | null> | null
+                    } | null,
+                    messages?: Array<{
+                      severity: GeinsCpqMessageSeverity,
+                      text?: string | null
+                    } | null> | null
+                  } | null> | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  selected: boolean,
+                  available: boolean,
+                  readOnly: boolean,
+                  selectionSource: GeinsCpqSelectionSource,
+                  quantity: number,
+                  defaultQuantity: number,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null,
+                  product?: {
+                    productId: number,
+                    name?: string | null,
+                    articleNumber?: string | null,
+                    alias: string,
+                    canonicalUrl?: string | null,
+                    productImages?: Array<{
+                      fileName: string
+                    } | null> | null
+                  } | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            description?: string | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | number | boolean | null | null,
+            defaultValue?: string | number | boolean | null | null,
+            required: boolean,
+            available: boolean,
+            readOnly: boolean,
+            min?: number | null,
+            max?: number | null,
+            step?: number | null,
+            decimals?: number | null,
+            unit?: string | null,
+            selectionSource: GeinsCpqSelectionSource,
+            valueSource: GeinsCpqValueSource,
+            sortIndex?: number | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                description?: string | null,
+                available: boolean,
+                minSelections?: number | null,
+                maxSelections?: number | null,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                quantityEditable: boolean,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  selected: boolean,
+                  available: boolean,
+                  readOnly: boolean,
+                  selectionSource: GeinsCpqSelectionSource,
+                  quantity: number,
+                  defaultQuantity: number,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null,
+                  product?: {
+                    productId: number,
+                    name?: string | null,
+                    articleNumber?: string | null,
+                    alias: string,
+                    canonicalUrl?: string | null,
+                    productImages?: Array<{
+                      fileName: string
+                    } | null> | null
+                  } | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        variables?: Array<{
+          id?: string | null,
+          name?: string | null,
+          description?: string | null,
+          valueType: GeinsCpqVariableValueType,
+          value?: string | number | boolean | null | null,
+          defaultValue?: string | number | boolean | null | null,
+          required: boolean,
+          available: boolean,
+          readOnly: boolean,
+          min?: number | null,
+          max?: number | null,
+          step?: number | null,
+          decimals?: number | null,
+          unit?: string | null,
+          selectionSource: GeinsCpqSelectionSource,
+          valueSource: GeinsCpqValueSource,
+          sortIndex?: number | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      variables?: Array<{
+        id?: string | null,
+        name?: string | null,
+        description?: string | null,
+        valueType: GeinsCpqVariableValueType,
+        value?: string | number | boolean | null | null,
+        defaultValue?: string | number | boolean | null | null,
+        required: boolean,
+        available: boolean,
+        readOnly: boolean,
+        min?: number | null,
+        max?: number | null,
+        step?: number | null,
+        decimals?: number | null,
+        unit?: string | null,
+        selectionSource: GeinsCpqSelectionSource,
+        valueSource: GeinsCpqValueSource,
+        sortIndex?: number | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        code?: string | null,
+        name?: string | null,
+        description?: string | null,
+        available: boolean,
+        minSelections?: number | null,
+        maxSelections?: number | null,
+        minQuantity?: number | null,
+        maxQuantity?: number | null,
+        quantityEditable: boolean,
+        sortIndex?: number | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          articleNumber?: string | null,
+          name?: string | null,
+          description?: string | null,
+          selected: boolean,
+          available: boolean,
+          readOnly: boolean,
+          selectionSource: GeinsCpqSelectionSource,
+          quantity: number,
+          defaultQuantity: number,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          discountPercent?: number | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null,
+          product?: {
+            productId: number,
+            name?: string | null,
+            articleNumber?: string | null,
+            alias: string,
+            canonicalUrl?: string | null,
+            productImages?: Array<{
+              fileName: string
+            } | null> | null
+          } | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null
+  } | null
+};
+
+export type GeinsRenewConfigurationVariablesType = Exact<{
+  configurationId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsRenewConfigurationType = {
+  renewConfiguration?: {
+    expiresAt: string
+  } | null
+};
+
+export type GeinsReopenCartItemConfigurationVariablesType = Exact<{
+  cartId: Scalars['String']['input'];
+  itemId: Scalars['String']['input'];
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsReopenCartItemConfigurationType = {
+  reopenCartItemConfiguration?: {
+    configurationId: string,
+    expiresAt: string,
+    isValid: boolean,
+    articleNumber?: string | null,
+    quantity: number,
+    discountPercent?: number | null,
+    weightPerUnit?: number | null,
+    templateId?: string | null,
+    templateVersion?: string | null,
+    unitPrice?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null,
+    messages?: Array<{
+      severity: GeinsCpqMessageSeverity,
+      text?: string | null
+    } | null> | null,
+    sections?: Array<{
+      id?: string | null,
+      name?: string | null,
+      description?: string | null,
+      visible: boolean,
+      sortIndex?: number | null,
+      sections?: Array<{
+        id?: string | null,
+        name?: string | null,
+        description?: string | null,
+        visible: boolean,
+        sortIndex?: number | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          description?: string | null,
+          visible: boolean,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            description?: string | null,
+            visible: boolean,
+            sortIndex?: number | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              description?: string | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | number | boolean | null | null,
+              defaultValue?: string | number | boolean | null | null,
+              required: boolean,
+              available: boolean,
+              readOnly: boolean,
+              min?: number | null,
+              max?: number | null,
+              step?: number | null,
+              decimals?: number | null,
+              unit?: string | null,
+              selectionSource: GeinsCpqSelectionSource,
+              valueSource: GeinsCpqValueSource,
+              sortIndex?: number | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                description?: string | null,
+                available: boolean,
+                minSelections?: number | null,
+                maxSelections?: number | null,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                quantityEditable: boolean,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  available: boolean,
+                  minSelections?: number | null,
+                  maxSelections?: number | null,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  quantityEditable: boolean,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    description?: string | null,
+                    selected: boolean,
+                    available: boolean,
+                    readOnly: boolean,
+                    selectionSource: GeinsCpqSelectionSource,
+                    quantity: number,
+                    defaultQuantity: number,
+                    minQuantity?: number | null,
+                    maxQuantity?: number | null,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null,
+                    product?: {
+                      productId: number,
+                      name?: string | null,
+                      articleNumber?: string | null,
+                      alias: string,
+                      canonicalUrl?: string | null,
+                      productImages?: Array<{
+                        fileName: string
+                      } | null> | null
+                    } | null,
+                    messages?: Array<{
+                      severity: GeinsCpqMessageSeverity,
+                      text?: string | null
+                    } | null> | null
+                  } | null> | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  selected: boolean,
+                  available: boolean,
+                  readOnly: boolean,
+                  selectionSource: GeinsCpqSelectionSource,
+                  quantity: number,
+                  defaultQuantity: number,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null,
+                  product?: {
+                    productId: number,
+                    name?: string | null,
+                    articleNumber?: string | null,
+                    alias: string,
+                    canonicalUrl?: string | null,
+                    productImages?: Array<{
+                      fileName: string
+                    } | null> | null
+                  } | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            description?: string | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | number | boolean | null | null,
+            defaultValue?: string | number | boolean | null | null,
+            required: boolean,
+            available: boolean,
+            readOnly: boolean,
+            min?: number | null,
+            max?: number | null,
+            step?: number | null,
+            decimals?: number | null,
+            unit?: string | null,
+            selectionSource: GeinsCpqSelectionSource,
+            valueSource: GeinsCpqValueSource,
+            sortIndex?: number | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                description?: string | null,
+                available: boolean,
+                minSelections?: number | null,
+                maxSelections?: number | null,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                quantityEditable: boolean,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  description?: string | null,
+                  selected: boolean,
+                  available: boolean,
+                  readOnly: boolean,
+                  selectionSource: GeinsCpqSelectionSource,
+                  quantity: number,
+                  defaultQuantity: number,
+                  minQuantity?: number | null,
+                  maxQuantity?: number | null,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null,
+                  product?: {
+                    productId: number,
+                    name?: string | null,
+                    articleNumber?: string | null,
+                    alias: string,
+                    canonicalUrl?: string | null,
+                    productImages?: Array<{
+                      fileName: string
+                    } | null> | null
+                  } | null,
+                  messages?: Array<{
+                    severity: GeinsCpqMessageSeverity,
+                    text?: string | null
+                  } | null> | null
+                } | null> | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        variables?: Array<{
+          id?: string | null,
+          name?: string | null,
+          description?: string | null,
+          valueType: GeinsCpqVariableValueType,
+          value?: string | number | boolean | null | null,
+          defaultValue?: string | number | boolean | null | null,
+          required: boolean,
+          available: boolean,
+          readOnly: boolean,
+          min?: number | null,
+          max?: number | null,
+          step?: number | null,
+          decimals?: number | null,
+          unit?: string | null,
+          selectionSource: GeinsCpqSelectionSource,
+          valueSource: GeinsCpqValueSource,
+          sortIndex?: number | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              description?: string | null,
+              available: boolean,
+              minSelections?: number | null,
+              maxSelections?: number | null,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              quantityEditable: boolean,
+              sortIndex?: number | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                description?: string | null,
+                selected: boolean,
+                available: boolean,
+                readOnly: boolean,
+                selectionSource: GeinsCpqSelectionSource,
+                quantity: number,
+                defaultQuantity: number,
+                minQuantity?: number | null,
+                maxQuantity?: number | null,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null,
+                product?: {
+                  productId: number,
+                  name?: string | null,
+                  articleNumber?: string | null,
+                  alias: string,
+                  canonicalUrl?: string | null,
+                  productImages?: Array<{
+                    fileName: string
+                  } | null> | null
+                } | null,
+                messages?: Array<{
+                  severity: GeinsCpqMessageSeverity,
+                  text?: string | null
+                } | null> | null
+              } | null> | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      variables?: Array<{
+        id?: string | null,
+        name?: string | null,
+        description?: string | null,
+        valueType: GeinsCpqVariableValueType,
+        value?: string | number | boolean | null | null,
+        defaultValue?: string | number | boolean | null | null,
+        required: boolean,
+        available: boolean,
+        readOnly: boolean,
+        min?: number | null,
+        max?: number | null,
+        step?: number | null,
+        decimals?: number | null,
+        unit?: string | null,
+        selectionSource: GeinsCpqSelectionSource,
+        valueSource: GeinsCpqValueSource,
+        sortIndex?: number | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        code?: string | null,
+        name?: string | null,
+        description?: string | null,
+        available: boolean,
+        minSelections?: number | null,
+        maxSelections?: number | null,
+        minQuantity?: number | null,
+        maxQuantity?: number | null,
+        quantityEditable: boolean,
+        sortIndex?: number | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          description?: string | null,
+          available: boolean,
+          minSelections?: number | null,
+          maxSelections?: number | null,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          quantityEditable: boolean,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            description?: string | null,
+            available: boolean,
+            minSelections?: number | null,
+            maxSelections?: number | null,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            quantityEditable: boolean,
+            sortIndex?: number | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              description?: string | null,
+              selected: boolean,
+              available: boolean,
+              readOnly: boolean,
+              selectionSource: GeinsCpqSelectionSource,
+              quantity: number,
+              defaultQuantity: number,
+              minQuantity?: number | null,
+              maxQuantity?: number | null,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null,
+              product?: {
+                productId: number,
+                name?: string | null,
+                articleNumber?: string | null,
+                alias: string,
+                canonicalUrl?: string | null,
+                productImages?: Array<{
+                  fileName: string
+                } | null> | null
+              } | null,
+              messages?: Array<{
+                severity: GeinsCpqMessageSeverity,
+                text?: string | null
+              } | null> | null
+            } | null> | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            description?: string | null,
+            selected: boolean,
+            available: boolean,
+            readOnly: boolean,
+            selectionSource: GeinsCpqSelectionSource,
+            quantity: number,
+            defaultQuantity: number,
+            minQuantity?: number | null,
+            maxQuantity?: number | null,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null,
+            product?: {
+              productId: number,
+              name?: string | null,
+              articleNumber?: string | null,
+              alias: string,
+              canonicalUrl?: string | null,
+              productImages?: Array<{
+                fileName: string
+              } | null> | null
+            } | null,
+            messages?: Array<{
+              severity: GeinsCpqMessageSeverity,
+              text?: string | null
+            } | null> | null
+          } | null> | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          articleNumber?: string | null,
+          name?: string | null,
+          description?: string | null,
+          selected: boolean,
+          available: boolean,
+          readOnly: boolean,
+          selectionSource: GeinsCpqSelectionSource,
+          quantity: number,
+          defaultQuantity: number,
+          minQuantity?: number | null,
+          maxQuantity?: number | null,
+          discountPercent?: number | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null,
+          product?: {
+            productId: number,
+            name?: string | null,
+            articleNumber?: string | null,
+            alias: string,
+            canonicalUrl?: string | null,
+            productImages?: Array<{
+              fileName: string
+            } | null> | null
+          } | null,
+          messages?: Array<{
+            severity: GeinsCpqMessageSeverity,
+            text?: string | null
+          } | null> | null
+        } | null> | null,
+        messages?: Array<{
+          severity: GeinsCpqMessageSeverity,
+          text?: string | null
+        } | null> | null
+      } | null> | null,
+      messages?: Array<{
+        severity: GeinsCpqMessageSeverity,
+        text?: string | null
+      } | null> | null
+    } | null> | null
+  } | null
+};
+
+export type GeinsUpdateConfiguredCartItemVariablesType = Exact<{
+  id: Scalars['String']['input'];
+  item: GeinsCartItemInputTypeType;
+  channelId?: InputMaybe<Scalars['String']['input']>;
+  languageId?: InputMaybe<Scalars['String']['input']>;
+  marketId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GeinsUpdateConfiguredCartItemType = {
+  updateCartItem?: {
+    id?: string | null,
+    items?: Array<{
+      id: string | number,
+      quantity: number,
+      configurationId?: string | null,
+      configuration?: {
+        summary?: Array<{
+          label?: string | null,
+          value?: string | null
+        } | null> | null
+      } | null
+    } | null> | null
+  } | null
+};
+
 export type GeinsPlaceOrderVariablesType = Exact<{
   cartId: Scalars['String']['input'];
   checkout: GeinsCheckoutInputTypeType;
@@ -8363,6 +15168,8 @@ export type GeinsGetOrderPublicType = {
     completedAt?: string | null,
     currency?: string | null,
     desiredDeliveryDate?: string | null,
+    customerOrderNumber?: string | null,
+    goodsLabel?: string | null,
     message?: string | null,
     status: string,
     updatedAt?: string | null,
@@ -8971,6 +15778,7 @@ export type GeinsGetOrderPublicType = {
 
 /**
  * @typedef {Object} CartItemInputType
+ * @property {string} [configurationId]
  * @property {string} [groupKey]
  * @property {string} [id]
  * @property {string} [message]
@@ -8982,6 +15790,8 @@ export type GeinsGetOrderPublicType = {
  * Type containing cart item information
  * @typedef {Object} CartItemType
  * @property {CampaignType} [campaign] - Campaign
+ * @property {CpqCartItemConfigurationType} [configuration] - What configurationId names, as it was committed. Null on an unconfigured cart item, and on a configured one added before the configuration was copied onto cart items. On an order it is filled in by getOrder and getOrderPublic only, and is null there where cpq could not answer. getOrders and getCompanyOrders always answer null.
+ * @property {string} [configurationId] - The committed cpq configuration this cart item is
  * @property {string} [groupKey] - The key of the group that this cart item belong to
  * @property {string} id - Cart item Id
  * @property {boolean} isCampaignFreeGift - Indicates if the cart item is a free gift from a campaign
@@ -9227,6 +16037,238 @@ export type GeinsGetOrderPublicType = {
  */
 
 /**
+ * The committed configuration a cart item is. On a cart it was copied onto the item when its configuration id was set, and reading it makes no call to cpq. On a single order it is read from cpq with the order.
+ * @typedef {Object} CpqCartItemConfigurationType
+ * @property {string} [articleNumber] - The article number of the configured product
+ * @property {string} [committedConfigurationId] - The committed configuration's id, the same as the cart item's configurationId. Null on an order, whose items carry no configurationId either, so that a reorder cannot reuse a price that is no longer quotable.
+ * @property {Decimal} [discountPercent] - The discount the ERP applied at commit, in percent
+ * @property {Array<(CpqCommittedSectionType|null|undefined)>} [sections] - The same selections as 'summary', structured by section. Null on a configuration committed before cpq recorded the structure.
+ * @property {Array<(CpqCommittedConfigurationLineType|null|undefined)>} [summary] - The selections as one line each, in the language the configuration was committed in
+ * @property {Decimal} [weightPerUnit] - The weight of one configured product, in the ERP's own unit
+ */
+
+/**
+ * One line of a committed configuration's human-readable summary
+ * @typedef {Object} CpqCommittedConfigurationLineType
+ * @property {string} [label] - What was chosen, in the requested language
+ * @property {string} [value] - The choice, in the requested language
+ */
+
+/**
+ * A configuration frozen at the price it was committed at. A cart line carries the committed id and not the session id, because carts outlive sessions.
+ * @typedef {Object} CpqCommittedConfigurationType
+ * @property {string} [articleNumber] - The article number of the configured product
+ * @property {string} committedConfigurationId - The id to pass as a cart item's configurationId when adding the configured product to a cart
+ * @property {string} [configurationId] - The session this was committed from
+ * @property {Decimal} [discountPercent] - The discount the ERP applied, in percent
+ * @property {Decimal} quantity - How many of the configured product were committed
+ * @property {Array<(CpqCommittedConfigurationLineType|null|undefined)>} [summary] - The selections in a form a cart line can show without re-reading the configuration
+ * @property {PriceType} [unitPrice] - The frozen price of one configured product. cpq reports net only, so the inc-VAT side is worked out here from the article's VAT rate in this market, and equals the net where no Geins product carries one.
+ * @property {Decimal} [weightPerUnit] - The weight of one configured product, in the ERP's own unit
+ */
+
+/**
+ * An option group of a committed configuration, holding only its selected options
+ * @typedef {Object} CpqCommittedOptionGroupType
+ * @property {string} [code] - The provider's own code for the group
+ * @property {string} [id] - The option group id
+ * @property {string} [name] - The option group name, in the language the configuration was committed in
+ * @property {Array<(CpqCommittedOptionGroupType|null|undefined)>} [optionGroups] - The groups nested in this one that hold a selection
+ * @property {Array<(CpqCommittedOptionType|null|undefined)>} [options] - The options selected in this group. Empty where only a nested group holds a selection.
+ * @property {number} [sortIndex] - Orders this group against every other member of the same parent, its sibling groups and, where the parent is a section, that section's variables and nested sections. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+ */
+
+/**
+ * An option the shopper had selected when the configuration was committed
+ * @typedef {Object} CpqCommittedOptionType
+ * @property {string} [articleNumber] - The article number of the product this option adds, when it maps to one
+ * @property {Decimal} [discountPercent] - The discount already reflected in 'unitPrice', in percent
+ * @property {string} [id] - The option id
+ * @property {string} [instanceId] - Distinguishes repeated copies of the same option within one group
+ * @property {string} [name] - The option's name as the summary shows it, in the language the configuration was committed in. Never empty.
+ * @property {ProductType} [product] - The Geins product the article number names today, read with the cart in one batch for all its items and with no call to cpq. Null when no active product in the market carries it, which is ordinary: an ERP part number is not always a sellable article. Also null on every option of the cart when the product read failed, in which case the cart's items are still answered. It is read in the request's market, which a caller passing its own marketId can make differ from the one the cart item was priced in. Its unitPrice is today's catalogue price with campaigns, price lists and customer prices applied, not what the option cost at commit, which is this option's 'unitPrice'.
+ * @property {Decimal} quantity - How many of the option were selected
+ * @property {PriceType} [unitPrice] - What one of the option cost at commit, with its own discount already taken off. cpq froze it net, so the inc-VAT side is worked out from the cart item's own VAT rate. Option prices need not add up to the cart item's price, which comes from the frozen total and the customer's agreement.
+ */
+
+/**
+ * A section of a committed configuration, holding only what the shopper saw and chose
+ * @typedef {Object} CpqCommittedSectionType
+ * @property {string} [id] - The section id
+ * @property {string} [name] - The section name, in the language the configuration was committed in
+ * @property {Array<(CpqCommittedOptionGroupType|null|undefined)>} [optionGroups] - The option groups in this section holding a selected option, directly or in a nested group
+ * @property {Array<(CpqCommittedSectionType|null|undefined)>} [sections] - The sections nested in this one that are not empty
+ * @property {number} [sortIndex] - Orders this section against every other member of the same parent, its sibling sections, variables and option groups alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+ * @property {Array<(CpqCommittedVariableType|null|undefined)>} [variables] - The variables in this section that carry a value
+ */
+
+/**
+ * A variable of a committed configuration and the value it was committed with
+ * @typedef {Object} CpqCommittedVariableType
+ * @property {number} [decimals] - How many decimals a number is written with. Null for any other value type.
+ * @property {string} [id] - The variable id
+ * @property {string} [name] - The variable name, in the language the configuration was committed in
+ * @property {number} [sortIndex] - Orders this variable against every other member of the same section, its sibling variables, the option groups and the nested sections alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+ * @property {string} [unit] - The unit the value is measured in, such as 'mm'
+ * @property {string} [value] - The value in invariant culture and without the unit: a number with exactly 'decimals' decimals, a date as yyyy-MM-dd, and a boolean as true or false
+ * @property {CpqVariableValueType} valueType - The type 'value' is written in
+ */
+
+/**
+ * One change to apply to a configuration. Which fields carry meaning depends on the type: a variable change reads variableId and value, an option change reads optionId, instanceId, selected, quantity and lock, and a quantity change reads only quantity.
+ * @typedef {Object} CpqConfigurationChangeInputType
+ * @property {string} [instanceId] - Which copy of the option to act on, for an option change
+ * @property {CpqOptionLock} [lock] - Whether to pin the option against later rule cascades, for an option change. 'NONE' leaves an existing pin alone, which is also what omitting it does.
+ * @property {string} [optionId] - The option to act on, for an option change
+ * @property {Decimal} [quantity] - On an option change the option's quantity; on a quantity change how many of the configured product are being ordered
+ * @property {boolean} [selected] - Whether to select or deselect the option, for an option change
+ * @property {CpqConfigurationChangeType} type - Which part of the configuration the change acts on
+ * @property {CpqValue} [value] - The value to set, for a variable change
+ * @property {string} [variableId] - The variable to set, for a variable change
+ */
+
+/**
+ * @typedef {("OPTION"|"QUANTITY"|"VARIABLE")} CpqConfigurationChangeType
+ */
+
+/**
+ * The expiry a renewed configuration session now answers until
+ * @typedef {Object} CpqConfigurationRenewalType
+ * @property {DateTimeOffset} expiresAt - When the session stops answering, after the renewal
+ */
+
+/**
+ * A live product configuration session. Every call that touches it answers the whole re-evaluated state, so replace what is held rather than merging into it.
+ * @typedef {Object} CpqConfigurationType
+ * @property {string} [articleNumber] - The article number of the product being configured
+ * @property {string} configurationId - The session id. Every later call on this configuration takes it.
+ * @property {Decimal} [discountPercent] - The discount the ERP applied, in percent
+ * @property {DateTimeOffset} expiresAt - When the session stops answering and the shopper has to start a new one. Push it out with renewConfiguration.
+ * @property {boolean} isValid - 'true' when the configuration is complete enough to be committed and ordered
+ * @property {Array<(CpqMessageType|null|undefined)>} [messages] - Messages about the configuration as a whole
+ * @property {Decimal} quantity - How many of the configured product are being ordered
+ * @property {Array<(CpqSectionType|null|undefined)>} [sections] - The configuration's top level sections
+ * @property {string} [templateId] - The provider template this configuration was opened from
+ * @property {string} [templateVersion] - The version of the provider template this configuration was opened from
+ * @property {PriceType} [unitPrice] - What one configured product costs according to the ERP. cpq reports net only, so the inc-VAT side is worked out here from the article's VAT rate in this market, and equals the net where no Geins product carries one. 'regularPrice' and 'isDiscounted' reconstruct 'discountPercent'.
+ * @property {Decimal} [weightPerUnit] - The weight of one configured product, in the ERP's own unit
+ */
+
+/**
+ * How much a message matters to the shopper
+ * @typedef {("ERROR"|"INFO"|"UNKNOWN"|"WARNING")} CpqMessageSeverity
+ */
+
+/**
+ * Something the provider wants the shopper to know about the element carrying it
+ * @typedef {Object} CpqMessageType
+ * @property {CpqMessageSeverity} severity - How much the message matters
+ * @property {string} [text] - The message, in the requested language
+ */
+
+/**
+ * A set of options the shopper chooses from, which may itself hold further groups
+ * @typedef {Object} CpqOptionGroupType
+ * @property {boolean} available - 'false' when the shopper's other choices rule this group out
+ * @property {string} [code] - The provider's own code for the group
+ * @property {string} [description] - The option group description, in the requested language
+ * @property {string} [id] - The option group id
+ * @property {Decimal} [maxQuantity] - The highest quantity an option in this group takes
+ * @property {number} [maxSelections] - How many options may be selected at once. One means the group is single-select.
+ * @property {Array<(CpqMessageType|null|undefined)>} [messages] - Messages about this option group
+ * @property {Decimal} [minQuantity] - The lowest quantity an option in this group takes
+ * @property {number} [minSelections] - How many options have to be selected
+ * @property {string} [name] - The option group name, in the requested language
+ * @property {Array<(CpqOptionGroupType|null|undefined)>} [optionGroups] - Option groups nested in this one
+ * @property {Array<(CpqOptionType|null|undefined)>} [options] - The options in this group
+ * @property {boolean} quantityEditable - 'true' when the shopper may set an option's quantity in this group
+ * @property {number} [sortIndex] - Orders this group against every other member of the same parent, its sibling groups and, where the parent is a section, that section's variables and nested sections. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+ */
+
+/**
+ * @typedef {("LOCK"|"NONE"|"UNLOCK")} CpqOptionLock
+ */
+
+/**
+ * One selectable row in an option group
+ * @typedef {Object} CpqOptionType
+ * @property {string} [articleNumber] - The article number of the product this option adds
+ * @property {boolean} available - 'false' when the shopper's other choices rule this option out
+ * @property {Decimal} defaultQuantity - The quantity the option takes when it is selected without one
+ * @property {string} [description] - The option description, in the requested language. This is not the part description 'name' can fall back to.
+ * @property {Decimal} [discountPercent] - The discount the ERP applied to this option, in percent
+ * @property {string} [id] - The option id
+ * @property {string} [instanceId] - Distinguishes repeated copies of the same option within one group
+ * @property {Decimal} [maxQuantity] - The highest quantity this option takes
+ * @property {Array<(CpqMessageType|null|undefined)>} [messages] - Messages about this option
+ * @property {Decimal} [minQuantity] - The lowest quantity this option takes
+ * @property {string} [name] - The ERP's name for this option, in the requested language: the merchant's own label for the row inside this configuration where there is one, and the description of the part this option adds otherwise. An option is a row inside the ERP's configuration, so the ERP names it, and under Monitor, where a part description is mandatory, it is filled for every option whose part is in the register. That is a different lookup from 'product', which resolves the same article number against the Geins catalogue, so an option commonly carries a name with no product beside it. A storefront wanting its own name, images or copy overrides from 'product'; the two disagreeing is ordinary rather than a defect. Empty means the ERP filled neither, and null means a cpq that predates the rename and is still answering 'providerLabel', which is every build until cpq is deployed rather than merely merged.
+ * @property {ProductType} [product] - The Geins product the article number names, resolved in this same call. Null when no active product in the market carries it, which is ordinary: an ERP part number is not always a sellable article. Its unitPrice is the catalogue price with campaigns, price lists and customer prices applied, which is not what a CPQ account charges for the option.
+ * @property {Decimal} quantity - How many of this option are selected
+ * @property {boolean} readOnly - 'true' when the option's selection is fixed and a change to it is refused. A lock the caller set does not make an option read-only: the caller can still change or unlock it. Always 'false' under Monitor.
+ * @property {boolean} selected - 'true' when the option is currently selected
+ * @property {CpqSelectionSource} selectionSource - Why the option is selected or deselected the way it is
+ * @property {PriceType} [unitPrice] - What one of this option costs according to the ERP, and what the cart is charged for it. cpq reports net only, so the inc-VAT side is worked out here from the configured article's VAT rate in this market, not this option's own product's, because the configured product is invoiced as one line. It equals the net where the configured article carries no rate. This is not product.unitPrice.
+ */
+
+/**
+ * A part of a configuration, holding variables, option groups and further sections
+ * @typedef {Object} CpqSectionType
+ * @property {string} [description] - The section description, in the requested language
+ * @property {string} [id] - The section id
+ * @property {Array<(CpqMessageType|null|undefined)>} [messages] - Messages about this section
+ * @property {string} [name] - The section name, in the requested language
+ * @property {Array<(CpqOptionGroupType|null|undefined)>} [optionGroups] - Option groups in this section
+ * @property {Array<(CpqSectionType|null|undefined)>} [sections] - Sections nested in this one
+ * @property {number} [sortIndex] - Orders this section against every other member of the same parent, its sibling sections, variables and option groups alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+ * @property {Array<(CpqVariableType|null|undefined)>} [variables] - Variables in this section
+ * @property {boolean} visible - 'false' when the shopper's other choices rule this section out
+ */
+
+/**
+ * Why an option is selected or deselected, or a variable available, the way it is
+ * @typedef {("GROUP_RULE"|"INITIAL"|"LOCKED"|"MANUAL"|"NONE"|"RULE_DESELECTED"|"RULE_SELECTED"|"TEMPORARILY_LOCKED"|"UNKNOWN")} CpqSelectionSource
+ */
+
+/**
+ * A configuration variable's value: a string, a number or a boolean, depending on the variable's own valueType. A date is a string.
+ * @typedef {*} CpqValue
+ */
+
+/**
+ * Where a variable's current value came from
+ * @typedef {("FALLBACK"|"FORMULA"|"INITIAL"|"LINKED"|"MANUAL"|"UNKNOWN")} CpqValueSource
+ */
+
+/**
+ * A single value the shopper sets, such as a measurement or a free-text engraving
+ * @typedef {Object} CpqVariableType
+ * @property {boolean} available - 'false' when the shopper's other choices rule this variable out
+ * @property {number} [decimals] - How many decimals a numeric value carries
+ * @property {CpqValue} [defaultValue] - The value the variable takes when nothing sets it
+ * @property {string} [description] - The variable description, in the requested language
+ * @property {string} [id] - The variable id
+ * @property {Decimal} [max] - The highest value a numeric variable takes
+ * @property {Array<(CpqMessageType|null|undefined)>} [messages] - Messages about this variable
+ * @property {Decimal} [min] - The lowest value a numeric variable takes
+ * @property {string} [name] - The variable name, in the requested language
+ * @property {boolean} readOnly - 'true' when the ERP sets the value itself, from a formula or another element it follows, and a change to it is refused. A read-only variable that is required and has no value is waiting on the inputs it is computed from, not on the shopper.
+ * @property {boolean} required - 'true' when the configuration is not valid until this variable holds a value
+ * @property {CpqSelectionSource} selectionSource - Why the variable is available the way it is
+ * @property {number} [sortIndex] - Orders this variable against every other member of the same section, its sibling variables, the option groups and the nested sections alike. Sort those on sortIndex, nulls last, and render them in that order. Null on every member means no order was reported, so keep the order the lists arrive in.
+ * @property {Decimal} [step] - The increment the value has to land on between the minimum and the maximum
+ * @property {string} [unit] - The unit the value is measured in, such as 'mm'
+ * @property {CpqValue} [value] - The value the variable currently holds
+ * @property {CpqValueSource} valueSource - Where the current value came from. Whether it can be changed is 'readOnly'.
+ * @property {CpqVariableValueType} valueType - The type value and defaultValue carry
+ */
+
+/**
+ * The type a variable's value and default value carry
+ * @typedef {("BOOLEAN"|"DATE"|"NUMBER"|"STRING"|"UNKNOWN")} CpqVariableValueType
+ */
+
+/**
  * Type containing all information about the currency-type
  * @typedef {Object} CurrencyType
  * @property {string} code - Currency code
@@ -9245,6 +16287,11 @@ export type GeinsGetOrderPublicType = {
  * timestamps to be formatted in accordance with the
  * [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
  * @typedef {*} DateTime
+ */
+
+/**
+ * The `DateTimeOffset` scalar type represents a date, time and offset from UTC. `DateTimeOffset` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+ * @typedef {*} DateTimeOffset
  */
 
 /**
@@ -9333,15 +16380,21 @@ export type GeinsGetOrderPublicType = {
  * @typedef {Object} GeinsMerchantApiMutation
  * @property {CartType} [addPackageToCart]
  * @property {CartType} [addToCart]
+ * @property {CpqConfigurationType} [applyConfigurationChanges] - Applies a batch of changes to a configuration and returns the whole re-evaluated state. The whole batch succeeds or none of it does, and the answer replaces what is held rather than patching it.
  * @property {CartType} [clearCart] - Clears all items in the cart
  * @property {CartType} [cloneCart] - Clones the cart
+ * @property {CpqCommittedConfigurationType} [commitConfiguration] - Freezes a configuration at its current price and returns the committed id, which is what a cart item's configurationId carries.
  * @property {boolean} [commitReset]
  * @property {CartType} [completeCart] - Marks the cart as completed, and makes it read-only
+ * @property {CpqConfigurationType} [createConfiguration] - Opens a product configuration session and returns its first evaluated state. The session settles its customer and its currency here and no later call moves them.
  * @property {CheckoutType} [createOrUpdateCheckout]
+ * @property {boolean} [deleteConfiguration] - Abandons a configuration session. Reading it afterwards answers a 'ConfigurationGone' error.
  * @property {boolean} [deleteUser]
  * @property {boolean} [monitorProductAvailability]
  * @property {PlaceOrderResponseType} [placeOrder]
  * @property {boolean} [postProductReview]
+ * @property {CpqConfigurationRenewalType} [renewConfiguration] - Pushes out a configuration session's expiry and reports the new one.
+ * @property {CpqConfigurationType} [reopenCartItemConfiguration] - Opens a cart item's committed configuration again as a session to edit, at the item's quantity and at today's price. Commit the session and pass the new committed id to updateCartItem to put it on the item. Until then the item keeps the configuration it has.
  * @property {boolean} [requestPasswordReset]
  * @property {CartType} [setCartMerchantData] - Set custom merchant data on the cart
  * @property {CartType} [setCartPromoCode] - Set a promo code on the cart
@@ -9368,6 +16421,7 @@ export type GeinsGetOrderPublicType = {
  * completed, the html snippet will contain the "Thank you"-content. - DEPRECATED: Use Checkout instead
  * @property {CheckoutAndOrderType} [getCheckoutAndOrder] - Gets html snippet and checkout order data for the specified external order. If
  * the order was recently completed, the html snippet will contain the "Thank you"-content. - DEPRECATED: Use Checkout instead
+ * @property {CpqConfigurationType} [getConfiguration] - Gets a live product configuration session in full. A session that has run out answers a 'ConfigurationGone' error, which is not the same as an id that never existed.
  * @property {MenuType} [getMenuAtLocation] - Get a menu
  * @property {OrderType} [getOrder] - Get a specific order with details
  * @property {OrderType} [getOrderPublic] - Get a specific order with details via public id

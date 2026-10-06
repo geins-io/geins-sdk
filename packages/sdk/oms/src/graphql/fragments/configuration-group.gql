@@ -1,0 +1,33 @@
+#import "./configuration-option.gql"
+#import "./configuration-message.gql"
+
+fragment CpqGroupFields on CpqOptionGroupType {
+  id
+  code
+  name
+  description
+  available
+  minSelections
+  maxSelections
+  minQuantity
+  maxQuantity
+  quantityEditable
+  sortIndex
+  options {
+    ...CpqOption
+  }
+  messages {
+    ...CpqMessage
+  }
+}
+
+# Fragments cannot recurse: option groups are selected three levels deep.
+fragment CpqGroupTree on CpqOptionGroupType {
+  ...CpqGroupFields
+  optionGroups {
+    ...CpqGroupFields
+    optionGroups {
+      ...CpqGroupFields
+    }
+  }
+}
