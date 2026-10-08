@@ -1,7 +1,9 @@
 #import "../fragments/cart.gql"
+#import "../fragments/cart-item-configuration.gql"
 mutation completeCart($id: String!, $channelId: String, $languageId: String, $marketId: String) {
   completeCart(id: $id, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
     ...OmsCart
+    ...OmsCartItemConfiguration
     __typename
   }
 }

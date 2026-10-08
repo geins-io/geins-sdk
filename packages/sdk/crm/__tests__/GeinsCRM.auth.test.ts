@@ -1,10 +1,10 @@
 import { GeinsCore } from '@geins/core';
 import { GeinsCRM } from '@geins/crm';
-import { AuthService } from '../src/auth/authService';
 import { AuthCredentials, AuthSettings } from '@geins/types';
 import { randomString, randomUserData } from '../../../../test/dataMock';
 import { validSettings, validUserCredentials } from '../../../../test/globalSettings';
 import { setupMockFetchForInternalApi } from '../../../../test/setupAuthMockFetch';
+import { AuthService } from '../src/auth/authService';
 
 type TestSetupOptions = {
   authSettings: AuthSettings;
@@ -110,10 +110,14 @@ function testGeinsCRM(options: TestSetupOptions) {
     });
 
     it('should login a user and update information with token', async () => {
+      // Own user: GeinsCRM.user.test.ts writes the shared one in a parallel worker
       const credentials: AuthCredentials = {
-        username: validUserCredentials.username,
-        password: validUserCredentials.password,
+        username: `${randomString(10).toLowerCase()}@test-user.com`,
+        password: randomString(10),
       };
+
+      const registerResult = await geinsCRM?.user.create(credentials);
+      expect(registerResult!.succeeded).toBe(true);
 
       const changedUserInfo = randomUserData();
 

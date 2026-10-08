@@ -1,17 +1,17 @@
 #import "./configuration-committed.gql"
 
-fragment CpqConfiguredCartLines on CartType {
-  id
+fragment OmsCartItemConfiguration on CartType {
   items {
-    id
-    quantity
     configurationId
     configuration {
       summary {
         label
         value
+        __typename
       }
       ...CpqCommittedSections
+      __typename
     }
+    __typename
   }
 }

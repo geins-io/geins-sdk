@@ -1,5 +1,5 @@
-import { groupCartItems, parseCart } from '../src/parsers/cartParser';
 import type { CartItemType, PriceType } from '@geins/types';
+import { groupCartItems, parseCart } from '../src/parsers/cartParser';
 
 // --- Helpers ---
 
@@ -385,5 +385,166 @@ describe('cartParser', () => {
       const result = groupCartItems(items, 'en');
       expect(result[0].totalPrice?.isDiscounted).toBe(false);
     });
+  });
+});
+
+describe('cart line configuration', () => {
+  function cartWith(item: Record<string, unknown>) {
+    return {
+      __typename: 'CartType',
+      id: 'cart-1',
+      items: [{ id: 1, skuId: 42, quantity: 1, product: null, groupKey: null, ...item }],
+      summary: null,
+    };
+  }
+
+  function lineOf(item: Record<string, unknown>): CartItemType {
+    return parseCart(cartWith(item), 'sv-SE')!.items[0];
+  }
+
+  it('reads a line that is not configured as having neither field', () => {
+    const line = lineOf({ configurationId: null, configuration: null });
+    expect(line.configurationId).toBeUndefined();
+    expect(line.configuration).toBeUndefined();
+  });
+
+  it('reads a line from a document that selects neither field as having neither', () => {
+    const line = lineOf({});
+    expect(line.configurationId).toBeUndefined();
+    expect(line.configuration).toBeUndefined();
+  });
+
+  it('reads a configured line with its id and summary rows in order, dropping a null row', () => {
+    const line = lineOf({
+      configurationId: 'cfg-1',
+      configuration: {
+        summary: [{ label: 'Width', value: '120 cm' }, null, { label: 'Colour', value: null }],
+      },
+    });
+    expect(line.configurationId).toBe('cfg-1');
+    expect(line.configuration).toEqual({
+      summary: [
+        { label: 'Width', value: '120 cm' },
+        { label: 'Colour', value: null },
+      ],
+    });
+  });
+
+  it('keeps a configuration committed with an empty summary as an empty list', () => {
+    const line = lineOf({ configurationId: 'cfg-2', configuration: { summary: [] } });
+    expect(line.configuration).toEqual({ summary: [] });
+  });
+
+  it('reads a configuration without a summary as an empty list', () => {
+    const line = lineOf({ configurationId: 'cfg-3', configuration: { summary: null } });
+    expect(line.configuration).toEqual({ summary: [] });
+  });
+
+  const wireSection = {
+    __typename: 'CpqCommittedSectionType',
+    id: 's1',
+    name: 'Dimensions',
+    sortIndex: 5,
+    variables: [
+      { id: 'v1', name: 'Width', sortIndex: 6, valueType: 'NUMBER', value: '1200', unit: 'mm', decimals: 0 },
+    ],
+    optionGroups: [
+      {
+        id: 'g1',
+        code: 'TEETH',
+        name: 'Teeth',
+        sortIndex: 15,
+        options: [
+          {
+            id: 'o1',
+            instanceId: '0',
+            articleNumber: 'J250',
+            name: 'J250',
+            quantity: '4',
+            unitPrice: { __typename: 'PriceType', sellingPriceExVat: 619.49 },
+            discountPercent: '0',
+          },
+        ],
+        optionGroups: null,
+      },
+    ],
+    sections: null,
+  };
+
+  it('reads the committed sections of a configured line', () => {
+    const line = lineOf({
+      configurationId: 'cfg-4',
+      configuration: { summary: [{ label: 'Width', value: '1200 mm' }], sections: [wireSection] },
+    });
+    expect(line.configuration).toStrictEqual({
+      summary: [{ label: 'Width', value: '1200 mm' }],
+      sections: [
+        {
+          id: 's1',
+          name: 'Dimensions',
+          sortIndex: 5,
+          variables: [
+            {
+              id: 'v1',
+              name: 'Width',
+              sortIndex: 6,
+              valueType: 'NUMBER',
+              value: '1200',
+              unit: 'mm',
+              decimals: 0,
+            },
+          ],
+          optionGroups: [
+            {
+              id: 'g1',
+              code: 'TEETH',
+              name: 'Teeth',
+              sortIndex: 15,
+              options: [
+                {
+                  id: 'o1',
+                  instanceId: '0',
+                  articleNumber: 'J250',
+                  name: 'J250',
+                  quantity: 4,
+                  unitPrice: { sellingPriceExVat: 619.49 },
+                  discountPercent: 0,
+                },
+              ],
+              optionGroups: [],
+            },
+          ],
+          sections: [],
+        },
+      ],
+    });
+  });
+
+  it('leaves sections out of a configuration committed before the structure was recorded', () => {
+    const line = lineOf({
+      configurationId: 'cfg-5',
+      configuration: { summary: [{ label: 'Width', value: '1200 mm' }], sections: null },
+    });
+    expect(line.configuration).toStrictEqual({ summary: [{ label: 'Width', value: '1200 mm' }] });
+  });
+
+  it('does not put a row configuration on the package entry', () => {
+    const configuration = { summary: [{ label: 'Width', value: '120 cm' }] };
+    const items = [
+      mockCartItem({ id: '1', groupKey: 'group-a', configurationId: 'cfg-1', configuration }),
+      mockCartItem({ id: '2', groupKey: 'group-a' }),
+    ];
+    const [entry] = groupCartItems(items, 'en');
+    expect(entry.configurationId).toBeUndefined();
+    expect(entry.configuration).toBeUndefined();
+    expect(entry.productPackageCartItems?.[0].configurationId).toBe('cfg-1');
+    expect(entry.productPackageCartItems?.[0].configuration).toEqual(configuration);
+  });
+
+  it('passes a configured line without a groupKey through with both fields', () => {
+    const configuration = { summary: [{ label: 'Width', value: '120 cm' }] };
+    const [line] = groupCartItems([mockCartItem({ configurationId: 'cfg-1', configuration })], 'en');
+    expect(line.configurationId).toBe('cfg-1');
+    expect(line.configuration).toEqual(configuration);
   });
 });

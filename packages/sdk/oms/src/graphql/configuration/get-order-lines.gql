@@ -1,6 +1,17 @@
+#import "../fragments/configuration-committed.gql"
 # Rows match the order service's by position: an order row's id is the nil GUID.
-query getConfiguredOrderLines($publicOrderId: Guid!, $channelId: String, $languageId: String, $marketId: String) {
-  getOrderPublic(publicOrderId: $publicOrderId, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
+query getConfiguredOrderLines(
+  $publicOrderId: Guid!
+  $channelId: String
+  $languageId: String
+  $marketId: String
+) {
+  getOrderPublic(
+    publicOrderId: $publicOrderId
+    channelId: $channelId
+    languageId: $languageId
+    marketId: $marketId
+  ) {
     cart {
       items {
         product {
@@ -12,6 +23,7 @@ query getConfiguredOrderLines($publicOrderId: Guid!, $channelId: String, $langua
             label
             value
           }
+          ...CpqCommittedSections
         }
       }
     }

@@ -1,10 +1,10 @@
 import {
+  parseCheckout,
   parseCheckoutSummary,
   parseCheckoutSummaryOrder,
-  parseCheckoutSummaryOrderTotal,
-  parseCheckoutSummaryOrderRows,
   parseCheckoutSummaryOrderRow,
-  parseCheckout,
+  parseCheckoutSummaryOrderRows,
+  parseCheckoutSummaryOrderTotal,
   parseValidateOrder,
   parseValidateOrderConditions,
 } from '../src/parsers/checkoutParser';
@@ -129,11 +129,7 @@ describe('checkoutParser', () => {
         discountExVat: 8,
         sum: 925,
         currency: 'SEK',
-        rows: [
-          { discountExVat: 5, discountIncVat: 6 },
-          { discountExVat: 3, discountIncVat: 4 },
-          null,
-        ],
+        rows: [{ discountExVat: 5, discountIncVat: 6 }, { discountExVat: 3, discountIncVat: 4 }, null],
       };
       const result = parseCheckoutSummaryOrderTotal(input as any, 'sv-SE');
       expect(result).toBeDefined();
@@ -338,6 +334,49 @@ describe('checkoutParser', () => {
       expect(result!.cart).toBeDefined();
       expect(result!.cart!.id).toBe('cart-1');
       expect(result!.billingAddress?.firstName).toBe('John');
+    });
+
+    it('reads a configured line on the checkout cart', () => {
+      const input = {
+        __typename: 'CheckoutType',
+        cart: {
+          __typename: 'CartType',
+          id: 'cart-1',
+          items: [
+            {
+              id: 1,
+              skuId: 42,
+              quantity: 1,
+              configurationId: 'cfg-1',
+              configuration: {
+                summary: [{ label: 'Width', value: '120 cm' }],
+                sections: [
+                  {
+                    id: 's1',
+                    name: 'Dimensions',
+                    sortIndex: 5,
+                    variables: null,
+                    optionGroups: null,
+                    sections: null,
+                  },
+                ],
+              },
+            },
+            { id: 2, skuId: 43, quantity: 1, configurationId: null, configuration: null },
+          ],
+          summary: null,
+        },
+      };
+      const result = parseCheckout(input as any, 'en');
+      expect(result!.cart!.items[0].configurationId).toBe('cfg-1');
+      expect(result!.cart!.items[0].configuration).toStrictEqual({
+        summary: [{ label: 'Width', value: '120 cm' }],
+        sections: [
+          { id: 's1', name: 'Dimensions', sortIndex: 5, variables: [], optionGroups: [], sections: [] },
+        ],
+      });
+      expect(result!.cart!.items[1].configurationId).toBeUndefined();
+      expect(result!.cart!.items[1].configuration).toBeUndefined();
     });
   });
 
