@@ -1,4 +1,5 @@
 #import "../fragments/cart.gql"
+#import "../fragments/cart-item-configuration.gql"
 mutation addToCart(
   $id: String!
   $item: CartItemInputType!
@@ -8,6 +9,7 @@ mutation addToCart(
 ) {
   addToCart(id: $id, item: $item, channelId: $channelId, languageId: $languageId, marketId: $marketId) {
     ...OmsCart
+    ...OmsCartItemConfiguration
     __typename
   }
 }

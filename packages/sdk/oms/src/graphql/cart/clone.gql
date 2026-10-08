@@ -1,4 +1,5 @@
 #import "../fragments/cart.gql"
+#import "../fragments/cart-item-configuration.gql"
 mutation cloneCart(
   $id: String!
   $resetPromotions: Boolean
@@ -14,6 +15,7 @@ mutation cloneCart(
     marketId: $marketId
   ) {
     ...OmsCart
+    ...OmsCartItemConfiguration
     __typename
   }
 }

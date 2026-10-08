@@ -1,9 +1,11 @@
 #import "./cart.gql"
+#import "./cart-item-configuration.gql"
 #import "./address.gql"
 
 fragment OmsCheckout on CheckoutType {
   cart {
     ...OmsCart
+    ...OmsCartItemConfiguration
   }
   consents {
     type
