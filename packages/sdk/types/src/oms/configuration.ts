@@ -155,6 +155,11 @@ export type ConfigurationSummaryLineType = {
   value: string | null;
 };
 
+/** The committed configuration a cart line is, as the line carries it. */
+export type CartItemConfigurationType = {
+  summary: ConfigurationSummaryLineType[];
+};
+
 /** What a commit answers: the frozen configuration a cart line can carry. */
 export type CommittedConfigurationType = {
   committedConfigurationId: string;
@@ -178,7 +183,7 @@ export type ConfiguredCartLinesType = {
     id: string | null;
     quantity: number | null;
     configurationId: string | null;
-    configuration: { summary: ConfigurationSummaryLineType[] } | null;
+    configuration: CartItemConfigurationType | null;
   }[];
 };
 
@@ -189,7 +194,7 @@ export type ConfiguredCartLinesType = {
 export type ConfiguredOrderLinesType = {
   items: ({
     product: { productId: number | null; type: string | null } | null;
-    configuration: { summary: ConfigurationSummaryLineType[] } | null;
+    configuration: CartItemConfigurationType | null;
   } | null)[];
 };
 

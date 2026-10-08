@@ -1,7 +1,8 @@
-import type { PriceType, ShippingOptionType, PaymentOptionType } from '../shared';
-import type { StockType } from '../pim/product';
-import type { CampaignRuleType } from '../shared/campaign';
 import type { CampaignType } from '../pim/campaign';
+import type { StockType } from '../pim/product';
+import type { PaymentOptionType, PriceType, ShippingOptionType } from '../shared';
+import type { CampaignRuleType } from '../shared/campaign';
+import type { CartItemConfigurationType } from './configuration';
 
 export type CartType = {
   id: string;
@@ -65,6 +66,8 @@ export type CartItemType = {
   message?: string;
   totalPrice?: PriceType;
   unitPrice?: PriceType;
+  configurationId?: string;
+  configuration?: CartItemConfigurationType;
 };
 
 export type CartGroupInputType = {

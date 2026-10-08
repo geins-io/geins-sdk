@@ -1,0 +1,14 @@
+fragment OmsCartItemConfiguration on CartType {
+  items {
+    configurationId
+    configuration {
+      summary {
+        label
+        value
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}

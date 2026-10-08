@@ -6,23 +6,22 @@ import type {
   CartItemType,
   CartSummaryType,
   CartType,
-  PriceType,
-  ProductPackageCartItemType,
-} from '@geins/types';
-import type {
+  GeinsCampaignPriceTypeType,
   GeinsCampaignRuleTypeType,
   GeinsCampaignTypeType,
-  GeinsCampaignPriceTypeType,
   GeinsCartItemTypeType,
+  GeinsCartSummaryTypeType,
   GeinsCartTypeType,
+  GeinsProductImageTypeType,
   GeinsProductPackageCartItemTypeType,
   GeinsProductTypeType,
   GeinsSkuTypeType,
   GeinsVatGroupTypeType,
-  GeinsCartSummaryTypeType,
-  GeinsProductImageTypeType,
+  PriceType,
+  ProductPackageCartItemType,
 } from '@geins/types';
 import { ItemType } from '@geins/types';
+import { parseConfigurationSummary } from './configurationParser';
 import { parseMoneyCurrencyString, parsePrice } from './sharedParsers';
 
 /**
@@ -58,6 +57,8 @@ export function groupCartItems(data: CartItemType[], locale: string): CartItemTy
     // Remove data from the base item
     delete baseItem.product;
     delete baseItem.skuId;
+    delete baseItem.configurationId;
+    delete baseItem.configuration;
 
     baseItem.productPackageCartItems = group;
 
@@ -197,7 +198,9 @@ function parseCartItems(
   }
   return data.map((item) => {
     return {
-      title: item?.productPackage ? item.productPackage.packageName ?? undefined : item?.product?.name ?? undefined,
+      title: item?.productPackage
+        ? (item.productPackage.packageName ?? undefined)
+        : (item?.product?.name ?? undefined),
       type: item?.productPackage ? ItemType.PACKAGE : ItemType.PRODUCT,
       product: parseCartItemProduct(item?.product, locale),
       skuId: item?.skuId,
@@ -209,6 +212,10 @@ function parseCartItems(
       groupKey: item?.groupKey != null ? String(item.groupKey) : undefined,
       productPackage: parseProductPackage(item?.productPackage),
       message: item?.message ?? undefined,
+      configurationId: item?.configurationId ?? undefined,
+      configuration: item?.configuration
+        ? { summary: parseConfigurationSummary(item.configuration.summary) }
+        : undefined,
     };
   });
 }

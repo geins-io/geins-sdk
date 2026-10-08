@@ -1,7 +1,9 @@
 #import "../fragments/cart.gql"
+#import "../fragments/cart-item-configuration.gql"
 query createCart($channelId: String, $languageId: String, $marketId: String) {
   getCart(channelId: $channelId, languageId: $languageId, marketId: $marketId) {
     ...OmsCart
+    ...OmsCartItemConfiguration
     __typename
   }
 }

@@ -192,7 +192,8 @@ export function parseConfiguration(value: unknown): ConfigurationType | null {
   };
 }
 
-function summary(value: unknown): ConfigurationSummaryLineType[] {
+/** A committed configuration's summary rows; a null row is dropped. */
+export function parseConfigurationSummary(value: unknown): ConfigurationSummaryLineType[] {
   return rows(value).map((line) => ({ label: text(line.label), value: text(line.value) }));
 }
 
@@ -209,7 +210,7 @@ export function parseCommittedConfiguration(value: unknown): CommittedConfigurat
     unitPrice: price(wire.unitPrice),
     discountPercent: decimal(wire.discountPercent),
     weightPerUnit: decimal(wire.weightPerUnit),
-    summary: summary(wire.summary),
+    summary: parseConfigurationSummary(wire.summary),
   };
 }
 
@@ -225,7 +226,7 @@ export function parseConfiguredCartLines(value: unknown): ConfiguredCartLinesTyp
         id: text(item.id),
         quantity: int(item.quantity),
         configurationId: text(item.configurationId),
-        configuration: configuration ? { summary: summary(configuration.summary) } : null,
+        configuration: configuration ? { summary: parseConfigurationSummary(configuration.summary) } : null,
       };
     }),
   };
@@ -252,7 +253,7 @@ export function parseConfiguredOrderLines(value: unknown): ConfiguredOrderLinesT
     const configuration = record(row.configuration);
     return {
       product: productRow ? { productId: int(productRow.productId), type: text(productRow.type) } : null,
-      configuration: configuration ? { summary: summary(configuration.summary) } : null,
+      configuration: configuration ? { summary: parseConfigurationSummary(configuration.summary) } : null,
     };
   });
 }
