@@ -440,6 +440,94 @@ describe('cart line configuration', () => {
     expect(line.configuration).toEqual({ summary: [] });
   });
 
+  const wireSection = {
+    __typename: 'CpqCommittedSectionType',
+    id: 's1',
+    name: 'Dimensions',
+    sortIndex: 5,
+    variables: [
+      { id: 'v1', name: 'Width', sortIndex: 6, valueType: 'NUMBER', value: '1200', unit: 'mm', decimals: 0 },
+    ],
+    optionGroups: [
+      {
+        id: 'g1',
+        code: 'TEETH',
+        name: 'Teeth',
+        sortIndex: 15,
+        options: [
+          {
+            id: 'o1',
+            instanceId: '0',
+            articleNumber: 'J250',
+            name: 'J250',
+            quantity: '4',
+            unitPrice: { __typename: 'PriceType', sellingPriceExVat: 619.49 },
+            discountPercent: '0',
+          },
+        ],
+        optionGroups: null,
+      },
+    ],
+    sections: null,
+  };
+
+  it('reads the committed sections of a configured line', () => {
+    const line = lineOf({
+      configurationId: 'cfg-4',
+      configuration: { summary: [{ label: 'Width', value: '1200 mm' }], sections: [wireSection] },
+    });
+    expect(line.configuration).toStrictEqual({
+      summary: [{ label: 'Width', value: '1200 mm' }],
+      sections: [
+        {
+          id: 's1',
+          name: 'Dimensions',
+          sortIndex: 5,
+          variables: [
+            {
+              id: 'v1',
+              name: 'Width',
+              sortIndex: 6,
+              valueType: 'NUMBER',
+              value: '1200',
+              unit: 'mm',
+              decimals: 0,
+            },
+          ],
+          optionGroups: [
+            {
+              id: 'g1',
+              code: 'TEETH',
+              name: 'Teeth',
+              sortIndex: 15,
+              options: [
+                {
+                  id: 'o1',
+                  instanceId: '0',
+                  articleNumber: 'J250',
+                  name: 'J250',
+                  quantity: 4,
+                  unitPrice: { sellingPriceExVat: 619.49 },
+                  discountPercent: 0,
+                },
+              ],
+              optionGroups: [],
+            },
+          ],
+          sections: [],
+        },
+      ],
+    });
+  });
+
+  it('leaves sections out of a configuration committed before the structure was recorded', () => {
+    const line = lineOf({
+      configurationId: 'cfg-5',
+      configuration: { summary: [{ label: 'Width', value: '1200 mm' }], sections: null },
+    });
+    expect(line.configuration).toStrictEqual({ summary: [{ label: 'Width', value: '1200 mm' }] });
+  });
+
   it('does not put a row configuration on the package entry', () => {
     const configuration = { summary: [{ label: 'Width', value: '120 cm' }] };
     const items = [

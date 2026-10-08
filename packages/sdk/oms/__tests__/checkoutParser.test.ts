@@ -348,7 +348,19 @@ describe('checkoutParser', () => {
               skuId: 42,
               quantity: 1,
               configurationId: 'cfg-1',
-              configuration: { summary: [{ label: 'Width', value: '120 cm' }] },
+              configuration: {
+                summary: [{ label: 'Width', value: '120 cm' }],
+                sections: [
+                  {
+                    id: 's1',
+                    name: 'Dimensions',
+                    sortIndex: 5,
+                    variables: null,
+                    optionGroups: null,
+                    sections: null,
+                  },
+                ],
+              },
             },
             { id: 2, skuId: 43, quantity: 1, configurationId: null, configuration: null },
           ],
@@ -357,8 +369,11 @@ describe('checkoutParser', () => {
       };
       const result = parseCheckout(input as any, 'en');
       expect(result!.cart!.items[0].configurationId).toBe('cfg-1');
-      expect(result!.cart!.items[0].configuration).toEqual({
+      expect(result!.cart!.items[0].configuration).toStrictEqual({
         summary: [{ label: 'Width', value: '120 cm' }],
+        sections: [
+          { id: 's1', name: 'Dimensions', sortIndex: 5, variables: [], optionGroups: [], sections: [] },
+        ],
       });
       expect(result!.cart!.items[1].configurationId).toBeUndefined();
       expect(result!.cart!.items[1].configuration).toBeUndefined();

@@ -1,3 +1,5 @@
+#import "./configuration-committed.gql"
+
 fragment OmsCartItemConfiguration on CartType {
   items {
     configurationId
@@ -7,6 +9,7 @@ fragment OmsCartItemConfiguration on CartType {
         value
         __typename
       }
+      ...CpqCommittedSections
       __typename
     }
     __typename
