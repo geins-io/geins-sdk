@@ -1,5 +1,13 @@
 import { readFileSync } from 'fs';
-import { buildSchema, parse, validate, type DocumentNode } from 'graphql';
+import {
+  buildSchema,
+  parse,
+  validate,
+  type DocumentNode,
+  type FieldNode,
+  type FragmentDefinitionNode,
+  type SelectionSetNode,
+} from 'graphql';
 import { join } from 'path';
 import checkoutQuery from '../src/graphql/checkout/get.gql';
 import { queries } from '../src/graphql/queries';
@@ -60,4 +68,51 @@ describe('graphql documents', () => {
       expect(fragmentNames(document).includes('OmsCartItemConfiguration')).toBe(name !== 'orderGet');
     },
   );
+
+  const configuredLineDocuments = [
+    ...cartDocuments.map(([name]) => name).filter((name) => name !== 'orderGet'),
+    'configurationAddCartItem',
+    'configurationUpdateCartItem',
+    'configurationGetCartLines',
+    'configurationGetOrderLines',
+    'configurationGetOrderLineChoices',
+  ];
+
+  it.each(documents)(
+    '%s selects the committed sections only where it reads a configured line',
+    (name, document) => {
+      expect(fragmentNames(document).includes('CpqCommittedSections')).toBe(
+        configuredLineDocuments.includes(name),
+      );
+    },
+  );
+
+  function fragment(name: string): FragmentDefinitionNode {
+    const document = toDocument(queries.configurationGetOrderLines);
+    const found = document.definitions.find(
+      (d): d is FragmentDefinitionNode => d.kind === 'FragmentDefinition' && d.name.value === name,
+    );
+    if (!found) throw new Error(`no fragment ${name}`);
+    return found;
+  }
+
+  function depthOf(node: { selectionSet?: SelectionSetNode }, field: string): number {
+    const child = node.selectionSet?.selections.find(
+      (s): s is FieldNode => s.kind === 'Field' && s.name.value === field,
+    );
+    return child ? 1 + depthOf(child, field) : 0;
+  }
+
+  it('walks sections four levels deep', () => {
+    expect(depthOf(fragment('CpqCommittedSections'), 'sections')).toBe(4);
+  });
+
+  // `product` is today's catalogue price, read for every option of the cart.
+  it('selects no product on a committed option', () => {
+    const fields = fragment('CpqCommittedOption').selectionSet.selections.map((s) =>
+      s.kind === 'Field' ? s.name.value : s.kind,
+    );
+    expect(fields).toEqual(expect.arrayContaining(['name', 'quantity', 'unitPrice']));
+    expect(fields).not.toContain('product');
+  });
 });

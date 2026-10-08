@@ -1,4 +1,5 @@
 import type {
+  CartItemConfigurationType,
   CommittedConfigurationOptionGroupType,
   CommittedConfigurationSectionType,
   CommittedConfigurationType,
@@ -197,6 +198,57 @@ export function parseConfigurationSummary(value: unknown): ConfigurationSummaryL
   return rows(value).map((line) => ({ label: text(line.label), value: text(line.value) }));
 }
 
+function committedGroup(wire: Wire): CommittedConfigurationOptionGroupType {
+  return {
+    id: text(wire.id),
+    code: text(wire.code),
+    name: text(wire.name),
+    sortIndex: int(wire.sortIndex),
+    options: rows(wire.options).map((option) => ({
+      id: text(option.id),
+      instanceId: text(option.instanceId),
+      articleNumber: text(option.articleNumber),
+      name: text(option.name),
+      quantity: decimal(option.quantity),
+      unitPrice: price(option.unitPrice),
+      discountPercent: decimal(option.discountPercent),
+    })),
+    optionGroups: rows(wire.optionGroups).map(committedGroup),
+  };
+}
+
+function committedSection(wire: Wire): CommittedConfigurationSectionType {
+  return {
+    id: text(wire.id),
+    name: text(wire.name),
+    sortIndex: int(wire.sortIndex),
+    variables: rows(wire.variables).map((variable) => ({
+      id: text(variable.id),
+      name: text(variable.name),
+      sortIndex: int(variable.sortIndex),
+      valueType: text(variable.valueType) ?? 'UNKNOWN',
+      value: text(variable.value),
+      unit: text(variable.unit),
+      decimals: int(variable.decimals),
+    })),
+    optionGroups: rows(wire.optionGroups).map(committedGroup),
+    sections: rows(wire.sections).map(committedSection),
+  };
+}
+
+/**
+ * A configured line's committed configuration; null for a line that has none.
+ * `sections` is left out when the answer has none to give.
+ */
+export function parseCartItemConfiguration(value: unknown): CartItemConfigurationType | null {
+  const wire = record(value);
+  if (!wire) return null;
+  const summary = parseConfigurationSummary(wire.summary);
+  return Array.isArray(wire.sections)
+    ? { summary, sections: rows(wire.sections).map(committedSection) }
+    : { summary };
+}
+
 /** What a commit answers; null when the answer holds no record, or one without its committed id. */
 export function parseCommittedConfiguration(value: unknown): CommittedConfigurationType | null {
   const wire = record(value);
@@ -220,15 +272,12 @@ export function parseConfiguredCartLines(value: unknown): ConfiguredCartLinesTyp
   if (!wire) return null;
   return {
     id: text(wire.id),
-    items: rows(wire.items).map((item) => {
-      const configuration = record(item.configuration);
-      return {
-        id: text(item.id),
-        quantity: int(item.quantity),
-        configurationId: text(item.configurationId),
-        configuration: configuration ? { summary: parseConfigurationSummary(configuration.summary) } : null,
-      };
-    }),
+    items: rows(wire.items).map((item) => ({
+      id: text(item.id),
+      quantity: int(item.quantity),
+      configurationId: text(item.configurationId),
+      configuration: parseCartItemConfiguration(item.configuration),
+    })),
   };
 }
 
@@ -250,37 +299,11 @@ function orderRows<T>(value: unknown, map: (row: Wire) => T): { items: (T | null
 export function parseConfiguredOrderLines(value: unknown): ConfiguredOrderLinesType | null {
   return orderRows(value, (row) => {
     const productRow = record(row.product);
-    const configuration = record(row.configuration);
     return {
       product: productRow ? { productId: int(productRow.productId), type: text(productRow.type) } : null,
-      configuration: configuration ? { summary: parseConfigurationSummary(configuration.summary) } : null,
+      configuration: parseCartItemConfiguration(row.configuration),
     };
   });
-}
-
-function committedGroup(wire: Wire): CommittedConfigurationOptionGroupType {
-  return {
-    id: text(wire.id),
-    options: rows(wire.options).map((option) => ({
-      id: text(option.id),
-      instanceId: text(option.instanceId),
-      quantity: decimal(option.quantity),
-    })),
-    optionGroups: rows(wire.optionGroups).map(committedGroup),
-  };
-}
-
-function committedSection(wire: Wire): CommittedConfigurationSectionType {
-  return {
-    id: text(wire.id),
-    variables: rows(wire.variables).map((variable) => ({
-      id: text(variable.id),
-      valueType: text(variable.valueType) ?? 'UNKNOWN',
-      value: text(variable.value),
-    })),
-    optionGroups: rows(wire.optionGroups).map(committedGroup),
-    sections: rows(wire.sections).map(committedSection),
-  };
 }
 
 export function parseCommittedOrderLines(value: unknown): CommittedOrderLinesType | null {

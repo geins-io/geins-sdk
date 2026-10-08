@@ -158,6 +158,11 @@ export type ConfigurationSummaryLineType = {
 /** The committed configuration a cart line is, as the line carries it. */
 export type CartItemConfigurationType = {
   summary: ConfigurationSummaryLineType[];
+  /**
+   * The summary's selections by section. Absent for a configuration committed
+   * before the structure was recorded; read `summary` then.
+   */
+  sections?: CommittedConfigurationSectionType[];
 };
 
 /** What a commit answers: the frozen configuration a cart line can carry. */
@@ -198,16 +203,40 @@ export type ConfiguredOrderLinesType = {
   } | null)[];
 };
 
+// `sortIndex` orders a member against its siblings of every kind, nulls last;
+// members arrive and are kept unsorted, and all-null means keep that order.
+
 /** A committed variable: the value in invariant culture, without its unit. */
 export type CommittedConfigurationVariableType = {
   id: string | null;
+  name: string | null;
+  sortIndex: number | null;
   valueType: ConfigurationValueType;
   value: string | null;
+  unit: string | null;
+  decimals: number | null;
+};
+
+export type CommittedConfigurationOptionType = {
+  id: string | null;
+  instanceId: string | null;
+  articleNumber: string | null;
+  name: string | null;
+  quantity: number | null;
+  /**
+   * One of the option at commit, net of its own discount; the inc-VAT side
+   * uses the line's VAT rate. Option prices need not add up to the line's.
+   */
+  unitPrice: PriceType | null;
+  discountPercent: number | null;
 };
 
 export type CommittedConfigurationOptionGroupType = {
   id: string | null;
-  options: { id: string | null; instanceId: string | null; quantity: number | null }[];
+  code: string | null;
+  name: string | null;
+  sortIndex: number | null;
+  options: CommittedConfigurationOptionType[];
   /** Selected three levels deep. */
   optionGroups: CommittedConfigurationOptionGroupType[];
 };
@@ -215,6 +244,8 @@ export type CommittedConfigurationOptionGroupType = {
 /** Only what the buyer saw and chose. */
 export type CommittedConfigurationSectionType = {
   id: string | null;
+  name: string | null;
+  sortIndex: number | null;
   variables: CommittedConfigurationVariableType[];
   optionGroups: CommittedConfigurationOptionGroupType[];
   /** Selected four levels deep. */

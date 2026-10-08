@@ -21,7 +21,7 @@ import type {
   ProductPackageCartItemType,
 } from '@geins/types';
 import { ItemType } from '@geins/types';
-import { parseConfigurationSummary } from './configurationParser';
+import { parseCartItemConfiguration } from './configurationParser';
 import { parseMoneyCurrencyString, parsePrice } from './sharedParsers';
 
 /**
@@ -213,9 +213,7 @@ function parseCartItems(
       productPackage: parseProductPackage(item?.productPackage),
       message: item?.message ?? undefined,
       configurationId: item?.configurationId ?? undefined,
-      configuration: item?.configuration
-        ? { summary: parseConfigurationSummary(item.configuration.summary) }
-        : undefined,
+      configuration: parseCartItemConfiguration(item?.configuration) ?? undefined,
     };
   });
 }

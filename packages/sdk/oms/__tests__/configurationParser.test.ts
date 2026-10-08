@@ -314,7 +314,230 @@ describe('parseConfiguredOrderLines', () => {
   });
 });
 
+// The committed structure as a configured line carries it, shaped like a live answer.
+function wireCommittedSections() {
+  return [
+    {
+      __typename: 'CpqCommittedSectionType',
+      id: 's1',
+      name: 'Additional Options',
+      sortIndex: 14,
+      variables: [
+        {
+          __typename: 'CpqCommittedVariableType',
+          id: 'v1',
+          name: 'Width (500-1500)',
+          sortIndex: 6,
+          valueType: 'NUMBER',
+          value: '1200',
+          unit: 'mm',
+          decimals: 0,
+        },
+        null,
+      ],
+      optionGroups: [
+        {
+          __typename: 'CpqCommittedOptionGroupType',
+          id: 'g1',
+          code: 'TEETH',
+          name: 'Teeth',
+          sortIndex: 15,
+          options: [
+            {
+              __typename: 'CpqCommittedOptionType',
+              id: 'o1',
+              instanceId: '0',
+              articleNumber: 'J250',
+              name: 'J250 Bucket Teeth 7-14t',
+              quantity: '4',
+              unitPrice: price,
+              discountPercent: '0',
+            },
+            null,
+          ],
+          optionGroups: [
+            {
+              id: 'g2',
+              code: null,
+              name: 'Wear bars',
+              sortIndex: null,
+              options: [
+                {
+                  id: 'o2',
+                  instanceId: '0',
+                  articleNumber: null,
+                  name: 'Wear bar profile 8x80',
+                  quantity: 5.73,
+                  unitPrice: null,
+                  discountPercent: null,
+                },
+              ],
+              optionGroups: null,
+            },
+          ],
+        },
+      ],
+      sections: [
+        { id: 's2', name: 'Nested', sortIndex: null, variables: null, optionGroups: null, sections: null },
+      ],
+    },
+    null,
+  ];
+}
+
+const committedSections = [
+  {
+    id: 's1',
+    name: 'Additional Options',
+    sortIndex: 14,
+    variables: [
+      {
+        id: 'v1',
+        name: 'Width (500-1500)',
+        sortIndex: 6,
+        valueType: 'NUMBER',
+        value: '1200',
+        unit: 'mm',
+        decimals: 0,
+      },
+    ],
+    optionGroups: [
+      {
+        id: 'g1',
+        code: 'TEETH',
+        name: 'Teeth',
+        sortIndex: 15,
+        options: [
+          {
+            id: 'o1',
+            instanceId: '0',
+            articleNumber: 'J250',
+            name: 'J250 Bucket Teeth 7-14t',
+            quantity: 4,
+            unitPrice: { sellingPriceExVat: 50.25, currency: { code: 'SEK' } },
+            discountPercent: 0,
+          },
+        ],
+        optionGroups: [
+          {
+            id: 'g2',
+            code: null,
+            name: 'Wear bars',
+            sortIndex: null,
+            options: [
+              {
+                id: 'o2',
+                instanceId: '0',
+                articleNumber: null,
+                name: 'Wear bar profile 8x80',
+                quantity: 5.73,
+                unitPrice: null,
+                discountPercent: null,
+              },
+            ],
+            optionGroups: [],
+          },
+        ],
+      },
+    ],
+    sections: [{ id: 's2', name: 'Nested', sortIndex: null, variables: [], optionGroups: [], sections: [] }],
+  },
+];
+
+describe('committed sections on a configured line', () => {
+  const summary = [{ label: 'Width', value: '1200 mm' }];
+
+  it('reads the sections of a cart line at depth, with names, sort indexes and option prices', () => {
+    const lines = parseConfiguredCartLines({
+      id: 'cart',
+      items: [
+        {
+          id: 'a',
+          quantity: 1,
+          configurationId: 'k1',
+          configuration: { summary, sections: wireCommittedSections() },
+        },
+      ],
+    });
+    expect(lines!.items[0].configuration).toStrictEqual({ summary, sections: committedSections });
+  });
+
+  it('reads the sections of an order row', () => {
+    const lines = parseConfiguredOrderLines({
+      cart: {
+        items: [
+          {
+            product: { productId: 7, type: 'configurable' },
+            configuration: { summary, sections: wireCommittedSections() },
+          },
+        ],
+      },
+    });
+    expect(lines!.items[0]!.configuration).toStrictEqual({ summary, sections: committedSections });
+  });
+
+  it('leaves sections out for a configuration committed before the structure was recorded, keeping the summary', () => {
+    const cart = parseConfiguredCartLines({
+      id: 'cart',
+      items: [{ id: 'a', quantity: 1, configurationId: 'k1', configuration: { summary, sections: null } }],
+    });
+    const order = parseConfiguredOrderLines({
+      cart: { items: [{ product: null, configuration: { summary, sections: null } }] },
+    });
+    expect(cart!.items[0].configuration).toStrictEqual({ summary });
+    expect(order!.items[0]!.configuration).toStrictEqual({ summary });
+  });
+
+  it('leaves sections out when the document does not select them', () => {
+    const lines = parseConfiguredCartLines({ id: 'cart', items: [{ id: 'a', configuration: { summary } }] });
+    expect(lines!.items[0].configuration).toStrictEqual({ summary });
+  });
+
+  it('keeps an empty structure as an empty list', () => {
+    const lines = parseConfiguredCartLines({
+      id: 'cart',
+      items: [{ id: 'a', configuration: { summary: [], sections: [] } }],
+    });
+    expect(lines!.items[0].configuration).toStrictEqual({ summary: [], sections: [] });
+  });
+
+  it('keeps the order the members arrive in and passes sortIndex through unsorted', () => {
+    const section = (id: string, sortIndex: number | null) => ({
+      id,
+      name: id,
+      sortIndex,
+      variables: null,
+      optionGroups: null,
+      sections: null,
+    });
+    const lines = parseConfiguredCartLines({
+      id: 'cart',
+      items: [
+        {
+          id: 'a',
+          configuration: { summary: [], sections: [section('c', 14), section('a', null), section('b', 2)] },
+        },
+      ],
+    });
+    expect(lines!.items[0].configuration!.sections!.map((s) => [s.id, s.sortIndex])).toEqual([
+      ['c', 14],
+      ['a', null],
+      ['b', 2],
+    ]);
+  });
+});
+
 describe('parseCommittedOrderLines', () => {
+  it('reads names, sort indexes and option prices when the document selects them', () => {
+    const lines = parseCommittedOrderLines({
+      cart: { items: [{ product: { productId: 7 }, configuration: { sections: wireCommittedSections() } }] },
+    });
+    expect(lines!.items[0]).toStrictEqual({
+      product: { productId: 7 },
+      configuration: { sections: committedSections },
+    });
+  });
+
   it('reads the committed structure at depth, keeping positions', () => {
     const lines = parseCommittedOrderLines({
       cart: {
@@ -350,15 +573,44 @@ describe('parseCommittedOrderLines', () => {
         sections: [
           {
             id: 's1',
-            variables: [{ id: 'v1', valueType: 'NUMBER', value: '1200' }],
+            name: null,
+            sortIndex: null,
+            variables: [
+              {
+                id: 'v1',
+                name: null,
+                sortIndex: null,
+                valueType: 'NUMBER',
+                value: '1200',
+                unit: null,
+                decimals: null,
+              },
+            ],
             optionGroups: [
               {
                 id: 'g1',
-                options: [{ id: 'o1', instanceId: 'i1', quantity: 2 }],
-                optionGroups: [{ id: 'g2', options: [], optionGroups: [] }],
+                code: null,
+                name: null,
+                sortIndex: null,
+                options: [
+                  {
+                    id: 'o1',
+                    instanceId: 'i1',
+                    articleNumber: null,
+                    name: null,
+                    quantity: 2,
+                    unitPrice: null,
+                    discountPercent: null,
+                  },
+                ],
+                optionGroups: [
+                  { id: 'g2', code: null, name: null, sortIndex: null, options: [], optionGroups: [] },
+                ],
               },
             ],
-            sections: [{ id: 's2', variables: [], optionGroups: [], sections: [] }],
+            sections: [
+              { id: 's2', name: null, sortIndex: null, variables: [], optionGroups: [], sections: [] },
+            ],
           },
         ],
       },

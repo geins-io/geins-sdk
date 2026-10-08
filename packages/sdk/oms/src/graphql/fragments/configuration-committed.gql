@@ -1,18 +1,40 @@
+#import "./price.gql"
+
+# No `product`: it is today's catalogue price, read for every option of the cart.
+fragment CpqCommittedOption on CpqCommittedOptionType {
+  id
+  instanceId
+  articleNumber
+  name
+  quantity
+  unitPrice {
+    ...OmsPrice
+  }
+  discountPercent
+}
+
 fragment CpqCommittedGroupFields on CpqCommittedOptionGroupType {
   id
+  code
+  name
+  sortIndex
   options {
-    id
-    instanceId
-    quantity
+    ...CpqCommittedOption
   }
 }
 
 fragment CpqCommittedSectionFields on CpqCommittedSectionType {
   id
+  name
+  sortIndex
   variables {
     id
+    name
+    sortIndex
     valueType
     value
+    unit
+    decimals
   }
   optionGroups {
     ...CpqCommittedGroupFields
@@ -20,6 +42,22 @@ fragment CpqCommittedSectionFields on CpqCommittedSectionType {
       ...CpqCommittedGroupFields
       optionGroups {
         ...CpqCommittedGroupFields
+      }
+    }
+  }
+}
+
+# Fragments cannot recurse: sections are selected four levels deep.
+fragment CpqCommittedSections on CpqCartItemConfigurationType {
+  sections {
+    ...CpqCommittedSectionFields
+    sections {
+      ...CpqCommittedSectionFields
+      sections {
+        ...CpqCommittedSectionFields
+        sections {
+          ...CpqCommittedSectionFields
+        }
       }
     }
   }
