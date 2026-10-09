@@ -22,6 +22,8 @@ The `@geins/oms` package allows you to add shopping cart and checkout functional
 
 - [Order](./order/index.md)
 
+- [Configuration (CPQ)](./configuration/index.md)
+
 - [Merchant Data](./merchant-data.md)
 
 ::: info :bulb: Authentication

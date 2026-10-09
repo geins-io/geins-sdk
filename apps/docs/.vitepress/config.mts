@@ -197,6 +197,7 @@ export default withMermaid({
                   ],
                 },
                 { text: 'Order', link: '/packages/oms/order' },
+                { text: 'Configuration (CPQ)', link: '/packages/oms/configuration' },
                 { text: 'Checkout Token', link: '/packages/oms/checkout-token' },
                 /*
                 { text: 'Token', link: '/packages/oms/checkout-token' },

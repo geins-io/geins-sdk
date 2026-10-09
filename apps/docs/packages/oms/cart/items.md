@@ -39,6 +39,8 @@ type CartItemType = {
   message?: string;
   totalPrice?: PriceType;
   unitPrice?: PriceType;
+  configurationId?: string;
+  configuration?: CartItemConfigurationType;
 };
 
 declare enum ItemType {
@@ -46,6 +48,8 @@ declare enum ItemType {
   PACKAGE = 'PACKAGE',
 }
 ```
+
+A line added from a committed configuration carries the configuration's id and a summary of it, see [Configuration (CPQ)](../configuration/index.md). On a line added before the API copied configurations onto lines, `configuration` is absent while `configurationId` is set.
 
 ## Identifying Items
 
