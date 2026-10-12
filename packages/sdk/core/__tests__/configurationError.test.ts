@@ -1,8 +1,10 @@
+import { ApolloError } from '@apollo/client/core';
 import { MerchantApiClient } from '../src/api-client/merchantApiClient';
 import {
   ConfigurationError,
   isConfigurationError,
   toConfigurationError,
+  toConfigurationErrorWithData,
 } from '../src/errors/configurationError';
 import { GeinsError, GeinsErrorCode } from '../src/errors/geinsError';
 import { TimeoutError } from '../src/errors/networkError';
@@ -155,6 +157,45 @@ describe('ConfigurationError', () => {
 
     expect(error.cause).toBe(cause);
     expect(error.providerCodes).toEqual([]);
+  });
+
+  it('has no data unless given', () => {
+    expect(new ConfigurationError({ providerErrors: [] }).data).toBeUndefined();
+  });
+
+  it('carries the data it is given', () => {
+    const data = { items: [] };
+
+    expect(new ConfigurationError({ providerErrors: [], data }).data).toBe(data);
+  });
+
+  describe('toConfigurationErrorWithData', () => {
+    const errors = [
+      { message: 'Configuration k2 is of another article', extensions: { code: 'ConfigurationMismatch' } },
+    ];
+
+    it("gives the same codes, message, status and cause as Apollo's own throw for the same answer", async () => {
+      answer(200, { data: { commitConfiguration: { committedConfigurationId: 'k' } }, errors });
+      const apollo = await thrown();
+
+      const error = toConfigurationErrorWithData(errors, { committedConfigurationId: 'k' });
+
+      expect(error.providerErrors).toEqual(apollo.providerErrors);
+      expect(error.providerCodes).toEqual(apollo.providerCodes);
+      expect(error.providerCode).toBe(apollo.providerCode);
+      expect(error.providerMessage).toBe(apollo.providerMessage);
+      expect(error.status).toBe(apollo.status);
+      expect(error.cause).toBeInstanceOf(ApolloError);
+      expect((error.cause as ApolloError).message).toBe((apollo.cause as ApolloError).message);
+    });
+
+    it('carries the data', () => {
+      expect(toConfigurationErrorWithData(errors, { items: [] }).data).toEqual({ items: [] });
+    });
+
+    it('carries no data for a null answer', () => {
+      expect(toConfigurationErrorWithData(errors, null).data).toBeUndefined();
+    });
   });
 
   describe('isConfigurationError', () => {

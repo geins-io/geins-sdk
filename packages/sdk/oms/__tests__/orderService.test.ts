@@ -151,6 +151,28 @@ describe('OrderService', () => {
         expect(row.configurationId).toBeUndefined();
       });
 
+      it('reads the committed fields of a configured row, without the committed id an order does not carry', async () => {
+        const row = await rowOf({
+          product: { productId: 8820, type: 'configurable' },
+          configurationId: null,
+          configuration: {
+            committedConfigurationId: null,
+            articleNumber: 'ART-1200',
+            discountPercent: 0,
+            weightPerUnit: 3.75,
+            summary: [],
+            sections: null,
+          },
+        });
+        expect(row.configuration).toStrictEqual({
+          articleNumber: 'ART-1200',
+          discountPercent: 0,
+          weightPerUnit: 3.75,
+          summary: [],
+        });
+        expect(row.configuration?.committedConfigurationId).toBeUndefined();
+      });
+
       it('reads a plain row with its product type and no configuration', async () => {
         const row = await rowOf({
           product: { productId: 1045, type: 'product' },

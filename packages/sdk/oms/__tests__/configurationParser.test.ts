@@ -281,6 +281,33 @@ describe('parseConfiguredCartLines', () => {
     });
   });
 
+  it('reads the committed fields of a configured line', () => {
+    const lines = parseConfiguredCartLines({
+      id: 'cart',
+      items: [
+        {
+          id: 'a',
+          quantity: 2,
+          configurationId: 'k1',
+          configuration: {
+            committedConfigurationId: 'k1',
+            articleNumber: 'ART-1200',
+            discountPercent: 12.5,
+            weightPerUnit: 3.75,
+            summary: [],
+          },
+        },
+      ],
+    });
+    expect(lines?.items[0].configuration).toStrictEqual({
+      committedConfigurationId: 'k1',
+      articleNumber: 'ART-1200',
+      discountPercent: 12.5,
+      weightPerUnit: 3.75,
+      summary: [],
+    });
+  });
+
   it('answers null for a null cart and an empty list for null items', () => {
     expect(parseConfiguredCartLines(null)).toBeNull();
     expect(parseConfiguredCartLines({ id: 'c', items: null })).toEqual({ id: 'c', items: [] });
@@ -305,6 +332,31 @@ describe('parseConfiguredOrderLines', () => {
         { product: { productId: 7, type: 'configurable' }, configuration: { summary: [] } },
         { product: null, configuration: null },
       ],
+    });
+  });
+
+  it('reads the committed fields of a configured row, without the committed id an order does not carry', () => {
+    const lines = parseConfiguredOrderLines({
+      cart: {
+        items: [
+          {
+            product: { productId: 7, type: 'configurable' },
+            configuration: {
+              committedConfigurationId: null,
+              articleNumber: 'ART-1200',
+              discountPercent: 0,
+              weightPerUnit: 0.048,
+              summary: [],
+            },
+          },
+        ],
+      },
+    });
+    expect(lines?.items[0]?.configuration).toStrictEqual({
+      articleNumber: 'ART-1200',
+      discountPercent: 0,
+      weightPerUnit: 0.048,
+      summary: [],
     });
   });
 

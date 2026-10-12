@@ -7,6 +7,10 @@ fragment CpqConfiguredCartLines on CartType {
     quantity
     configurationId
     configuration {
+      committedConfigurationId
+      articleNumber
+      discountPercent
+      weightPerUnit
       summary {
         label
         value

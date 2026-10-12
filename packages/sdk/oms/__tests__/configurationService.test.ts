@@ -1,4 +1,5 @@
 import { ConfigurationError, FetchPolicyOptions, GeinsError, GeinsErrorCode } from '@geins/core';
+import type { ConfigurationChangeInputType } from '@geins/types';
 import { ConfigurationService } from '../src/services/configurationService';
 
 function createMockApiClient() {
@@ -167,6 +168,12 @@ describe('ConfigurationService', () => {
       expect(sent(mock).requestOptions.fetchPolicy).toBe(FetchPolicyOptions.NO_CACHE);
     });
 
+    it('asks for the data an answer with errors carries', async () => {
+      await call(service);
+
+      expect(sent(mock).requestOptions.errorPolicy).toBe('all');
+    });
+
     it(kind === 'mutation' ? 'is never retried' : 'may be retried', async () => {
       await call(service);
 
@@ -225,6 +232,18 @@ describe('ConfigurationService', () => {
     await service.create({ articleNumber: 'KONF-1', quantity: 2 });
 
     expect(sent(mock).variables).toEqual({ articleNumber: 'KONF-1', quantity: 2, ...CHANNEL });
+  });
+
+  it('sends an option change without its instance, or with only a lock, as it is', async () => {
+    mock.runMutation.mockResolvedValue({ data: { applyConfigurationChanges: document } });
+    const changes: ConfigurationChangeInputType[] = [
+      { type: 'OPTION', optionId: 'o1', selected: true },
+      { type: 'OPTION', optionId: 'o2', instanceId: '0', lock: 'LOCK' },
+    ];
+
+    await service.applyChanges('c1', changes);
+
+    expect(sent(mock).variables).toEqual({ configurationId: 'c1', changes, ...CHANNEL });
   });
 
   it('answers whether a delete released the session', async () => {
