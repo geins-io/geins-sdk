@@ -4,6 +4,10 @@ fragment OmsCartItemConfiguration on CartType {
   items {
     configurationId
     configuration {
+      committedConfigurationId
+      articleNumber
+      discountPercent
+      weightPerUnit
       summary {
         label
         value

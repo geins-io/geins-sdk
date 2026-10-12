@@ -167,6 +167,12 @@ describe('ConfigurationService', () => {
       expect(sent(mock).requestOptions.fetchPolicy).toBe(FetchPolicyOptions.NO_CACHE);
     });
 
+    it('asks for the data an answer with errors carries', async () => {
+      await call(service);
+
+      expect(sent(mock).requestOptions.errorPolicy).toBe('all');
+    });
+
     it(kind === 'mutation' ? 'is never retried' : 'may be retried', async () => {
       await call(service);
 

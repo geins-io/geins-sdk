@@ -157,6 +157,17 @@ export type ConfigurationSummaryLineType = {
 
 /** The committed configuration a cart line is, as the line carries it. */
 export type CartItemConfigurationType = {
+  /**
+   * The committed configuration's id, the same as the cart line's `configurationId`.
+   * Absent on an order, whose rows carry no configuration id either.
+   */
+  committedConfigurationId?: string;
+  /** The article number of the configured product. */
+  articleNumber?: string;
+  /** The discount the ERP applied at commit, in percent. */
+  discountPercent?: number;
+  /** The weight of one configured product, in the ERP's own unit. */
+  weightPerUnit?: number;
   summary: ConfigurationSummaryLineType[];
   /**
    * The summary's selections by section. Absent for a configuration committed

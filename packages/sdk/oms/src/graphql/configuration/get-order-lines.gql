@@ -19,6 +19,10 @@ query getConfiguredOrderLines(
           type
         }
         configuration {
+          committedConfigurationId
+          articleNumber
+          discountPercent
+          weightPerUnit
           summary {
             label
             value

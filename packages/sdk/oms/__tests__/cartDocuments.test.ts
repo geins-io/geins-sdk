@@ -100,6 +100,42 @@ describe('graphql documents', () => {
     },
   );
 
+  // The choices read selects only the committed structure.
+  const lineConfigurationDocuments = documents.filter(
+    ([name]) => configuredLineDocuments.includes(name) && name !== 'configurationGetOrderLineChoices',
+  );
+
+  function configurationSelections(document: DocumentNode): string[][] {
+    const selections: string[][] = [];
+    visit(document, {
+      Field(node) {
+        if (node.name.value !== 'configuration') return;
+        selections.push(
+          (node.selectionSet?.selections ?? []).flatMap((s) => (s.kind === 'Field' ? [s.name.value] : [])),
+        );
+      },
+    });
+    return selections;
+  }
+
+  it.each(lineConfigurationDocuments)(
+    '%s selects the committed fields of a line configuration',
+    (_name, document) => {
+      const selections = configurationSelections(document);
+      expect(selections.length).toBeGreaterThan(0);
+      for (const fields of selections) {
+        expect(fields).toEqual(
+          expect.arrayContaining([
+            'committedConfigurationId',
+            'articleNumber',
+            'discountPercent',
+            'weightPerUnit',
+          ]),
+        );
+      }
+    },
+  );
+
   function fragment(name: string): FragmentDefinitionNode {
     const document = toDocument(queries.configurationGetOrderLines);
     const found = document.definitions.find(

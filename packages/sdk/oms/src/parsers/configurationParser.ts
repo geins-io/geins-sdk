@@ -238,15 +238,23 @@ function committedSection(wire: Wire): CommittedConfigurationSectionType {
 
 /**
  * A configured line's committed configuration; null for a line that has none.
- * `sections` is left out when the answer has none to give.
+ * `sections` and each committed field are left out when the answer has none to give.
  */
 export function parseCartItemConfiguration(value: unknown): CartItemConfigurationType | null {
   const wire = record(value);
   if (!wire) return null;
-  const summary = parseConfigurationSummary(wire.summary);
-  return Array.isArray(wire.sections)
-    ? { summary, sections: rows(wire.sections).map(committedSection) }
-    : { summary };
+  const committedConfigurationId = text(wire.committedConfigurationId);
+  const articleNumber = text(wire.articleNumber);
+  const discountPercent = decimal(wire.discountPercent);
+  const weightPerUnit = decimal(wire.weightPerUnit);
+  return {
+    ...(committedConfigurationId !== null ? { committedConfigurationId } : {}),
+    ...(articleNumber !== null ? { articleNumber } : {}),
+    ...(discountPercent !== null ? { discountPercent } : {}),
+    ...(weightPerUnit !== null ? { weightPerUnit } : {}),
+    summary: parseConfigurationSummary(wire.summary),
+    ...(Array.isArray(wire.sections) ? { sections: rows(wire.sections).map(committedSection) } : {}),
+  };
 }
 
 /** What a commit answers; null when the answer holds no record, or one without its committed id. */

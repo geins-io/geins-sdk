@@ -33,7 +33,12 @@ export {
 export { AuthError, TokenExpiredError, TokenRefreshError } from './errors/authError';
 export { CartError } from './errors/cartError';
 export { CheckoutError, OrderError } from './errors/checkoutError';
-export { ConfigurationError, isConfigurationError, toConfigurationError } from './errors/configurationError';
+export {
+  ConfigurationError,
+  isConfigurationError,
+  toConfigurationError,
+  toConfigurationErrorWithData,
+} from './errors/configurationError';
 export type {
   ConfigurationErrorCode,
   ConfigurationErrorDetails,
