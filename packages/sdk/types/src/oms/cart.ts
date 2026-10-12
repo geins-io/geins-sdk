@@ -45,6 +45,8 @@ export type CartItemProductType = {
     stock: StockType;
   }[];
   unitPrice: PriceType;
+  /** The Geins product type, such as `product` or `configurable`. Selected by the order read only. */
+  type?: string;
 };
 
 export enum ItemType {

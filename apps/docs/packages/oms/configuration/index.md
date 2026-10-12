@@ -401,6 +401,8 @@ getOrderLines(
 
 Answers each row's product id and product type, and, when the row is configured, its configuration: the `summary`, and the committed `sections` where the API recorded them.
 
+**Deprecated.** The order read [`order.get`](../order/get.md#configured-rows) carries each row's product type and configuration itself, so this second read of the order is no longer needed.
+
 ```typescript
 const order = await geinsOMS.configuration.getOrderLines(publicOrderId, { userToken });
 order?.items.forEach((row, position) => {
