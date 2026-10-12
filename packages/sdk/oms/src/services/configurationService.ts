@@ -172,7 +172,10 @@ export class ConfigurationService extends BaseApiService {
 
   // --- Orders ---
 
-  /** An order's rows by position, each with its product's type and, when configured, its summary. */
+  /**
+   * An order's rows by position, each with its product's type and, when configured, its summary.
+   * @deprecated `order.get` reads the same fields on each row in the order read itself.
+   */
   async getOrderLines(
     publicOrderId: string,
     requestContext?: RequestContext,

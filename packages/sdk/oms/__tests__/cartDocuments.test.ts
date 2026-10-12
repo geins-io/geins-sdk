@@ -3,6 +3,7 @@ import {
   buildSchema,
   parse,
   validate,
+  visit,
   type DocumentNode,
   type FieldNode,
   type FragmentDefinitionNode,
@@ -61,16 +62,28 @@ describe('graphql documents', () => {
     );
   });
 
-  // On an order, `configuration` is read from cpq with the order.
-  it.each(cartDocuments)(
-    '%s selects the line configuration on a cart and not on an order',
-    (name, document) => {
-      expect(fragmentNames(document).includes('OmsCartItemConfiguration')).toBe(name !== 'orderGet');
-    },
-  );
+  it.each(cartDocuments)('%s selects the line configuration', (_name, document) => {
+    expect(fragmentNames(document)).toContain('OmsCartItemConfiguration');
+  });
+
+  function selectsProductType(document: DocumentNode): boolean {
+    let found = false;
+    visit(document, {
+      Field(node) {
+        if (node.name.value !== 'product') return;
+        found ||= !!node.selectionSet?.selections.some((s) => s.kind === 'Field' && s.name.value === 'type');
+      },
+    });
+    return found;
+  }
+
+  // The order read is where a configurable row is told from a plain one.
+  it.each(cartDocuments)('%s selects the product type only on an order', (name, document) => {
+    expect(selectsProductType(document)).toBe(name === 'orderGet');
+  });
 
   const configuredLineDocuments = [
-    ...cartDocuments.map(([name]) => name).filter((name) => name !== 'orderGet'),
+    ...cartDocuments.map(([name]) => name),
     'configurationAddCartItem',
     'configurationUpdateCartItem',
     'configurationGetCartLines',
