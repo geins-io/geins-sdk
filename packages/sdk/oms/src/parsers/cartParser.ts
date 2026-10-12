@@ -291,6 +291,7 @@ function parseCartItemProduct(
     })),
     alias: data.alias || '',
     canonicalUrl: data.canonicalUrl || '',
+    type: data.type ?? undefined,
     primaryCategory: {
       name: data.primaryCategory?.name || '',
     },

@@ -1,5 +1,5 @@
-import { OrderService } from '../src/services/orderService';
 import { GeinsError, OrderError } from '@geins/core';
+import { OrderService } from '../src/services/orderService';
 
 function createMockApiClient() {
   const mockClient = {
@@ -100,10 +100,7 @@ describe('OrderService', () => {
     it('spreads requestContext into createVariables', async () => {
       mockClient.runQuery.mockResolvedValue({ data: {} });
 
-      await service.get(
-        { publicOrderId: 'PUB-1' },
-        { languageId: 'en-US', marketId: 'US' },
-      );
+      await service.get({ publicOrderId: 'PUB-1' }, { languageId: 'en-US', marketId: 'US' });
 
       const callArgs = mockClient.runQuery.mock.calls[0][0];
       expect(callArgs.variables.languageId).toBe('en-US');
@@ -118,6 +115,57 @@ describe('OrderService', () => {
       const callArgs = mockClient.runQuery.mock.calls[0][0];
       expect(callArgs.variables.languageId).toBe('sv-SE');
       expect(callArgs.variables.marketId).toBe('SE');
+    });
+
+    describe('an order row', () => {
+      function orderWith(item: Record<string, unknown>) {
+        return {
+          __typename: 'OrderType',
+          id: 1548,
+          publicId: 'PUB-1548',
+          cart: {
+            __typename: 'CartType',
+            id: 'cart-1',
+            items: [
+              { id: '00000000-0000-0000-0000-000000000000', skuId: 1, quantity: 1, groupKey: null, ...item },
+            ],
+            summary: null,
+          },
+        };
+      }
+
+      async function rowOf(item: Record<string, unknown>) {
+        mockClient.runQuery.mockResolvedValue(orderWith(item));
+        return (await service.get({ publicOrderId: 'PUB-1548' }))!.cart!.items[0];
+      }
+
+      // As measured on real orders: the configured row's id is null.
+      it('reads a configured row with its product type and configuration, and no configuration id', async () => {
+        const row = await rowOf({
+          product: { productId: 8820, type: 'configurable' },
+          configurationId: null,
+          configuration: { summary: [{ label: 'Width', value: '1200 mm' }], sections: null },
+        });
+        expect(row.product?.type).toBe('configurable');
+        expect(row.configuration).toStrictEqual({ summary: [{ label: 'Width', value: '1200 mm' }] });
+        expect(row.configurationId).toBeUndefined();
+      });
+
+      it('reads a plain row with its product type and no configuration', async () => {
+        const row = await rowOf({
+          product: { productId: 1045, type: 'product' },
+          configurationId: null,
+          configuration: null,
+        });
+        expect(row.product?.type).toBe('product');
+        expect(row.configuration).toBeUndefined();
+        expect(row.configurationId).toBeUndefined();
+      });
+
+      it('reads a product that answers no type as having none', async () => {
+        const row = await rowOf({ product: { productId: 1045, type: null } });
+        expect(row.product?.type).toBeUndefined();
+      });
     });
   });
 });

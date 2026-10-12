@@ -1,4 +1,5 @@
 #import "./cart.gql"
+#import "./cart-item-configuration.gql"
 #import "./address.gql"
 #import "./price.gql"
 #import "./payment-details.gql"
@@ -26,6 +27,12 @@ fragment OrderSummary on OrderType {
   }
   cart {
     ...OmsCart
+    ...OmsCartItemConfiguration
+    items {
+      product {
+        type
+      }
+    }
   }
   paymentDetails {
     ...PaymentDetails
