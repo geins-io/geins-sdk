@@ -1,6 +1,6 @@
 import { ApolloError } from '@apollo/client/core';
 import type { GeinsSettings } from '@geins/types';
-import { MerchantApiClient } from '../src/api-client/merchantApiClient';
+import { FetchPolicyOptions, MerchantApiClient } from '../src/api-client/merchantApiClient';
 import { TimeoutError } from '../src/errors/networkError';
 
 const MUTATION = `
@@ -185,5 +185,82 @@ describe('MerchantApiClient per-call retry', () => {
       .catch(() => undefined);
 
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('MerchantApiClient per-call error policy', () => {
+  const refused = () =>
+    jest.spyOn(globalThis, 'fetch').mockImplementation(
+      async () =>
+        new Response(
+          JSON.stringify({
+            data: { commit: 'kept', get: 'kept' },
+            errors: [{ message: 'refused', extensions: { code: 'ConfigurationMismatch' } }],
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } },
+        ),
+    );
+
+  it.each(['mutate', 'query'] as const)(
+    '%s: still throws on an answer with errors, as before',
+    async (method) => {
+      refused();
+      const target = client();
+
+      const error = await (
+        method === 'mutate'
+          ? target.runMutation({ queryAsString: MUTATION })
+          : target.runQuery({
+              queryAsString: QUERY,
+              requestOptions: { fetchPolicy: FetchPolicyOptions.NO_CACHE },
+            })
+      ).catch((e: unknown) => e);
+
+      expect(error).toBeInstanceOf(ApolloError);
+    },
+  );
+
+  it.each(['mutate', 'query'] as const)(
+    "%s: answers the data and the errors when asked for errorPolicy 'all'",
+    async (method) => {
+      refused();
+      const target = client();
+      const requestOptions = { fetchPolicy: FetchPolicyOptions.NO_CACHE, errorPolicy: 'all' as const };
+
+      const result = await (method === 'mutate'
+        ? target.runMutation({ queryAsString: MUTATION, requestOptions })
+        : target.runQuery({ queryAsString: QUERY, requestOptions }));
+
+      expect(result.data).toEqual({ commit: 'kept', get: 'kept' });
+      expect(result.errors?.map((e) => e.extensions?.code)).toEqual(['ConfigurationMismatch']);
+    },
+  );
+
+  it.each(['mutate', 'query'] as const)(
+    "%s: keeps nothing in the cache from an answer with errors, without the cache and errorPolicy 'all'",
+    async (method) => {
+      refused();
+      const target = client();
+      const requestOptions = { fetchPolicy: FetchPolicyOptions.NO_CACHE, errorPolicy: 'all' as const };
+
+      await (method === 'mutate'
+        ? target.runMutation({ queryAsString: MUTATION, requestOptions })
+        : target.runQuery({ queryAsString: QUERY, requestOptions }));
+
+      expect(target.getClient()!.cache.extract()).toEqual({});
+    },
+  );
+
+  // The check above can fail: with the cache on, the same answer is stored.
+  it("query: stores the answer of a call with the cache and errorPolicy 'all'", async () => {
+    refused();
+    const target = client();
+
+    await target.runQuery({
+      queryAsString: QUERY,
+      requestOptions: { fetchPolicy: FetchPolicyOptions.NETWORK_ONLY, errorPolicy: 'all' },
+    });
+
+    expect(target.getClient()!.cache.extract()).not.toEqual({});
   });
 });

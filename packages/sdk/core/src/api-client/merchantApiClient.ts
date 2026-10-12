@@ -4,6 +4,7 @@ import {
   ApolloQueryResult,
   createHttpLink,
   DocumentNode,
+  ErrorPolicy,
   FetchPolicy,
   FetchResult,
   gql,
@@ -37,6 +38,8 @@ export enum OperationType {
 
 export interface RequestOptions {
   fetchPolicy?: FetchPolicyOptions;
+  /** Apollo's error policy; `all` answers the data and the errors instead of throwing. */
+  errorPolicy?: ErrorPolicy;
   pollInterval?: number;
   context?: Record<string, unknown>;
   [key: string]: unknown;
@@ -262,6 +265,7 @@ export class MerchantApiClient {
       fetchPolicy: this.getFetchPolicy(OperationType.QUERY, opts.fetchPolicy),
       pollInterval: opts.pollInterval || this.pollInterval,
       context: this.buildContext(userToken, opts.context),
+      ...(opts.errorPolicy ? { errorPolicy: opts.errorPolicy } : {}),
     });
   }
 
@@ -280,6 +284,7 @@ export class MerchantApiClient {
         | 'network-only'
         | 'no-cache',
       context: this.buildContext(userToken, opts.context),
+      ...(opts.errorPolicy ? { errorPolicy: opts.errorPolicy } : {}),
     });
   }
 }

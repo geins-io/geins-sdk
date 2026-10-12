@@ -1,3 +1,5 @@
+import { ApolloError } from '@apollo/client/core';
+import type { GraphQLFormattedError } from 'graphql';
 import { GeinsError, GeinsErrorCode } from './geinsError';
 
 /** The codes the CPQ area is known to send, for autocomplete; any other string can arrive. */
@@ -11,6 +13,10 @@ export type ConfigurationErrorCode =
   | 'ConfigurationNotReopenable'
   | 'CartItemNotConfigured'
   | 'CartBelongsToAnotherCompany'
+  | 'NotAvailable'
+  | 'InvalidProductReference'
+  | 'ProductNotFound'
+  | 'ConfigurationCurrencyMismatch'
   | (string & {});
 
 /** One GraphQL error of the answer: its `extensions.code`, when it has one, and its message. */
@@ -19,12 +25,14 @@ export interface ConfigurationProviderError {
   message: string;
 }
 
-export interface ConfigurationErrorDetails {
+export interface ConfigurationErrorDetails<TData = unknown> {
   /** Every GraphQL error in the answer, in order. */
   providerErrors: ConfigurationProviderError[];
   /** The status Apollo reported: any non-2xx, or a 2xx whose body was not JSON. */
   status?: number;
   cause?: unknown;
+  /** What the API answered alongside the errors, parsed as the call answers it. */
+  data?: TData;
 }
 
 /**
@@ -33,10 +41,13 @@ export interface ConfigurationErrorDetails {
  * can branch on a code the SDK does not know. The message is fixed: the cause
  * can hold the request's URL.
  *
+ * `TData` is the answer of the call that threw, which `data` holds when the API
+ * sent one alongside the errors; each configuration call names its own.
+ *
  * Everything is a field, not a getter: built for ES5, an `Error` subclass is a
  * plain `Error` at run time, without the subclass's prototype.
  */
-export class ConfigurationError extends GeinsError {
+export class ConfigurationError<TData = unknown> extends GeinsError {
   readonly providerErrors: ConfigurationProviderError[];
   /** Every provider code in the answer, verbatim and in order. */
   readonly providerCodes: ConfigurationErrorCode[];
@@ -45,8 +56,14 @@ export class ConfigurationError extends GeinsError {
   /** The message of the first GraphQL error, if any. */
   readonly providerMessage?: string;
   readonly status?: number;
+  /**
+   * What the API answered alongside the errors, when it answered anything:
+   * the unchanged cart lines of a refused `updateCartItem`, or the committed
+   * configuration, without a price, of a commit in a market of another currency.
+   */
+  readonly data?: TData;
 
-  constructor({ providerErrors, status, cause }: ConfigurationErrorDetails) {
+  constructor({ providerErrors, status, cause, data }: ConfigurationErrorDetails<TData>) {
     super('The configuration request failed', GeinsErrorCode.CONFIGURATION_FAILED, cause);
     this.name = 'ConfigurationError';
     this.providerErrors = providerErrors;
@@ -56,6 +73,7 @@ export class ConfigurationError extends GeinsError {
     this.providerCode = this.providerCodes[0];
     this.providerMessage = providerErrors[0]?.message;
     this.status = status;
+    this.data = data;
   }
 }
 
@@ -75,8 +93,9 @@ function graphQLErrors(value: unknown): GraphQLErrorLike[] {
 /**
  * Whether a value is a {@link ConfigurationError}. Use it rather than
  * `instanceof`, which the ES5 build cannot answer for an `Error` subclass.
+ * `TData` is taken on trust: pass the answer type of the call that threw.
  */
-export function isConfigurationError(value: unknown): value is ConfigurationError {
+export function isConfigurationError<TData = unknown>(value: unknown): value is ConfigurationError<TData> {
   if (value instanceof ConfigurationError) return true;
   const error = record(value);
   return error?.name === 'ConfigurationError' && Array.isArray(error.providerErrors);
@@ -87,8 +106,11 @@ export function isConfigurationError(value: unknown): value is ConfigurationErro
  * GraphQL errors in two places: `graphQLErrors` for a 2xx answer, and the
  * network error's parsed body (`networkError.result.errors`) for a non-2xx one.
  */
-export function toConfigurationError(error: unknown): ConfigurationError {
-  if (isConfigurationError(error)) return error;
+export function toConfigurationError<TData = unknown>(
+  error: unknown,
+  data?: TData,
+): ConfigurationError<TData> {
+  if (isConfigurationError<TData>(error)) return error;
 
   const apollo = record(error);
   const network = record(apollo?.networkError);
@@ -102,5 +124,17 @@ export function toConfigurationError(error: unknown): ConfigurationError {
     }),
     ...(typeof status === 'number' ? { status } : {}),
     cause: network ? apollo?.networkError : error,
+    ...(data !== undefined ? { data } : {}),
   });
+}
+
+/**
+ * The errors of a 2xx answer read with errorPolicy `all`, as the same error
+ * Apollo's default policy throws for them, plus the answer they came with.
+ */
+export function toConfigurationErrorWithData<TData>(
+  errors: ReadonlyArray<GraphQLFormattedError>,
+  data: TData | null,
+): ConfigurationError<TData> {
+  return toConfigurationError(new ApolloError({ graphQLErrors: errors }), data ?? undefined);
 }

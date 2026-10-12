@@ -143,8 +143,17 @@ export type ConfigurationChangeInputType =
   | {
       type: 'OPTION';
       optionId: string;
-      instanceId: string;
-      selected: boolean;
+      /**
+       * Which copy of the option to act on. Without it, the change acts on the
+       * option's only instance; send it when an option has several.
+       */
+      instanceId?: string;
+      /**
+       * Whether to select or deselect. May be left out when `quantity` or a `lock`
+       * of `LOCK` or `UNLOCK` is sent, and the selection is then kept; with none of
+       * them (or `lock: 'NONE'`), the API refuses with `ConfigurationFailed`.
+       */
+      selected?: boolean;
       quantity?: number;
       lock?: 'NONE' | 'LOCK' | 'UNLOCK';
     }
@@ -157,6 +166,17 @@ export type ConfigurationSummaryLineType = {
 
 /** The committed configuration a cart line is, as the line carries it. */
 export type CartItemConfigurationType = {
+  /**
+   * The committed configuration's id, the same as the cart line's `configurationId`.
+   * Absent on an order, whose rows carry no configuration id either.
+   */
+  committedConfigurationId?: string;
+  /** The article number of the configured product. */
+  articleNumber?: string;
+  /** The discount the ERP applied at commit, in percent. */
+  discountPercent?: number;
+  /** The weight of one configured product, in the ERP's own unit. */
+  weightPerUnit?: number;
   summary: ConfigurationSummaryLineType[];
   /**
    * The summary's selections by section. Absent for a configuration committed

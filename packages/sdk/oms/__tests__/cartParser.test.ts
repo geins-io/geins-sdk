@@ -430,6 +430,47 @@ describe('cart line configuration', () => {
     });
   });
 
+  it('reads the committed fields of a configured line', () => {
+    const line = lineOf({
+      configurationId: 'cfg-6',
+      configuration: {
+        committedConfigurationId: 'cfg-6',
+        articleNumber: 'ART-1200',
+        discountPercent: 12.5,
+        weightPerUnit: 3.75,
+        summary: [],
+      },
+    });
+    expect(line.configuration).toStrictEqual({
+      committedConfigurationId: 'cfg-6',
+      articleNumber: 'ART-1200',
+      discountPercent: 12.5,
+      weightPerUnit: 3.75,
+      summary: [],
+    });
+  });
+
+  it('reads committed fields the answer holds as null, or not at all, as absent', () => {
+    const nulls = lineOf({
+      configurationId: 'cfg-7',
+      configuration: {
+        committedConfigurationId: null,
+        articleNumber: null,
+        discountPercent: null,
+        weightPerUnit: null,
+        summary: [],
+      },
+    });
+    const missing = lineOf({ configurationId: 'cfg-7', configuration: { summary: [] } });
+    for (const line of [nulls, missing]) {
+      expect(line.configuration).toStrictEqual({ summary: [] });
+      expect(line.configuration?.committedConfigurationId).toBeUndefined();
+      expect(line.configuration?.articleNumber).toBeUndefined();
+      expect(line.configuration?.discountPercent).toBeUndefined();
+      expect(line.configuration?.weightPerUnit).toBeUndefined();
+    }
+  });
+
   it('keeps a configuration committed with an empty summary as an empty list', () => {
     const line = lineOf({ configurationId: 'cfg-2', configuration: { summary: [] } });
     expect(line.configuration).toEqual({ summary: [] });

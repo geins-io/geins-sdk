@@ -49,7 +49,7 @@ declare enum ItemType {
 }
 ```
 
-A line added from a committed configuration carries the configuration's id and a summary of it, see [Configuration (CPQ)](../configuration/index.md). On a line added before the API copied configurations onto lines, `configuration` is absent while `configurationId` is set.
+A line added from a committed configuration carries the configuration's id and a summary of it, see [Configuration (CPQ)](../configuration/index.md). Its `configuration` also carries `committedConfigurationId`, `articleNumber`, `discountPercent` and `weightPerUnit`, each absent where the API answers none. On a line added before the API copied configurations onto lines, `configuration` is absent while `configurationId` is set.
 
 ## Identifying Items
 
