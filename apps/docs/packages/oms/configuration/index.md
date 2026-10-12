@@ -58,8 +58,8 @@ type ConfigurationChangeInputType =
   | {
       type: 'OPTION';
       optionId: string;
-      instanceId: string;
-      selected: boolean;
+      instanceId?: string;
+      selected?: boolean;
       quantity?: number;
       lock?: 'NONE' | 'LOCK' | 'UNLOCK';
     }
@@ -274,7 +274,7 @@ Applies a batch of changes in order and answers the whole re-evaluated document.
 A change acts on one of three things:
 
 - `VARIABLE` sets a variable's `value`.
-- `OPTION` selects or deselects an option by `optionId` and `instanceId`, optionally with a `quantity` and a `lock`.
+- `OPTION` selects or deselects an option by `optionId` and `instanceId`, optionally with a `quantity` and a `lock`. Without `instanceId`, the change acts on the option's only instance; send it when an option has several. `selected` may be left out when `quantity` or a `lock` of `LOCK` or `UNLOCK` is sent, and the selection is then kept; with none of them (or `lock: 'NONE'`), the API refuses with `ConfigurationFailed`.
 - `QUANTITY` sets how many of the configured product are ordered.
 
 ```typescript

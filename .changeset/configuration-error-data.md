@@ -27,3 +27,7 @@ A cart line's and an order row's `configuration`, as the cart service, `order.ge
 configuration service read it, now carries `committedConfigurationId`, `articleNumber`, `discountPercent` and `weightPerUnit` as
 optional fields of `CartItemConfigurationType`, each absent where the API answers none
 (`committedConfigurationId` always is on an order).
+
+An `OPTION` change in `ConfigurationChangeInputType` may leave out `instanceId`, and then acts on the
+option's only instance. It may leave out `selected` when it sends a `quantity` or a `lock` of `LOCK`
+or `UNLOCK`, as the API takes it.

@@ -143,8 +143,17 @@ export type ConfigurationChangeInputType =
   | {
       type: 'OPTION';
       optionId: string;
-      instanceId: string;
-      selected: boolean;
+      /**
+       * Which copy of the option to act on. Without it, the change acts on the
+       * option's only instance; send it when an option has several.
+       */
+      instanceId?: string;
+      /**
+       * Whether to select or deselect. May be left out when `quantity` or a `lock`
+       * of `LOCK` or `UNLOCK` is sent, and the selection is then kept; with none of
+       * them (or `lock: 'NONE'`), the API refuses with `ConfigurationFailed`.
+       */
+      selected?: boolean;
       quantity?: number;
       lock?: 'NONE' | 'LOCK' | 'UNLOCK';
     }
