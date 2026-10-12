@@ -29,13 +29,21 @@ const configuration = await geinsOMS.configuration.create(
 );
 ```
 
-Every method takes an optional `requestContext` (language, market, channel and `userToken`) and an optional `options` object with a per-call timeout, see [Call options](#call-options). The API settles a session's customer and currency when the session is created, so pass the signed-in buyer's `userToken` from `create` on.
+Every method takes an optional `requestContext` (language, market, channel and `userToken`) and an optional `options` object with a per-call timeout, see [Call options](#call-options).
+
+### Before you start
+
+- **CPQ is enabled on the account.** Without it, every call fails with `NotAvailable`.
+- **The buyer is signed in, and their company has an ERP customer number.** Pass the buyer's `userToken` on every call, `create` included. A signed-out buyer, or a company without a customer number, gets `MissingCustomerNumber`.
+- **Every call passes the same channel, market and language.** The API settles a session's customer and currency when the session is created; a later call in a market with another currency is refused with `ConfigurationCurrencyMismatch`.
+
+The [CPQ guide](https://www.geins.io/developers/guides/working-with-configurations) describes the API behind this service in full.
 
 What the SDK itself does on every call:
 
 - **Stateless.** Like the cart service, it holds no per-request state, so one instance can serve concurrent requests.
 - **No cache.** Every call bypasses the Apollo cache. A session's nodes carry template ids that repeat across sessions, so normalising them would mix one session into another.
-- **No retry on a mutation.** A commit or a configured add sent twice would be two lines, so a mutation is sent once.
+- **No retry on a mutation.** A configured add sent twice is two cart lines, because configured lines never merge, so a mutation is sent once.
 - **`null` for a missing answer.** A method answers `null` when the response does not hold what it asked for, for example a session without an id.
 - **One error type.** Every failure from the API is thrown as a `ConfigurationError` carrying the API's own codes, see [Errors](#errors).
 
@@ -114,6 +122,10 @@ type ConfigurationSummaryLineType = {
 
 /** The committed configuration a cart line is, as the line carries it. */
 type CartItemConfigurationType = {
+  committedConfigurationId?: string; // the line's configurationId; absent on an order
+  articleNumber?: string; // the configured product's article number
+  discountPercent?: number; // the discount the ERP applied at commit, in percent
+  weightPerUnit?: number; // the weight of one configured product, in the ERP's own unit
   summary: ConfigurationSummaryLineType[];
   sections?: CommittedConfigurationSectionType[];
 };
@@ -143,7 +155,17 @@ type CommittedOrderLinesType = {
 };
 ```
 
-A session's `sections` hold its variables and option groups, and option groups hold options. Variables and options carry `available`, `readOnly`, their `selectionSource` and their own `messages`; option groups carry `available` and `messages`, sections `visible` and `messages`. A UI can follow the rules the provider applied from these without knowing them. A committed section (`CommittedConfigurationSectionType`) holds only what the buyer saw and chose. The full node types are in `packages/sdk/types/src/oms/configuration.ts`: `ConfigurationSectionType`, `ConfigurationVariableType`, `ConfigurationOptionGroupType`, `ConfigurationOptionType` and their committed counterparts.
+A session's `sections` hold its variables and option groups, and option groups hold options. Variables and options carry `available`, `readOnly`, their `selectionSource` and their own `messages`; option groups carry `available` and `messages`, sections `visible` and `messages`. A UI can follow the rules the provider applied from these without knowing them:
+
+- **Order:** sort a parent's sections, variables and option groups together on `sortIndex`, nulls last. The SDK keeps the order the API answered, and when every `sortIndex` is `null`, keep that order.
+- **Visibility:** hide a section whose `visible` is `false`; disable a variable, option group or option whose `available` is `false`.
+- **Read-only:** a variable or option with `readOnly: true` cannot be edited, and a change to it is refused. A `LOCK` you send yourself does not make an option read-only.
+- **Lock:** a `LOCK` keeps the option from being changed by later rule cascades.
+- **Option groups:** `minSelections` and `maxSelections` give the selection rules (`maxSelections: 1` is single-select); `quantityEditable`, with `minQuantity` and `maxQuantity`, says whether and how far a quantity can change.
+- **Add to cart:** enable it only when the session's `isValid` is `true`.
+- **Option prices:** `option.unitPrice` is the ERP price the cart charges. `option.product` is the matching Geins catalogue product, often `null`, and its own price is not the CPQ price.
+
+The guide's [rendering rules](https://www.geins.io/developers/guides/working-with-configurations#2-render-the-tree) give them in full. A committed section (`CommittedConfigurationSectionType`) holds only what the buyer saw and chose. The full node types are in `packages/sdk/types/src/oms/configuration.ts`: `ConfigurationSectionType`, `ConfigurationVariableType`, `ConfigurationOptionGroupType`, `ConfigurationOptionType` and their committed counterparts.
 
 Lists are never `null` and hold no `null` rows, with two exceptions in the order reads: `items` keeps a `null` row in its place (see [Orders](#orders)), and a committed row's `sections` is `null` when the structure was not recorded. Ids stay nullable as the schema declares them. Enum values such as `selectionSource` are typed as the known members but can be any string, so a value added in the API reaches you unchanged.
 
@@ -156,9 +178,17 @@ A configured product goes from a session to a cart line in four calls:
 3. **`commit`** freezes the session at its current price and answers a committed id.
 4. **`addCartItem`** puts the committed id in the cart as a line of its own.
 
-A cart line carries the committed id, not the session id, because a cart outlives a session.
+A cart line carries the committed id, not the session id, because a cart outlives a session. Three ids are in play:
 
-A session expires at its `expiresAt`. `renew` pushes the expiry out. Once a session has expired, been deleted or been committed, reading it afterwards answers `ConfigurationGone`.
+| Id                                          | What it is                                                                  | Comes from                 | Taken by                                                 |
+| ------------------------------------------- | --------------------------------------------------------------------------- | -------------------------- | -------------------------------------------------------- |
+| Session id (`configurationId` on a session) | A live session, until its `expiresAt`                                       | `create`, `reopenCartItem` | `get`, `applyChanges`, `commit`, `renew`, `delete`       |
+| Committed id (`committedConfigurationId`)   | The configuration frozen at commit, with its price; it outlives the session | `commit`                   | `addCartItem` and `updateCartItem`, as `configurationId` |
+| Cart line id (`id` on a cart line)          | The line, as long as it is in the cart                                      | The cart                   | `updateCartItem` (`id`), `reopenCartItem` (`itemId`)     |
+
+The ERP sets a configured product's price net of VAT. The API works out the inc-VAT side from the configured article's VAT rate in the market, and it equals the net where the configured article carries no VAT rate.
+
+A session expires at its `expiresAt`. `renew` pushes the expiry out: renew while the buyer is active, and `delete` the session when the buyer leaves, as the guide's [session lifetime](https://www.geins.io/developers/guides/working-with-configurations#3-apply-changes) says. Once a session has expired, been deleted or been committed, reading it afterwards answers `ConfigurationGone`.
 
 To change a configured line already in the cart:
 
@@ -167,6 +197,8 @@ To change a configured line already in the cart:
 3. **`updateCartItem`** puts the new committed id on the line.
 
 Until `updateCartItem`, the API keeps the line on the configuration it already has, so a buyer who abandons the edit loses nothing.
+
+To change a configured line's quantity at the right price, take the same three steps with a `QUANTITY` change, and pass `updateCartItem` the new committed `quantity`. The cart quantity should match the committed one: the committed price was quoted for it.
 
 ```typescript
 const session = await geinsOMS.configuration.create({ productId: 1001, quantity: 1 }, { userToken });
@@ -183,12 +215,14 @@ if (evaluated?.isValid) {
   if (committed) {
     await geinsOMS.configuration.addCartItem(
       cartId,
-      { skuId: 5001, quantity: 1, configurationId: committed.committedConfigurationId },
+      { skuId: 5001, quantity: committed.quantity ?? 1, configurationId: committed.committedConfigurationId },
       { userToken },
     );
   }
 }
 ```
+
+Add the line at the committed `quantity`: the committed price was quoted for it.
 
 ## Sessions
 
@@ -284,6 +318,8 @@ commit(
 
 Freezes the session at its current price and answers the committed configuration. Its `committedConfigurationId` is what a cart line's `configurationId` carries; `summary` is the buyer's selections as one line each.
 
+In a market whose currency is not the session's, the API commits anyway and answers `ConfigurationCurrencyMismatch`. The error's `data` holds the committed configuration, without a price; see [Data with an error](#data-with-an-error).
+
 ```typescript
 const committed = await geinsOMS.configuration.commit(configurationId, { userToken });
 const lineConfigurationId = committed?.committedConfigurationId;
@@ -316,7 +352,7 @@ reopenCartItem(
 ): Promise<ConfigurationType | null>
 ```
 
-Opens a configured cart line's committed configuration again as a new session, at the line's quantity and at today's price. Commit that session and pass the new committed id to [`updateCartItem`](#swap-a-line-s-configuration); until then the line keeps the configuration it has.
+Opens a configured cart line's committed configuration again as a new session, at the line's quantity and at today's price. Commit that session and pass the new committed id to [`updateCartItem`](#swap-a-line-s-configuration); until then the line keeps the configuration it has. `ConfigurationNotReopenable` means the configuration cannot be revised: the buyer configures the product again from scratch.
 
 ```typescript
 const session = await geinsOMS.configuration.reopenCartItem(cartId, cartLineId, { userToken });
@@ -358,7 +394,9 @@ updateCartItem(
 ): Promise<ConfiguredCartLinesType | null>
 ```
 
-Puts a cart line, named by its `id`, on another committed configuration and answers the cart's lines.
+Puts a cart line, named by its `id`, on another committed configuration and answers the cart's lines. With `configurationId: ""` the line loses its configuration: it keeps `configurationId: ""` (not `null`) and reads `configuration: null`.
+
+When the API refuses the new configuration, the line keeps the one it has, and the error's `data` holds the cart's lines, unchanged; see [Data with an error](#data-with-an-error).
 
 ```typescript
 const lines = await geinsOMS.configuration.updateCartItem(
@@ -378,11 +416,11 @@ getCartLines(
 ): Promise<ConfiguredCartLinesType | null>
 ```
 
-Answers the cart's lines, each with its committed id and configuration. An unconfigured line has `configurationId` and `configuration` set to `null`. A configured line added before the API copied configurations onto lines has its `configurationId` but `configuration: null`, so tell a configured line by its `configurationId`. The API copies the configuration onto the line when the line is added or updated, so this read makes no call to the provider. `configuration.sections` is absent on a line committed before the API recorded the structure; read `summary` then.
+Answers the cart's lines, each with its committed id and configuration. An unconfigured line has `configurationId` and `configuration` set to `null`, and a line whose configuration was removed has `configurationId: ""`. A configured line added before the API copied configurations onto lines has its `configurationId` but `configuration: null`, so tell a configured line by its `configurationId`. The API copies the configuration onto the line when the line is added or updated, so this read makes no call to the provider. `configuration.sections` is absent on a line committed before the API recorded the structure; read `summary` then.
 
 ```typescript
 const lines = await geinsOMS.configuration.getCartLines(cartId, { userToken });
-const configured = lines?.items.filter((item) => item.configurationId !== null) ?? [];
+const configured = lines?.items.filter((item) => !!item.configurationId) ?? [];
 ```
 
 ## Orders
@@ -440,7 +478,7 @@ const session = await geinsOMS.configuration.get(configurationId, { userToken },
 Every failure from the API (a GraphQL error, a non-2xx answer, a timeout or a network error) is a `ConfigurationError` from `@geins/core`; a settings error such as a missing language or market is a `GeinsError`. Its `code` is `GeinsErrorCode.CONFIGURATION_FAILED`; the API's own codes are carried as sent rather than mapped, so you can branch on a code the SDK does not know yet.
 
 ```typescript
-class ConfigurationError extends GeinsError {
+class ConfigurationError<TData = unknown> extends GeinsError {
   readonly providerErrors: { code?: ConfigurationErrorCode; message: string }[];
   /** Every provider code in the answer, in order. */
   readonly providerCodes: ConfigurationErrorCode[];
@@ -449,6 +487,8 @@ class ConfigurationError extends GeinsError {
   /** The message of the first GraphQL error, if any. */
   readonly providerMessage?: string;
   readonly status?: number;
+  /** What the API answered alongside the errors, parsed as the method answers it. */
+  readonly data?: TData;
 }
 ```
 
@@ -468,14 +508,44 @@ try {
 
 The codes the API is known to send. Any other string can arrive.
 
-| Code                          | What it means                                                                                           |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `ConfigurationNotFound`       | No session has this id.                                                                                 |
-| `ConfigurationGone`           | The session existed but is finished: it expired, was deleted, or was committed.                         |
-| `MissingCustomerNumber`       | The session has no customer to settle on, for example a `create` without a signed-in buyer.             |
-| `ConfigurationFailed`         | The provider refused the request, for example a change in `applyChanges`; `providerMessage` says which. |
-| `ConfigurationMismatch`       | The committed configuration is not for the article it was added with.                                   |
-| `LoginRequired`               | The cart holds a configured line and needs a signed-in buyer to be read.                                |
-| `ConfigurationNotReopenable`  | The cart line's configuration cannot be opened again.                                                   |
-| `CartItemNotConfigured`       | The cart line carries no configuration.                                                                 |
-| `CartBelongsToAnotherCompany` | The cart belongs to another company than the signed-in buyer's.                                         |
+| Code                                          | What it means                                                                                               | What to do                                                                                       |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `NotAvailable`                                | CPQ is not enabled on the account.                                                                          | Hide the configurator.                                                                           |
+| `MissingCustomerNumber`                       | No customer to settle the session on: the buyer is signed out, or their company has no ERP customer number. | Ask the buyer to sign in; otherwise the account needs setting up.                                |
+| `InvalidProductReference` / `ProductNotFound` | `create` named no product it can configure, by `productId` or `articleNumber`.                              | Fix the input.                                                                                   |
+| `ConfigurationNotFound`                       | No session or committed configuration has this id.                                                          | Start a new session.                                                                             |
+| `ConfigurationGone`                           | The session existed but is finished: it expired, was deleted, or was committed.                             | Start a new session.                                                                             |
+| `ConfigurationFailed`                         | The provider refused the request, for example a change in `applyChanges`; `providerMessage` says which.     | Change the input. A refused change fails the same way on every retry.                            |
+| `ConfigurationCurrencyMismatch`               | The session is priced in another currency than the call's market.                                           | Open a new session in this market.                                                               |
+| `ConfigurationMismatch`                       | The committed configuration is not for the article of the cart line's SKU.                                  | Add with the configured article's SKU, or swap the line onto a configuration of its own article. |
+| `LoginRequired`                               | The cart holds a configured line and needs a signed-in buyer to be read.                                    | Ask the buyer to sign in.                                                                        |
+| `ConfigurationNotReopenable`                  | The cart line's configuration cannot be opened again.                                                       | Configure the product again from scratch.                                                        |
+| `CartItemNotConfigured`                       | The cart line carries no configuration.                                                                     | Read the cart again; there is nothing to reopen.                                                 |
+| `CartBelongsToAnotherCompany`                 | The cart belongs to another company than the signed-in buyer's.                                             | Read the buyer's own cart again.                                                                 |
+
+### Data with an error
+
+Some refusals come with an answer. The SDK still throws, and the error's `data` holds that answer, parsed as the method answers it; `data` is absent when the API answered nothing. `TData` is the method's own answer type, which `isConfigurationError` takes as a parameter.
+
+| Method           | `data` with the error                                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `updateCartItem` | The cart's lines, unchanged, when the new configuration is refused (`ConfigurationMismatch`, `ConfigurationNotFound`). |
+| `commit`         | The committed configuration without a price, with `ConfigurationCurrencyMismatch`: the API committed anyway.           |
+
+```typescript
+import { isConfigurationError } from '@geins/core';
+import type { ConfiguredCartLinesType } from '@geins/types';
+
+try {
+  await geinsOMS.configuration.updateCartItem(
+    cartId,
+    { id: cartLineId, quantity: 1, configurationId },
+    { userToken },
+  );
+} catch (error) {
+  if (isConfigurationError<ConfiguredCartLinesType>(error) && error.data) {
+    // The line kept its configuration: show the cart as it is.
+    renderCart(error.data.items);
+  }
+}
+```
