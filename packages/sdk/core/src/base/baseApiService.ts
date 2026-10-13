@@ -1,7 +1,7 @@
-import type { GeinsSettings, RequestContext } from '@geins/types';
+import type { DocumentNode } from '@apollo/client/core';
+import type { GeinsCallOptions, GeinsSettings, RequestContext } from '@geins/types';
 import type { MerchantApiClient } from '../api-client/merchantApiClient';
 import { GraphQLQueryOptions } from '../api-client/merchantApiClient';
-import type { DocumentNode } from '@apollo/client/core';
 import { GeinsError, GeinsErrorCode } from '../errors/geinsError';
 
 /** Function that returns a MerchantApiClient instance. */
@@ -105,6 +105,26 @@ export abstract class BaseApiService {
   }
 
   /**
+   * Adds one call's own options to its query options: a `timeoutMs` goes into the
+   * request context, where it takes precedence over the client's own limit.
+   * @param options - The query options built for the call.
+   * @param callOptions - The call's own options, if any.
+   */
+  protected withCallOptions(
+    options: GraphQLQueryOptions,
+    callOptions?: GeinsCallOptions,
+  ): GraphQLQueryOptions {
+    if (callOptions?.timeoutMs === undefined) return options;
+    return {
+      ...options,
+      requestOptions: {
+        ...options.requestOptions,
+        context: { ...options.requestOptions?.context, timeoutMs: callOptions.timeoutMs },
+      },
+    };
+  }
+
+  /**
    * Executes a GraphQL query via the API client.
    * @param options - Query and variables to execute.
    * @throws {GeinsError} If the API client is not initialized.
@@ -159,7 +179,9 @@ export abstract class BaseApiService {
 
         // Check if the value is an array, and clean each object inside it
         if (Array.isArray(value)) {
-          acc[key] = value.map((item) => (item && typeof item === 'object' ? this.cleanObject(item as Record<string, unknown>) : item));
+          acc[key] = value.map((item) =>
+            item && typeof item === 'object' ? this.cleanObject(item as Record<string, unknown>) : item,
+          );
         }
         // Recursively clean if the value is a non-null object
         else if (value && typeof value === 'object') {
