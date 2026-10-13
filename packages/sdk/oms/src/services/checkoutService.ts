@@ -1,5 +1,14 @@
-import { BaseApiService, CheckoutError, FetchPolicyOptions, GeinsError, GeinsErrorCode, decodeJWT, encodeJWT, parseErrorMessage } from '@geins/core';
 import type { ApiClientGetter, GraphQLQueryOptions } from '@geins/core';
+import {
+  BaseApiService,
+  CheckoutError,
+  FetchPolicyOptions,
+  GeinsError,
+  GeinsErrorCode,
+  decodeJWT,
+  encodeJWT,
+  parseErrorMessage,
+} from '@geins/core';
 
 import type {
   CheckoutInputType,
@@ -76,7 +85,11 @@ export interface CheckoutServiceInterface {
    * @param {string} args.paymentMethod - The payment type.
    * @returns {Promise<CheckoutSummaryType | undefined>} A promise that resolves to the checkout summary or undefined.
    */
-  summary(args: { orderId: string; paymentMethod: string; requestContext?: RequestContext }): Promise<CheckoutSummaryType | undefined>;
+  summary(args: {
+    orderId: string;
+    paymentMethod: string;
+    requestContext?: RequestContext;
+  }): Promise<CheckoutSummaryType | undefined>;
 
   /**
    * Creates a token for the checkout process to use when sending user to an external checkout page.
@@ -111,11 +124,7 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
   private readonly dataResolver;
   private _settings: OMSSettings;
 
-  constructor(
-    apiClient: ApiClientGetter,
-    geinsSettings: GeinsSettings,
-    _settings: OMSSettings,
-  ) {
+  constructor(apiClient: ApiClientGetter, geinsSettings: GeinsSettings, _settings: OMSSettings) {
     super(apiClient, geinsSettings);
     this._settings = _settings;
     this.dataResolver = new CheckoutDataResolver(geinsSettings, _settings);
@@ -212,14 +221,18 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       throw new GeinsError('Missing checkout options', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
-    const options = this.buildOptions(
-      queries.orderCreate,
-      {
-        cartId: resolvedArgs.cartId,
-        checkout: resolvedArgs.checkoutOptions,
-        marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
-      },
-      resolvedArgs.requestContext,
+    // No timeout: an order Geins places after the client gave up would read as failed.
+    const options = this.withCallOptions(
+      this.buildOptions(
+        queries.orderCreate,
+        {
+          cartId: resolvedArgs.cartId,
+          checkout: resolvedArgs.checkoutOptions,
+          marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
+        },
+        resolvedArgs.requestContext,
+      ),
+      { timeoutMs: 0 },
     );
 
     try {
@@ -233,7 +246,11 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
     }
   }
 
-  async summary(args: { orderId: string; paymentMethod: string; requestContext?: RequestContext }): Promise<CheckoutSummaryType | undefined> {
+  async summary(args: {
+    orderId: string;
+    paymentMethod: string;
+    requestContext?: RequestContext;
+  }): Promise<CheckoutSummaryType | undefined> {
     if (!args.orderId) {
       throw new GeinsError('Missing orderId', GeinsErrorCode.INVALID_ARGUMENT);
     }

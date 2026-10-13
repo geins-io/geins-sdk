@@ -40,6 +40,12 @@ export type GeinsSettings = {
   requestConfig?: GeinsRequestConfig;
 };
 
+/** Options for one call. */
+export type GeinsCallOptions = {
+  /** This call's deadline in milliseconds, over the client's own; 0 means none. */
+  timeoutMs?: number;
+};
+
 export interface GeinsRequestConfig {
   retry?: GeinsRetryConfig | false;
   timeoutMs?: number;
@@ -118,5 +124,3 @@ export enum LinkAttributeRelEnum {
   search = 'search',
   tag = 'tag',
 }
-
-

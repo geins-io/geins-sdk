@@ -1,6 +1,13 @@
-import type { MenuVariables, MenuItemType, MenuType, MenuServiceResult, RequestContext } from '@geins/types';
-import type { GeinsMenuItemTypeType } from '@geins/types';
 import { BaseApiService, GeinsError, GeinsErrorCode } from '@geins/core';
+import type {
+  GeinsCallOptions,
+  GeinsMenuItemTypeType,
+  MenuItemType,
+  MenuServiceResult,
+  MenuType,
+  MenuVariables,
+  RequestContext,
+} from '@geins/types';
 import { queries } from '../graphql';
 
 /** Service for fetching CMS navigation menus by location ID. */
@@ -21,12 +28,15 @@ export class MenuService extends BaseApiService {
    * Fetches a menu and returns a parsed {@link MenuType} with nested menu items.
    * @param variables - Must include menuLocationId.
    * @param requestContext - Optional per-request overrides (locale/market/channel/userToken).
+   * @param options - Optional per-call options, such as this call's `timeoutMs`.
    */
-  async get(variables: MenuVariables, requestContext?: RequestContext) {
+  async get(variables: MenuVariables, requestContext?: RequestContext, options?: GeinsCallOptions) {
     if (!variables.menuLocationId) {
       throw new GeinsError('LocationId is required', GeinsErrorCode.INVALID_ARGUMENT);
     }
-    return await this.runQueryParsed(this.createQueryOptions(queries.menu, variables, requestContext));
+    return await this.runQueryParsed(
+      this.withCallOptions(this.createQueryOptions(queries.menu, variables, requestContext), options),
+    );
   }
 
   /**
