@@ -221,14 +221,18 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       throw new GeinsError('Missing checkout options', GeinsErrorCode.INVALID_ARGUMENT);
     }
 
-    const options = this.buildOptions(
-      queries.orderCreate,
-      {
-        cartId: resolvedArgs.cartId,
-        checkout: resolvedArgs.checkoutOptions,
-        marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
-      },
-      resolvedArgs.requestContext,
+    // No timeout: an order Geins places after the client gave up would read as failed.
+    const options = this.withCallOptions(
+      this.buildOptions(
+        queries.orderCreate,
+        {
+          cartId: resolvedArgs.cartId,
+          checkout: resolvedArgs.checkoutOptions,
+          marketId: resolvedArgs.checkoutMarketId || this._geinsSettings.market,
+        },
+        resolvedArgs.requestContext,
+      ),
+      { timeoutMs: 0 },
     );
 
     try {

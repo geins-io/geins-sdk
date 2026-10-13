@@ -156,4 +156,50 @@ describe('TimeoutLink per call', () => {
 
     jest.advanceTimersByTime(60);
   });
+
+  it("never times out a call that asks for 0, over the link's deadline", () => {
+    jest.useFakeTimers();
+    const link = ApolloLink.from([createRequestIdLink(), createTimeoutLink(50), createDelayedLink(1_000)]);
+    const next = jest.fn();
+    const error = jest.fn();
+
+    execute(link, { query: TEST_QUERY, context: { timeoutMs: 0 } }).subscribe({ next, error });
+    jest.advanceTimersByTime(1_000);
+
+    expect(error).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith({ data: { test: true } });
+    jest.useRealTimers();
+  });
+
+  it("takes a positive per-call deadline over the link's own", (done) => {
+    jest.useFakeTimers();
+    const link = ApolloLink.from([createRequestIdLink(), createTimeoutLink(5_000), createDelayedLink(1_000)]);
+
+    execute(link, { query: TEST_QUERY, context: { timeoutMs: 50 } }).subscribe({
+      error: (error) => {
+        expect(error).toBeInstanceOf(TimeoutError);
+        expect(error.timeoutMs).toBe(50);
+        jest.useRealTimers();
+        done();
+      },
+    });
+
+    jest.advanceTimersByTime(60);
+  });
+
+  it("uses the link's deadline when the call names none", (done) => {
+    jest.useFakeTimers();
+    const link = ApolloLink.from([createRequestIdLink(), createTimeoutLink(50), createDelayedLink(1_000)]);
+
+    execute(link, { query: TEST_QUERY, context: {} }).subscribe({
+      error: (error) => {
+        expect(error).toBeInstanceOf(TimeoutError);
+        expect(error.timeoutMs).toBe(50);
+        jest.useRealTimers();
+        done();
+      },
+    });
+
+    jest.advanceTimersByTime(60);
+  });
 });

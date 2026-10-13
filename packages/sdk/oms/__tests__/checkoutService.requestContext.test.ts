@@ -1,5 +1,4 @@
 import { CheckoutService } from '../src/services/checkoutService';
-import { GeinsError } from '@geins/core';
 
 function createMockApiClient() {
   const mockClient = {
@@ -35,6 +34,36 @@ describe('CheckoutService requestContext override', () => {
   const requestContext = { languageId: 'en-US', marketId: 'US', channelId: 'us-channel' };
 
   describe('createOrder', () => {
+    it('asks for no timeout: a write cut off after Geins applied it reads as failed', async () => {
+      mockClient.runQuery.mockResolvedValue({
+        __typename: 'CreateOrderResponseType',
+        created: true,
+        orderId: 'order-1',
+      });
+
+      await service.createOrder({
+        cartId: 'cart-1',
+        checkoutOptions: { paymentId: 1 } as any,
+      });
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.requestOptions).toEqual({ fetchPolicy: 'no-cache', context: { timeoutMs: 0 } });
+    });
+
+    it('leaves the timeout to the client for a read on the same service', async () => {
+      mockClient.runQuery.mockResolvedValue({ checkout: null });
+
+      await service
+        .validate({
+          cartId: 'cart-1',
+          checkoutOptions: { paymentId: 1 } as any,
+        })
+        .catch(() => undefined);
+
+      const callArgs = mockClient.runQuery.mock.calls[0][0];
+      expect(callArgs.requestOptions?.context).toBeUndefined();
+    });
+
     it('routes userToken to options, not variables, so the API receives Authorization: Bearer', async () => {
       mockClient.runQuery.mockResolvedValue({
         __typename: 'CreateOrderResponseType',

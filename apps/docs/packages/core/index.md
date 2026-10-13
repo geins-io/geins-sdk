@@ -211,6 +211,12 @@ const geinsCore = new GeinsCore({
 });
 ```
 
+One call can set its own limit, which takes precedence over the client's; `0` means no SDK timeout for that call, though the runtime's own limits, such as undici's 300 s, still apply. The CMS `get` methods take it as a third argument, and `createOrder` always sends `0`: an order the merchant API places after the client gave up would otherwise read as failed.
+
+```typescript
+const menu = await geinsCMS.menu.get({ menuLocationId: 'main' }, undefined, { timeoutMs: 3000 });
+```
+
 ### Request/Response Interceptors
 
 Hook into the request lifecycle for logging, metrics, or custom header injection.
