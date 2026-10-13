@@ -1,6 +1,12 @@
-import type { MenuVariables, MenuItemType, MenuType, MenuServiceResult, RequestContext } from '@geins/types';
-import type { GeinsMenuItemTypeType } from '@geins/types';
 import { BaseApiService, GeinsError, GeinsErrorCode } from '@geins/core';
+import type {
+  GeinsMenuItemTypeType,
+  MenuItemType,
+  MenuServiceResult,
+  MenuType,
+  MenuVariables,
+  RequestContext,
+} from '@geins/types';
 import { queries } from '../graphql';
 
 /** Service for fetching CMS navigation menus by location ID. */

@@ -45,8 +45,8 @@ $ yarn add -D @geins/core
 ```sh [bun]
 $ bun add -D @geins/core
 ```
-:::
 
+:::
 
 ### GeinsSettings Type
 
@@ -107,7 +107,7 @@ The `EventService` allows you to manage custom events within your application. F
 const eventService = geinsCore.events;
 
 // Adding an event listener
-eventService.listenerAdd(data => {
+eventService.listenerAdd((data) => {
   console.log('Event received:', data);
 });
 
@@ -153,7 +153,7 @@ const graphQLClient = geinsCore.graphql;
 
 // Making a GraphQL query
 const query = `{ user(id: "user-123") { name email } }`;
-graphQLClient.query(query).then(response => {
+graphQLClient.query(query).then((response) => {
   console.log('GraphQL response:', response);
 });
 ```
@@ -164,12 +164,12 @@ You can access information about the current channel and all available channels.
 
 ```typescript
 // Getting the current channel
-geinsCore.channel.current().then(channel => {
+geinsCore.channel.current().then((channel) => {
   console.log('Current channel:', channel);
 });
 
 // Getting all channels
-geinsCore.channel.all().then(channels => {
+geinsCore.channel.all().then((channels) => {
   console.log('All channels:', channels);
 });
 ```
@@ -187,10 +187,10 @@ const geinsCore = new GeinsCore({
   // ...required settings
   requestConfig: {
     retry: {
-      maxRetries: 3,        // default: 3
-      initialDelayMs: 300,  // default: 300
-      maxDelayMs: 10000,    // default: 10000
-      jitter: true,         // default: true
+      maxRetries: 3, // default: 3
+      initialDelayMs: 300, // default: 300
+      maxDelayMs: 10000, // default: 10000
+      jitter: true, // default: true
     },
   },
 });
@@ -266,6 +266,7 @@ Set `telemetry: false` to explicitly disable.
 ### Request IDs and SDK Version
 
 Every request automatically gets two headers — no configuration needed:
+
 - `x-request-id` — unique UUID for log correlation (also on error objects)
 - `x-sdk-version` — the SDK version for server-side debugging
 
@@ -277,11 +278,11 @@ Every mutation automatically gets an `x-idempotency-key` header with a unique UU
 
 The request pipeline introduces specific error classes that extend `GeinsError`:
 
-| Error | When |
-|-------|------|
-| `TimeoutError` | Request exceeds `timeoutMs` |
-| `RateLimitError` | Server returns HTTP 429 |
-| `RetryExhaustedError` | All retry attempts failed |
+| Error                 | When                              |
+| --------------------- | --------------------------------- |
+| `TimeoutError`        | Request exceeds `timeoutMs`       |
+| `RateLimitError`      | Server returns HTTP 429           |
+| `RetryExhaustedError` | All retry attempts failed         |
 | `NetworkRequestError` | Base class for all network errors |
 
 ```typescript
@@ -310,13 +311,16 @@ Use `paginate()` to iterate page-by-page:
 ```typescript
 import { paginate } from '@geins/core';
 
-const pages = paginate(async (skip, take) => {
-  const result = await geinsCore.graphql.query({
-    query: productsQuery,
-    variables: { skip, take, channelId, languageId, marketId },
-  });
-  return { items: result.products.products, count: result.products.count };
-}, { take: 20 });
+const pages = paginate(
+  async (skip, take) => {
+    const result = await geinsCore.graphql.query({
+      query: productsQuery,
+      variables: { skip, take, channelId, languageId, marketId },
+    });
+    return { items: result.products.products, count: result.products.count };
+  },
+  { take: 20 },
+);
 
 for await (const page of pages) {
   console.log(`Got ${page.items.length} of ${page.count} (hasMore: ${page.hasMore})`);
@@ -331,13 +335,16 @@ Use `paginateAll()` to fetch every page and return a flat array:
 ```typescript
 import { paginateAll } from '@geins/core';
 
-const allProducts = await paginateAll(async (skip, take) => {
-  const result = await geinsCore.graphql.query({
-    query: productsQuery,
-    variables: { skip, take, channelId, languageId, marketId },
-  });
-  return { items: result.products.products, count: result.products.count };
-}, { take: 50 });
+const allProducts = await paginateAll(
+  async (skip, take) => {
+    const result = await geinsCore.graphql.query({
+      query: productsQuery,
+      variables: { skip, take, channelId, languageId, marketId },
+    });
+    return { items: result.products.products, count: result.products.count };
+  },
+  { take: 50 },
+);
 ```
 
 ## Integration with Other Packages
@@ -350,7 +357,7 @@ import { GeinsCMS } from '@geins/cms';
 const geinsCMS = new GeinsCMS(geinsCore);
 
 // Using the CMS package
-geinsCMS.getContent('homepage').then(content => {
+geinsCMS.getContent('homepage').then((content) => {
   console.log('Homepage content:', content);
 });
 ```
