@@ -3,6 +3,8 @@ import type {
   CheckoutSummaryOrderTotalType,
   CheckoutSummaryOrderType,
   CheckoutSummaryType,
+  PaymentOptionType,
+  ShippingOptionType,
 } from '@geins/core';
 import {
   CheckoutType,
@@ -11,19 +13,16 @@ import {
   ValidateOrderConditionsResponseType,
   ValidateOrderCreationResponseType,
 } from '@geins/core';
-import type { PaymentOptionType, ShippingOptionType } from '@geins/core';
-import {
-  GeinsPaymentCheckout,
-} from '@geins/types';
 import type {
   GeinsCheckoutDataTypeType,
-  GeinsCheckoutOrderTypeType,
   GeinsCheckoutOrderRowTypeType,
+  GeinsCheckoutOrderTypeType,
   GeinsCheckoutTypeType,
   GeinsPaymentOptionTypeType,
   GeinsShippingOptionTypeType,
   GeinsValidateOrderCreationResponseTypeType,
 } from '@geins/types';
+import { GeinsPaymentCheckout } from '@geins/types';
 import { parseCart } from './cartParser';
 import { parseAddress, parseMoneyCurrencyString } from './sharedParsers';
 
@@ -34,7 +33,11 @@ import { parseAddress, parseMoneyCurrencyString } from './sharedParsers';
  * @returns Parsed checkout summary, or undefined if not found.
  */
 export function parseCheckoutSummary(data: unknown, locale: string): CheckoutSummaryType | undefined {
-  const checkoutSummary = findObjectWithProperty<GeinsCheckoutDataTypeType>(data, '__typename', 'CheckoutDataType');
+  const checkoutSummary = findObjectWithProperty<GeinsCheckoutDataTypeType>(
+    data,
+    '__typename',
+    'CheckoutDataType',
+  );
   if (!checkoutSummary) {
     return undefined;
   }
@@ -229,7 +232,11 @@ export function parseCheckoutSummaryOrderRow(
   data: GeinsCheckoutOrderRowTypeType | null | undefined,
   locale: string,
 ): CheckoutSummaryOrderRowType | undefined {
-  const row = findObjectWithProperty<GeinsCheckoutOrderRowTypeType>(data, '__typename', 'CheckoutOrderRowType');
+  const row = findObjectWithProperty<GeinsCheckoutOrderRowTypeType>(
+    data,
+    '__typename',
+    'CheckoutOrderRowType',
+  );
   if (!row) {
     return undefined;
   }
@@ -256,7 +263,8 @@ export function parseCheckoutSummaryOrderRow(
     price: {
       campaignIds: row.campaignIds?.filter((s): s is string => s != null) ?? undefined,
       campaignNames: row.campaignNames?.filter((s): s is string => s != null) ?? undefined,
-      productPriceCampaignId: row.productPriceCampaignId != null ? String(row.productPriceCampaignId) : undefined,
+      productPriceCampaignId:
+        row.productPriceCampaignId != null ? String(row.productPriceCampaignId) : undefined,
       productPriceListId: row.productPriceListId != null ? String(row.productPriceListId) : undefined,
       discountRate: row.discountRate,
       discountExVat: row.discountExVat,
@@ -330,6 +338,8 @@ function parsePaymentOptions(
       checkoutType: toPaymentOptionCheckoutType(o.checkoutType),
       paymentType: o.paymentType ?? undefined,
       paymentData: o.paymentData ?? undefined,
+      feeIncVatFormatted: o.feeIncVatFormatted ?? undefined,
+      feeExVatFormatted: o.feeExVatFormatted ?? undefined,
     }));
 }
 

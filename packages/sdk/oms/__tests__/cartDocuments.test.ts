@@ -164,4 +164,33 @@ describe('graphql documents', () => {
     expect(fields).toEqual(expect.arrayContaining(['name', 'quantity', 'unitPrice']));
     expect(fields).not.toContain('product');
   });
+
+  const checkoutDocuments = documents.filter(([, document]) =>
+    fragmentNames(document).includes('OmsCheckout'),
+  );
+
+  function paymentOptionSelections(document: DocumentNode): string[][] {
+    const selections: string[][] = [];
+    visit(document, {
+      Field(node) {
+        if (node.name.value !== 'paymentOptions') return;
+        selections.push(
+          (node.selectionSet?.selections ?? []).flatMap((s) => (s.kind === 'Field' ? [s.name.value] : [])),
+        );
+      },
+    });
+    return selections;
+  }
+
+  it('covers every document that reads a checkout', () => {
+    expect(checkoutDocuments.map(([name]) => name)).toEqual(['checkoutCreate']);
+  });
+
+  it.each(checkoutDocuments)('%s selects the fee of every payment option', (_name, document) => {
+    const selections = paymentOptionSelections(document);
+    expect(selections).toHaveLength(1);
+    expect(selections[0]).toEqual(
+      expect.arrayContaining(['feeIncVat', 'feeExVat', 'feeIncVatFormatted', 'feeExVatFormatted']),
+    );
+  });
 });

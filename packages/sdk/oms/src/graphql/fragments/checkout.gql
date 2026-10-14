@@ -37,5 +37,9 @@ fragment OmsCheckout on CheckoutType {
     paymentData
     isSelected
     newCheckoutSession
+    feeIncVat
+    feeExVat
+    feeIncVatFormatted
+    feeExVatFormatted
   }
 }
