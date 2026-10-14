@@ -36,6 +36,8 @@ export type PaymentOptionType = {
   checkoutType?: PaymentOptionCheckoutType;
   paymentType?: GeinsPaymentType;
   paymentData?: string;
+  feeIncVatFormatted?: string;
+  feeExVatFormatted?: string;
 };
 
 export type CheckoutRedirectsType = {

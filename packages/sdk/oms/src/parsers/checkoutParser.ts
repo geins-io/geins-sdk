@@ -338,6 +338,8 @@ function parsePaymentOptions(
       checkoutType: toPaymentOptionCheckoutType(o.checkoutType),
       paymentType: o.paymentType ?? undefined,
       paymentData: o.paymentData ?? undefined,
+      feeIncVatFormatted: o.feeIncVatFormatted ?? undefined,
+      feeExVatFormatted: o.feeExVatFormatted ?? undefined,
     }));
 }
 
