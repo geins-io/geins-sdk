@@ -48,6 +48,7 @@ const checkout = await geinsOMS.checkout.get({
   requestContext: { userToken },
 });
 ```
+
 :::
 
 ## Types
@@ -149,6 +150,8 @@ type PaymentOptionType = {
   checkoutType?: PaymentOptionCheckoutType;
   paymentType?: string;
   paymentData?: string;
+  feeIncVatFormatted?: string;
+  feeExVatFormatted?: string;
 };
 ```
 
@@ -156,6 +159,7 @@ type PaymentOptionType = {
 - `checkoutType` - This is used to indicate if the payment is a standard payment or an external payment.
 - `feeIncVat` - The fee including VAT
 - `feeExVat` - The fee excluding VAT
+- `feeIncVatFormatted` / `feeExVatFormatted` - The fee formatted with its currency, e.g. `29 kr`
 
 ::: tip :bulb: Tip
 Some external payment gateways expect you to render their payment options. If the `checkoutType` is `EXTERNAL` then you need to render the payment options for the user. Use the `paymentData` to render the payment options. This is usually a html snippet that you can render in your frontend.

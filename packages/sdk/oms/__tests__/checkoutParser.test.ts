@@ -336,6 +336,49 @@ describe('checkoutParser', () => {
       expect(result!.billingAddress?.firstName).toBe('John');
     });
 
+    it('reads the fee of each payment option', () => {
+      const input = {
+        __typename: 'CheckoutType',
+        paymentOptions: [
+          {
+            id: 1,
+            feeIncVat: 29,
+            feeExVat: 23.2,
+            feeIncVatFormatted: '29 kr',
+            feeExVatFormatted: '23,20 kr',
+            isDefault: false,
+            isSelected: true,
+          },
+          {
+            id: 2,
+            feeIncVat: 0,
+            feeExVat: 0,
+            feeIncVatFormatted: null,
+            feeExVatFormatted: null,
+            isDefault: true,
+            isSelected: false,
+          },
+        ],
+      };
+      const result = parseCheckout(input as any, 'sv-SE');
+      expect(result!.paymentOptions).toEqual([
+        expect.objectContaining({
+          id: 1,
+          feeIncVat: 29,
+          feeExVat: 23.2,
+          feeIncVatFormatted: '29 kr',
+          feeExVatFormatted: '23,20 kr',
+        }),
+        expect.objectContaining({
+          id: 2,
+          feeIncVat: 0,
+          feeExVat: 0,
+          feeIncVatFormatted: undefined,
+          feeExVatFormatted: undefined,
+        }),
+      ]);
+    });
+
     it('reads a configured line on the checkout cart', () => {
       const input = {
         __typename: 'CheckoutType',
