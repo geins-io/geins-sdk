@@ -1,10 +1,20 @@
-import { ContentAreaType, ContentPageType, GeinsMenuItemTypeType, ContentContainerType, ContentType, GeinsError, GeinsErrorCode, sdkLogger } from '@geins/core';
 import type {
   GeinsMenuItemBaseType,
+  GeinsMetadataTypeType,
   GeinsPageWidgetCollectionTypeType,
   GeinsPageWidgetContainerTypeType,
+  GeinsPageWidgetImageTypeType,
   GeinsPageWidgetTypeType,
-  GeinsMetadataTypeType,
+} from '@geins/core';
+import {
+  ContentAreaType,
+  ContentContainerType,
+  ContentPageType,
+  ContentType,
+  GeinsError,
+  GeinsErrorCode,
+  GeinsMenuItemTypeType,
+  sdkLogger,
 } from '@geins/core';
 
 /** Maps a raw menu item to a structured menu type, recursively parsing children. */
@@ -130,7 +140,7 @@ export function parseMetaData(meta: GeinsMetadataTypeType) {
   };
 }
 
-/** Parses a widget into a content item with config and type-specific data. Promotes `active` and `displayName` from data to config. */
+/** Parses a widget into a content item with config, type-specific data and its images. Promotes `active` and `displayName` from data to config. */
 export function parseContent(content: GeinsPageWidgetTypeType): ContentType {
   const parsedContent = {
     config: {
@@ -142,6 +152,15 @@ export function parseContent(content: GeinsPageWidgetTypeType): ContentType {
       sortOrder: content.sortOrder,
     },
     data: {} as Record<string, unknown>,
+    images: (content.images ?? [])
+      .filter((image): image is GeinsPageWidgetImageTypeType => image != null)
+      .map((image) => ({
+        fileName: image.fileName,
+        url: image.url ?? null,
+        largestSize: image.largestSize
+          ? { imageWidth: image.largestSize.imageWidth, imageHeight: image.largestSize.imageHeight }
+          : null,
+      })),
   };
 
   if (content.type) {

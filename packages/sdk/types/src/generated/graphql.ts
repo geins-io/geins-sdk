@@ -2997,6 +2997,7 @@ export type GeinsPageWidgetContainerType = {
     configuration: string,
     images?: Array<{
       fileName: string,
+      url?: string | null,
       largestSize?: {
         imageWidth: number,
         imageHeight: number
@@ -3014,6 +3015,7 @@ export type GeinsPageWidgetType = {
   configuration: string,
   images?: Array<{
     fileName: string,
+    url?: string | null,
     largestSize?: {
       imageWidth: number,
       imageHeight: number
@@ -9224,6 +9226,7 @@ export type GeinsWidgetAreaPageAliasType = {
         configuration: string,
         images?: Array<{
           fileName: string,
+          url?: string | null,
           largestSize?: {
             imageWidth: number,
             imageHeight: number
@@ -9277,6 +9280,7 @@ export type GeinsWidgetAreaType = {
         configuration: string,
         images?: Array<{
           fileName: string,
+          url?: string | null,
           largestSize?: {
             imageWidth: number,
             imageHeight: number
