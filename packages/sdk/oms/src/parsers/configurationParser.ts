@@ -89,7 +89,10 @@ function product(value: unknown): ConfigurationOptionProductType | null {
     articleNumber: text(wire.articleNumber),
     alias: text(wire.alias),
     canonicalUrl: text(wire.canonicalUrl),
-    productImages: rows(wire.productImages).map((image) => ({ fileName: text(image.fileName) })),
+    productImages: rows(wire.productImages).map((image) => ({
+      fileName: text(image.fileName),
+      url: text(image.url),
+    })),
   };
 }
 

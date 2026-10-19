@@ -1,22 +1,22 @@
+import { GeinsError } from '@geins/core';
 import {
-  parseMenuItem,
-  parseContentArea,
-  parseContentPage,
   parseContainer,
-  parseMetaData,
   parseContent,
+  parseContentArea,
   parseContentData,
-  parseContentDataByType,
-  parseJsonSafe,
-  parseContentDataJson,
-  parseContentDataText,
-  parseContentDataHtml,
-  parseContentDataProductList,
-  parseContentDataImage,
   parseContentDataBanner,
   parseContentDataButtons,
+  parseContentDataByType,
+  parseContentDataHtml,
+  parseContentDataImage,
+  parseContentDataJson,
+  parseContentDataProductList,
+  parseContentDataText,
+  parseContentPage,
+  parseJsonSafe,
+  parseMenuItem,
+  parseMetaData,
 } from '../src/parsers/contentParsers';
-import { GeinsError } from '@geins/core';
 
 describe('contentParsers', () => {
   describe('parseMenuItem', () => {
@@ -152,9 +152,7 @@ describe('contentParsers', () => {
             familyName: 'landing',
             meta: { title: 'Home', description: 'Landing page' },
             tags: ['featured'],
-            containers: [
-              { id: 10, name: 'Hero', sortOrder: 0, widgets: [] },
-            ],
+            containers: [{ id: 10, name: 'Hero', sortOrder: 0, widgets: [] }],
           },
         },
       };
@@ -204,7 +202,13 @@ describe('contentParsers', () => {
         responsiveMode: 'desktop',
         design: 'default',
         widgets: [
-          { name: 'Widget1', type: 'TextPageWidget', size: 'full', sortOrder: 0, configuration: '{"text":"Hello"}' },
+          {
+            name: 'Widget1',
+            type: 'TextPageWidget',
+            size: 'full',
+            sortOrder: 0,
+            configuration: '{"text":"Hello"}',
+          },
         ],
       };
       const result = parseContainer(input as any);
@@ -279,6 +283,42 @@ describe('contentParsers', () => {
       expect(result.data).toEqual({});
     });
 
+    it('passes the widget images through with their asset library url', () => {
+      const input = {
+        name: 'Banner',
+        type: 'BannerPageWidget',
+        size: 'full',
+        sortOrder: 0,
+        configuration: '{}',
+        images: [
+          {
+            fileName: 'hero.png',
+            url: 'https://cdn.litium.media/acme/content/hero.png',
+            largestSize: null,
+            sizes: [],
+          },
+          { fileName: 'legacy.png', url: null, largestSize: { imageWidth: 1200, imageHeight: 400 } },
+          null,
+        ],
+      };
+      const result = parseContent(input as any);
+      expect(result.images).toEqual([
+        { fileName: 'hero.png', url: 'https://cdn.litium.media/acme/content/hero.png', largestSize: null },
+        { fileName: 'legacy.png', url: null, largestSize: { imageWidth: 1200, imageHeight: 400 } },
+      ]);
+    });
+
+    it('gives a widget without images an empty list', () => {
+      const result = parseContent({
+        name: 'Text',
+        type: 'TextPageWidget',
+        size: 'full',
+        sortOrder: 0,
+        configuration: '{}',
+      } as any);
+      expect(result.images).toEqual([]);
+    });
+
     it('handles invalid JSON configuration', () => {
       const input = {
         name: 'BadJson',
@@ -299,7 +339,10 @@ describe('contentParsers', () => {
     });
 
     it('parses valid JSON data', () => {
-      const result = parseContentData('TextPageWidget', JSON.stringify({ text: 'Hello', name: 'Widget1', active: true }));
+      const result = parseContentData(
+        'TextPageWidget',
+        JSON.stringify({ text: 'Hello', name: 'Widget1', active: true }),
+      );
       expect(result.name).toBe('Widget1');
       expect(result.active).toBe(true);
       expect(result.text).toBe('Hello');

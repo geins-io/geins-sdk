@@ -288,6 +288,7 @@ function parseCartItemProduct(
     name: data.name || '',
     productImages: (data.productImages || []).map((image: GeinsProductImageTypeType | null) => ({
       fileName: image?.fileName || '',
+      url: image?.url ?? null,
     })),
     alias: data.alias || '',
     canonicalUrl: data.canonicalUrl || '',

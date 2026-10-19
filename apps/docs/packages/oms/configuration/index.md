@@ -163,7 +163,7 @@ A session's `sections` hold its variables and option groups, and option groups h
 - **Lock:** a `LOCK` keeps the option from being changed by later rule cascades.
 - **Option groups:** `minSelections` and `maxSelections` give the selection rules (`maxSelections: 1` is single-select); `quantityEditable`, with `minQuantity` and `maxQuantity`, says whether and how far a quantity can change.
 - **Add to cart:** enable it only when the session's `isValid` is `true`.
-- **Option prices:** `option.unitPrice` is the ERP price the cart charges. `option.product` is the matching Geins catalogue product, often `null`, and its own price is not the CPQ price.
+- **Option prices:** `option.unitPrice` is the ERP price the cart charges. `option.product` is the matching Geins catalogue product, often `null`, and its own price is not the CPQ price. Its `productImages` carry `fileName` and `url`, the asset library URL, which is `null` for an image outside the library.
 
 The guide's [rendering rules](https://www.geins.io/developers/guides/working-with-configurations#2-render-the-tree) give them in full. A committed section (`CommittedConfigurationSectionType`) holds only what the buyer saw and chose. The full node types are in `packages/sdk/types/src/oms/configuration.ts`: `ConfigurationSectionType`, `ConfigurationVariableType`, `ConfigurationOptionGroupType`, `ConfigurationOptionType` and their committed counterparts.
 

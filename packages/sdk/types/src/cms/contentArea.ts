@@ -25,7 +25,10 @@ export interface ContentImageSizeType {
 
 export interface ContentImageType {
   fileName: string;
-  largestSize: ContentImageSizeType;
+  /** Asset library URL; null for an image outside the library. */
+  url?: string | null;
+  /** Null for an asset library image. */
+  largestSize: ContentImageSizeType | null;
 }
 
 export interface ContentConfigType {
@@ -40,6 +43,7 @@ export interface ContentConfigType {
 export interface ContentType {
   config: ContentConfigType;
   data: Record<string, unknown>;
+  images?: ContentImageType[];
 }
 
 export interface ContentContainerType {

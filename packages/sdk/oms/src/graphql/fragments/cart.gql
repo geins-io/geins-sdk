@@ -48,6 +48,7 @@ fragment OmsCart on CartType {
       name
       productImages {
         fileName
+        url
         __typename
       }
       alias

@@ -1,9 +1,15 @@
 import { CustomerType, GeinsSettings } from '../common';
 import type { GeinsUserType } from '../generated';
 import type { CartType } from '../oms/cart';
-import type { AddressType, CheckoutRedirectsType, PaymentOptionType, ShippingOptionType, RequestContext } from '../shared';
+import type {
+  AddressType,
+  CheckoutRedirectsType,
+  PaymentOptionType,
+  RequestContext,
+  ShippingOptionType,
+} from '../shared';
 
-enum CheckoutStatus {
+export enum CheckoutStatus {
   OK = 'OK',
   CUSTOMER_BLACKLISTED = 'CUSTOMER_BLACKLISTED',
 }

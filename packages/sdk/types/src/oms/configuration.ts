@@ -67,7 +67,8 @@ export type ConfigurationOptionProductType = {
   articleNumber: string | null;
   alias: string | null;
   canonicalUrl: string | null;
-  productImages: { fileName: string | null }[];
+  /** `url` is the asset library URL; null for an image outside the library. */
+  productImages: { fileName: string | null; url?: string | null }[];
 };
 
 export type ConfigurationOptionType = {
