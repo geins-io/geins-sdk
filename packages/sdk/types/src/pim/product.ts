@@ -57,7 +57,8 @@ export type LowestPriceType = {
 };
 
 export type ProductImageType = {
-  url: string;
+  /** Asset library URL; null for an image outside the library. */
+  url?: string | null;
   fileName?: string;
   altText?: string;
   isPrimary: boolean;

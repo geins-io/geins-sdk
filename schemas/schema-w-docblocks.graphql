@@ -2396,6 +2396,9 @@ type PageWidgetImageType {
   """Filename"""
   fileName: String!
 
+  """The asset library URL of the image, if any."""
+  url: String
+
   """Largest image size"""
   largestSize: PageWidgetImageSizeType
 
@@ -2788,6 +2791,9 @@ type ProductImageType {
 
   """Custom tags associated with the product image."""
   tags: [String]
+
+  """The asset library URL of the product image, if any."""
+  url: String
 }
 
 """

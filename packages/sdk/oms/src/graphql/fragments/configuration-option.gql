@@ -27,6 +27,7 @@ fragment CpqOption on CpqOptionType {
     canonicalUrl
     productImages {
       fileName
+      url
     }
   }
   messages {

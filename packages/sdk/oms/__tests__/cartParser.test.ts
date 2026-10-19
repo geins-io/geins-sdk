@@ -136,6 +136,38 @@ describe('cartParser', () => {
       expect(result!.merchantData).toBe('{"tracking":"abc"}');
     });
 
+    it('keeps the asset library url of each product image, null when the image has none', () => {
+      const input = {
+        __typename: 'CartType',
+        id: 'cart-images',
+        items: [
+          {
+            id: 1,
+            skuId: 42,
+            quantity: 1,
+            product: {
+              productId: 100,
+              name: 'Cool Shoe',
+              productImages: [
+                { fileName: 'shoe.jpg', url: 'https://cdn.litium.media/acme/products/shoe.jpg' },
+                { fileName: 'legacy.jpg', url: null },
+                { fileName: 'older.jpg' },
+              ],
+              skus: [],
+            },
+          },
+        ],
+        appliedCampaigns: [],
+        summary: null,
+      };
+      const result = parseCart(input, 'sv-SE');
+      expect(result!.items[0].product?.productImages).toEqual([
+        { fileName: 'shoe.jpg', url: 'https://cdn.litium.media/acme/products/shoe.jpg' },
+        { fileName: 'legacy.jpg', url: null },
+        { fileName: 'older.jpg', url: null },
+      ]);
+    });
+
     it('finds nested CartType via findObjectWithProperty', () => {
       const input = {
         data: {

@@ -2075,6 +2075,8 @@ export interface GeinsPageWidgetImageTypeType {
   largestSize?: Maybe<GeinsPageWidgetImageSizeTypeType>;
   /** Image sizes */
   sizes?: Maybe<Array<Maybe<GeinsPageWidgetImageSizeTypeType>>>;
+  /** The asset library URL of the image, if any. */
+  url?: Maybe<Scalars['String']['output']>;
 }
 
 /** Type containing CMS page information */
@@ -2343,6 +2345,8 @@ export interface GeinsProductImageTypeType {
   fileName: Scalars['String']['output'];
   /** Custom tags associated with the product image. */
   tags?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** The asset library URL of the product image, if any. */
+  url?: Maybe<Scalars['String']['output']>;
 }
 
 /** Type containing meta data for the package selection that a cart item was added from */
@@ -2993,6 +2997,7 @@ export type GeinsPageWidgetContainerType = {
     configuration: string,
     images?: Array<{
       fileName: string,
+      url?: string | null,
       largestSize?: {
         imageWidth: number,
         imageHeight: number
@@ -3010,6 +3015,7 @@ export type GeinsPageWidgetType = {
   configuration: string,
   images?: Array<{
     fileName: string,
+    url?: string | null,
     largestSize?: {
       imageWidth: number,
       imageHeight: number
@@ -3367,7 +3373,8 @@ export type GeinsOmsCartType = {
       } | null,
       productImages?: Array<{
         __typename: 'ProductImageType',
-        fileName: string
+        fileName: string,
+        url?: string | null
       } | null> | null,
       primaryCategory?: {
         __typename: 'CategoryType',
@@ -3599,6 +3606,1311 @@ export type GeinsOmsStockType = {
   static?: number | null
 };
 
+export type GeinsOmsCartItemConfigurationType = {
+  items?: Array<{
+    __typename: 'CartItemType',
+    configurationId?: string | null,
+    configuration?: {
+      __typename: 'CpqCartItemConfigurationType',
+      committedConfigurationId?: string | null,
+      articleNumber?: string | null,
+      discountPercent?: number | null,
+      weightPerUnit?: number | null,
+      summary?: Array<{
+        __typename: 'CpqCommittedConfigurationLineType',
+        label?: string | null,
+        value?: string | null
+      } | null> | null,
+      sections?: Array<{
+        id?: string | null,
+        name?: string | null,
+        sortIndex?: number | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null,
+        variables?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          valueType: GeinsCpqVariableValueType,
+          value?: string | null,
+          unit?: string | null,
+          decimals?: number | null
+        } | null> | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            quantity: number,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null
+          } | null> | null
+        } | null> | null
+      } | null> | null
+    } | null
+  } | null> | null
+};
+
+export type GeinsCpqCommittedSectionsType = {
+  sections?: Array<{
+    id?: string | null,
+    name?: string | null,
+    sortIndex?: number | null,
+    sections?: Array<{
+      id?: string | null,
+      name?: string | null,
+      sortIndex?: number | null,
+      sections?: Array<{
+        id?: string | null,
+        name?: string | null,
+        sortIndex?: number | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null,
+        variables?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          valueType: GeinsCpqVariableValueType,
+          value?: string | null,
+          unit?: string | null,
+          decimals?: number | null
+        } | null> | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            quantity: number,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null
+          } | null> | null
+        } | null> | null
+      } | null> | null,
+      variables?: Array<{
+        id?: string | null,
+        name?: string | null,
+        sortIndex?: number | null,
+        valueType: GeinsCpqVariableValueType,
+        value?: string | null,
+        unit?: string | null,
+        decimals?: number | null
+      } | null> | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        code?: string | null,
+        name?: string | null,
+        sortIndex?: number | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            quantity: number,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null
+          } | null> | null
+        } | null> | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          articleNumber?: string | null,
+          name?: string | null,
+          quantity: number,
+          discountPercent?: number | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null> | null
+    } | null> | null,
+    variables?: Array<{
+      id?: string | null,
+      name?: string | null,
+      sortIndex?: number | null,
+      valueType: GeinsCpqVariableValueType,
+      value?: string | null,
+      unit?: string | null,
+      decimals?: number | null
+    } | null> | null,
+    optionGroups?: Array<{
+      id?: string | null,
+      code?: string | null,
+      name?: string | null,
+      sortIndex?: number | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        code?: string | null,
+        name?: string | null,
+        sortIndex?: number | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            quantity: number,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null
+          } | null> | null
+        } | null> | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          articleNumber?: string | null,
+          name?: string | null,
+          quantity: number,
+          discountPercent?: number | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null> | null,
+      options?: Array<{
+        id?: string | null,
+        instanceId?: string | null,
+        articleNumber?: string | null,
+        name?: string | null,
+        quantity: number,
+        discountPercent?: number | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null> | null
+    } | null> | null
+  } | null> | null
+};
+
+export type GeinsCpqCommittedSectionFieldsType = {
+  id?: string | null,
+  name?: string | null,
+  sortIndex?: number | null,
+  variables?: Array<{
+    id?: string | null,
+    name?: string | null,
+    sortIndex?: number | null,
+    valueType: GeinsCpqVariableValueType,
+    value?: string | null,
+    unit?: string | null,
+    decimals?: number | null
+  } | null> | null,
+  optionGroups?: Array<{
+    id?: string | null,
+    code?: string | null,
+    name?: string | null,
+    sortIndex?: number | null,
+    optionGroups?: Array<{
+      id?: string | null,
+      code?: string | null,
+      name?: string | null,
+      sortIndex?: number | null,
+      optionGroups?: Array<{
+        id?: string | null,
+        code?: string | null,
+        name?: string | null,
+        sortIndex?: number | null,
+        options?: Array<{
+          id?: string | null,
+          instanceId?: string | null,
+          articleNumber?: string | null,
+          name?: string | null,
+          quantity: number,
+          discountPercent?: number | null,
+          unitPrice?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null> | null,
+      options?: Array<{
+        id?: string | null,
+        instanceId?: string | null,
+        articleNumber?: string | null,
+        name?: string | null,
+        quantity: number,
+        discountPercent?: number | null,
+        unitPrice?: {
+          __typename: 'PriceType',
+          sellingPriceIncVat: number,
+          sellingPriceExVat: number,
+          regularPriceIncVat: number,
+          regularPriceExVat: number,
+          discountIncVat: number,
+          discountExVat: number,
+          discountPercentage: number,
+          vat: number,
+          isDiscounted: boolean,
+          sellingPriceIncVatFormatted?: string | null,
+          sellingPriceExVatFormatted?: string | null,
+          regularPriceIncVatFormatted?: string | null,
+          regularPriceExVatFormatted?: string | null,
+          discountIncVatFormatted?: string | null,
+          discountExVatFormatted?: string | null,
+          vatFormatted?: string | null,
+          currency?: {
+            __typename: 'CurrencyType',
+            code: string,
+            symbol: string,
+            rate: number,
+            name: string
+          } | null
+        } | null
+      } | null> | null
+    } | null> | null,
+    options?: Array<{
+      id?: string | null,
+      instanceId?: string | null,
+      articleNumber?: string | null,
+      name?: string | null,
+      quantity: number,
+      discountPercent?: number | null,
+      unitPrice?: {
+        __typename: 'PriceType',
+        sellingPriceIncVat: number,
+        sellingPriceExVat: number,
+        regularPriceIncVat: number,
+        regularPriceExVat: number,
+        discountIncVat: number,
+        discountExVat: number,
+        discountPercentage: number,
+        vat: number,
+        isDiscounted: boolean,
+        sellingPriceIncVatFormatted?: string | null,
+        sellingPriceExVatFormatted?: string | null,
+        regularPriceIncVatFormatted?: string | null,
+        regularPriceExVatFormatted?: string | null,
+        discountIncVatFormatted?: string | null,
+        discountExVatFormatted?: string | null,
+        vatFormatted?: string | null,
+        currency?: {
+          __typename: 'CurrencyType',
+          code: string,
+          symbol: string,
+          rate: number,
+          name: string
+        } | null
+      } | null
+    } | null> | null
+  } | null> | null
+};
+
+export type GeinsCpqCommittedGroupFieldsType = {
+  id?: string | null,
+  code?: string | null,
+  name?: string | null,
+  sortIndex?: number | null,
+  options?: Array<{
+    id?: string | null,
+    instanceId?: string | null,
+    articleNumber?: string | null,
+    name?: string | null,
+    quantity: number,
+    discountPercent?: number | null,
+    unitPrice?: {
+      __typename: 'PriceType',
+      sellingPriceIncVat: number,
+      sellingPriceExVat: number,
+      regularPriceIncVat: number,
+      regularPriceExVat: number,
+      discountIncVat: number,
+      discountExVat: number,
+      discountPercentage: number,
+      vat: number,
+      isDiscounted: boolean,
+      sellingPriceIncVatFormatted?: string | null,
+      sellingPriceExVatFormatted?: string | null,
+      regularPriceIncVatFormatted?: string | null,
+      regularPriceExVatFormatted?: string | null,
+      discountIncVatFormatted?: string | null,
+      discountExVatFormatted?: string | null,
+      vatFormatted?: string | null,
+      currency?: {
+        __typename: 'CurrencyType',
+        code: string,
+        symbol: string,
+        rate: number,
+        name: string
+      } | null
+    } | null
+  } | null> | null
+};
+
+export type GeinsCpqCommittedOptionType = {
+  id?: string | null,
+  instanceId?: string | null,
+  articleNumber?: string | null,
+  name?: string | null,
+  quantity: number,
+  discountPercent?: number | null,
+  unitPrice?: {
+    __typename: 'PriceType',
+    sellingPriceIncVat: number,
+    sellingPriceExVat: number,
+    regularPriceIncVat: number,
+    regularPriceExVat: number,
+    discountIncVat: number,
+    discountExVat: number,
+    discountPercentage: number,
+    vat: number,
+    isDiscounted: boolean,
+    sellingPriceIncVatFormatted?: string | null,
+    sellingPriceExVatFormatted?: string | null,
+    regularPriceIncVatFormatted?: string | null,
+    regularPriceExVatFormatted?: string | null,
+    discountIncVatFormatted?: string | null,
+    discountExVatFormatted?: string | null,
+    vatFormatted?: string | null,
+    currency?: {
+      __typename: 'CurrencyType',
+      code: string,
+      symbol: string,
+      rate: number,
+      name: string
+    } | null
+  } | null
+};
+
 export type GeinsOmsCheckoutType = {
   email?: string | null,
   identityNumber?: string | null,
@@ -3622,6 +4934,7 @@ export type GeinsOmsCheckoutType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -3681,7 +4994,8 @@ export type GeinsOmsCheckoutType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -3785,6 +5099,554 @@ export type GeinsOmsCheckoutType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -3915,7 +5777,11 @@ export type GeinsOmsCheckoutType = {
     paymentType?: GeinsPaymentType | null,
     paymentData?: string | null,
     isSelected: boolean,
-    newCheckoutSession: boolean
+    newCheckoutSession: boolean,
+    feeIncVat: number,
+    feeExVat: number,
+    feeIncVatFormatted?: string | null,
+    feeExVatFormatted?: string | null
   } | null> | null
 };
 
@@ -3943,9 +5809,549 @@ export type GeinsCpqConfiguredCartLinesType = {
     quantity: number,
     configurationId?: string | null,
     configuration?: {
+      committedConfigurationId?: string | null,
+      articleNumber?: string | null,
+      discountPercent?: number | null,
+      weightPerUnit?: number | null,
       summary?: Array<{
         label?: string | null,
         value?: string | null
+      } | null> | null,
+      sections?: Array<{
+        id?: string | null,
+        name?: string | null,
+        sortIndex?: number | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null,
+        variables?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          valueType: GeinsCpqVariableValueType,
+          value?: string | null,
+          unit?: string | null,
+          decimals?: number | null
+        } | null> | null,
+        optionGroups?: Array<{
+          id?: string | null,
+          code?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null,
+          options?: Array<{
+            id?: string | null,
+            instanceId?: string | null,
+            articleNumber?: string | null,
+            name?: string | null,
+            quantity: number,
+            discountPercent?: number | null,
+            unitPrice?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null
+          } | null> | null
+        } | null> | null
       } | null> | null
     } | null
   } | null> | null
@@ -4122,7 +6528,8 @@ export type GeinsCpqConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -4183,7 +6590,8 @@ export type GeinsCpqConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -4244,7 +6652,8 @@ export type GeinsCpqConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -4369,7 +6778,8 @@ export type GeinsCpqConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -4430,7 +6840,8 @@ export type GeinsCpqConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -4491,7 +6902,8 @@ export type GeinsCpqConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -4616,7 +7028,8 @@ export type GeinsCpqConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -4677,7 +7090,8 @@ export type GeinsCpqConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -4738,7 +7152,8 @@ export type GeinsCpqConfigurationType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -4863,7 +7278,8 @@ export type GeinsCpqConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -4924,7 +7340,8 @@ export type GeinsCpqConfigurationType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -4985,7 +7402,8 @@ export type GeinsCpqConfigurationType = {
           alias: string,
           canonicalUrl?: string | null,
           productImages?: Array<{
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null
         } | null,
         messages?: Array<{
@@ -5123,7 +7541,8 @@ export type GeinsCpqSectionFieldsType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -5184,7 +7603,8 @@ export type GeinsCpqSectionFieldsType = {
           alias: string,
           canonicalUrl?: string | null,
           productImages?: Array<{
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null
         } | null,
         messages?: Array<{
@@ -5245,7 +7665,8 @@ export type GeinsCpqSectionFieldsType = {
         alias: string,
         canonicalUrl?: string | null,
         productImages?: Array<{
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null
       } | null,
       messages?: Array<{
@@ -5372,7 +7793,8 @@ export type GeinsCpqGroupTreeType = {
           alias: string,
           canonicalUrl?: string | null,
           productImages?: Array<{
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null
         } | null,
         messages?: Array<{
@@ -5433,7 +7855,8 @@ export type GeinsCpqGroupTreeType = {
         alias: string,
         canonicalUrl?: string | null,
         productImages?: Array<{
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null
       } | null,
       messages?: Array<{
@@ -5494,7 +7917,8 @@ export type GeinsCpqGroupTreeType = {
       alias: string,
       canonicalUrl?: string | null,
       productImages?: Array<{
-        fileName: string
+        fileName: string,
+        url?: string | null
       } | null> | null
     } | null,
     messages?: Array<{
@@ -5568,7 +7992,8 @@ export type GeinsCpqGroupFieldsType = {
       alias: string,
       canonicalUrl?: string | null,
       productImages?: Array<{
-        fileName: string
+        fileName: string,
+        url?: string | null
       } | null> | null
     } | null,
     messages?: Array<{
@@ -5630,54 +8055,13 @@ export type GeinsCpqOptionType = {
     alias: string,
     canonicalUrl?: string | null,
     productImages?: Array<{
-      fileName: string
+      fileName: string,
+      url?: string | null
     } | null> | null
   } | null,
   messages?: Array<{
     severity: GeinsCpqMessageSeverity,
     text?: string | null
-  } | null> | null
-};
-
-export type GeinsCpqCommittedSectionFieldsType = {
-  id?: string | null,
-  variables?: Array<{
-    id?: string | null,
-    valueType: GeinsCpqVariableValueType,
-    value?: string | null
-  } | null> | null,
-  optionGroups?: Array<{
-    id?: string | null,
-    optionGroups?: Array<{
-      id?: string | null,
-      optionGroups?: Array<{
-        id?: string | null,
-        options?: Array<{
-          id?: string | null,
-          instanceId?: string | null,
-          quantity: number
-        } | null> | null
-      } | null> | null,
-      options?: Array<{
-        id?: string | null,
-        instanceId?: string | null,
-        quantity: number
-      } | null> | null
-    } | null> | null,
-    options?: Array<{
-      id?: string | null,
-      instanceId?: string | null,
-      quantity: number
-    } | null> | null
-  } | null> | null
-};
-
-export type GeinsCpqCommittedGroupFieldsType = {
-  id?: string | null,
-  options?: Array<{
-    id?: string | null,
-    instanceId?: string | null,
-    quantity: number
   } | null> | null
 };
 
@@ -5734,12 +8118,6 @@ export type GeinsOrderSummaryType = {
     isCompleted: boolean,
     merchantData?: string | null,
     promoCode?: string | null,
-    appliedCampaigns?: Array<{
-      __typename: 'CampaignRuleType',
-      campaignId: string,
-      name?: string | null,
-      hideTitle?: boolean | null
-    } | null> | null,
     items?: Array<{
       __typename: 'CartItemType',
       id: string | number,
@@ -5747,54 +8125,10 @@ export type GeinsOrderSummaryType = {
       skuId: number,
       quantity: number,
       message?: string | null,
-      productPackage?: {
-        __typename: 'ProductPackageCartItemType',
-        packageId: number,
-        packageName: string,
-        groupId: number,
-        optionId: number
-      } | null,
-      campaign?: {
-        __typename: 'CampaignType',
-        appliedCampaigns?: Array<{
-          __typename: 'CampaignRuleType',
-          campaignId: string,
-          name?: string | null,
-          hideTitle?: boolean | null
-        } | null> | null,
-        prices?: Array<{
-          __typename: 'CampaignPriceType',
-          quantity: number,
-          price?: {
-            __typename: 'PriceType',
-            sellingPriceIncVat: number,
-            sellingPriceExVat: number,
-            regularPriceIncVat: number,
-            regularPriceExVat: number,
-            discountIncVat: number,
-            discountExVat: number,
-            discountPercentage: number,
-            vat: number,
-            isDiscounted: boolean,
-            sellingPriceIncVatFormatted?: string | null,
-            sellingPriceExVatFormatted?: string | null,
-            regularPriceIncVatFormatted?: string | null,
-            regularPriceExVatFormatted?: string | null,
-            discountIncVatFormatted?: string | null,
-            discountExVatFormatted?: string | null,
-            vatFormatted?: string | null,
-            currency?: {
-              __typename: 'CurrencyType',
-              code: string,
-              symbol: string,
-              rate: number,
-              name: string
-            } | null
-          } | null
-        } | null> | null
-      } | null,
+      configurationId?: string | null,
       product?: {
         __typename: 'ProductType',
+        type?: string | null,
         productId: number,
         articleNumber?: string | null,
         name?: string | null,
@@ -5806,7 +8140,8 @@ export type GeinsOrderSummaryType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -5859,6 +8194,52 @@ export type GeinsOrderSummaryType = {
           } | null
         } | null
       } | null,
+      productPackage?: {
+        __typename: 'ProductPackageCartItemType',
+        packageId: number,
+        packageName: string,
+        groupId: number,
+        optionId: number
+      } | null,
+      campaign?: {
+        __typename: 'CampaignType',
+        appliedCampaigns?: Array<{
+          __typename: 'CampaignRuleType',
+          campaignId: string,
+          name?: string | null,
+          hideTitle?: boolean | null
+        } | null> | null,
+        prices?: Array<{
+          __typename: 'CampaignPriceType',
+          quantity: number,
+          price?: {
+            __typename: 'PriceType',
+            sellingPriceIncVat: number,
+            sellingPriceExVat: number,
+            regularPriceIncVat: number,
+            regularPriceExVat: number,
+            discountIncVat: number,
+            discountExVat: number,
+            discountPercentage: number,
+            vat: number,
+            isDiscounted: boolean,
+            sellingPriceIncVatFormatted?: string | null,
+            sellingPriceExVatFormatted?: string | null,
+            regularPriceIncVatFormatted?: string | null,
+            regularPriceExVatFormatted?: string | null,
+            discountIncVatFormatted?: string | null,
+            discountExVatFormatted?: string | null,
+            vatFormatted?: string | null,
+            currency?: {
+              __typename: 'CurrencyType',
+              code: string,
+              symbol: string,
+              rate: number,
+              name: string
+            } | null
+          } | null
+        } | null> | null
+      } | null,
       unitPrice?: {
         __typename: 'PriceType',
         sellingPriceIncVat: number,
@@ -5910,7 +8291,561 @@ export type GeinsOrderSummaryType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
+    } | null> | null,
+    appliedCampaigns?: Array<{
+      __typename: 'CampaignRuleType',
+      campaignId: string,
+      name?: string | null,
+      hideTitle?: boolean | null
     } | null> | null,
     summary?: {
       __typename: 'CartSummaryType',
@@ -6291,6 +9226,7 @@ export type GeinsWidgetAreaPageAliasType = {
         configuration: string,
         images?: Array<{
           fileName: string,
+          url?: string | null,
           largestSize?: {
             imageWidth: number,
             imageHeight: number
@@ -6344,6 +9280,7 @@ export type GeinsWidgetAreaType = {
         configuration: string,
         images?: Array<{
           fileName: string,
+          url?: string | null,
           largestSize?: {
             imageWidth: number,
             imageHeight: number
@@ -6806,6 +9743,7 @@ export type GeinsAddToCartType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -6865,7 +9803,8 @@ export type GeinsAddToCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -6969,6 +9908,554 @@ export type GeinsAddToCartType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -7079,6 +10566,7 @@ export type GeinsAddPackageToCartType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -7138,7 +10626,8 @@ export type GeinsAddPackageToCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -7242,6 +10731,554 @@ export type GeinsAddPackageToCartType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -7351,6 +11388,7 @@ export type GeinsCloneCartType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -7410,7 +11448,8 @@ export type GeinsCloneCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -7514,6 +11553,554 @@ export type GeinsCloneCartType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -7622,6 +12209,7 @@ export type GeinsCompleteCartType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -7681,7 +12269,8 @@ export type GeinsCompleteCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -7785,6 +12374,554 @@ export type GeinsCompleteCartType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -7892,6 +13029,7 @@ export type GeinsCreateCartType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -7951,7 +13089,8 @@ export type GeinsCreateCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -8055,6 +13194,554 @@ export type GeinsCreateCartType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -8164,6 +13851,7 @@ export type GeinsGetCartType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -8223,7 +13911,8 @@ export type GeinsGetCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -8327,6 +14016,554 @@ export type GeinsGetCartType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -8436,6 +14673,7 @@ export type GeinsSetCartMerchantDataType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -8495,7 +14733,8 @@ export type GeinsSetCartMerchantDataType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -8599,6 +14838,554 @@ export type GeinsSetCartMerchantDataType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -8708,6 +15495,7 @@ export type GeinsSetCartPromoCodeType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -8767,7 +15555,8 @@ export type GeinsSetCartPromoCodeType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -8871,6 +15660,554 @@ export type GeinsSetCartPromoCodeType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -8981,6 +16318,7 @@ export type GeinsSetCartShippingFeeType = {
         skuId: number,
         quantity: number,
         message?: string | null,
+        configurationId?: string | null,
         productPackage?: {
           __typename: 'ProductPackageCartItemType',
           packageId: number,
@@ -9040,7 +16378,8 @@ export type GeinsSetCartShippingFeeType = {
           } | null,
           productImages?: Array<{
             __typename: 'ProductImageType',
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null,
           primaryCategory?: {
             __typename: 'CategoryType',
@@ -9144,6 +16483,554 @@ export type GeinsSetCartShippingFeeType = {
             rate: number,
             name: string
           } | null
+        } | null,
+        configuration?: {
+          __typename: 'CpqCartItemConfigurationType',
+          committedConfigurationId?: string | null,
+          articleNumber?: string | null,
+          discountPercent?: number | null,
+          weightPerUnit?: number | null,
+          summary?: Array<{
+            __typename: 'CpqCommittedConfigurationLineType',
+            label?: string | null,
+            value?: string | null
+          } | null> | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                sections?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  variables?: Array<{
+                    id?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    valueType: GeinsCpqVariableValueType,
+                    value?: string | null,
+                    unit?: string | null,
+                    decimals?: number | null
+                  } | null> | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      optionGroups?: Array<{
+                        id?: string | null,
+                        code?: string | null,
+                        name?: string | null,
+                        sortIndex?: number | null,
+                        options?: Array<{
+                          id?: string | null,
+                          instanceId?: string | null,
+                          articleNumber?: string | null,
+                          name?: string | null,
+                          quantity: number,
+                          discountPercent?: number | null,
+                          unitPrice?: {
+                            __typename: 'PriceType',
+                            sellingPriceIncVat: number,
+                            sellingPriceExVat: number,
+                            regularPriceIncVat: number,
+                            regularPriceExVat: number,
+                            discountIncVat: number,
+                            discountExVat: number,
+                            discountPercentage: number,
+                            vat: number,
+                            isDiscounted: boolean,
+                            sellingPriceIncVatFormatted?: string | null,
+                            sellingPriceExVatFormatted?: string | null,
+                            regularPriceIncVatFormatted?: string | null,
+                            regularPriceExVatFormatted?: string | null,
+                            discountIncVatFormatted?: string | null,
+                            discountExVatFormatted?: string | null,
+                            vatFormatted?: string | null,
+                            currency?: {
+                              __typename: 'CurrencyType',
+                              code: string,
+                              symbol: string,
+                              rate: number,
+                              name: string
+                            } | null
+                          } | null
+                        } | null> | null
+                      } | null> | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null
+                } | null> | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null
         } | null
       } | null> | null,
       summary?: {
@@ -9254,6 +17141,7 @@ export type GeinsUpdateCartGroupType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -9313,7 +17201,8 @@ export type GeinsUpdateCartGroupType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -9417,6 +17306,554 @@ export type GeinsUpdateCartGroupType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -9542,6 +17979,7 @@ export type GeinsUpdateCartItemType = {
       skuId: number,
       quantity: number,
       message?: string | null,
+      configurationId?: string | null,
       productPackage?: {
         __typename: 'ProductPackageCartItemType',
         packageId: number,
@@ -9601,7 +18039,8 @@ export type GeinsUpdateCartItemType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -9705,6 +18144,554 @@ export type GeinsUpdateCartItemType = {
           rate: number,
           name: string
         } | null
+      } | null,
+      configuration?: {
+        __typename: 'CpqCartItemConfigurationType',
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
+        summary?: Array<{
+          __typename: 'CpqCommittedConfigurationLineType',
+          label?: string | null,
+          value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
+        } | null> | null
       } | null
     } | null> | null,
     summary?: {
@@ -9818,6 +18805,7 @@ export type GeinsCreateOrUpdateCheckoutType = {
         skuId: number,
         quantity: number,
         message?: string | null,
+        configurationId?: string | null,
         productPackage?: {
           __typename: 'ProductPackageCartItemType',
           packageId: number,
@@ -9877,7 +18865,8 @@ export type GeinsCreateOrUpdateCheckoutType = {
           } | null,
           productImages?: Array<{
             __typename: 'ProductImageType',
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null,
           primaryCategory?: {
             __typename: 'CategoryType',
@@ -9981,6 +18970,554 @@ export type GeinsCreateOrUpdateCheckoutType = {
             rate: number,
             name: string
           } | null
+        } | null,
+        configuration?: {
+          __typename: 'CpqCartItemConfigurationType',
+          committedConfigurationId?: string | null,
+          articleNumber?: string | null,
+          discountPercent?: number | null,
+          weightPerUnit?: number | null,
+          summary?: Array<{
+            __typename: 'CpqCommittedConfigurationLineType',
+            label?: string | null,
+            value?: string | null
+          } | null> | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                sections?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  variables?: Array<{
+                    id?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    valueType: GeinsCpqVariableValueType,
+                    value?: string | null,
+                    unit?: string | null,
+                    decimals?: number | null
+                  } | null> | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      optionGroups?: Array<{
+                        id?: string | null,
+                        code?: string | null,
+                        name?: string | null,
+                        sortIndex?: number | null,
+                        options?: Array<{
+                          id?: string | null,
+                          instanceId?: string | null,
+                          articleNumber?: string | null,
+                          name?: string | null,
+                          quantity: number,
+                          discountPercent?: number | null,
+                          unitPrice?: {
+                            __typename: 'PriceType',
+                            sellingPriceIncVat: number,
+                            sellingPriceExVat: number,
+                            regularPriceIncVat: number,
+                            regularPriceExVat: number,
+                            discountIncVat: number,
+                            discountExVat: number,
+                            discountPercentage: number,
+                            vat: number,
+                            isDiscounted: boolean,
+                            sellingPriceIncVatFormatted?: string | null,
+                            sellingPriceExVatFormatted?: string | null,
+                            regularPriceIncVatFormatted?: string | null,
+                            regularPriceExVatFormatted?: string | null,
+                            discountIncVatFormatted?: string | null,
+                            discountExVatFormatted?: string | null,
+                            vatFormatted?: string | null,
+                            currency?: {
+                              __typename: 'CurrencyType',
+                              code: string,
+                              symbol: string,
+                              rate: number,
+                              name: string
+                            } | null
+                          } | null
+                        } | null> | null
+                      } | null> | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null
+                } | null> | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null
         } | null
       } | null> | null,
       summary?: {
@@ -10111,7 +19648,11 @@ export type GeinsCreateOrUpdateCheckoutType = {
       paymentType?: GeinsPaymentType | null,
       paymentData?: string | null,
       isSelected: boolean,
-      newCheckoutSession: boolean
+      newCheckoutSession: boolean,
+      feeIncVat: number,
+      feeExVat: number,
+      feeIncVatFormatted?: string | null,
+      feeExVatFormatted?: string | null
     } | null> | null
   } | null
 };
@@ -10269,6 +19810,7 @@ export type GeinsCheckoutType = {
         skuId: number,
         quantity: number,
         message?: string | null,
+        configurationId?: string | null,
         productPackage?: {
           __typename: 'ProductPackageCartItemType',
           packageId: number,
@@ -10328,7 +19870,8 @@ export type GeinsCheckoutType = {
           } | null,
           productImages?: Array<{
             __typename: 'ProductImageType',
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null,
           primaryCategory?: {
             __typename: 'CategoryType',
@@ -10432,6 +19975,554 @@ export type GeinsCheckoutType = {
             rate: number,
             name: string
           } | null
+        } | null,
+        configuration?: {
+          __typename: 'CpqCartItemConfigurationType',
+          committedConfigurationId?: string | null,
+          articleNumber?: string | null,
+          discountPercent?: number | null,
+          weightPerUnit?: number | null,
+          summary?: Array<{
+            __typename: 'CpqCommittedConfigurationLineType',
+            label?: string | null,
+            value?: string | null
+          } | null> | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                sections?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  variables?: Array<{
+                    id?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    valueType: GeinsCpqVariableValueType,
+                    value?: string | null,
+                    unit?: string | null,
+                    decimals?: number | null
+                  } | null> | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      optionGroups?: Array<{
+                        id?: string | null,
+                        code?: string | null,
+                        name?: string | null,
+                        sortIndex?: number | null,
+                        options?: Array<{
+                          id?: string | null,
+                          instanceId?: string | null,
+                          articleNumber?: string | null,
+                          name?: string | null,
+                          quantity: number,
+                          discountPercent?: number | null,
+                          unitPrice?: {
+                            __typename: 'PriceType',
+                            sellingPriceIncVat: number,
+                            sellingPriceExVat: number,
+                            regularPriceIncVat: number,
+                            regularPriceExVat: number,
+                            discountIncVat: number,
+                            discountExVat: number,
+                            discountPercentage: number,
+                            vat: number,
+                            isDiscounted: boolean,
+                            sellingPriceIncVatFormatted?: string | null,
+                            sellingPriceExVatFormatted?: string | null,
+                            regularPriceIncVatFormatted?: string | null,
+                            regularPriceExVatFormatted?: string | null,
+                            discountIncVatFormatted?: string | null,
+                            discountExVatFormatted?: string | null,
+                            vatFormatted?: string | null,
+                            currency?: {
+                              __typename: 'CurrencyType',
+                              code: string,
+                              symbol: string,
+                              rate: number,
+                              name: string
+                            } | null
+                          } | null
+                        } | null> | null
+                      } | null> | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null
+                } | null> | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null
         } | null
       } | null> | null,
       summary?: {
@@ -10563,9 +20654,549 @@ export type GeinsAddConfiguredCartItemType = {
       quantity: number,
       configurationId?: string | null,
       configuration?: {
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
         summary?: Array<{
           label?: string | null,
           value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
         } | null> | null
       } | null
     } | null> | null
@@ -10753,7 +21384,8 @@ export type GeinsApplyConfigurationChangesType = {
                       alias: string,
                       canonicalUrl?: string | null,
                       productImages?: Array<{
-                        fileName: string
+                        fileName: string,
+                        url?: string | null
                       } | null> | null
                     } | null,
                     messages?: Array<{
@@ -10814,7 +21446,8 @@ export type GeinsApplyConfigurationChangesType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -10875,7 +21508,8 @@ export type GeinsApplyConfigurationChangesType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -11000,7 +21634,8 @@ export type GeinsApplyConfigurationChangesType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -11061,7 +21696,8 @@ export type GeinsApplyConfigurationChangesType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -11122,7 +21758,8 @@ export type GeinsApplyConfigurationChangesType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -11247,7 +21884,8 @@ export type GeinsApplyConfigurationChangesType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -11308,7 +21946,8 @@ export type GeinsApplyConfigurationChangesType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -11369,7 +22008,8 @@ export type GeinsApplyConfigurationChangesType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -11494,7 +22134,8 @@ export type GeinsApplyConfigurationChangesType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -11555,7 +22196,8 @@ export type GeinsApplyConfigurationChangesType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -11616,7 +22258,8 @@ export type GeinsApplyConfigurationChangesType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -11868,7 +22511,8 @@ export type GeinsCreateConfigurationType = {
                       alias: string,
                       canonicalUrl?: string | null,
                       productImages?: Array<{
-                        fileName: string
+                        fileName: string,
+                        url?: string | null
                       } | null> | null
                     } | null,
                     messages?: Array<{
@@ -11929,7 +22573,8 @@ export type GeinsCreateConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -11990,7 +22635,8 @@ export type GeinsCreateConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -12115,7 +22761,8 @@ export type GeinsCreateConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -12176,7 +22823,8 @@ export type GeinsCreateConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -12237,7 +22885,8 @@ export type GeinsCreateConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -12362,7 +23011,8 @@ export type GeinsCreateConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -12423,7 +23073,8 @@ export type GeinsCreateConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -12484,7 +23135,8 @@ export type GeinsCreateConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -12609,7 +23261,8 @@ export type GeinsCreateConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -12670,7 +23323,8 @@ export type GeinsCreateConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -12731,7 +23385,8 @@ export type GeinsCreateConfigurationType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -12780,9 +23435,549 @@ export type GeinsGetConfiguredCartLinesType = {
       quantity: number,
       configurationId?: string | null,
       configuration?: {
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
         summary?: Array<{
           label?: string | null,
           value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
         } | null> | null
       } | null
     } | null> | null
@@ -12807,129 +24002,537 @@ export type GeinsGetConfiguredOrderLineChoicesType = {
         configuration?: {
           sections?: Array<{
             id?: string | null,
-            variables?: Array<{
-              id?: string | null,
-              valueType: GeinsCpqVariableValueType,
-              value?: string | null
-            } | null> | null,
-            optionGroups?: Array<{
-              id?: string | null,
-              optionGroups?: Array<{
-                id?: string | null,
-                optionGroups?: Array<{
-                  id?: string | null,
-                  options?: Array<{
-                    id?: string | null,
-                    instanceId?: string | null,
-                    quantity: number
-                  } | null> | null
-                } | null> | null,
-                options?: Array<{
-                  id?: string | null,
-                  instanceId?: string | null,
-                  quantity: number
-                } | null> | null
-              } | null> | null,
-              options?: Array<{
-                id?: string | null,
-                instanceId?: string | null,
-                quantity: number
-              } | null> | null
-            } | null> | null,
+            name?: string | null,
+            sortIndex?: number | null,
             sections?: Array<{
               id?: string | null,
-              variables?: Array<{
-                id?: string | null,
-                valueType: GeinsCpqVariableValueType,
-                value?: string | null
-              } | null> | null,
-              optionGroups?: Array<{
-                id?: string | null,
-                optionGroups?: Array<{
-                  id?: string | null,
-                  optionGroups?: Array<{
-                    id?: string | null,
-                    options?: Array<{
-                      id?: string | null,
-                      instanceId?: string | null,
-                      quantity: number
-                    } | null> | null
-                  } | null> | null,
-                  options?: Array<{
-                    id?: string | null,
-                    instanceId?: string | null,
-                    quantity: number
-                  } | null> | null
-                } | null> | null,
-                options?: Array<{
-                  id?: string | null,
-                  instanceId?: string | null,
-                  quantity: number
-                } | null> | null
-              } | null> | null,
+              name?: string | null,
+              sortIndex?: number | null,
               sections?: Array<{
                 id?: string | null,
-                variables?: Array<{
-                  id?: string | null,
-                  valueType: GeinsCpqVariableValueType,
-                  value?: string | null
-                } | null> | null,
-                optionGroups?: Array<{
-                  id?: string | null,
-                  optionGroups?: Array<{
-                    id?: string | null,
-                    optionGroups?: Array<{
-                      id?: string | null,
-                      options?: Array<{
-                        id?: string | null,
-                        instanceId?: string | null,
-                        quantity: number
-                      } | null> | null
-                    } | null> | null,
-                    options?: Array<{
-                      id?: string | null,
-                      instanceId?: string | null,
-                      quantity: number
-                    } | null> | null
-                  } | null> | null,
-                  options?: Array<{
-                    id?: string | null,
-                    instanceId?: string | null,
-                    quantity: number
-                  } | null> | null
-                } | null> | null,
+                name?: string | null,
+                sortIndex?: number | null,
                 sections?: Array<{
                   id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
                   variables?: Array<{
                     id?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
                     valueType: GeinsCpqVariableValueType,
-                    value?: string | null
+                    value?: string | null,
+                    unit?: string | null,
+                    decimals?: number | null
                   } | null> | null,
                   optionGroups?: Array<{
                     id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
                     optionGroups?: Array<{
                       id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
                       optionGroups?: Array<{
                         id?: string | null,
+                        code?: string | null,
+                        name?: string | null,
+                        sortIndex?: number | null,
                         options?: Array<{
                           id?: string | null,
                           instanceId?: string | null,
-                          quantity: number
+                          articleNumber?: string | null,
+                          name?: string | null,
+                          quantity: number,
+                          discountPercent?: number | null,
+                          unitPrice?: {
+                            __typename: 'PriceType',
+                            sellingPriceIncVat: number,
+                            sellingPriceExVat: number,
+                            regularPriceIncVat: number,
+                            regularPriceExVat: number,
+                            discountIncVat: number,
+                            discountExVat: number,
+                            discountPercentage: number,
+                            vat: number,
+                            isDiscounted: boolean,
+                            sellingPriceIncVatFormatted?: string | null,
+                            sellingPriceExVatFormatted?: string | null,
+                            regularPriceIncVatFormatted?: string | null,
+                            regularPriceExVatFormatted?: string | null,
+                            discountIncVatFormatted?: string | null,
+                            discountExVatFormatted?: string | null,
+                            vatFormatted?: string | null,
+                            currency?: {
+                              __typename: 'CurrencyType',
+                              code: string,
+                              symbol: string,
+                              rate: number,
+                              name: string
+                            } | null
+                          } | null
                         } | null> | null
                       } | null> | null,
                       options?: Array<{
                         id?: string | null,
                         instanceId?: string | null,
-                        quantity: number
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
                       } | null> | null
                     } | null> | null,
                     options?: Array<{
                       id?: string | null,
                       instanceId?: string | null,
-                      quantity: number
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
                     } | null> | null
                   } | null> | null
+                } | null> | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
                 } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
               } | null> | null
             } | null> | null
           } | null> | null
@@ -12956,9 +24559,549 @@ export type GeinsGetConfiguredOrderLinesType = {
           type?: string | null
         } | null,
         configuration?: {
+          committedConfigurationId?: string | null,
+          articleNumber?: string | null,
+          discountPercent?: number | null,
+          weightPerUnit?: number | null,
           summary?: Array<{
             label?: string | null,
             value?: string | null
+          } | null> | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                sections?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  variables?: Array<{
+                    id?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    valueType: GeinsCpqVariableValueType,
+                    value?: string | null,
+                    unit?: string | null,
+                    decimals?: number | null
+                  } | null> | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      optionGroups?: Array<{
+                        id?: string | null,
+                        code?: string | null,
+                        name?: string | null,
+                        sortIndex?: number | null,
+                        options?: Array<{
+                          id?: string | null,
+                          instanceId?: string | null,
+                          articleNumber?: string | null,
+                          name?: string | null,
+                          quantity: number,
+                          discountPercent?: number | null,
+                          unitPrice?: {
+                            __typename: 'PriceType',
+                            sellingPriceIncVat: number,
+                            sellingPriceExVat: number,
+                            regularPriceIncVat: number,
+                            regularPriceExVat: number,
+                            discountIncVat: number,
+                            discountExVat: number,
+                            discountPercentage: number,
+                            vat: number,
+                            isDiscounted: boolean,
+                            sellingPriceIncVatFormatted?: string | null,
+                            sellingPriceExVatFormatted?: string | null,
+                            regularPriceIncVatFormatted?: string | null,
+                            regularPriceExVatFormatted?: string | null,
+                            discountIncVatFormatted?: string | null,
+                            discountExVatFormatted?: string | null,
+                            vatFormatted?: string | null,
+                            currency?: {
+                              __typename: 'CurrencyType',
+                              code: string,
+                              symbol: string,
+                              rate: number,
+                              name: string
+                            } | null
+                          } | null
+                        } | null> | null
+                      } | null> | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null
+                } | null> | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
           } | null> | null
         } | null
       } | null> | null
@@ -13146,7 +25289,8 @@ export type GeinsGetConfigurationType = {
                       alias: string,
                       canonicalUrl?: string | null,
                       productImages?: Array<{
-                        fileName: string
+                        fileName: string,
+                        url?: string | null
                       } | null> | null
                     } | null,
                     messages?: Array<{
@@ -13207,7 +25351,8 @@ export type GeinsGetConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -13268,7 +25413,8 @@ export type GeinsGetConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -13393,7 +25539,8 @@ export type GeinsGetConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -13454,7 +25601,8 @@ export type GeinsGetConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -13515,7 +25663,8 @@ export type GeinsGetConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -13640,7 +25789,8 @@ export type GeinsGetConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -13701,7 +25851,8 @@ export type GeinsGetConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -13762,7 +25913,8 @@ export type GeinsGetConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -13887,7 +26039,8 @@ export type GeinsGetConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -13948,7 +26101,8 @@ export type GeinsGetConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -14009,7 +26163,8 @@ export type GeinsGetConfigurationType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -14225,7 +26380,8 @@ export type GeinsReopenCartItemConfigurationType = {
                       alias: string,
                       canonicalUrl?: string | null,
                       productImages?: Array<{
-                        fileName: string
+                        fileName: string,
+                        url?: string | null
                       } | null> | null
                     } | null,
                     messages?: Array<{
@@ -14286,7 +26442,8 @@ export type GeinsReopenCartItemConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -14347,7 +26504,8 @@ export type GeinsReopenCartItemConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -14472,7 +26630,8 @@ export type GeinsReopenCartItemConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -14533,7 +26692,8 @@ export type GeinsReopenCartItemConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -14594,7 +26754,8 @@ export type GeinsReopenCartItemConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -14719,7 +26880,8 @@ export type GeinsReopenCartItemConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -14780,7 +26942,8 @@ export type GeinsReopenCartItemConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -14841,7 +27004,8 @@ export type GeinsReopenCartItemConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -14966,7 +27130,8 @@ export type GeinsReopenCartItemConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -15027,7 +27192,8 @@ export type GeinsReopenCartItemConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -15088,7 +27254,8 @@ export type GeinsReopenCartItemConfigurationType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -15126,9 +27293,549 @@ export type GeinsUpdateConfiguredCartItemType = {
       quantity: number,
       configurationId?: string | null,
       configuration?: {
+        committedConfigurationId?: string | null,
+        articleNumber?: string | null,
+        discountPercent?: number | null,
+        weightPerUnit?: number | null,
         summary?: Array<{
           label?: string | null,
           value?: string | null
+        } | null> | null,
+        sections?: Array<{
+          id?: string | null,
+          name?: string | null,
+          sortIndex?: number | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null,
+          variables?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            valueType: GeinsCpqVariableValueType,
+            value?: string | null,
+            unit?: string | null,
+            decimals?: number | null
+          } | null> | null,
+          optionGroups?: Array<{
+            id?: string | null,
+            code?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null,
+            options?: Array<{
+              id?: string | null,
+              instanceId?: string | null,
+              articleNumber?: string | null,
+              name?: string | null,
+              quantity: number,
+              discountPercent?: number | null,
+              unitPrice?: {
+                __typename: 'PriceType',
+                sellingPriceIncVat: number,
+                sellingPriceExVat: number,
+                regularPriceIncVat: number,
+                regularPriceExVat: number,
+                discountIncVat: number,
+                discountExVat: number,
+                discountPercentage: number,
+                vat: number,
+                isDiscounted: boolean,
+                sellingPriceIncVatFormatted?: string | null,
+                sellingPriceExVatFormatted?: string | null,
+                regularPriceIncVatFormatted?: string | null,
+                regularPriceExVatFormatted?: string | null,
+                discountIncVatFormatted?: string | null,
+                discountExVatFormatted?: string | null,
+                vatFormatted?: string | null,
+                currency?: {
+                  __typename: 'CurrencyType',
+                  code: string,
+                  symbol: string,
+                  rate: number,
+                  name: string
+                } | null
+              } | null
+            } | null> | null
+          } | null> | null
         } | null> | null
       } | null
     } | null> | null
@@ -15214,12 +27921,6 @@ export type GeinsGetOrderPublicType = {
       isCompleted: boolean,
       merchantData?: string | null,
       promoCode?: string | null,
-      appliedCampaigns?: Array<{
-        __typename: 'CampaignRuleType',
-        campaignId: string,
-        name?: string | null,
-        hideTitle?: boolean | null
-      } | null> | null,
       items?: Array<{
         __typename: 'CartItemType',
         id: string | number,
@@ -15227,54 +27928,10 @@ export type GeinsGetOrderPublicType = {
         skuId: number,
         quantity: number,
         message?: string | null,
-        productPackage?: {
-          __typename: 'ProductPackageCartItemType',
-          packageId: number,
-          packageName: string,
-          groupId: number,
-          optionId: number
-        } | null,
-        campaign?: {
-          __typename: 'CampaignType',
-          appliedCampaigns?: Array<{
-            __typename: 'CampaignRuleType',
-            campaignId: string,
-            name?: string | null,
-            hideTitle?: boolean | null
-          } | null> | null,
-          prices?: Array<{
-            __typename: 'CampaignPriceType',
-            quantity: number,
-            price?: {
-              __typename: 'PriceType',
-              sellingPriceIncVat: number,
-              sellingPriceExVat: number,
-              regularPriceIncVat: number,
-              regularPriceExVat: number,
-              discountIncVat: number,
-              discountExVat: number,
-              discountPercentage: number,
-              vat: number,
-              isDiscounted: boolean,
-              sellingPriceIncVatFormatted?: string | null,
-              sellingPriceExVatFormatted?: string | null,
-              regularPriceIncVatFormatted?: string | null,
-              regularPriceExVatFormatted?: string | null,
-              discountIncVatFormatted?: string | null,
-              discountExVatFormatted?: string | null,
-              vatFormatted?: string | null,
-              currency?: {
-                __typename: 'CurrencyType',
-                code: string,
-                symbol: string,
-                rate: number,
-                name: string
-              } | null
-            } | null
-          } | null> | null
-        } | null,
+        configurationId?: string | null,
         product?: {
           __typename: 'ProductType',
+          type?: string | null,
           productId: number,
           articleNumber?: string | null,
           name?: string | null,
@@ -15286,7 +27943,8 @@ export type GeinsGetOrderPublicType = {
           } | null,
           productImages?: Array<{
             __typename: 'ProductImageType',
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null,
           primaryCategory?: {
             __typename: 'CategoryType',
@@ -15339,6 +27997,52 @@ export type GeinsGetOrderPublicType = {
             } | null
           } | null
         } | null,
+        productPackage?: {
+          __typename: 'ProductPackageCartItemType',
+          packageId: number,
+          packageName: string,
+          groupId: number,
+          optionId: number
+        } | null,
+        campaign?: {
+          __typename: 'CampaignType',
+          appliedCampaigns?: Array<{
+            __typename: 'CampaignRuleType',
+            campaignId: string,
+            name?: string | null,
+            hideTitle?: boolean | null
+          } | null> | null,
+          prices?: Array<{
+            __typename: 'CampaignPriceType',
+            quantity: number,
+            price?: {
+              __typename: 'PriceType',
+              sellingPriceIncVat: number,
+              sellingPriceExVat: number,
+              regularPriceIncVat: number,
+              regularPriceExVat: number,
+              discountIncVat: number,
+              discountExVat: number,
+              discountPercentage: number,
+              vat: number,
+              isDiscounted: boolean,
+              sellingPriceIncVatFormatted?: string | null,
+              sellingPriceExVatFormatted?: string | null,
+              regularPriceIncVatFormatted?: string | null,
+              regularPriceExVatFormatted?: string | null,
+              discountIncVatFormatted?: string | null,
+              discountExVatFormatted?: string | null,
+              vatFormatted?: string | null,
+              currency?: {
+                __typename: 'CurrencyType',
+                code: string,
+                symbol: string,
+                rate: number,
+                name: string
+              } | null
+            } | null
+          } | null> | null
+        } | null,
         unitPrice?: {
           __typename: 'PriceType',
           sellingPriceIncVat: number,
@@ -15390,7 +28094,561 @@ export type GeinsGetOrderPublicType = {
             rate: number,
             name: string
           } | null
+        } | null,
+        configuration?: {
+          __typename: 'CpqCartItemConfigurationType',
+          committedConfigurationId?: string | null,
+          articleNumber?: string | null,
+          discountPercent?: number | null,
+          weightPerUnit?: number | null,
+          summary?: Array<{
+            __typename: 'CpqCommittedConfigurationLineType',
+            label?: string | null,
+            value?: string | null
+          } | null> | null,
+          sections?: Array<{
+            id?: string | null,
+            name?: string | null,
+            sortIndex?: number | null,
+            sections?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              sections?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                sections?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  variables?: Array<{
+                    id?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    valueType: GeinsCpqVariableValueType,
+                    value?: string | null,
+                    unit?: string | null,
+                    decimals?: number | null
+                  } | null> | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      optionGroups?: Array<{
+                        id?: string | null,
+                        code?: string | null,
+                        name?: string | null,
+                        sortIndex?: number | null,
+                        options?: Array<{
+                          id?: string | null,
+                          instanceId?: string | null,
+                          articleNumber?: string | null,
+                          name?: string | null,
+                          quantity: number,
+                          discountPercent?: number | null,
+                          unitPrice?: {
+                            __typename: 'PriceType',
+                            sellingPriceIncVat: number,
+                            sellingPriceExVat: number,
+                            regularPriceIncVat: number,
+                            regularPriceExVat: number,
+                            discountIncVat: number,
+                            discountExVat: number,
+                            discountPercentage: number,
+                            vat: number,
+                            isDiscounted: boolean,
+                            sellingPriceIncVatFormatted?: string | null,
+                            sellingPriceExVatFormatted?: string | null,
+                            regularPriceIncVatFormatted?: string | null,
+                            regularPriceExVatFormatted?: string | null,
+                            discountIncVatFormatted?: string | null,
+                            discountExVatFormatted?: string | null,
+                            vatFormatted?: string | null,
+                            currency?: {
+                              __typename: 'CurrencyType',
+                              code: string,
+                              symbol: string,
+                              rate: number,
+                              name: string
+                            } | null
+                          } | null
+                        } | null> | null
+                      } | null> | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null
+                } | null> | null,
+                variables?: Array<{
+                  id?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  valueType: GeinsCpqVariableValueType,
+                  value?: string | null,
+                  unit?: string | null,
+                  decimals?: number | null
+                } | null> | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    optionGroups?: Array<{
+                      id?: string | null,
+                      code?: string | null,
+                      name?: string | null,
+                      sortIndex?: number | null,
+                      options?: Array<{
+                        id?: string | null,
+                        instanceId?: string | null,
+                        articleNumber?: string | null,
+                        name?: string | null,
+                        quantity: number,
+                        discountPercent?: number | null,
+                        unitPrice?: {
+                          __typename: 'PriceType',
+                          sellingPriceIncVat: number,
+                          sellingPriceExVat: number,
+                          regularPriceIncVat: number,
+                          regularPriceExVat: number,
+                          discountIncVat: number,
+                          discountExVat: number,
+                          discountPercentage: number,
+                          vat: number,
+                          isDiscounted: boolean,
+                          sellingPriceIncVatFormatted?: string | null,
+                          sellingPriceExVatFormatted?: string | null,
+                          regularPriceIncVatFormatted?: string | null,
+                          regularPriceExVatFormatted?: string | null,
+                          discountIncVatFormatted?: string | null,
+                          discountExVatFormatted?: string | null,
+                          vatFormatted?: string | null,
+                          currency?: {
+                            __typename: 'CurrencyType',
+                            code: string,
+                            symbol: string,
+                            rate: number,
+                            name: string
+                          } | null
+                        } | null
+                      } | null> | null
+                    } | null> | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null
+              } | null> | null,
+              variables?: Array<{
+                id?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                valueType: GeinsCpqVariableValueType,
+                value?: string | null,
+                unit?: string | null,
+                decimals?: number | null
+              } | null> | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  optionGroups?: Array<{
+                    id?: string | null,
+                    code?: string | null,
+                    name?: string | null,
+                    sortIndex?: number | null,
+                    options?: Array<{
+                      id?: string | null,
+                      instanceId?: string | null,
+                      articleNumber?: string | null,
+                      name?: string | null,
+                      quantity: number,
+                      discountPercent?: number | null,
+                      unitPrice?: {
+                        __typename: 'PriceType',
+                        sellingPriceIncVat: number,
+                        sellingPriceExVat: number,
+                        regularPriceIncVat: number,
+                        regularPriceExVat: number,
+                        discountIncVat: number,
+                        discountExVat: number,
+                        discountPercentage: number,
+                        vat: number,
+                        isDiscounted: boolean,
+                        sellingPriceIncVatFormatted?: string | null,
+                        sellingPriceExVatFormatted?: string | null,
+                        regularPriceIncVatFormatted?: string | null,
+                        regularPriceExVatFormatted?: string | null,
+                        discountIncVatFormatted?: string | null,
+                        discountExVatFormatted?: string | null,
+                        vatFormatted?: string | null,
+                        currency?: {
+                          __typename: 'CurrencyType',
+                          code: string,
+                          symbol: string,
+                          rate: number,
+                          name: string
+                        } | null
+                      } | null
+                    } | null> | null
+                  } | null> | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null
+            } | null> | null,
+            variables?: Array<{
+              id?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              valueType: GeinsCpqVariableValueType,
+              value?: string | null,
+              unit?: string | null,
+              decimals?: number | null
+            } | null> | null,
+            optionGroups?: Array<{
+              id?: string | null,
+              code?: string | null,
+              name?: string | null,
+              sortIndex?: number | null,
+              optionGroups?: Array<{
+                id?: string | null,
+                code?: string | null,
+                name?: string | null,
+                sortIndex?: number | null,
+                optionGroups?: Array<{
+                  id?: string | null,
+                  code?: string | null,
+                  name?: string | null,
+                  sortIndex?: number | null,
+                  options?: Array<{
+                    id?: string | null,
+                    instanceId?: string | null,
+                    articleNumber?: string | null,
+                    name?: string | null,
+                    quantity: number,
+                    discountPercent?: number | null,
+                    unitPrice?: {
+                      __typename: 'PriceType',
+                      sellingPriceIncVat: number,
+                      sellingPriceExVat: number,
+                      regularPriceIncVat: number,
+                      regularPriceExVat: number,
+                      discountIncVat: number,
+                      discountExVat: number,
+                      discountPercentage: number,
+                      vat: number,
+                      isDiscounted: boolean,
+                      sellingPriceIncVatFormatted?: string | null,
+                      sellingPriceExVatFormatted?: string | null,
+                      regularPriceIncVatFormatted?: string | null,
+                      regularPriceExVatFormatted?: string | null,
+                      discountIncVatFormatted?: string | null,
+                      discountExVatFormatted?: string | null,
+                      vatFormatted?: string | null,
+                      currency?: {
+                        __typename: 'CurrencyType',
+                        code: string,
+                        symbol: string,
+                        rate: number,
+                        name: string
+                      } | null
+                    } | null
+                  } | null> | null
+                } | null> | null,
+                options?: Array<{
+                  id?: string | null,
+                  instanceId?: string | null,
+                  articleNumber?: string | null,
+                  name?: string | null,
+                  quantity: number,
+                  discountPercent?: number | null,
+                  unitPrice?: {
+                    __typename: 'PriceType',
+                    sellingPriceIncVat: number,
+                    sellingPriceExVat: number,
+                    regularPriceIncVat: number,
+                    regularPriceExVat: number,
+                    discountIncVat: number,
+                    discountExVat: number,
+                    discountPercentage: number,
+                    vat: number,
+                    isDiscounted: boolean,
+                    sellingPriceIncVatFormatted?: string | null,
+                    sellingPriceExVatFormatted?: string | null,
+                    regularPriceIncVatFormatted?: string | null,
+                    regularPriceExVatFormatted?: string | null,
+                    discountIncVatFormatted?: string | null,
+                    discountExVatFormatted?: string | null,
+                    vatFormatted?: string | null,
+                    currency?: {
+                      __typename: 'CurrencyType',
+                      code: string,
+                      symbol: string,
+                      rate: number,
+                      name: string
+                    } | null
+                  } | null
+                } | null> | null
+              } | null> | null,
+              options?: Array<{
+                id?: string | null,
+                instanceId?: string | null,
+                articleNumber?: string | null,
+                name?: string | null,
+                quantity: number,
+                discountPercent?: number | null,
+                unitPrice?: {
+                  __typename: 'PriceType',
+                  sellingPriceIncVat: number,
+                  sellingPriceExVat: number,
+                  regularPriceIncVat: number,
+                  regularPriceExVat: number,
+                  discountIncVat: number,
+                  discountExVat: number,
+                  discountPercentage: number,
+                  vat: number,
+                  isDiscounted: boolean,
+                  sellingPriceIncVatFormatted?: string | null,
+                  sellingPriceExVatFormatted?: string | null,
+                  regularPriceIncVatFormatted?: string | null,
+                  regularPriceExVatFormatted?: string | null,
+                  discountIncVatFormatted?: string | null,
+                  discountExVatFormatted?: string | null,
+                  vatFormatted?: string | null,
+                  currency?: {
+                    __typename: 'CurrencyType',
+                    code: string,
+                    symbol: string,
+                    rate: number,
+                    name: string
+                  } | null
+                } | null
+              } | null> | null
+            } | null> | null
+          } | null> | null
         } | null
+      } | null> | null,
+      appliedCampaigns?: Array<{
+        __typename: 'CampaignRuleType',
+        campaignId: string,
+        name?: string | null,
+        hideTitle?: boolean | null
       } | null> | null,
       summary?: {
         __typename: 'CartSummaryType',
@@ -16679,6 +29937,7 @@ export type GeinsGetOrderPublicType = {
  * @property {string} fileName - Filename
  * @property {PageWidgetImageSizeType} [largestSize] - Largest image size
  * @property {Array<(PageWidgetImageSizeType|null|undefined)>} [sizes] - Image sizes
+ * @property {string} [url] - The asset library URL of the image, if any.
  */
 
 /**
@@ -16854,6 +30113,7 @@ export type GeinsGetOrderPublicType = {
  * @typedef {Object} ProductImageType
  * @property {string} fileName - The file name of the product image.
  * @property {Array<(string|null|undefined)>} [tags] - Custom tags associated with the product image.
+ * @property {string} [url] - The asset library URL of the product image, if any.
  */
 
 /**

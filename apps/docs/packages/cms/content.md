@@ -66,14 +66,17 @@ export interface ContentImageSizeType {
 
 #### ContentImageType
 
-Represents an image with its filename and largest size.
+Represents a widget image: its file name, its asset library URL, and its largest size.
 
 ```typescript
 export interface ContentImageType {
   fileName: string;
-  largestSize: ContentImageSizeType;
+  url?: string | null; // asset library URL; null for an image outside the library
+  largestSize: ContentImageSizeType | null; // null for an asset library image
 }
 ```
+
+Build the image URL from `url` when it is set. An image outside the asset library has `url: null` and is served by its `fileName` as before.
 
 #### ContentType
 
@@ -81,13 +84,9 @@ Represents a single content item.
 
 ```typescript
 export interface ContentType {
-  id: string;
-  name: string;
-  sortOrder: number;
-  type: string;
-  size: string;
-  configuration: string;
-  images: ContentImageType[];
+  config: ContentConfigType;
+  data: Record<string, unknown>; // the widget configuration, parsed
+  images?: ContentImageType[]; // always a list from the parser, empty when the widget has none
 }
 ```
 
@@ -160,7 +159,6 @@ export interface ContentAreaType {
   containers: ContentContainerType[];
 }
 ```
-
 
 ## Parsing Content / Widgets
 

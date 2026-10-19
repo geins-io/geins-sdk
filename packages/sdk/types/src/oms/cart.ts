@@ -33,6 +33,8 @@ export type CartItemProductType = {
   name: string;
   productImages: {
     fileName: string;
+    /** Asset library URL; null for an image outside the library. */
+    url?: string | null;
   }[];
   alias: string;
   canonicalUrl: string;
