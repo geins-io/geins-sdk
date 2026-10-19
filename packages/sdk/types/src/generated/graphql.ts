@@ -2075,6 +2075,8 @@ export interface GeinsPageWidgetImageTypeType {
   largestSize?: Maybe<GeinsPageWidgetImageSizeTypeType>;
   /** Image sizes */
   sizes?: Maybe<Array<Maybe<GeinsPageWidgetImageSizeTypeType>>>;
+  /** The asset library URL of the image, if any. */
+  url?: Maybe<Scalars['String']['output']>;
 }
 
 /** Type containing CMS page information */
@@ -2343,6 +2345,8 @@ export interface GeinsProductImageTypeType {
   fileName: Scalars['String']['output'];
   /** Custom tags associated with the product image. */
   tags?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** The asset library URL of the product image, if any. */
+  url?: Maybe<Scalars['String']['output']>;
 }
 
 /** Type containing meta data for the package selection that a cart item was added from */
@@ -29844,6 +29848,7 @@ export type GeinsGetOrderPublicType = {
  * @property {string} fileName - Filename
  * @property {PageWidgetImageSizeType} [largestSize] - Largest image size
  * @property {Array<(PageWidgetImageSizeType|null|undefined)>} [sizes] - Image sizes
+ * @property {string} [url] - The asset library URL of the image, if any.
  */
 
 /**
@@ -30019,6 +30024,7 @@ export type GeinsGetOrderPublicType = {
  * @typedef {Object} ProductImageType
  * @property {string} fileName - The file name of the product image.
  * @property {Array<(string|null|undefined)>} [tags] - Custom tags associated with the product image.
+ * @property {string} [url] - The asset library URL of the product image, if any.
  */
 
 /**
