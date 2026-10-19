@@ -3371,7 +3371,8 @@ export type GeinsOmsCartType = {
       } | null,
       productImages?: Array<{
         __typename: 'ProductImageType',
-        fileName: string
+        fileName: string,
+        url?: string | null
       } | null> | null,
       primaryCategory?: {
         __typename: 'CategoryType',
@@ -4991,7 +4992,8 @@ export type GeinsOmsCheckoutType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -6524,7 +6526,8 @@ export type GeinsCpqConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -6585,7 +6588,8 @@ export type GeinsCpqConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -6646,7 +6650,8 @@ export type GeinsCpqConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -6771,7 +6776,8 @@ export type GeinsCpqConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -6832,7 +6838,8 @@ export type GeinsCpqConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -6893,7 +6900,8 @@ export type GeinsCpqConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -7018,7 +7026,8 @@ export type GeinsCpqConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -7079,7 +7088,8 @@ export type GeinsCpqConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -7140,7 +7150,8 @@ export type GeinsCpqConfigurationType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -7265,7 +7276,8 @@ export type GeinsCpqConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -7326,7 +7338,8 @@ export type GeinsCpqConfigurationType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -7387,7 +7400,8 @@ export type GeinsCpqConfigurationType = {
           alias: string,
           canonicalUrl?: string | null,
           productImages?: Array<{
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null
         } | null,
         messages?: Array<{
@@ -7525,7 +7539,8 @@ export type GeinsCpqSectionFieldsType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -7586,7 +7601,8 @@ export type GeinsCpqSectionFieldsType = {
           alias: string,
           canonicalUrl?: string | null,
           productImages?: Array<{
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null
         } | null,
         messages?: Array<{
@@ -7647,7 +7663,8 @@ export type GeinsCpqSectionFieldsType = {
         alias: string,
         canonicalUrl?: string | null,
         productImages?: Array<{
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null
       } | null,
       messages?: Array<{
@@ -7774,7 +7791,8 @@ export type GeinsCpqGroupTreeType = {
           alias: string,
           canonicalUrl?: string | null,
           productImages?: Array<{
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null
         } | null,
         messages?: Array<{
@@ -7835,7 +7853,8 @@ export type GeinsCpqGroupTreeType = {
         alias: string,
         canonicalUrl?: string | null,
         productImages?: Array<{
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null
       } | null,
       messages?: Array<{
@@ -7896,7 +7915,8 @@ export type GeinsCpqGroupTreeType = {
       alias: string,
       canonicalUrl?: string | null,
       productImages?: Array<{
-        fileName: string
+        fileName: string,
+        url?: string | null
       } | null> | null
     } | null,
     messages?: Array<{
@@ -7970,7 +7990,8 @@ export type GeinsCpqGroupFieldsType = {
       alias: string,
       canonicalUrl?: string | null,
       productImages?: Array<{
-        fileName: string
+        fileName: string,
+        url?: string | null
       } | null> | null
     } | null,
     messages?: Array<{
@@ -8032,7 +8053,8 @@ export type GeinsCpqOptionType = {
     alias: string,
     canonicalUrl?: string | null,
     productImages?: Array<{
-      fileName: string
+      fileName: string,
+      url?: string | null
     } | null> | null
   } | null,
   messages?: Array<{
@@ -8116,7 +8138,8 @@ export type GeinsOrderSummaryType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -9776,7 +9799,8 @@ export type GeinsAddToCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -10598,7 +10622,8 @@ export type GeinsAddPackageToCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -11419,7 +11444,8 @@ export type GeinsCloneCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -12239,7 +12265,8 @@ export type GeinsCompleteCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -13058,7 +13085,8 @@ export type GeinsCreateCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -13879,7 +13907,8 @@ export type GeinsGetCartType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -14700,7 +14729,8 @@ export type GeinsSetCartMerchantDataType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -15521,7 +15551,8 @@ export type GeinsSetCartPromoCodeType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -16343,7 +16374,8 @@ export type GeinsSetCartShippingFeeType = {
           } | null,
           productImages?: Array<{
             __typename: 'ProductImageType',
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null,
           primaryCategory?: {
             __typename: 'CategoryType',
@@ -17165,7 +17197,8 @@ export type GeinsUpdateCartGroupType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -18002,7 +18035,8 @@ export type GeinsUpdateCartItemType = {
         } | null,
         productImages?: Array<{
           __typename: 'ProductImageType',
-          fileName: string
+          fileName: string,
+          url?: string | null
         } | null> | null,
         primaryCategory?: {
           __typename: 'CategoryType',
@@ -18827,7 +18861,8 @@ export type GeinsCreateOrUpdateCheckoutType = {
           } | null,
           productImages?: Array<{
             __typename: 'ProductImageType',
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null,
           primaryCategory?: {
             __typename: 'CategoryType',
@@ -19831,7 +19866,8 @@ export type GeinsCheckoutType = {
           } | null,
           productImages?: Array<{
             __typename: 'ProductImageType',
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null,
           primaryCategory?: {
             __typename: 'CategoryType',
@@ -21344,7 +21380,8 @@ export type GeinsApplyConfigurationChangesType = {
                       alias: string,
                       canonicalUrl?: string | null,
                       productImages?: Array<{
-                        fileName: string
+                        fileName: string,
+                        url?: string | null
                       } | null> | null
                     } | null,
                     messages?: Array<{
@@ -21405,7 +21442,8 @@ export type GeinsApplyConfigurationChangesType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -21466,7 +21504,8 @@ export type GeinsApplyConfigurationChangesType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -21591,7 +21630,8 @@ export type GeinsApplyConfigurationChangesType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -21652,7 +21692,8 @@ export type GeinsApplyConfigurationChangesType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -21713,7 +21754,8 @@ export type GeinsApplyConfigurationChangesType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -21838,7 +21880,8 @@ export type GeinsApplyConfigurationChangesType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -21899,7 +21942,8 @@ export type GeinsApplyConfigurationChangesType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -21960,7 +22004,8 @@ export type GeinsApplyConfigurationChangesType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -22085,7 +22130,8 @@ export type GeinsApplyConfigurationChangesType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -22146,7 +22192,8 @@ export type GeinsApplyConfigurationChangesType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -22207,7 +22254,8 @@ export type GeinsApplyConfigurationChangesType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -22459,7 +22507,8 @@ export type GeinsCreateConfigurationType = {
                       alias: string,
                       canonicalUrl?: string | null,
                       productImages?: Array<{
-                        fileName: string
+                        fileName: string,
+                        url?: string | null
                       } | null> | null
                     } | null,
                     messages?: Array<{
@@ -22520,7 +22569,8 @@ export type GeinsCreateConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -22581,7 +22631,8 @@ export type GeinsCreateConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -22706,7 +22757,8 @@ export type GeinsCreateConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -22767,7 +22819,8 @@ export type GeinsCreateConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -22828,7 +22881,8 @@ export type GeinsCreateConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -22953,7 +23007,8 @@ export type GeinsCreateConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -23014,7 +23069,8 @@ export type GeinsCreateConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -23075,7 +23131,8 @@ export type GeinsCreateConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -23200,7 +23257,8 @@ export type GeinsCreateConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -23261,7 +23319,8 @@ export type GeinsCreateConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -23322,7 +23381,8 @@ export type GeinsCreateConfigurationType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -25225,7 +25285,8 @@ export type GeinsGetConfigurationType = {
                       alias: string,
                       canonicalUrl?: string | null,
                       productImages?: Array<{
-                        fileName: string
+                        fileName: string,
+                        url?: string | null
                       } | null> | null
                     } | null,
                     messages?: Array<{
@@ -25286,7 +25347,8 @@ export type GeinsGetConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -25347,7 +25409,8 @@ export type GeinsGetConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -25472,7 +25535,8 @@ export type GeinsGetConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -25533,7 +25597,8 @@ export type GeinsGetConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -25594,7 +25659,8 @@ export type GeinsGetConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -25719,7 +25785,8 @@ export type GeinsGetConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -25780,7 +25847,8 @@ export type GeinsGetConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -25841,7 +25909,8 @@ export type GeinsGetConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -25966,7 +26035,8 @@ export type GeinsGetConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -26027,7 +26097,8 @@ export type GeinsGetConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -26088,7 +26159,8 @@ export type GeinsGetConfigurationType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -26304,7 +26376,8 @@ export type GeinsReopenCartItemConfigurationType = {
                       alias: string,
                       canonicalUrl?: string | null,
                       productImages?: Array<{
-                        fileName: string
+                        fileName: string,
+                        url?: string | null
                       } | null> | null
                     } | null,
                     messages?: Array<{
@@ -26365,7 +26438,8 @@ export type GeinsReopenCartItemConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -26426,7 +26500,8 @@ export type GeinsReopenCartItemConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -26551,7 +26626,8 @@ export type GeinsReopenCartItemConfigurationType = {
                     alias: string,
                     canonicalUrl?: string | null,
                     productImages?: Array<{
-                      fileName: string
+                      fileName: string,
+                      url?: string | null
                     } | null> | null
                   } | null,
                   messages?: Array<{
@@ -26612,7 +26688,8 @@ export type GeinsReopenCartItemConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -26673,7 +26750,8 @@ export type GeinsReopenCartItemConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -26798,7 +26876,8 @@ export type GeinsReopenCartItemConfigurationType = {
                   alias: string,
                   canonicalUrl?: string | null,
                   productImages?: Array<{
-                    fileName: string
+                    fileName: string,
+                    url?: string | null
                   } | null> | null
                 } | null,
                 messages?: Array<{
@@ -26859,7 +26938,8 @@ export type GeinsReopenCartItemConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -26920,7 +27000,8 @@ export type GeinsReopenCartItemConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -27045,7 +27126,8 @@ export type GeinsReopenCartItemConfigurationType = {
                 alias: string,
                 canonicalUrl?: string | null,
                 productImages?: Array<{
-                  fileName: string
+                  fileName: string,
+                  url?: string | null
                 } | null> | null
               } | null,
               messages?: Array<{
@@ -27106,7 +27188,8 @@ export type GeinsReopenCartItemConfigurationType = {
               alias: string,
               canonicalUrl?: string | null,
               productImages?: Array<{
-                fileName: string
+                fileName: string,
+                url?: string | null
               } | null> | null
             } | null,
             messages?: Array<{
@@ -27167,7 +27250,8 @@ export type GeinsReopenCartItemConfigurationType = {
             alias: string,
             canonicalUrl?: string | null,
             productImages?: Array<{
-              fileName: string
+              fileName: string,
+              url?: string | null
             } | null> | null
           } | null,
           messages?: Array<{
@@ -27855,7 +27939,8 @@ export type GeinsGetOrderPublicType = {
           } | null,
           productImages?: Array<{
             __typename: 'ProductImageType',
-            fileName: string
+            fileName: string,
+            url?: string | null
           } | null> | null,
           primaryCategory?: {
             __typename: 'CategoryType',

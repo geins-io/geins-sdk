@@ -173,7 +173,15 @@ describe('parseConfiguration', () => {
       articleNumber: 'P-7',
       alias: 'panel',
       canonicalUrl: '/p/panel',
-      productImages: [{ __typename: 'ProductImageType', fileName: 'panel.jpg' }, null],
+      productImages: [
+        {
+          __typename: 'ProductImageType',
+          fileName: 'panel.jpg',
+          url: 'https://cdn.litium.media/acme/products/panel.jpg',
+        },
+        { __typename: 'ProductImageType', fileName: 'side.jpg', url: null },
+        null,
+      ],
     };
     const doc = parseConfiguration(
       wireConfiguration({
@@ -194,7 +202,10 @@ describe('parseConfiguration', () => {
       articleNumber: 'P-7',
       alias: 'panel',
       canonicalUrl: '/p/panel',
-      productImages: [{ fileName: 'panel.jpg' }],
+      productImages: [
+        { fileName: 'panel.jpg', url: 'https://cdn.litium.media/acme/products/panel.jpg' },
+        { fileName: 'side.jpg', url: null },
+      ],
     });
   });
 
