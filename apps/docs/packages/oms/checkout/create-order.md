@@ -61,9 +61,9 @@ const result = await geinsOMS.checkout.createOrder({
 `checkoutOptions` accepts two mutually exclusive shapes per address
 side. Pick exactly one per side:
 
-| Customer type | Use these fields |
-|---|---|
-| Consumer (`PERSON`) | `billingAddress`, `shippingAddress` (literal `AddressInputType`) |
+| Customer type            | Use these fields                                                                                     |
+| ------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Consumer (`PERSON`)      | `billingAddress`, `shippingAddress` (literal `AddressInputType`)                                     |
 | Company (`ORGANIZATION`) | `billingAddressId`, `shippingAddressId` (string ids referring to the company's predefined addresses) |
 
 Geins rejects literal addresses on a company checkout and rejects
@@ -81,6 +81,7 @@ export type CreateOrderResponseType = {
   orderId?: string;
   publicId?: string;
   message?: string;
+  code?: string;
 };
 ```
 
@@ -88,6 +89,7 @@ export type CreateOrderResponseType = {
 - `orderId` - The order ID that is created in Geins. This is not preset if the order was not created.
 - `publicId` - Might be empty depending on flow of the payment gateway. This is not preset if the order was not created.
 - `message` - Only present if the order was not created. This will contain a message indicating why the order was not created.
+- `code` - Only present if the order was not created and Geins sent an `extensions.code` with the refusal, for example `INVALID_IDENTITY_NUMBER`. It is passed on verbatim. Many refusals carry no code: validation errors such as `First name is required` arrive with a message only. Keep a path for a refusal without a code.
 
 ## Example
 
@@ -101,6 +103,6 @@ const createOrderResult = await geinsOMS.checkout.createOrder({
 if (createOrderResult.created) {
   console.log('Order created successfully:', createOrderResult);
 } else {
-  console.log('Order creation failed:', createOrderResult.message);
+  console.log('Order creation failed:', createOrderResult.code ?? 'no code', createOrderResult.message);
 }
 ```

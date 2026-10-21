@@ -35,6 +35,7 @@ export { CartError } from './errors/cartError';
 export { CheckoutError, OrderError } from './errors/checkoutError';
 export {
   ConfigurationError,
+  graphQLErrorCode,
   isConfigurationError,
   toConfigurationError,
   toConfigurationErrorWithData,
