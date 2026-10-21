@@ -7,6 +7,7 @@ import {
   GeinsErrorCode,
   decodeJWT,
   encodeJWT,
+  graphQLErrorCode,
   parseErrorMessage,
 } from '@geins/core';
 
@@ -239,9 +240,11 @@ export class CheckoutService extends BaseApiService implements CheckoutServiceIn
       const data = await this.runQuery(options);
       return parseOrder(data, this._geinsSettings.locale);
     } catch (e) {
+      const code = graphQLErrorCode(e);
       return {
         created: false,
         message: parseErrorMessage(e as Error),
+        ...(code ? { code } : {}),
       } as CreateOrderResponseType;
     }
   }

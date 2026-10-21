@@ -91,6 +91,27 @@ function graphQLErrors(value: unknown): GraphQLErrorLike[] {
 }
 
 /**
+ * Apollo puts GraphQL errors in two places: `graphQLErrors` for a 2xx answer,
+ * and the network error's parsed body (`networkError.result.errors`) for a non-2xx one.
+ */
+function apolloGraphQLErrors(error: unknown): GraphQLErrorLike[] {
+  const apollo = record(error);
+  const network = record(apollo?.networkError);
+  return [...graphQLErrors(apollo?.graphQLErrors), ...graphQLErrors(record(network?.result)?.errors)];
+}
+
+/**
+ * The first `extensions.code` among a failed call's GraphQL errors, verbatim.
+ * `undefined` when none carries one, which is how Geins sends its validation
+ * refusals ("First name is required"), so a caller needs a path without a code.
+ */
+export function graphQLErrorCode(error: unknown): string | undefined {
+  return apolloGraphQLErrors(error)
+    .map((item) => item.extensions?.code)
+    .find((code): code is string => typeof code === 'string');
+}
+
+/**
  * Whether a value is a {@link ConfigurationError}. Use it rather than
  * `instanceof`, which the ES5 build cannot answer for an `Error` subclass.
  * `TData` is taken on trust: pass the answer type of the call that threw.
@@ -101,11 +122,7 @@ export function isConfigurationError<TData = unknown>(value: unknown): value is 
   return error?.name === 'ConfigurationError' && Array.isArray(error.providerErrors);
 }
 
-/**
- * A failure from the merchant API as a {@link ConfigurationError}. Apollo puts
- * GraphQL errors in two places: `graphQLErrors` for a 2xx answer, and the
- * network error's parsed body (`networkError.result.errors`) for a non-2xx one.
- */
+/** A failure from the merchant API as a {@link ConfigurationError}. */
 export function toConfigurationError<TData = unknown>(
   error: unknown,
   data?: TData,
@@ -114,7 +131,7 @@ export function toConfigurationError<TData = unknown>(
 
   const apollo = record(error);
   const network = record(apollo?.networkError);
-  const errors = [...graphQLErrors(apollo?.graphQLErrors), ...graphQLErrors(record(network?.result)?.errors)];
+  const errors = apolloGraphQLErrors(error);
   const status = network?.statusCode;
 
   return new ConfigurationError({

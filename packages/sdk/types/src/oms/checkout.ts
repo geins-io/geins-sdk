@@ -19,6 +19,8 @@ export type CreateOrderResponseType = {
   orderId?: string;
   publicId?: string;
   message?: string;
+  /** A refused order's `extensions.code`, verbatim; many refusals carry none. */
+  code?: string;
 };
 
 export type ConsentType = {
