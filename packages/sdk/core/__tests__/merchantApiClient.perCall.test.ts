@@ -87,7 +87,7 @@ describe('MerchantApiClient per-call context', () => {
   );
 
   it.each(['mutate', 'query'] as const)(
-    '%s: sends only the auth header for a token, as before',
+    '%s: sends the auth header for a token, and keeps the call unshared',
     async (method) => {
       const target = client();
       const sent = contextSent(target, method);
@@ -96,7 +96,7 @@ describe('MerchantApiClient per-call context', () => {
         ? target.runMutation({ queryAsString: MUTATION, userToken: 't' })
         : target.runQuery({ queryAsString: QUERY, userToken: 't' }));
 
-      expect(sent()).toEqual({ headers: { Authorization: 'Bearer t' } });
+      expect(sent()).toEqual({ headers: { Authorization: 'Bearer t' }, queryDeduplication: false });
     },
   );
 
@@ -115,6 +115,7 @@ describe('MerchantApiClient per-call context', () => {
         timeoutMs: 5,
         retry: false,
         headers: { 'x-a': '1', Authorization: 'Bearer t' },
+        queryDeduplication: false,
       });
     },
   );
