@@ -167,6 +167,52 @@ describe('orderParser', () => {
       expect(result!.goodsLabel).toBeUndefined();
     });
 
+    it('maps quotationId and quotationNumber from an order finalized from a quotation', () => {
+      const input = {
+        __typename: 'OrderType',
+        id: 901,
+        customerId: 100,
+        currency: 'SEK',
+        status: 'pending',
+        publicId: 'PUB-901',
+        quotationId: '11111111-2222-4333-8444-555555555555',
+        quotationNumber: 'Q-1001-00',
+      };
+      const result = parseOrderSummary(input as any, 'sv-SE');
+      expect(result!.quotationId).toBe('11111111-2222-4333-8444-555555555555');
+      expect(result!.quotationNumber).toBe('Q-1001-00');
+    });
+
+    it('maps null quotationId and quotationNumber (an order not from a quotation) to undefined', () => {
+      const input = {
+        __typename: 'OrderType',
+        id: 55,
+        customerId: 100,
+        currency: 'SEK',
+        status: 'shipped',
+        publicId: 'PUB-55',
+        quotationId: null,
+        quotationNumber: null,
+      };
+      const result = parseOrderSummary(input as any, 'sv-SE');
+      expect(result!.quotationId).toBeUndefined();
+      expect(result!.quotationNumber).toBeUndefined();
+    });
+
+    it('leaves quotationId and quotationNumber undefined when the response has neither', () => {
+      const input = {
+        __typename: 'OrderType',
+        id: 55,
+        customerId: 100,
+        currency: 'SEK',
+        status: 'shipped',
+        publicId: 'PUB-55',
+      };
+      const result = parseOrderSummary(input as any, 'sv-SE');
+      expect(result!.quotationId).toBeUndefined();
+      expect(result!.quotationNumber).toBeUndefined();
+    });
+
     it('parses a full order summary', () => {
       const input = {
         __typename: 'OrderType',

@@ -2235,6 +2235,10 @@ type OrderType {
   status: String!
   updatedAt: DateTime
   publicId: ID!
+  """The ID of the quotation the order was finalized from, or null for an order that did not come from one."""
+  quotationId: Guid
+  """The number of the quotation the order was finalized from, or null for an order that did not come from one."""
+  quotationNumber: String
   billingAddress: AddressType
   shippingAddress: AddressType
   cart: CartType

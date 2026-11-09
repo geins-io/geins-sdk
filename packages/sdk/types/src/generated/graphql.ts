@@ -1953,6 +1953,10 @@ export interface GeinsOrderTypeType {
   paymentDetails?: Maybe<Array<Maybe<GeinsPaymentDetailsTypeType>>>;
   paymentFee?: Maybe<GeinsPriceTypeType>;
   publicId: Scalars['ID']['output'];
+  /** The ID of the quotation the order was finalized from, or null for an order that did not come from one. */
+  quotationId?: Maybe<Scalars['Guid']['output']>;
+  /** The number of the quotation the order was finalized from, or null for an order that did not come from one. */
+  quotationNumber?: Maybe<Scalars['String']['output']>;
   refunds?: Maybe<Array<Maybe<GeinsRefundTypeType>>>;
   shippingAddress?: Maybe<GeinsAddressTypeType>;
   shippingDetails?: Maybe<Array<Maybe<GeinsShippingDetailTypeType>>>;
@@ -8078,6 +8082,8 @@ export type GeinsOrderSummaryType = {
   status: string,
   updatedAt?: string | null,
   publicId: string | number,
+  quotationId?: string | null,
+  quotationNumber?: string | null,
   fromBalance: number,
   fromBalanceFormatted?: string | null,
   billingAddress?: {
@@ -27881,6 +27887,8 @@ export type GeinsGetOrderPublicType = {
     status: string,
     updatedAt?: string | null,
     publicId: string | number,
+    quotationId?: string | null,
+    quotationNumber?: string | null,
     fromBalance: number,
     fromBalanceFormatted?: string | null,
     billingAddress?: {
@@ -29853,6 +29861,8 @@ export type GeinsGetOrderPublicType = {
  * @property {Array<(PaymentDetailsType|null|undefined)>} [paymentDetails]
  * @property {PriceType} [paymentFee]
  * @property {string} publicId
+ * @property {Guid} [quotationId] - The ID of the quotation the order was finalized from, or null for an order that did not come from one.
+ * @property {string} [quotationNumber] - The number of the quotation the order was finalized from, or null for an order that did not come from one.
  * @property {Array<(RefundType|null|undefined)>} [refunds]
  * @property {AddressType} [shippingAddress]
  * @property {Array<(ShippingDetailType|null|undefined)>} [shippingDetails]
