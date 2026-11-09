@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.8",
-    "cookie-universal": "^2.2.2",
+    "cookie": "^1.1.1",
     "@cacheable/node-cache": "^1.5.2",
     "broadcast-channel": "^7.0.0"
   },

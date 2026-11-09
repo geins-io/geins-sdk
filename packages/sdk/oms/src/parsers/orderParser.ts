@@ -104,6 +104,8 @@ export function parseOrderSummary(data: unknown, locale: string): OrderSummaryTy
     status: orderSummary.status,
     updatedAt: orderSummary.updatedAt ?? undefined,
     publicId: String(orderSummary.publicId),
+    quotationId: orderSummary.quotationId ?? undefined,
+    quotationNumber: orderSummary.quotationNumber ?? undefined,
     billingAddress: parseAddress(orderSummary.billingAddress ?? undefined),
     shippingAddress: parseAddress(orderSummary.shippingAddress ?? undefined),
     cart: parseCart(orderSummary.cart, locale),

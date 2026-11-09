@@ -26,6 +26,6 @@ export default {
     graphql(),
     terser()
   ],
-  external: ['@apollo/client', 'cookie-universal', '@cacheable/node-cache', 'broadcast-channel'],
+  external: ['@apollo/client', 'cookie', '@cacheable/node-cache', 'broadcast-channel'],
   treeshake: true
 };

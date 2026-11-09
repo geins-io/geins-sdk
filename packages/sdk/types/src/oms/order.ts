@@ -52,6 +52,9 @@ export type OrderSummaryType = {
   status?: string;
   updatedAt?: string;
   publicId?: string;
+  /** The quotation the order was finalized from, if any. */
+  quotationId?: string;
+  quotationNumber?: string;
   billingAddress?: AddressType;
   shippingAddress?: AddressType;
   cart?: CartType;

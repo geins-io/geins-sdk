@@ -1,5 +1,32 @@
-import { type CookieSerializeOptions } from 'cookie';
-import Cookie from 'cookie-universal';
+import { parse, serialize, type SerializeOptions } from 'cookie';
+
+type CookieDocument = { cookie: string };
+
+function browserDocument(): CookieDocument | undefined {
+  const { document } = globalThis as { document?: { cookie?: unknown } };
+  return typeof document === 'object' && typeof document.cookie === 'string'
+    ? (document as CookieDocument)
+    : undefined;
+}
+
+// Reads values the way cookie-universal did: surrounding quotes stripped before decoding.
+function decodeValue(raw: string): string {
+  const value = raw.charAt(0) === '"' ? raw.slice(1, -1) : raw;
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+// Values that are valid JSON come back parsed, as they always have.
+function parseJson(value: string | undefined): unknown {
+  try {
+    return JSON.parse(value as string);
+  } catch {
+    return value;
+  }
+}
 
 /** Configuration options for setting cookies. */
 export interface CookieServiceConfig {
@@ -39,7 +66,8 @@ export class CookieService {
   private httpOnly = true;
   private sameSite: 'strict' | 'lax' | 'none' = 'lax';
   private maxAge: number;
-  private cookie = Cookie();
+  // Without a document every method is a no-op: get returns '', getAll {}.
+  private document = browserDocument();
 
   /**
    * Creates an instance of CookieService.
@@ -97,15 +125,29 @@ export class CookieService {
     return maxAge;
   }
 
-  private configToCookieOptions(config: CookieServiceConfig): CookieSerializeOptions {
+  private configToCookieOptions(config: CookieServiceConfig): SerializeOptions {
     return {
       path: config.path,
       domain: config.domain,
       secure: config.secure,
       httpOnly: config.httpOnly,
       sameSite: config.sameSite,
-      maxAge: config.maxAge !== undefined ? this.parseMaxAge(config.maxAge) : undefined,
+      maxAge: this.toSerializedMaxAge(config.maxAge),
     };
+  }
+
+  // cookie-universal wrote no Max-Age for null, and Max-Age=±Infinity, which Chromium stored as a
+  // session cookie and WebKit dropped. Both now get a session cookie. NaN still throws, as it did.
+  private toSerializedMaxAge(maxAge: CookieServiceConfig['maxAge'] | null): number | undefined {
+    if (maxAge == null) {
+      return undefined;
+    }
+    const parsed = this.parseMaxAge(maxAge);
+    return Math.abs(parsed) === Infinity ? undefined : Math.floor(parsed);
+  }
+
+  private readCookies(): Record<string, string | undefined> {
+    return this.document ? parse(this.document.cookie, { decode: decodeValue }) : {};
   }
 
   /**
@@ -113,7 +155,15 @@ export class CookieService {
    * @returns An object containing all cookies.
    */
   public getAll(): Record<string, string> {
-    return this.cookie.getAll() as Record<string, string>;
+    const cookies = this.readCookies();
+    const all: Record<string, string> = {};
+    for (const name of Object.keys(cookies)) {
+      // cookie-universal dropped names Object.prototype already has, __proto__ among them.
+      if (!(name in Object.prototype)) {
+        all[name] = parseJson(cookies[name]) as string;
+      }
+    }
+    return all;
   }
 
   /**
@@ -122,7 +172,7 @@ export class CookieService {
    * @returns The value of the cookie, or an empty string if not found.
    */
   public get(cookieName: string): string {
-    return this.cookie.get(cookieName) || '';
+    return (parseJson(this.readCookies()[cookieName]) as string) || '';
   }
 
   /**
@@ -130,7 +180,9 @@ export class CookieService {
    * @param cookieName - The name of the cookie to remove.
    */
   public remove(cookieName: string): void {
-    this.cookie.remove(cookieName);
+    if (this.document) {
+      this.document.cookie = serialize(cookieName, '', { path: '/', expires: new Date(0) });
+    }
   }
 
   /**
@@ -143,6 +195,13 @@ export class CookieService {
     const mergedConfig = { ...baseConfig, ...config, ...cookie };
     const options = this.configToCookieOptions(mergedConfig);
 
-    this.cookie.set(cookie.name, cookie.payload, options);
+    if (this.document) {
+      const { payload } = cookie as { payload: unknown };
+      let value = payload === undefined ? '' : String(payload);
+      if (typeof payload === 'object') {
+        value = JSON.stringify(payload);
+      }
+      this.document.cookie = serialize(cookie.name, value, options);
+    }
   }
 }

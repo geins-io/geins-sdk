@@ -19,6 +19,8 @@ fragment OrderSummary on OrderType {
   status
   updatedAt
   publicId
+  quotationId
+  quotationNumber
   billingAddress {
     ...OmsAddress
   }
