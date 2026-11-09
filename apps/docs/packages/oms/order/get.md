@@ -27,3 +27,13 @@ Each row of `orderSummary.cart.items` carries its product's type in `product.typ
 ```typescript
 const configured = orderSummary?.cart?.items.filter((row) => row.product?.type === 'configurable') ?? [];
 ```
+
+### The quotation an order came from
+
+An order placed by finalizing a quotation names it in `quotationId` and `quotationNumber`. Both are `undefined` on an order that did not come from a quotation, and on one placed before the API recorded the link.
+
+```typescript
+if (orderSummary?.quotationId) {
+  console.log(`From quotation ${orderSummary.quotationNumber}`);
+}
+```
