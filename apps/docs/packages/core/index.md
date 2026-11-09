@@ -244,6 +244,10 @@ const geinsCore = new GeinsCore({
 
 The `onRequest` interceptor supports both synchronous and asynchronous callbacks.
 
+Identical reads in flight at the same time share one request. A read with headers always makes its own
+request. Pass a user's identity as `userToken` or in `requestOptions.context.headers`. Headers added in an
+`onRequest` interceptor are not taken into account for this, so never use it for identity.
+
 ### Telemetry
 
 Built-in request metrics — track request count, success/error rates, latency percentiles, and more. Metrics are collected automatically and flushed on a configurable interval.

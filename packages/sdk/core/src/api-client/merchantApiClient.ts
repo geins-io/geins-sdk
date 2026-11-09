@@ -248,7 +248,10 @@ export class MerchantApiClient {
       ...(context?.headers as Record<string, string> | undefined),
       ...(userToken ? { Authorization: `Bearer ${userToken}` } : {}),
     };
-    return { ...context, ...(Object.keys(headers).length > 0 ? { headers } : {}) };
+    if (Object.keys(headers).length === 0) return { ...context };
+    // Apollo shares an in-flight read by query and variables only. A read with headers makes
+    // its own request; set last, so a caller cannot turn that off.
+    return { ...context, headers, queryDeduplication: false };
   }
 
   /** Execute a GraphQL query against the Merchant API. */
