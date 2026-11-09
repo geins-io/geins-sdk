@@ -136,8 +136,8 @@ export class CookieService {
     };
   }
 
-  // cookie-universal wrote no Max-Age for null and Max-Age=±Infinity, which browsers ignore;
-  // both stay session cookies. NaN still throws in serialize, as it did.
+  // cookie-universal wrote no Max-Age for null, and Max-Age=±Infinity, which Chromium stored as a
+  // session cookie and WebKit dropped. Both now get a session cookie. NaN still throws, as it did.
   private toSerializedMaxAge(maxAge: CookieServiceConfig['maxAge'] | null): number | undefined {
     if (maxAge == null) {
       return undefined;

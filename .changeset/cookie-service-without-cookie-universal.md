@@ -13,11 +13,13 @@ Behaviour is unchanged for valid input. Without a `document`, as on a server, ev
 still a no-op: `get` returns `''` and `getAll` returns `{}`. In a browser, `get` and `getAll` still
 parse values that are valid JSON, still strip surrounding quotes from a value, and `get` still
 returns `''` for a value that parses to a falsy JSON value such as `0` or `false`. `set` writes the
-same cookie string as before, still rounds a fractional `maxAge` down, still writes no `Max-Age` for a `null` one, and
-still writes an object payload as JSON. An infinite `maxAge` now writes no `Max-Age` instead of
-`Max-Age=Infinity`, which browsers ignored, so it stays a session cookie. `getAll` still leaves
-out cookies named like an `Object.prototype` member, such as `__proto__`. `remove` still expires
-the cookie on path `/`.
+same cookie string as before, still rounds a fractional `maxAge` down, still writes no `Max-Age`
+for a `null` one, and still writes an object payload as JSON. `getAll` still leaves out cookies
+named like an `Object.prototype` member, such as `__proto__`. `remove` still expires the cookie on
+path `/`.
+
+An infinite `maxAge` now writes no `Max-Age` instead of `Max-Age=Infinity`. Chromium stored the old
+cookie as a session cookie and WebKit dropped it; both now store a session cookie.
 
 Invalid input now throws: `set` now applies `cookie`'s own validation to name, path and domain,
 where `cookie-universal` wrote them as is. A name with a space or `=`, or a path or domain
