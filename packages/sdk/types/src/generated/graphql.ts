@@ -1094,6 +1094,7 @@ export enum GeinsDiscountType {
   ExternalType = 'EXTERNAL',
   NoneType = 'NONE',
   PriceCampaignType = 'PRICE_CAMPAIGN',
+  PriceListType = 'PRICE_LIST',
   SalePriceType = 'SALE_PRICE'
 }
 
@@ -3371,6 +3372,7 @@ export type GeinsOmsCartType = {
       name?: string | null,
       alias: string,
       canonicalUrl?: string | null,
+      discountType?: GeinsDiscountType | null,
       brand?: {
         __typename: 'BrandType',
         name?: string | null
@@ -4992,6 +4994,7 @@ export type GeinsOmsCheckoutType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -8140,6 +8143,7 @@ export type GeinsOrderSummaryType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -9803,6 +9807,7 @@ export type GeinsAddToCartType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -10626,6 +10631,7 @@ export type GeinsAddPackageToCartType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -11448,6 +11454,7 @@ export type GeinsCloneCartType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -12269,6 +12276,7 @@ export type GeinsCompleteCartType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -13089,6 +13097,7 @@ export type GeinsCreateCartType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -13911,6 +13920,7 @@ export type GeinsGetCartType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -14733,6 +14743,7 @@ export type GeinsSetCartMerchantDataType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -15555,6 +15566,7 @@ export type GeinsSetCartPromoCodeType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -16378,6 +16390,7 @@ export type GeinsSetCartShippingFeeType = {
           name?: string | null,
           alias: string,
           canonicalUrl?: string | null,
+          discountType?: GeinsDiscountType | null,
           brand?: {
             __typename: 'BrandType',
             name?: string | null
@@ -17201,6 +17214,7 @@ export type GeinsUpdateCartGroupType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -18039,6 +18053,7 @@ export type GeinsUpdateCartItemType = {
         name?: string | null,
         alias: string,
         canonicalUrl?: string | null,
+        discountType?: GeinsDiscountType | null,
         brand?: {
           __typename: 'BrandType',
           name?: string | null
@@ -18865,6 +18880,7 @@ export type GeinsCreateOrUpdateCheckoutType = {
           name?: string | null,
           alias: string,
           canonicalUrl?: string | null,
+          discountType?: GeinsDiscountType | null,
           brand?: {
             __typename: 'BrandType',
             name?: string | null
@@ -19870,6 +19886,7 @@ export type GeinsCheckoutType = {
           name?: string | null,
           alias: string,
           canonicalUrl?: string | null,
+          discountType?: GeinsDiscountType | null,
           brand?: {
             __typename: 'BrandType',
             name?: string | null
@@ -27945,6 +27962,7 @@ export type GeinsGetOrderPublicType = {
           name?: string | null,
           alias: string,
           canonicalUrl?: string | null,
+          discountType?: GeinsDiscountType | null,
           brand?: {
             __typename: 'BrandType',
             name?: string | null
@@ -29573,7 +29591,7 @@ export type GeinsGetOrderPublicType = {
  */
 
 /**
- * @typedef {("EXTERNAL"|"NONE"|"PRICE_CAMPAIGN"|"SALE_PRICE")} DiscountType
+ * @typedef {("EXTERNAL"|"NONE"|"PRICE_CAMPAIGN"|"PRICE_LIST"|"SALE_PRICE")} DiscountType
  */
 
 /**

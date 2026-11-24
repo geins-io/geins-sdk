@@ -78,6 +78,7 @@ fragment OmsCart on CartType {
         ...OmsPrice
         __typename
       }
+      discountType
       __typename
     }
     unitPrice {

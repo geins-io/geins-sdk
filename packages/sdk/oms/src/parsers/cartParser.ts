@@ -307,6 +307,7 @@ function parseCartItemProduct(
       },
     })),
     unitPrice: parsePrice(data.unitPrice, locale),
+    discountType: data.discountType ?? undefined,
   };
 }
 
