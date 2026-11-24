@@ -885,6 +885,7 @@ enum DiscountType {
   SALE_PRICE
   PRICE_CAMPAIGN
   EXTERNAL
+  PRICE_LIST
 }
 
 """Type containing collection of filters"""
