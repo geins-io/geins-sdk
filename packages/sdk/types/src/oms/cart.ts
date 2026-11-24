@@ -1,3 +1,4 @@
+import type { GeinsDiscountType } from '../generated';
 import type { CampaignType } from '../pim/campaign';
 import type { StockType } from '../pim/product';
 import type { PaymentOptionType, PriceType, ShippingOptionType } from '../shared';
@@ -47,6 +48,8 @@ export type CartItemProductType = {
     stock: StockType;
   }[];
   unitPrice: PriceType;
+  /** What the price comes from, such as `PRICE_LIST` or `PRICE_CAMPAIGN`. */
+  discountType?: GeinsDiscountType;
   /** The Geins product type, such as `product` or `configurable`. Selected by the order read only. */
   type?: string;
 };

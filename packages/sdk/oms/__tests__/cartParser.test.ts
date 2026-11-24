@@ -168,6 +168,29 @@ describe('cartParser', () => {
       ]);
     });
 
+    it("keeps each line product's discount type, undefined when the API sends none", () => {
+      const line = (id: number, discountType?: string | null) => ({
+        id,
+        skuId: id,
+        quantity: 1,
+        product: { productId: id, name: 'Pipe', productImages: [], skus: [], discountType },
+      });
+      const input = {
+        __typename: 'CartType',
+        id: 'cart-discount-type',
+        items: [line(1, 'PRICE_LIST'), line(2, 'PRICE_CAMPAIGN'), line(3, null), line(4)],
+        appliedCampaigns: [],
+        summary: null,
+      };
+      const result = parseCart(input, 'sv-SE');
+      expect(result!.items.map((item) => item.product?.discountType)).toEqual([
+        'PRICE_LIST',
+        'PRICE_CAMPAIGN',
+        undefined,
+        undefined,
+      ]);
+    });
+
     it('finds nested CartType via findObjectWithProperty', () => {
       const input = {
         data: {
