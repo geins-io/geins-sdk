@@ -51,6 +51,16 @@ const menu = await geinsCMS.menu.get('main-menu');
 console.log(menu);
 ```
 
+#### Menu depth
+
+`depth` sets how many levels of menu items are fetched, counting the top items as 1. It defaults to 3; each extra level adds to the query and the response.
+
+```typescript
+const menu = await geinsCMS.menu.get({ menuLocationId: 'main', depth: 4 });
+```
+
+The SDK accepts 1–6. This is the SDK's own limit for navigation menus, not the API's: the Merchant API itself refuses more than 60 levels (`MAX_DEPTH_EXCEEDED`, measured; not documented). Any other value throws a `GeinsError` with `INVALID_ARGUMENT` before a request is sent.
+
 ### Example Structure of Menu Response
 
 The response from `get` provides structured data for rendering menus and their nested items:
